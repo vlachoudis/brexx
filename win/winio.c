@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/win/RCS/winio.c,v 1.1 1999/09/13 15:06:41 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/win/RCS/winio.c,v 1.2 1999/11/26 13:22:36 bnv Exp $
  * $Log: winio.c,v $
+ * Revision 1.2  1999/11/26 13:22:36  bnv
+ * Changed: The marking mechanism to avoid flickering.
+ *
  * Revision 1.1  1999/09/13 15:06:41  bnv
  * Initial revision
  *
@@ -38,6 +41,7 @@ POINT	_Cursor = { 0, 0 };			// Cursor location
 BOOL	_CheckBreak = TRUE;			// Allow Ctrl-C for break?
 BOOL	_WinTerminated = FALSE;			// Escape exists program
 HFONT	_hFont;					// Current working font
+DWORD	_FontHeight = 14;			// Font Height
 HWND	_CrtWindow = 0;				// CRT window handle
 HINSTANCE	_CrtInstance;			// CRT class instance
 
@@ -72,10 +76,10 @@ static	void	(*SignalBreak)(int sig) = NULL;
 static	BOOL	BreakActive = FALSE;
 static	TCHAR	ModuleName[80];
 
-/* ---- Wsignal ---- */
+/* ---- WSignal ---- */
 /* Substitue of the signal(), for trapping the Control-C */
 void
-Wsignal(int sig, void (*func)(int sig))
+WSignal(int sig, void (*func)(int sig))
 {
 	switch (sig) {
 		case SIGINT:
@@ -86,7 +90,7 @@ Wsignal(int sig, void (*func)(int sig))
 		default:
 			break;
 	}
-} /* Wsignal */
+} /* WSignal */
 
 /* ---- WSetTitle ---- */
 void
@@ -546,7 +550,7 @@ WindowResize(void)
 		// For the first time create the font (WCE)
 		memset ((char *)&lf, 0, sizeof(lf));
 		lf.lfPitchAndFamily = FIXED_PITCH | FF_MODERN;
-		lf.lfHeight = 14;
+		lf.lfHeight = _FontHeight;
 		_hFont = CreateFontIndirect (&lf);
 
 		// Initialise the Device Context
@@ -745,15 +749,24 @@ _WinIOProc(HWND Window, UINT Message, WPARAM WParam, LONG LParam)
 			break;
 		case WM_MOUSEMOVE:      
 			if (marking) {
-				/* Draw old area to erase it */
-				DrawMarkedArea();              
-				
-				/* Update the position */
-				markEnd.x = LOWORD(LParam)/CharSize.x + _Origin.x;			
-				markEnd.y = HIWORD(LParam)/CharSize.y + _Origin.y;
+				int	nx, ny;
 
-				/* Draw the new marked area */
-				DrawMarkedArea();
+				/* Find the new position */
+				nx = LOWORD(LParam)/CharSize.x + _Origin.x;
+				ny = HIWORD(LParam)/CharSize.y + _Origin.y;
+
+				/* Redraw only when different to avoid flickering */
+				if (nx != markEnd.x || ny != markEnd.y) {
+					/* Draw old area to erase it */
+					DrawMarkedArea();              
+				
+					/* Update the position */
+					markEnd.x = nx;
+					markEnd.y = ny;
+
+					/* Draw the new marked area */
+					DrawMarkedArea();
+				}
 			}
 			break;
 		//case WM_LBUTTONDBLCLK:           
