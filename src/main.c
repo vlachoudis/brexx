@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/main.c,v 1.2 1999/02/10 15:43:16 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/main.c,v 1.3 1999/05/26 16:48:06 bnv Exp $
  * $Log: main.c,v $
+ * Revision 1.3  1999/05/26 16:48:06  bnv
+ * Gene corrections in RXCONIO
+ *
  * Revision 1.2  1999/02/10 15:43:16  bnv
  * Additions from Generoso Martello
  *
@@ -17,8 +20,8 @@
 #include <rxdefs.h>
 
 /* ------- Includes for any other external library ------- */
-#ifdef RXGEXT
-#include <rxgext.h>
+#ifdef RXCONIO
+extern RxConIOInitialize();
 #endif
 
 /* --------------------- main ---------------------- */
@@ -49,8 +52,8 @@ main(int ac, char *av[])
 	RxInitialize(av[0]);
 
 	/* --- Register functions of external libraries --- */
-#ifdef RXGEXT
-	RxGExtInitialize();
+#ifdef RXCONIO
+	RxConIOInitialize();
 #endif
 
 	/* --- scan arguments --- */
