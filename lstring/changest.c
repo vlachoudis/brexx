@@ -1,6 +1,9 @@
 /*
- * $Id: changest.c,v 1.4 2001/06/25 18:49:48 bnv Exp $
+ * $Id: changest.c,v 1.5 2002/06/11 12:37:15 bnv Exp $
  * $Log: changest.c,v $
+ * Revision 1.5  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.4  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -18,7 +21,7 @@
 #include <lstring.h>
 
 /* ----------------- Lchagestr ------------------- */
-void
+void __CDECL
 Lchangestr( const PLstr to, const PLstr oldstr,
 	const PLstr str, const PLstr newstr)
 {

@@ -1,6 +1,9 @@
 /*
- * $Id: compare.c,v 1.2 2001/06/25 18:49:48 bnv Exp $
+ * $Id: compare.c,v 1.3 2002/06/11 12:37:15 bnv Exp $
  * $Log: compare.c,v $
+ * Revision 1.3  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.2  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -16,7 +19,7 @@
  * of the non matching character [1,largest length]   *
  * returns 0 if strings are equal                     *
  * -------------------------------------------------- */
-long
+long __CDECL
 Lcompare( const PLstr A, const PLstr B, const char pad )
 {
 	long	i;

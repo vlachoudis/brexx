@@ -1,6 +1,9 @@
 /*
- * $Id: bool.c,v 1.3 2001/06/25 18:49:48 bnv Exp $
+ * $Id: bool.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
  * $Log: bool.c,v $
+ * Revision 1.4  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -16,7 +19,7 @@
 #include <lstring.h>
 
 /* ------------------- Lbool ------------------ */
-int
+int __CDECL
 Lbool( const PLstr num )
 {
 	long	i;

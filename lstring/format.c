@@ -1,6 +1,9 @@
 /*
- * $Id: format.c,v 1.4 2001/06/25 18:49:18 bnv Exp $
+ * $Id: format.c,v 1.5 2002/06/11 12:37:15 bnv Exp $
  * $Log: format.c,v $
+ * Revision 1.5  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.4  2001/06/25 18:49:18  bnv
  * Corrected: The calculation of the final size of the Lstring
  *
@@ -18,7 +21,7 @@
 #include <lstring.h>
 
 /* ---------------- Lformat ------------------ */
-void
+void __CDECL
 Lformat( const PLstr to, const PLstr from,
 	long before, long after, long expp, long expt )
 {

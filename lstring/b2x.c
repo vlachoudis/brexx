@@ -1,6 +1,9 @@
 /*
- * $Id: b2x.c,v 1.3 2001/06/25 18:49:48 bnv Exp $
+ * $Id: b2x.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
  * $Log: b2x.c,v $
+ * Revision 1.4  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -16,7 +19,7 @@
 #include <lstring.h>
 
 /* ------------------- Lb2x ------------------- */
-void
+void __CDECL
 Lb2x( const PLstr to, const PLstr from )
 {
 	long	i;

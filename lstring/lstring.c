@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.c,v 1.5 2002/06/06 08:21:29 bnv Exp $
+ * $Id: lstring.c,v 1.6 2002/06/11 12:37:15 bnv Exp $
  * $Log: lstring.c,v $
+ * Revision 1.6  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.5  2002/06/06 08:21:29  bnv
  * Added: Readline support
  *
@@ -40,7 +43,7 @@
 /* ================= Lstring routines ================== */
 
 /* -------------------- Linit ---------------- */
-void
+void __CDECL
 Linit( LerrorFunc Lerr)
 {
 	size_t	i;
@@ -71,14 +74,14 @@ Linit( LerrorFunc Lerr)
 } /* Linit */
 
 /* -------------- _Lfree ------------------- */
-void
+void __CDECL
 _Lfree(void *str)
 {
 	LPFREE((PLstr)str);
 } /* _Lfree */
 
 /* ---------------- Lfx -------------------- */
-void
+void __CDECL
 Lfx( const PLstr s, const size_t len )
 {
 	size_t	max;
@@ -106,7 +109,7 @@ Lfx( const PLstr s, const size_t len )
 } /* Lfx */
 
 /* ---------------- Licpy ------------------ */
-void
+void __CDECL
 Licpy( const PLstr to, const long from )
 {
 	LLEN(*to)  = sizeof(long);
@@ -115,7 +118,7 @@ Licpy( const PLstr to, const long from )
 } /* Licpy */
 
 /* ---------------- Lrcpy ------------------ */
-void
+void __CDECL
 Lrcpy( const PLstr to, const double from )
 {
 	LLEN(*to)  = sizeof(double);
@@ -124,7 +127,7 @@ Lrcpy( const PLstr to, const double from )
 } /* Lrcpy */
 
 /* ---------------- Lscpy ------------------ */
-void
+void __CDECL
 Lscpy( const PLstr to, const char *from )
 {
 	size_t	len;
@@ -141,7 +144,7 @@ Lscpy( const PLstr to, const char *from )
 
 #ifdef WCE
 /* ---------------- Lwscpy ------------------ */
-void
+void __CDECL
 Lwscpy(const PLstr to, const wchar_t *from )
 {
 	size_t	len;
@@ -158,7 +161,7 @@ Lwscpy(const PLstr to, const wchar_t *from )
 #endif
 
 /* ---------------- Lcat ------------------- */
-void
+void __CDECL
 Lcat( const PLstr to, const char *from )
 {
 	size_t	l;
@@ -177,7 +180,7 @@ Lcat( const PLstr to, const char *from )
 } /* Lcat */
 
 /* ------------------ Lcmp ------------------- */
-int
+int __CDECL
 Lcmp( const PLstr a, const char *b )
 {
 	int	r,blen;
@@ -199,7 +202,7 @@ Lcmp( const PLstr a, const char *b )
 } /* Lcmp */
 
 /* ---------------- Lstrcpy ----------------- */
-void
+void __CDECL
 Lstrcpy( const PLstr to, const PLstr from )
 {
 	if (LLEN(*from)==0) {
@@ -226,7 +229,7 @@ Lstrcpy( const PLstr to, const PLstr from )
 } /* Lstrcpy */
 
 /* ----------------- Lstrcat ------------------ */
-void
+void __CDECL
 Lstrcat( const PLstr to, const PLstr from )
 {
 	size_t	l;
@@ -250,7 +253,7 @@ Lstrcat( const PLstr to, const PLstr from )
 /* ----------------- _Lstrcmp ----------------- */
 /* -- Low level strcmp, suppose that both of -- */
 /* -- are of the same type                      */
-int
+int __CDECL
 _Lstrcmp( const PLstr a, const PLstr b )
 {
 	int	r;
@@ -274,7 +277,7 @@ _Lstrcmp( const PLstr a, const PLstr b )
 } /* _Lstrcmp */
 
 /* ----------------- Lstrcmp ------------------ */
-int
+int __CDECL
 Lstrcmp( const PLstr a, const PLstr b )
 {
 	int	r;
@@ -296,7 +299,7 @@ Lstrcmp( const PLstr a, const PLstr b )
 }  /* Lstrcmp */
 
 /* ----------------- Lstrset ------------------ */
-void
+void __CDECL
 Lstrset( const PLstr to, const size_t length, const char value)
 {
 	Lfx(to,length);
@@ -307,7 +310,7 @@ Lstrset( const PLstr to, const size_t length, const char value)
 
 /* ----------------- _Lsubstr ----------------- */
 /* WARNING!!! length is size_t type DO NOT PASS A NEGATIVE value */
-void
+void __CDECL
 _Lsubstr( const PLstr to, const PLstr from, size_t start, size_t length )
 {
 	L2STR(from);
@@ -333,7 +336,7 @@ _Lsubstr( const PLstr to, const PLstr from, size_t start, size_t length )
 /* that is to hold an integer number as a real in a string. */
 /* ie.   '  2.0 '  this should be LINTEGER not LREAL        */
 /* -------------------------------------------------------- */
-int
+int __CDECL
 _Lisnum( const PLstr s )
 {
 	bool	F, R;
@@ -475,7 +478,7 @@ isnumber:
 } /* _Lisnum */
 
 /* ------------------ L2str ------------------- */
-void
+void __CDECL
 L2str( const PLstr s )
 {
 	if (LTYPE(*s)==LINTEGER_TY) {
@@ -504,7 +507,7 @@ L2str( const PLstr s )
 } /* L2str */
 
 /* ------------------ L2int ------------------- */
-void
+void __CDECL
 L2int( const PLstr s )
 {
 	if (LTYPE(*s)==LREAL_TY) {
@@ -538,7 +541,7 @@ L2int( const PLstr s )
 } /* L2int */
 
 /* ------------------ L2real ------------------- */
-void
+void __CDECL
 L2real( const PLstr s )
 {
 	if (LTYPE(*s)==LINTEGER_TY)
@@ -558,7 +561,7 @@ L2real( const PLstr s )
 /* ------------------- _L2num -------------------- */
 /* this function is used when we know to what type */
 /* we should change the string                     */
-void
+void __CDECL
 _L2num( const PLstr s, const int type )
 {
 	LASCIIZ(*s);
@@ -588,7 +591,7 @@ _L2num( const PLstr s, const int type )
 } /* _L2num */
 
 /* ------------------ L2num ------------------- */
-void
+void __CDECL
 L2num( const PLstr s )
 {
 	switch (_Lisnum(s)) {
@@ -624,7 +627,7 @@ L2num( const PLstr s )
 } /* L2num */
 
 /* ----------------- Lrdint ------------------ */
-long
+long __CDECL
 Lrdint( const PLstr s )
 {
 	if (LTYPE(*s)==LINTEGER_TY) return LINT(*s);
@@ -659,7 +662,7 @@ Lrdint( const PLstr s )
 } /* Lrdint */
 
 /* ----------------- Lrdreal ------------------ */
-double
+double __CDECL
 Lrdreal( const PLstr s )
 {
 	if (LTYPE(*s)==LREAL_TY) return LREAL(*s);

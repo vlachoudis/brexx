@@ -1,6 +1,9 @@
 /*
- * $Id: bitand.c,v 1.2 2001/06/25 18:49:48 bnv Exp $
+ * $Id: bitand.c,v 1.3 2002/06/11 12:37:15 bnv Exp $
  * $Log: bitand.c,v $
+ * Revision 1.3  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.2  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -12,7 +15,7 @@
 #include <lstring.h>
 
 /* ---------------- Lbitand ------------------ */
-void
+void __CDECL
 Lbitand( const PLstr to, const PLstr s1, const PLstr s2,
 	const bool usepad, const char pad )
 {

@@ -1,6 +1,9 @@
 /*
- * $Id: overlay.c,v 1.2 2001/06/25 18:49:48 bnv Exp $
+ * $Id: overlay.c,v 1.3 2002/06/11 12:37:15 bnv Exp $
  * $Log: overlay.c,v $
+ * Revision 1.3  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.2  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -13,7 +16,7 @@
 #include <lstring.h>
 
 /* ------------------ Loverlay ---------------- */
-void
+void __CDECL
 Loverlay( const PLstr to, const PLstr newstr, const PLstr target,
 	long n, long length, const char pad)
 {

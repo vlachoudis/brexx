@@ -1,6 +1,9 @@
 /*
- * $Id: index.c,v 1.2 2001/06/25 18:49:48 bnv Exp $
+ * $Id: index.c,v 1.3 2002/06/11 12:37:15 bnv Exp $
  * $Log: index.c,v $
+ * Revision 1.3  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.2  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -19,7 +22,7 @@
  * returns  0 (NOTFOUND) is needle is not found    *
  * else returns position [1,haystack len]          *
  * ----------------------------------------------- */
-long
+long __CDECL
 Lindex( const PLstr haystack, const PLstr needle, long p)
 {
 	long	n,lp;

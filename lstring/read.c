@@ -1,6 +1,9 @@
 /*
- * $Id: read.c,v 1.6 2002/06/06 08:21:55 bnv Exp $
+ * $Id: read.c,v 1.7 2002/06/11 12:37:15 bnv Exp $
  * $Log: read.c,v $
+ * Revision 1.7  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.6  2002/06/06 08:21:55  bnv
  * Changed: Directive for READLINE
  *
@@ -34,7 +37,7 @@
 #endif
 
 /* ---------------- Lread ------------------- */
-void
+void __CDECL
 Lread( FILEP f, const PLstr line, long size )
 {
 	long	l;

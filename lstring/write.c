@@ -1,6 +1,9 @@
 /*
- * $Id: write.c,v 1.6 2001/06/25 18:49:48 bnv Exp $
+ * $Id: write.c,v 1.7 2002/06/11 12:37:15 bnv Exp $
  * $Log: write.c,v $
+ * Revision 1.7  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.6  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -24,7 +27,7 @@
 #include <lstring.h>
 
 /* ---------------- Lwrite ------------------- */
-void
+void __CDECL
 Lwrite( FILEP f, const PLstr line, const bool newline)
 {
 	long	l;

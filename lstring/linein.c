@@ -1,6 +1,9 @@
 /*
- * $Id: linein.c,v 1.4 2001/06/25 18:49:48 bnv Exp $
+ * $Id: linein.c,v 1.5 2002/06/11 12:37:15 bnv Exp $
  * $Log: linein.c,v $
+ * Revision 1.5  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.4  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -18,7 +21,7 @@
 #include <lstring.h>
 
 /* ---------------- Llinein ------------------- */
-void
+void __CDECL
 Llinein( FILEP f, const PLstr line, long *curline, long start, long length )
 {
 	int	ch,prev='\n';

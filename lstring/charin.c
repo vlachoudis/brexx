@@ -1,6 +1,9 @@
 /*
- * $Id: charin.c,v 1.3 2001/06/25 18:49:48 bnv Exp $
+ * $Id: charin.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
  * $Log: charin.c,v $
+ * Revision 1.4  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -15,7 +18,7 @@
 #include <lstring.h>
 
 /* ---------------- Lcharin ------------------- */
-void
+void __CDECL
 Lcharin( FILEP f, const PLstr line, const long start, const long length )
 {
 	if (start>=1)

@@ -1,6 +1,9 @@
 /*
- * $Id: date.c,v 1.4 2001/06/25 18:49:48 bnv Exp $
+ * $Id: date.c,v 1.5 2002/06/11 12:37:15 bnv Exp $
  * $Log: date.c,v $
+ * Revision 1.5  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.4  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -57,7 +60,7 @@ static TCHAR *months[] = {
 	TEXT("October"), TEXT("November"), TEXT("December") };
 
 /* ----------------- Ldate ------------------ */
-void
+void __CDECL
 Ldate( const PLstr datestr, char option )
 {
 	static	TCHAR *fmt = TEXT("%02d/%02d/%02d");

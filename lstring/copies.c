@@ -1,6 +1,9 @@
 /*
- * $Id: copies.c,v 1.2 2001/06/25 18:49:48 bnv Exp $
+ * $Id: copies.c,v 1.3 2002/06/11 12:37:15 bnv Exp $
  * $Log: copies.c,v $
+ * Revision 1.3  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.2  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -12,7 +15,7 @@
 #include <lstring.h>
 
 /* ------------------ Lcopies -------------------- */
-void
+void __CDECL
 Lcopies( const PLstr to, const PLstr from, long n )
 {
 	Lstr	tmp,tmp2;

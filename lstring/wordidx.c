@@ -1,6 +1,9 @@
 /*
- * $Id: wordidx.c,v 1.2 2001/06/25 18:49:48 bnv Exp $
+ * $Id: wordidx.c,v 1.3 2002/06/11 12:37:15 bnv Exp $
  * $Log: wordidx.c,v $
+ * Revision 1.3  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.2  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -12,7 +15,7 @@
 #include <lstring.h>
 
 /* ----------------- Lwordindex ---------------- */
-long
+long __CDECL
 Lwordindex( const PLstr str, long n )
 {
 	long	p;

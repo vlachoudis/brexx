@@ -1,6 +1,9 @@
 /*
- * $Id: right.c,v 1.2 2001/06/25 18:49:48 bnv Exp $
+ * $Id: right.c,v 1.3 2002/06/11 12:37:15 bnv Exp $
  * $Log: right.c,v $
+ * Revision 1.3  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.2  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -13,7 +16,7 @@
 #include <lstring.h>
 
 /* ------------------ Lright ------------------- */
-void
+void __CDECL
 Lright( const PLstr to, const PLstr from, const long length, const char pad)
 {
 	L2STR(from);

@@ -1,6 +1,9 @@
 /*
- * $Id: intdiv.c,v 1.2 2001/06/25 18:49:48 bnv Exp $
+ * $Id: intdiv.c,v 1.3 2002/06/11 12:37:15 bnv Exp $
  * $Log: intdiv.c,v $
+ * Revision 1.3  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.2  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -13,7 +16,7 @@
 #include <lstring.h>
 
 /* ---------------- Lintdiv ---------------- */
-void
+void __CDECL
 Lintdiv( const PLstr to, const PLstr A, const PLstr B )
 {
 	double	b;

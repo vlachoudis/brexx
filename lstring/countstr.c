@@ -1,6 +1,9 @@
 /*
- * $Id: countstr.c,v 1.2 2001/06/25 18:49:48 bnv Exp $
+ * $Id: countstr.c,v 1.3 2002/06/11 12:37:15 bnv Exp $
  * $Log: countstr.c,v $
+ * Revision 1.3  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.2  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -15,7 +18,7 @@
  * Counts the appearances of the first string 'target'
  * in the second argument 'source'
  */
-long
+long __CDECL
 Lcountstr( const PLstr target, const PLstr source )
 {
 	long	output=0, position;

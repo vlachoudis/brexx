@@ -1,6 +1,9 @@
 /*
- * $Id: translat.c,v 1.3 2001/06/25 18:49:48 bnv Exp $
+ * $Id: translat.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
  * $Log: translat.c,v $
+ * Revision 1.4  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -15,7 +18,7 @@
 #include <lstring.h>
 
 /* ---------------- Ltranslate ------------------- */
-void
+void __CDECL
 Ltranslate( const PLstr to, const PLstr from,
 	const PLstr tableout, const PLstr tablein, const char pad )
 {

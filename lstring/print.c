@@ -1,6 +1,9 @@
 /*
- * $Id: print.c,v 1.6 2001/06/25 18:49:48 bnv Exp $
+ * $Id: print.c,v 1.7 2002/06/11 12:37:15 bnv Exp $
  * $Log: print.c,v $
+ * Revision 1.7  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.6  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -35,7 +38,7 @@
 #endif
 
 /* ---------------- Lprint ------------------- */
-void
+void __CDECL
 Lprint( FILEP f, const PLstr str )
 {
 	size_t	l;

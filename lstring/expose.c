@@ -1,6 +1,9 @@
 /*
- * $Id: expose.c,v 1.3 2001/06/25 18:49:48 bnv Exp $
+ * $Id: expose.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
  * $Log: expose.c,v $
+ * Revision 1.4  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -15,7 +18,7 @@
 #include <lstring.h>
 
 /* -----------------  expose ---------------- */
-void
+void __CDECL
 Lexpose( const PLstr to, const PLstr A, const PLstr B )
 {
 	double ar,r;

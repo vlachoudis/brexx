@@ -1,6 +1,9 @@
 /*
- * $Id: insert.c,v 1.3 2001/06/25 18:49:48 bnv Exp $
+ * $Id: insert.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
  * $Log: insert.c,v $
+ * Revision 1.4  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -15,7 +18,7 @@
 #include <lstring.h>
 
 /* ------------------ Linsert ------------------- */
-void
+void __CDECL
 Linsert( const PLstr to, const PLstr newstr, const PLstr target, 
 			long n, long length, const char pad)
 {

@@ -1,6 +1,9 @@
 /*
- * $Id: x2c.c,v 1.3 2001/06/25 18:49:48 bnv Exp $
+ * $Id: x2c.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
  * $Log: x2c.c,v $
+ * Revision 1.4  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -17,7 +20,7 @@
 #include <lstring.h>
 
 /* ------------------ Lx2c ------------------ */
-void
+void __CDECL
 Lx2c( const PLstr to, const PLstr from )
 {
 	int	i,j,r;

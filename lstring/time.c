@@ -1,6 +1,9 @@
 /*
- * $Id: time.c,v 1.6 2001/06/25 18:49:48 bnv Exp $
+ * $Id: time.c,v 1.7 2002/06/11 12:37:15 bnv Exp $
  * $Log: time.c,v $
+ * Revision 1.7  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.6  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -43,7 +46,7 @@
 static double elapsed=0.0;
 
 /* ------------------ _Ltimeinit ----------------- */
-void
+void __CDECL
 _Ltimeinit( void )
 {
 #if defined(MSDOS) && !defined(__WIN32__) && !defined(_MSC_VER)
@@ -73,7 +76,7 @@ _Ltimeinit( void )
 } /* _Ltimeinit */
 
 /* -------------------- Ltime ---------------------- */
-void
+void __CDECL
 Ltime( const PLstr timestr, char option )
 {
 	double	unow;

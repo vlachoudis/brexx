@@ -1,6 +1,9 @@
 /*
- * $Id: words.c,v 1.2 2001/06/25 18:49:48 bnv Exp $
+ * $Id: words.c,v 1.3 2002/06/11 12:37:15 bnv Exp $
  * $Log: words.c,v $
+ * Revision 1.3  2002/06/11 12:37:15  bnv
+ * Added: CDECL
+ *
  * Revision 1.2  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -12,7 +15,7 @@
 #include <lstring.h>
 
 /* ----------------- Lwords ------------------ */
-long
+long __CDECL
 Lwords( const PLstr from )
 {
 	long	i=0,r=0;
