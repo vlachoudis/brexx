@@ -1,34 +1,6 @@
 /*
- * $Id: os.h,v 1.10 2009/06/02 09:41:43 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/os.h,v 1.1 1999/11/29 14:58:00 bnv Exp $
  * $Log: os.h,v $
- * Revision 1.10  2009/06/02 09:41:43  bnv
- * MVS/CMS corrections
- *
- * Revision 1.9  2008/07/14 13:09:21  bnv
- * MVS,CMS support
- *
- * Revision 1.8  2006/01/26 10:29:52  bnv
- * Corrected for Windows CE
- *
- * Revision 1.7  2003/11/04 09:48:17  bnv
- * REMOVED: the mkstemp
- * mkstemp was openning the file and returing the file handle
- *
- * Revision 1.6  2003/02/12 16:38:39  bnv
- * Added: pragma to disable the signed/unsigned comparison warning
- *
- * Revision 1.5  2002/08/22 12:30:34  bnv
- * Added: UNIX define
- *
- * Revision 1.4  2002/06/11 12:37:56  bnv
- * Added: CDECL
- *
- * Revision 1.3  2002/06/06 08:22:54  bnv
- * Added: MKTEMP
- *
- * Revision 1.2  2001/06/25 18:52:04  bnv
- * Header -> Id
- *
  * Revision 1.1  1999/11/29 14:58:00  bnv
  * Initial revision
  *
@@ -46,7 +18,7 @@
  * General
  *	ALIGN	- Align the code in 4-bytes (used for RISC machines)
  *	RMLAST	- If the last newline should be remove from the
- *		  Redirected commands
+ * 		  Redirected commands
  *	INLINE	- Use inline in some routines to speed up the code.
  *	GREEK	- Support for the GREEK character set.
  *
@@ -72,10 +44,6 @@
 #	define	SHELL    "SHELL"
 #	define	FILESEP  '\\'
 #	define	PATHSEP  ';'
-#	define	ALIGN	1
-#	define	WIN	1
-
-#	pragma warning(disable : 4018)	/* signed unsigned comparison warning */
 
 #elif defined(MSDOS)
 
@@ -102,39 +70,7 @@
 #	define	HAS_CTYPE
 #	define	HAS_XTOY
 
-#elif __CMS__
-
-#	define VMCMS 1
-#	define SHELL "SHELL"
-#	define OS "VM//CMS"
-#	define FILESEP '.'
-#	define PATHSEP ':'
-
-#	define HAS_TERMINALIO
-#	define HAS_STDIO
-#	define HAS_STRING
-#	define HAS_CTYPE
-#	define HAS_XTOY
-#	define HAS_SIGNAL
-
-#elif __MVS__
-
-#	define VMCMS 1
-#	define SHELL "SHELL"
-#	define OS "MVS"
-#	define FILESEP '.'
-#	define PATHSEP ':'
-
-#	define HAS_TERMINALIO
-#	define HAS_STDIO
-#	define HAS_STRING
-#	define HAS_CTYPE
-#	define HAS_XTOY
-#	define HAS_SIGNAL
-
 #else
-
-#	define	UNIX	1
 
 #	define	OS       "UNIX"
 #	define	SHELL    "SHELL"
@@ -150,9 +86,6 @@
 #endif
 
 #ifdef WCE
-#	define	__CDECL	__cdecl
-#else
-#	define	__CDECL
 #endif
 
 #ifndef __BORLANDC__
@@ -160,23 +93,20 @@
 #endif
 
 /* --------------- NON UNICODE ----------------- */
-#ifndef WIN
-#	ifndef UNICODE
-#		ifndef TCHAR
-#			define	TCHAR		char
-#			define	LPTSTR		char*
-#		endif
-#		ifndef TEXT
-#			define	TEXT(x)		(x)
-#		endif
+#ifndef UNICODE
+#	ifndef TCHAR
+#		define	TCHAR		char
+#		define	LPTSTR		char*
+#	endif
+#	ifndef TEXT
+#		define	TEXT(x)		(x)
 #	endif
 #endif
 
 /* -------------- Terminal I/O ----------------- */
 #ifdef HAS_TERMINALIO
-#	define	PUTS		puts
-#	define	PUTCHAR		putchar
-//#	define	PUTINT(a,b,c)	;
+#	define	PUTS	puts
+#	define	PUTCHAR	putchar
 #else
 #	define	PUTS		Bputs
 #	define	PUTINT		Bputint
@@ -201,15 +131,6 @@
 #	define	FPUTC		fputc
 #	define	FPUTS		fputs
 #	define	FGETC		fgetc
-#	define	PRINTF		printf
-
-#	ifdef WIN
-#		define	GETCWD		_getcwd
-#		define	CHDIR		_chdir
-#	else
-#		define	GETCWD		getcwd
-#		define	CHDIR		chdir
-#	endif
 #else
 	/* --- Use the home made I/O --- */
 #	define	STDIN		NULL
@@ -226,17 +147,6 @@
 #	define	FPUTC		Bfputc
 #	define	FPUTS		Bfputs
 #	define	FGETC		Bfgetc
-#	define	PRINTF		Bprintf
-
-#	define	GETCWD		Bgetcwd
-#	define	CHDIR		Bchdir
-#endif
-
-/* ---------------- Unicode Ops ------------------ */
-#ifdef UNICODE
-#	define	SPRINTF		swprintf
-#else
-#	define	SPRINTF		sprintf
 #endif
 
 /* ---------------- Memory Ops ------------------- */
@@ -261,23 +171,18 @@
 #	define	STRCAT		_fstrcat
 #	define	STRCHR		_fstrchr
 #	define	STRLEN		_fstrlen
-#	define	STRSTR		_fstrstr
-#	define	MKTEMP		mktemp
 #elif defined(HAS_STRING)
 #	define	STRCPY		strcpy
 #	define	STRCMP		strcmp
 #	define	STRCAT		strcat
 #	define	STRCHR		strchr
 #	define	STRLEN		strlen
-#	define	STRSTR		strstr
-#	define	MKTEMP		mktemp
 #else
 #	define	STRCPY		Bstrcpy
 #	define	STRCMP		Bstrcmp
 #	define	STRCAT		Bstrcat
 #	define	STRCHR		Bstrchr
 #	define	STRLEN		Bstrlen
-#	define	STRSTR		Bstrstr
 #endif
 
 /* ----------------- Ctype ------------------------- */
