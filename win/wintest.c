@@ -1,9 +1,6 @@
 /*
- * $Id: wintest.c,v 1.2 2001/06/25 18:51:48 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/win/RCS/wintest.c,v 1.1 1999/11/26 08:48:34 bnv Exp $
  * $Log: wintest.c,v $
- * Revision 1.2  2001/06/25 18:51:48  bnv
- * Header -> Id
- *
  * Revision 1.1  1999/11/26 08:48:34  bnv
  * Initial revision
  *
@@ -12,7 +9,7 @@
 #include <tchar.h>
 #include <string.h>
 #include <windows.h>
-#include "winio.h"
+#include <winio.h>
 
 
 /* --------------------- WinMain ---------------------- */
