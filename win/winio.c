@@ -1,6 +1,9 @@
 /*
- * $Id: winio.c,v 1.5 2002/06/11 12:38:06 bnv Exp $
+ * $Id: winio.c,v 1.6 2002/08/19 15:38:49 bnv Exp $
  * $Log: winio.c,v $
+ * Revision 1.6  2002/08/19 15:38:49  bnv
+ * Corrected: Cursor behavior
+ *
  * Revision 1.5  2002/06/11 12:38:06  bnv
  * Added: CDECL
  *
@@ -65,7 +68,6 @@ static POINT	Range;			// Scroll bar ranges
 static int	FirstLine  = 0;		// First line in circular buffer
 static int	KeyCount   = 0;		// Count of keys in KeyBuffer
 static BOOL	Focused = FALSE;	// Window focused?
-static BOOL	Reading = FALSE;	// Reading from window?
 static BOOL	Painting = FALSE;	// Handling wm_Paint?
 
 static LPTSTR	ScreenBuffer;		// Screen buffer pointer
@@ -149,18 +151,28 @@ DoneDeviceContext(void)
 static void
 _ShowCursor(void)
 {
-	CreateCaret(_CrtWindow, 0, CharSize.x, 2);
-	SetCaretPos(	(_Cursor.x - _Origin.x) * CharSize.x,
-			(_Cursor.y - _Origin.y) * CharSize.y + CharAscent);
-	ShowCaret(_CrtWindow);
+	if (Focused) {
+		SetCaretPos(	(_Cursor.x - _Origin.x) * CharSize.x,
+				(_Cursor.y - _Origin.y) * CharSize.y + CharAscent);
+		ShowCaret(_CrtWindow);
+	}
 } /* _ShowCursor */
 
 /* ----------- Hide caret ------------ */
 static void
 _HideCursor(void)
 {
-	DestroyCaret();
+	if (Focused)
+		HideCaret(_CrtWindow);
 } /* _HideCursor */
+
+/* ---------- Create caret --------- */
+static void
+_CreateCursor(void)
+{
+		CreateCaret(_CrtWindow, 0, CharSize.x? CharSize.x : 8, 2);
+		_ShowCursor();
+} /* _CreateCursor */
 
 /* ----------- UpdateScroll bars ------ */
 static void
@@ -275,6 +287,7 @@ WWriteBuf(LPTSTR Buffer, WORD Count)
 
 	L = _Cursor.x;
 	R = _Cursor.x;
+	_HideCursor();
 	while (Count > 0) {
 		if (Buffer[0] == -1)
 			Buffer[0] = TEXT(' ');
@@ -320,6 +333,7 @@ WWriteBuf(LPTSTR Buffer, WORD Count)
 	}
 	ShowText(L, R);
 	WTrackCursor();
+	_ShowCursor();
 } /* WWriteBuf */
 
 /* ------- Write character to window ---------- */
@@ -350,17 +364,11 @@ WReadKey(void)
 
 	if (!WKeyPressed()) {
 		MSG M;
-		Reading = TRUE;
-		if (Focused)
-			_ShowCursor();
 		while ( (KeyCount==0) && (ClpKeyCount==0) &&
 			GetMessage(&M, 0, 0, 0)) {
 				TranslateMessage(&M);
 				DispatchMessage(&M);
 			}
-		if (Focused)
-			_HideCursor();
-		Reading = FALSE;
 	}
 	if (ClpKeyCount) {
 		readkey = (char)ClpKeyBuffer[0];
@@ -380,7 +388,9 @@ WReadKey(void)
 void __CDECL
 WGotoXY(int X, int Y)
 {
+	_HideCursor();
 	_CursorTo(X - 1, Y - 1);
+	_ShowCursor();
 } /* WGotoXY */
 
 /* ------- Return cursor X position --------- */
@@ -415,9 +425,11 @@ WClrscr(void)
 void __CDECL
 WClreol(void)
 {
+	_HideCursor();
 	unicodeMemSet(ScreenPtr(_Cursor.x,_Cursor.y),TEXT(' '),
 			(_ScreenSize.x-_Cursor.x));
 	ShowText(_Cursor.x, _ScreenSize.x);
+	_ShowCursor();
 } /* Wclreol */          
 
 /* ------- DrawMarked area by inversing --------------- */             
@@ -427,7 +439,7 @@ DrawMarkedArea(void)
 	HBRUSH	hOldBrush;	
 	int	oldR2;
 	int	top, bottom;
-	
+
 	/* We assume that the previous routine has got a device context */	    
 	if (markBegin.x==markEnd.x) return;
 
@@ -524,6 +536,7 @@ WindowPaint(void)
 	Painting = TRUE;
 	InitDeviceContext();
 
+	_HideCursor();
 	if (CharSize.x ^= 0) {
 		X1 = max(0, PS.rcPaint.left / CharSize.x + _Origin.x);
 		X2 = min(_ScreenSize.x,
@@ -540,6 +553,7 @@ WindowPaint(void)
 		}
 	}
 	DoneDeviceContext();
+	_ShowCursor();
 	Painting = FALSE;
 } /* WindowPaint */
 
@@ -550,8 +564,7 @@ WindowResize(void)
 	RECT	rc;
 	static BOOL	FirstTime = TRUE;
 
-	if (Focused && Reading)
-		_HideCursor();
+	DestroyCaret();
 
 	if (FirstTime) {
 		// Find Font metrics
@@ -600,9 +613,7 @@ WindowResize(void)
 	}
 
 	SetScrollBars();
-
-	if (Focused && Reading)
-		_ShowCursor();
+	_CreateCursor();
 } /* WindowResize */
 
 /* ------ AddKey ------ */
@@ -746,6 +757,8 @@ _WinIOProc(HWND Window, UINT Message, WPARAM WParam, LONG LParam)
 				DestroyMenu(hMenu);
 			} else {
 				InitDeviceContext();
+				_HideCursor();
+				SetCapture(_CrtWindow);
 				markBegin.x = markEnd.x = LOWORD(LParam)/CharSize.x + _Origin.x;
 				markBegin.y = markEnd.y = HIWORD(LParam)/CharSize.y + _Origin.y;
 				marking = TRUE;
@@ -755,6 +768,8 @@ _WinIOProc(HWND Window, UINT Message, WPARAM WParam, LONG LParam)
 			if (marking) {
 				marking = FALSE;
 				DrawMarkedArea();
+				_ShowCursor();
+				ReleaseCapture();
 				DoneDeviceContext();
 				Copy2Clipboard();
 			}
@@ -826,12 +841,10 @@ _WinIOProc(HWND Window, UINT Message, WPARAM WParam, LONG LParam)
 			Focused = TRUE;
 			InvalidateRect(Window, NULL, TRUE);
 			UpdateWindow(Window);
-			if (Reading)
-				_ShowCursor();
+			_CreateCursor();
 			break;
 		case WM_KILLFOCUS:
-			if (Reading)
-				_HideCursor();
+			DestroyCaret();
 			Focused = FALSE;
 			break;
 		/*** WM_QUIT, needs special handling, DO NOT UNCOMMENT */
@@ -899,6 +912,7 @@ WExitWinIO(void)
 	if (_CrtWindow) {
 		GetWindowText(_CrtWindow, OldTitle, sizeof(OldTitle)/sizeof(TCHAR));
 		wsprintf(Title, TEXT("[ %s ]"), OldTitle);
+		DestroyCaret();
 		SetWindowText(_CrtWindow, Title);
 		_CheckBreak = FALSE;
 		SignalBreak = NULL;
