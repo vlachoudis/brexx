@@ -1,6 +1,9 @@
 /*
- * $Id: justify.c,v 1.3 2002/06/11 12:37:15 bnv Exp $
+ * $Id: justify.c,v 1.4 2004/08/16 15:25:37 bnv Exp $
  * $Log: justify.c,v $
+ * Revision 1.4  2004/08/16 15:25:37  bnv
+ * float to double
+ *
  * Revision 1.3  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -20,7 +23,7 @@ Ljustify( const PLstr to, const PLstr from, long length, char pad )
 {
 	int	spaces, ins, extra;
 	int	p,lp,i;
-	float	r,rstep;
+	double	r,rstep;
 	char	padstr[2];
 	Lstr	tmp,sub,space;
 
@@ -55,7 +58,7 @@ Ljustify( const PLstr to, const PLstr from, long length, char pad )
 		}
 ******/
 	}
-   
+
 	for (p=spaces=0; p<LLEN(tmp); p++)	/* count spaces */
 		if (LSTR(tmp)[p] == ' ') spaces++;
 
@@ -68,7 +71,7 @@ Ljustify( const PLstr to, const PLstr from, long length, char pad )
 
 	ins = length - (LLEN(tmp) - spaces);
 	extra = ins%spaces;
-	rstep = (float)(spaces+1)/(float)(extra+1);
+	rstep = (double)(spaces+1)/(double)(extra+1);
 	ins /= spaces;
 
 	Lstrset(&space,ins,pad);
