@@ -1,6 +1,9 @@
 /*
- * $Id: trace.h,v 1.3 2001/06/25 18:52:04 bnv Exp $
+ * $Id: trace.h,v 1.4 2002/06/11 12:37:56 bnv Exp $
  * $Log: trace.h,v $
+ * Revision 1.4  2002/06/11 12:37:56  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2001/06/25 18:52:04  bnv
  * Header -> Id
  *
@@ -66,12 +69,12 @@ enum MiddleCharType {	nothing_middle	= 0,
 #define TB_MIDDLECHAR	MASK3
 
 /* ------------------- Function Prototypes ------------------ */
-int	TraceCurline( RxFile **rxf, int print );
-void	TraceSet( PLstr );
-void	TraceByte( int middlechar );
-void	TraceClause( void );
-void	TraceInstruction( byte inst );
-int	TraceInteractive( int );
+int	__CDECL TraceCurline( RxFile **rxf, int print );
+void	__CDECL TraceSet( PLstr );
+void	__CDECL TraceByte( int middlechar );
+void	__CDECL TraceClause( void );
+void	__CDECL TraceInstruction( byte inst );
+int	__CDECL TraceInteractive( int );
 
 #undef EXTERN
 #endif

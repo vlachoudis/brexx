@@ -1,6 +1,9 @@
 /*
- * $Id: dqueue.h,v 1.2 2001/06/25 18:52:04 bnv Exp $
+ * $Id: dqueue.h,v 1.3 2002/06/11 12:37:56 bnv Exp $
  * $Log: dqueue.h,v $
+ * Revision 1.3  2002/06/11 12:37:56  bnv
+ * Added: CDECL
+ *
  * Revision 1.2  2001/06/25 18:52:04  bnv
  * Header -> Id
  *
@@ -34,11 +37,11 @@ typedef struct {
 #define DQPEEK(q)	(((q)->tail)->dat)
 
 /* ============= function prototypes ============= */
-void	DQAdd2Head( DQueue *queue, void *dat);
-void	DQAdd2Tail( DQueue *queue, void *dat);
-void	*DQPop( DQueue *queue );
-void	DQDel( DQueue *queue, DQueueElem *elem );
-void	DQFlush( DQueue *queue, void (freefunc)(void *dat) );
+void	__CDECL DQAdd2Head( DQueue *queue, void *dat);
+void	__CDECL DQAdd2Tail( DQueue *queue, void *dat);
+void		*DQPop( DQueue *queue );
+void	__CDECL DQDel( DQueue *queue, DQueueElem *elem );
+void	__CDECL DQFlush( DQueue *queue, void (__CDECL *freefunc)(void *) );
 
 /*DQueueElem *	DQFind( DQueue *queue, PLstr str );*/
 

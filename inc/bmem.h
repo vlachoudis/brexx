@@ -1,6 +1,9 @@
 /*
- * $Id: bmem.h,v 1.2 2001/06/25 18:52:04 bnv Exp $
+ * $Id: bmem.h,v 1.3 2002/06/11 12:37:56 bnv Exp $
  * $Log: bmem.h,v $
+ * Revision 1.3  2002/06/11 12:37:56  bnv
+ * Added: CDECL
+ *
  * Revision 1.2  2001/06/25 18:52:04  bnv
  * Header -> Id
  *
@@ -12,6 +15,7 @@
 #ifndef __BMEM_H__
 #define __BMEM_H__
 
+#include <os.h>
 #include <stdlib.h>
 #include <malloc.h>
 
@@ -33,12 +37,12 @@
 
 /* ------ function prototypes --------- */
 #ifdef __DEBUG__
-void	*mem_malloc(size_t size, char *desc);
-void	*mem_realloc(void *ptr, size_t size);
-void	mem_free(void *ptr);
-void	mem_list(void);
-int	mem_chk(void);
-long	mem_allocated(void);
+void	__CDECL *mem_malloc(size_t size, char *desc);
+void	__CDECL *mem_realloc(void *ptr, size_t size);
+void	__CDECL mem_free(void *ptr);
+void	__CDECL mem_list(void);
+int	__CDECL mem_chk(void);
+long	__CDECL mem_allocated(void);
 #endif
 
 #endif

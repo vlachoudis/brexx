@@ -1,6 +1,9 @@
 /*
- * $Id: bintree.h,v 1.2 2001/06/25 18:52:04 bnv Exp $
+ * $Id: bintree.h,v 1.3 2002/06/11 12:37:56 bnv Exp $
  * $Log: bintree.h,v $
+ * Revision 1.3  2002/06/11 12:37:56  bnv
+ * Added: CDECL
+ *
  * Revision 1.2  2001/06/25 18:52:04  bnv
  * Header -> Id
  *
@@ -42,13 +45,16 @@ typedef struct {
 		(t).maxdepth=0; (t).balancedepth=BALANCE_START;}
 
 /* =================== function prototypes =================== */
-PBinLeaf BinAdd( BinTree *tree, PLstr name, void *dat );
-PBinLeaf BinFind( BinTree *tree, PLstr name );
-void	BinDisposeLeaf( BinTree *tree, PBinLeaf leaf, void (BinFreeData)(void *) );
-void	BinDisposeTree( BinTree *tree, void (BinFreeData)(void *) );
-void	BinDel( BinTree *tree, PLstr name, void (BinFreeData)(void *dat) );
-void	BinPrint( PBinLeaf leaf );
-void	BinBalance( BinTree *tree );
+PBinLeaf __CDECL BinAdd( BinTree *tree, PLstr name, void *dat );
+PBinLeaf __CDECL BinFind( BinTree *tree, PLstr name );
+void	__CDECL BinDisposeLeaf( BinTree *tree, PBinLeaf leaf,
+		void (__CDECL *BinFreeData)(void *) );
+void	__CDECL BinDisposeTree( BinTree *tree,
+		void (__CDECL *BinFreeData)(void *) );
+void	__CDECL BinDel( BinTree *tree, PLstr name,
+		void (__CDECL *BinFreeData)(void *) );
+void	__CDECL BinPrint( PBinLeaf leaf );
+void	__CDECL BinBalance( BinTree *tree );
 
 #undef EXTERN
 #endif

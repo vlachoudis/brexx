@@ -1,6 +1,9 @@
 /*
- * $Id: cefunc.h,v 1.2 2001/06/25 18:52:04 bnv Exp $
+ * $Id: cefunc.h,v 1.3 2002/06/11 12:37:56 bnv Exp $
  * $Log: cefunc.h,v $
+ * Revision 1.3  2002/06/11 12:37:56  bnv
+ * Added: CDECL
+ *
  * Revision 1.2  2001/06/25 18:52:04  bnv
  * Header -> Id
  *
@@ -27,7 +30,7 @@ enum	ce_msgs {
 };
 
 /* ---- Function Prototypes ---- */
-BOOL CE_GetRegData(HKEY key, TCHAR *keyPath, TCHAR *varName,
+BOOL __CDECL CE_GetRegData(HKEY key, TCHAR *keyPath, TCHAR *varName,
 		   DWORD type, LPBYTE pvData, LPDWORD cbData );
 
 

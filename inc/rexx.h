@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.h,v 1.7 2002/06/06 08:23:11 bnv Exp $
+ * $Id: rexx.h,v 1.8 2002/06/11 12:37:56 bnv Exp $
  * $Log: rexx.h,v $
+ * Revision 1.8  2002/06/11 12:37:56  bnv
+ * Added: CDECL
+ *
  * Revision 1.7  2002/06/06 08:23:11  bnv
  * New Version
  *
@@ -136,7 +139,7 @@ struct targs {
 typedef
 struct tbltfunc {
 	char	*name;
-	void	(*func)(int);
+	void	(__CDECL *func)(int);
 	int	opt;
 } TBltFunc;
 
@@ -208,18 +211,19 @@ EXTERN BinLeaf	*NullStr,	/* basic leaf Lstrings		*/
 		*NotReadyStr;
 
 /* ============= function prototypes ============== */
-void	RxInitialize( char *program_name );
-void	RxFinalize( void );
-int	RxRun( char *filename, PLstr programstr,
+void	__CDECL RxInitialize( char *program_name );
+void	__CDECL RxFinalize( void );
+int	__CDECL RxLoadFile( RxFile *rxf );
+int	__CDECL RxRun( char *filename, PLstr programstr,
 		PLstr arguments, PLstr tracestr, char *environment );
 
-int	RxRegFunction( char *name, void (*func)(int), int opt );
+int	__CDECL RxRegFunction( char *name, void (__CDECL *func)(int), int opt );
 
-void	RxHaltTrap( int );
-void	RxSignalCondition( int );
+void	__CDECL RxHaltTrap( int );
+void	__CDECL RxSignalCondition( int );
 
-int	RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr);
-int	RxExecuteCmd( PLstr cmd, PLstr env );
+int	__CDECL RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr);
+int	__CDECL RxExecuteCmd( PLstr cmd, PLstr env );
 
 #undef EXTERN
 #endif

@@ -1,6 +1,9 @@
 /*
- * $Id: bstr.h,v 1.2 2001/06/25 18:52:04 bnv Exp $
+ * $Id: bstr.h,v 1.3 2002/06/11 12:37:56 bnv Exp $
  * $Log: bstr.h,v $
+ * Revision 1.3  2002/06/11 12:37:56  bnv
+ * Added: CDECL
+ *
  * Revision 1.2  2001/06/25 18:52:04  bnv
  * Header -> Id
  *
@@ -46,12 +49,12 @@ extern  char	_Bctype[];    /* Character type array */
 #define Btolower(c) ((c) + 'a' - 'A')
 
 /* ------------- Replacement for string.h --------------- */
-char*		Bstrcpy(char *dest, const char *src);
-int		Bstrcmp(const char *s1, const char *s2);
-char*		Bstrcat(char *dest, const char *src);
-const char*	Bstrchr(const char *s, int c);
-unsigned	Bstrlen(const char *s);
-char*		Bl2a(	char *s, const long num,
+char*		__CDECL Bstrcpy(char *dest, const char *src);
+int		__CDECL Bstrcmp(const char *s1, const char *s2);
+char*		__CDECL Bstrcat(char *dest, const char *src);
+const char*	__CDECL Bstrchr(const char *s, int c);
+unsigned	__CDECL Bstrlen(const char *s);
+char*		__CDECL Bl2a(	char *s, const long num,
 			int length, const int radix);
 /* char*		Bltoa(long num, char *s); */
 #endif

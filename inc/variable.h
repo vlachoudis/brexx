@@ -1,6 +1,9 @@
 /*
- * $Id: variable.h,v 1.3 2001/06/25 18:52:04 bnv Exp $
+ * $Id: variable.h,v 1.4 2002/06/11 12:37:56 bnv Exp $
  * $Log: variable.h,v $
+ * Revision 1.4  2002/06/11 12:37:56  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2001/06/25 18:52:04  bnv
  * Header -> Id
  *
@@ -39,27 +42,33 @@ struct tvariable {
 } Variable;
 
 /* --------------- function prototypes ----------------- */
-void	RxInitVariables(void);
-void	RxDoneVariables(void);
-void	RxVarFree(void *var);
-PBinLeaf RxVarAdd(Scope scope, PLstr name, int hasdot, PBinLeaf stemleaf );
-PBinLeaf RxVarFind(const Scope scope, const PBinLeaf litleaf, bool *found);
-PBinLeaf RxVarFindOld(Scope scope, PLstr name, bool *found);
-void	RxVarDel(Scope scope, PBinLeaf litleaf, PBinLeaf varleaf);
-void	RxVarDelOld(Scope scope, PLstr name, PBinLeaf varleaf);
-void	RxVarDelInd(Scope scope, PLstr vars);
-PBinLeaf RxVarExpose(Scope scope, PBinLeaf litleaf);
-void	RxVarSet(Scope scope, PBinLeaf varleaf, PLstr value);
-void	RxSetSpecialVar(int,long);
-Scope	RxScopeMalloc( void );
-void	RxScopeFree(Scope scope);
-void	RxScopeAssign(PBinLeaf leaf);
+void	__CDECL RxInitVariables(void);
+void	__CDECL RxDoneVariables(void);
+void	__CDECL RxVarFree(void *var);
+PBinLeaf __CDECL RxVarAdd(Scope scope, PLstr name, int hasdot,
+			PBinLeaf stemleaf );
+PBinLeaf __CDECL RxVarFind(const Scope scope, const PBinLeaf litleaf,
+			bool *found);
+PBinLeaf __CDECL RxVarFindOld(Scope scope, PLstr name, bool *found);
+void	__CDECL RxVarDel(Scope scope, PBinLeaf litleaf, PBinLeaf varleaf);
+void	__CDECL RxVarDelOld(Scope scope, PLstr name, PBinLeaf varleaf);
+void	__CDECL RxVarDelInd(Scope scope, PLstr vars);
+PBinLeaf __CDECL RxVarExpose(Scope scope, PBinLeaf litleaf);
+void	__CDECL RxVarSet(Scope scope, PBinLeaf varleaf, PLstr value);
+void	__CDECL RxSetSpecialVar(int,long);
+Scope	__CDECL RxScopeMalloc( void );
+void	__CDECL RxScopeFree(Scope scope);
+void	__CDECL RxScopeAssign(PBinLeaf leaf);
 
-void	RxVar2Str( PLstr result, PBinLeaf leaf, int option );
-void	RxReadVarTree(PLstr result, Scope scope, PLstr head, int option);
+void	__CDECL RxVar2Str( PLstr result, PBinLeaf leaf, int option );
+void	__CDECL RxReadVarTree(PLstr result, Scope scope, PLstr head,
+			int option);
 
-int	RxRegPool(char *poolname, int (*getf)(PLstr,PLstr),
+int	__CDECL RxRegPool(char *poolname, int (*getf)(PLstr,PLstr),
                         int (*setf)(PLstr,PLstr));
+int	__CDECL RxPoolGet(PLstr,PLstr,PLstr);
+int	__CDECL RxPoolSet(PLstr,PLstr,PLstr);
+
 	
 #undef EXTERN
 #endif

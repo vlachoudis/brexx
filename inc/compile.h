@@ -1,6 +1,9 @@
 /*
- * $Id: compile.h,v 1.3 2001/06/25 18:52:04 bnv Exp $
+ * $Id: compile.h,v 1.4 2002/06/11 12:37:56 bnv Exp $
  * $Log: compile.h,v $
+ * Revision 1.4  2002/06/11 12:37:56  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2001/06/25 18:52:04  bnv
  * Header -> Id
  *
@@ -201,9 +204,9 @@ enum mnemonic_type {
 };
 
 /* ------- function prototypes ----- */
-void	RxInitCompile( RxFile *rxf, PLstr src );
-void	RxDoneCompile( void );
-int	RxCompile( void );
+void	__CDECL RxInitCompile( RxFile *rxf, PLstr src );
+void	__CDECL RxDoneCompile( void );
+int	__CDECL RxCompile( void );
 
 #ifndef ALIGN
 	word	_CodeInsByte( word pos, byte b );
@@ -217,9 +220,9 @@ int	RxCompile( void );
 	dword	_CodeAddDWord( dword d);
 	dword	_CodeAddPtr( void *ptr );
 #endif
-void	*_Add2Lits( PLstr lit, int hasdot );
-void	_mustbe( enum symboltype sym, int err, int subno);
-PBinLeaf _AddLabel( int type, size_t position );
+void		*_Add2Lits( PLstr lit, int hasdot );
+void	__CDECL _mustbe( enum symboltype sym, int err, int subno);
+PBinLeaf	_AddLabel( int type, size_t position );
 
 #undef EXTERN
 #endif

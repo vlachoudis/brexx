@@ -1,6 +1,9 @@
 /*
- * $Id: nextsymb.h,v 1.3 2001/06/25 18:52:04 bnv Exp $
+ * $Id: nextsymb.h,v 1.4 2002/06/11 12:37:56 bnv Exp $
  * $Log: nextsymb.h,v $
+ * Revision 1.4  2002/06/11 12:37:56  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2001/06/25 18:52:04  bnv
  * Header -> Id
  *
@@ -108,8 +111,8 @@ EXTERN int	symboline;		/* current line number		*/
 EXTERN enum	stat_type  symbolstat;	/* statement type		*/
 
 /* -------- function prototypes ----------- */
-void	InitNextsymbol( PLstr str );
-void	nextsymbol(void);
+void	__CDECL InitNextsymbol( PLstr str );
+void	__CDECL nextsymbol(void);
 
 #undef EXTERN
 #endif

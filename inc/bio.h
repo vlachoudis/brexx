@@ -1,6 +1,9 @@
 /*
- * $Id: bio.h,v 1.4 2002/06/06 08:22:34 bnv Exp $
+ * $Id: bio.h,v 1.5 2002/06/11 12:37:56 bnv Exp $
  * $Log: bio.h,v $
+ * Revision 1.5  2002/06/11 12:37:56  bnv
+ * Added: CDECL
+ *
  * Revision 1.4  2002/06/06 08:22:34  bnv
  * Corrected: Bfseek
  *
@@ -55,22 +58,22 @@ typedef struct {
 	int	mode;
 } BFILE;
 
-BFILE	*Bfopen(const char *filename, const char *mode);
-int	Bfclose(BFILE *stream);
+BFILE		*Bfopen(const char *filename, const char *mode);
+int	__CDECL Bfclose(BFILE *stream);
 #ifdef __BORLANDC__
 #	define Bfseek(s,o,w)	_llseek(s->handle,o,w)
 #endif
-int	Bfseek(BFILE *stream, int distance, int method);
+int	__CDECL Bfseek(BFILE *stream, int distance, int method);
 #define	Bftell(s)	Bfseek(s,0L,SEEK_CUR)
-int	Bfeof(BFILE *stream);
-int	Bfflush(BFILE *stream);
-void	Bfputs(const char *s, BFILE *stream);
-int	Bfgetc(BFILE *stream);
-int	Bfputc(char ch, BFILE *stream);
+int	__CDECL Bfeof(BFILE *stream);
+int	__CDECL Bfflush(BFILE *stream);
+void	__CDECL Bfputs(const char *s, BFILE *stream);
+int	__CDECL Bfgetc(BFILE *stream);
+int	__CDECL Bfputc(char ch, BFILE *stream);
 
-char	Bgetchar(void);
-void	Bputs(const char *s);
-void	Bputch(char ch);
-void	Bputint(long num, int length, int radix);
+char	__CDECL Bgetchar(void);
+void	__CDECL Bputs(const char *s);
+void	__CDECL Bputch(char ch);
+void	__CDECL Bputint(long num, int length, int radix);
 
 #endif

@@ -1,6 +1,9 @@
 /*
- * $Id: os.h,v 1.3 2002/06/06 08:22:54 bnv Exp $
+ * $Id: os.h,v 1.4 2002/06/11 12:37:56 bnv Exp $
  * $Log: os.h,v $
+ * Revision 1.4  2002/06/11 12:37:56  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2002/06/06 08:22:54  bnv
  * Added: MKTEMP
  *
@@ -98,6 +101,9 @@
 #endif
 
 #ifdef WCE
+#	define	__CDECL	__cdecl
+#else
+#	define	__CDECL
 #endif
 
 #ifndef __BORLANDC__

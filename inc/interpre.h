@@ -1,6 +1,9 @@
 /*
- * $Id: interpre.h,v 1.3 2001/06/25 18:52:04 bnv Exp $
+ * $Id: interpre.h,v 1.4 2002/06/11 12:37:56 bnv Exp $
  * $Log: interpre.h,v $
+ * Revision 1.4  2002/06/11 12:37:56  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2001/06/25 18:52:04  bnv
  * Header -> Id
  *
@@ -37,9 +40,9 @@ EXTERN	CIPTYPE	*Rxcodestart;		/* actual code          */
 EXTERN	CIPTYPE	*Rxcip;			/* instruction pointer	*/
 
 /* -------- function prototypes ------- */
-void	RxInitInterpret( void );
-void	RxDoneInterpret( void );
-int	RxInterpret( void );
+void	__CDECL RxInitInterpret( void );
+void	__CDECL RxDoneInterpret( void );
+int	__CDECL RxInterpret( void );
 
 #undef EXTERN
 #endif
