@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/rxdefs.h,v 1.1 1998/07/02 17:35:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/rxdefs.h,v 1.2 1999/11/29 14:58:00 bnv Exp $
  * $Log: rxdefs.h,v $
+ * Revision 1.2  1999/11/29 14:58:00  bnv
+ * Changed: Some defines
+ *
  * Revision 1.1  1998/07/02 17:35:50  bnv
  * Initial revision
  *
@@ -92,6 +95,10 @@ enum functions {
  f_log  ,    f_log10,    f_pow  ,    f_pow10,
  f_sin  ,    f_sinh ,    f_sign ,    f_sqrt ,
  f_tan  ,    f_tanh,
+
+#ifdef _WIN32_WCE
+ f_lasterror,	f_a2u,	f_u2a,
+#endif
 
  f_lastfunc	/* this will be used for the user builtin functions */
 };

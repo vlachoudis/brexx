@@ -1,15 +1,17 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/trace.h,v 1.1 1998/07/02 17:35:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/trace.h,v 1.2 1999/11/29 14:58:00 bnv Exp $
  * $Log: trace.h,v $
+ * Revision 1.2  1999/11/29 14:58:00  bnv
+ * Changed: Some defines
+ *
  * Revision 1.1  1998/07/02 17:35:50  bnv
  * Initial revision
  *
  */
 
-#ifndef __TRACE_H_
-#define __TRACE_H_
+#ifndef __TRACE_H__
+#define __TRACE_H__
 
-#include <bnv.h>
 #include <lstring.h>
 
 #ifdef __TRACE_C__

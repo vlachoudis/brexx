@@ -1,13 +1,16 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/variable.h,v 1.1 1998/07/02 17:35:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/variable.h,v 1.2 1999/11/29 14:58:00 bnv Exp $
  * $Log: variable.h,v $
+ * Revision 1.2  1999/11/29 14:58:00  bnv
+ * Changed: Some defines
+ *
  * Revision 1.1  1998/07/02 17:35:50  bnv
  * Initial revision
  *
  */
 
-#ifndef __VARIABLE_H_
-#define __VARIABLE_H_
+#ifndef __VARIABLE_H__
+#define __VARIABLE_H__
 
 #include <bintree.h>
 

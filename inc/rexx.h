@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/rexx.h,v 1.3 1999/05/14 13:08:00 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/rexx.h,v 1.4 1999/11/29 14:58:00 bnv Exp $
  * $Log: rexx.h,v $
+ * Revision 1.4  1999/11/29 14:58:00  bnv
+ * Changed: Some defines
+ *
  * Revision 1.3  1999/05/14 13:08:00  bnv
  * Release 2.0.1
  *
@@ -41,27 +44,16 @@
 #	define EXTERN extern
 #endif
 
-#ifdef MSDOS
-#	define OS	"MSDOS"
-#	define SHELL	"COMSPEC"
-#	define FILESEP	'\\'
-#	define PATHSEP	';'
-#else
-#	define OS	"UNIX"
-#	define SHELL	"SHELL"
-#	define FILESEP	'/'
-#	define PATHSEP	':'
-#endif
-
 /* ------------ some defines ------------------ */
-#define	VERSION		"REXX_BNV R2.0.1 " ## __DATE__
+#define	VERSION		"REXX_BNV R2.0.2 " ## __DATE__
 #define	AUTHOR		"Vassilis N. Vlachoudis <V.Vlachoudis@cern.ch>"
+#define REGAPPKEY	TEXT("Software\\Marmita\\BRexx")
 #define	SCIENTIFIC	0
 #define ENGINEERING	1
 
 #define MAXARGS		15
 #define PROC_INC	10
-#define CLAUSE_INC	50
+#define CLAUSE_INC	100
 #define CODE_INC	256
 #define STCK_SIZE	255
 
@@ -88,7 +80,7 @@
 #define	RCVAR		0
 #define	SIGLVAR		1
 
-#if defined(ALIGN)
+#ifdef ALIGN
 #	define CTYPE	dword
 #else
 #	define CTYPE	word
@@ -168,6 +160,9 @@ struct trxproc {
 /* ------------- global variables ----------------- */
 #ifdef __DEBUG__
 EXTERN int	__debug__;
+#endif
+#if defined(WIN32) || defined(WCE)
+EXTERN TCHAR	*_szRxAppKey;
 #endif
 EXTERN char	*_prgname;	/* point to argv[0]		*/
 EXTERN jmp_buf	_error_trap;	/* error trap for compile	*/
