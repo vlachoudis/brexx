@@ -1,6 +1,9 @@
 /*
- * $Id: rxdefs.h,v 1.4 2002/06/06 08:23:36 bnv Exp $
+ * $Id: rxdefs.h,v 1.5 2003/02/12 16:39:33 bnv Exp $
  * $Log: rxdefs.h,v $
+ * Revision 1.5  2003/02/12 16:39:33  bnv
+ * Added: Lhashvalue
+ *
  * Revision 1.4  2002/06/06 08:23:36  bnv
  * Added: logical operations
  *
@@ -82,7 +85,7 @@ enum functions {
  f_verify,        f_word,          f_wordindex,     f_wordlength,
  f_wordpos,       f_words,         f_write,         f_x2c,
  f_x2d,           f_xrange,        f_desbuf,        f_soundex,
- f_dropbuf,
+ f_dropbuf,       f_hashvalue, 
 
  f_changestr,     f_countstr,
  f_b2x,           f_x2b,
