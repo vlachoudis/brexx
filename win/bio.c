@@ -1,6 +1,9 @@
 /*
- * $Id: bio.c,v 1.2 2001/06/25 18:52:24 bnv Exp $
+ * $Id: bio.c,v 1.3 2002/01/14 09:14:19 bnv Exp $
  * $Log: bio.c,v $
+ * Revision 1.3  2002/01/14 09:14:19  bnv
+ * Added: Bfseek function
+ *
  * Revision 1.2  2001/06/25 18:52:24  bnv
  * Header -> Id
  *
@@ -113,6 +116,15 @@ Bfclose( BFILE *stream )
 	free(stream);
 	return 0;
 } /* Bfclose */
+
+/* ----- Bfflush ----- */
+int
+Bfseek(BFILE *stream, int distance, int method)
+{
+	if (!stream) return 0;
+	stream->mode &= ~BIO_EOF;
+	return SetFilePointer(stream->handle,distance,0,method);
+} /* Bfseek */
 
 /* ----- Bfflush ----- */
 int
