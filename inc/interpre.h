@@ -1,13 +1,16 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/interpre.h,v 1.1 1998/07/02 17:35:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/interpre.h,v 1.2 1999/11/29 14:58:00 bnv Exp $
  * $Log: interpre.h,v $
+ * Revision 1.2  1999/11/29 14:58:00  bnv
+ * Changed: Some defines
+ *
  * Revision 1.1  1998/07/02 17:35:50  bnv
  * Initial revision
  *
  */
 
-#ifndef __INTERPRET_H_
-#define __INTERPRET_H_
+#ifndef __INTERPRET_H__
+#define __INTERPRET_H__
 
 #include <lstring.h>
 #include <bintree.h>
@@ -18,7 +21,7 @@
 #	define EXTERN extern
 #endif
 
-#if !defined(ALIGN)
+#ifndef ALIGN
 #	define CIPTYPE	byte
 #else
 #	define CIPTYPE	dword
