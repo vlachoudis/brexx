@@ -1,35 +1,19 @@
 /*
- * $Id: template.c,v 1.7 2008/07/15 07:40:25 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/template.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
  * $Log: template.c,v $
- * Revision 1.7  2008/07/15 07:40:25  bnv
- * #include changed from <> to ""
- *
- * Revision 1.6  2004/08/16 15:29:30  bnv
- * Changed: name of mnemonic operands from xxx_mn to O_XXX
- *
- * Revision 1.5  2003/08/04 01:29:58  bnv
- * Insert TMP before the NEG!
- *
- * Revision 1.4  2002/06/11 12:37:38  bnv
- * Added: CDECL
- *
- * Revision 1.3  2001/06/25 18:51:48  bnv
- * Header -> Id
- *
- * Revision 1.2  1999/11/26 13:13:47  bnv
- * Changed: To use the new macros.
- *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
  */
 
-#include "lerror.h"
-#include "lstring.h"
+#include <bnv.h>
 
-#include "rexx.h"
-#include "trace.h"
-#include "compile.h"
+#include <lerror.h>
+#include <lstring.h>
+
+#include <rexx.h>
+#include <trace.h>
+#include <compile.h>
 
 /* ----------- vrefp --------- */
 /* variable reference position */
@@ -41,7 +25,7 @@ vrefp( void )
 	if (symbol != ident_sy)
 	Lerror( ERR_STRING_EXPECTED,7,&symbolstr);
 
-	_CodeAddByte( OP_LOAD );
+	_CodeAddByte( load_mn );
 		_CodeAddPtr( SYMBOLADD2LITS );
 		TraceByte( nothing_middle );
 	nextsymbol();
@@ -66,13 +50,13 @@ position(void)
 		else
 		if (type==LSTRING_TY)
 			Lerror(ERR_INVALID_TEMPLATE,2,&symbolstr);
-		_CodeAddByte(OP_PUSH);
+		_CodeAddByte(push_mn);
 			_CodeAddPtr(SYMBOLADD2LITS_KEY);
 			TraceByte( nothing_middle );
 		nextsymbol();
 	} else
 		Lerror(ERR_INVALID_TEMPLATE,2,&symbolstr);
-	_CodeAddByte(OP_TOINT);
+	_CodeAddByte(toint_mn);
 } /* position */
 
 /* -------------------------------------------------------------- */
@@ -87,16 +71,15 @@ position(void)
 /*  position   := NUMBER | vrefp  | Msg38.2                       */
 /*  relative_pos := ('+' | '-') position                          */
 /* -------------------------------------------------------------- */
-void __CDECL
+void
 C_template(void)
 {
 	void	*target_ptr=NULL;
 	bool	trigger, dot=FALSE;
 	bool	sign;
 	int	type;
-	CTYPE	pos;
 
-	_CodeAddByte(OP_PARSE);
+	_CodeAddByte(parse_mn);
 	while ((symbol!=semicolon_sy) && (symbol!=comma_sy)) {
 		trigger = FALSE;
 		switch (symbol) {
@@ -105,7 +88,7 @@ C_template(void)
 				if (target_ptr || dot) {
 					/* trigger space */
 					trigger = TRUE;
-					_CodeAddByte(OP_TR_SPACE);
+					_CodeAddByte(tr_space_mn);
 					/* do not go to next symbol */
 				} else {
 					if (symbol==ident_sy)
@@ -121,24 +104,22 @@ C_template(void)
 				trigger = TRUE;
 				sign = (symbol==minus_sy);
 				nextsymbol();
-				pos = CompileCodeLen;
 				position();
 				if (sign) {
-					_CodeInsByte(pos,OP_PUSHTMP);
-					_CodeAddByte(OP_NEG);
+					_CodeAddByte(neg_mn);
 					TraceByte( nothing_middle );
 				}
-				_CodeAddByte(OP_TR_REL);
+				_CodeAddByte(tr_rel_mn);
 				break;
 
 			case literal_sy:
 				trigger = TRUE;
 
 				if (symbolisstr) {
-					_CodeAddByte(OP_PUSH);
+					_CodeAddByte(push_mn);
 						_CodeAddPtr(SYMBOLADD2LITS_KEY);
 						TraceByte( nothing_middle );
-					_CodeAddByte(OP_TR_LIT);
+					_CodeAddByte(tr_lit_mn);
 					nextsymbol();
 				} else {
 					type = _Lisnum(&symbolstr);
@@ -148,11 +129,11 @@ C_template(void)
 					if (type==LSTRING_TY)
 						Lerror(ERR_INVALID_TEMPLATE,1,&symbolstr);
 
-					_CodeAddByte(OP_PUSH);
+					_CodeAddByte(push_mn);
 						_CodeAddPtr(SYMBOLADD2LITS_KEY);
 						TraceByte( nothing_middle );
-					_CodeAddByte(OP_TOINT);
-					_CodeAddByte(OP_TR_ABS);
+					_CodeAddByte(toint_mn);
+					_CodeAddByte(tr_abs_mn);
 					nextsymbol();
 				}
 				break;
@@ -160,15 +141,15 @@ C_template(void)
 			case le_parent:
 				trigger = TRUE;
 				vrefp();
-				_CodeAddByte(OP_TR_LIT);
+				_CodeAddByte(tr_lit_mn);
 				break;
 
 			case eq_sy:
 				trigger = TRUE;
 				nextsymbol();
 				position();
-				_CodeAddByte(OP_TOINT);
-				_CodeAddByte(OP_TR_ABS);
+				_CodeAddByte(toint_mn);
+				_CodeAddByte(tr_abs_mn);
 				break;
 
 			default:
@@ -176,14 +157,14 @@ C_template(void)
 		} /* end of switch */
 		if (trigger) {
 			if (target_ptr) {
-				_CodeAddByte(OP_CREATE);
+				_CodeAddByte(create_mn);
 					_CodeAddPtr(target_ptr);
-				_CodeAddByte(OP_PVAR);
+				_CodeAddByte(pvar_mn);
 					TraceByte( other_middle );
 				target_ptr = NULL;
 			} else
 			if (dot) {
-				_CodeAddByte(OP_PDOT);
+				_CodeAddByte(pdot_mn);
 					TraceByte( dot_middle );
 				dot = FALSE;
 			}
@@ -191,18 +172,18 @@ C_template(void)
 	} /* end of while */
 
 	if (target_ptr) {	/* assign the remaining part */
-		_CodeAddByte(OP_TR_END);
-		_CodeAddByte(OP_CREATE);
+		_CodeAddByte(tr_end_mn);
+		_CodeAddByte(create_mn);
 			_CodeAddPtr(target_ptr);
-		_CodeAddByte(OP_PVAR);
+		_CodeAddByte(pvar_mn);
 			TraceByte( other_middle );
 	} else
 	if (dot) {
-		_CodeAddByte(OP_TR_END);
-		_CodeAddByte(OP_PDOT);
+		_CodeAddByte(tr_end_mn);
+		_CodeAddByte(pdot_mn);
 			TraceByte( dot_middle );
 	}
 
-	_CodeAddByte(OP_POP);
+	_CodeAddByte(pop_mn);
 		_CodeAddByte(1);
 } /* C_template */
