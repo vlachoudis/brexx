@@ -1,6 +1,9 @@
 /*
- * $Id: rxmysql.c,v 1.1 2002/06/06 08:24:54 bnv Exp $
+ * $Id: rxmysql.c,v 1.2 2002/07/03 13:15:08 bnv Exp $
  * $Log: rxmysql.c,v $
+ * Revision 1.2  2002/07/03 13:15:08  bnv
+ * Corrected: Various stuf
+ *
  * Revision 1.1  2002/06/06 08:24:54  bnv
  * Initial revision
  *
@@ -17,11 +20,19 @@ static long	sqlfields = -1;
 static long	sqlrows = -1;
 
 enum dbfunc {
-	_enum_close,
-	_enum_insertid,
 	_enum_get,
 	_enum_isnull
 };
+
+/* --- _dbfieldfromname --- */
+static int _dbfieldfromname(char *name)
+{
+	int i;
+	for (i=0; i<sqlfields; i++)
+		if (!strcmp(name,sqlfieldtypes[i].name))
+			return i;
+	return -1;
+} /* _dbfield */
 
 /* --------------------------------------------------------------- */
 /*  DBCONNECT(host,user,password,database)                         */
@@ -58,11 +69,9 @@ void R_dbconnect( const int func )
 } /* R_dbconnect */
 
 /* --------------------------------------------------------------- */
-/*  DBCLOSE()                                                     */
-/* -------------------------------------------------------------- */
-/*  DBINSERTID()                                                  */
-/* -------------------------------------------------------------- */
-void R_dbcloseins( const int func )
+/*  DBCLOSE()                                                      */
+/* --------------------------------------------------------------- */
+void R_dbclose( const int func )
 {
 	if (ARGN) Lerror(ERR_INCORRECT_CALL,0);
 
@@ -77,7 +86,7 @@ void R_dbcloseins( const int func )
 	sqlfieldtypes = NULL;
 	sqlfields = -1;
 	sqlrows = -1;
-} /* R_dbcloseins */
+} /* R_dbclose */
 
 /* --------------------------------------------------------------- */
 /*  DBERROR("A")                                                   */
@@ -123,7 +132,7 @@ void R_dbsql( const int func )
 	get_s(1);
 
 	if (sql==NULL)
-		Lerror(ERR_INCORRECT_CALL,0);
+		Lerror(ERR_DATABASE,1);
 
 	if (sqlres!=NULL) {
 		mysql_free_result(sqlres);
@@ -152,7 +161,16 @@ void R_dbsql( const int func )
 } /* R_dbsql */
 
 /* --------------------------------------------------------------- */
-/*  DBFIELD(["num"][,"Name","Type","Key","Null","Autoincrement")   */
+/*  DBFIELD(["num|fieldname"]                                      */
+/*                [,"Name" - (Default) name of the field           */
+/*                  "Def" - (Default) name of the field           */
+/*                  "Type" - type of the field                     */
+/*                  "Key"  - if it is used as a key                */
+/*                  "Length" - Length of the field                 */
+/*                  "Maxlength" - Maximum length of the field      */
+/*                  "Null" - if it accepts null values             */
+/*                  "Autoincrement" - if it is autoincrement       */
+/*                  "Flags" - field flags                          */
 /* --------------------------------------------------------------- */
 void R_dbfield( const int func )
 {
@@ -197,24 +215,24 @@ void R_dbfield( const int func )
 	LZEROSTR(*ARGR);
 	if (sqlres==NULL) return;
 
-	get_i(1,f);
-	if (f>sqlfields) return;
-	f--;
-	if (!exist(2))
+	must_exist(1);
+	if (Ldatatype(ARG1,'N'))
+		f = Lrdint(ARG1)-1;
+	else {
+		LASCIIZ(*ARG1);
+		f = _dbfieldfromname(LSTR(*ARG1));
+		if (f<0)
+			Lerror(ERR_DATABASE,2);
+	}
+	if (f>=sqlfields) return;
+	if (!exist(2)) {
 		Lscpy(ARGR,sqlfieldtypes[f].name);
+		return;
+	}
 	L2STR(ARG2);
 	switch (LSTR(*ARG2)[0]) {
 		case 'D': case 'd':
 			Lscpy(ARGR,sqlfieldtypes[f].def);
-			break;
-		case 'L': case 'l':
-			Licpy(ARGR,sqlfieldtypes[f].length);
-			break;
-		case 'M': case 'm':
-			Licpy(ARGR,sqlfieldtypes[f].max_length);
-			break;
-		case 'F': case 'f':
-			Licpy(ARGR,sqlfieldtypes[f].flags);
 			break;
 		case 'T': case 't': {
 			int i;
@@ -227,15 +245,33 @@ void R_dbfield( const int func )
 				return;
 			}
 			break;
+		case 'K': case 'k':
+			Licpy(ARGR,IS_PRI_KEY(sqlfieldtypes[f].flags));
+			break;
+		case 'L': case 'l':
+			Licpy(ARGR,sqlfieldtypes[f].length);
+			break;
+		case 'M': case 'm':
+			Licpy(ARGR,sqlfieldtypes[f].max_length);
+			break;
+		case 'U': case 'u':
+			Licpy(ARGR,IS_NOT_NULL(sqlfieldtypes[f].flags));
+			break;
+		case 'A': case 'a':
+			Licpy(ARGR,sqlfieldtypes[f].flags&AUTO_INCREMENT_FLAG);
+			break;
+		case 'F': case 'f':
+			Licpy(ARGR,sqlfieldtypes[f].flags);
+			break;
 		default:
 			Lscpy(ARGR,sqlfieldtypes[f].name);
 	}
 } /* R_dbfield */
 
 /* --------------------------------------------------------------- */
-/*  DBGET(row,field)                                               */
+/*  DBGET(row,[field|fieldName])                                   */
 /* --------------------------------------------------------------- */
-/*  DBISNULL(row,field)                                            */
+/*  DBISNULL(row,[field|fieldName])                                */
 /* --------------------------------------------------------------- */
 void R_dbgetnull( const int func )
 {
@@ -245,12 +281,22 @@ void R_dbgetnull( const int func )
 	static long lastrow;
 	char *data;
 
-	if (ARGN!=2) Lerror(ERR_INCORRECT_CALL,0);
-	get_i(1,rowno);
-	get_i(2,fieldno);
-	rowno--; fieldno--;
-
 	LZEROSTR(*ARGR);
+
+	if (ARGN!=2) Lerror(ERR_INCORRECT_CALL,0);
+
+	get_i(1,rowno);	rowno--;
+
+	must_exist(2);
+	if (Ldatatype(ARG2,'N'))
+		fieldno = Lrdint(ARG2)-1;
+	else {
+		LASCIIZ(*ARG2);
+		fieldno = _dbfieldfromname(LSTR(*ARG2));
+		if (fieldno<0)
+			Lerror(ERR_DATABASE,2);
+	}
+
 	if (sqlres == NULL || rowno>=sqlrows || fieldno>=sqlfields)
 		return;
 
@@ -274,7 +320,7 @@ void R_dbgetnull( const int func )
 } /* R_dbgetnull */
 
 /* --------------------------------------------------------------- */
-/*  DBINFO()                                                       */
+/*  DBINFO('Rows'|'Fields'|'Insertid')                             */
 /* --------------------------------------------------------------- */
 void R_dbinfo( const int func )
 {
@@ -294,6 +340,11 @@ void R_dbinfo( const int func )
 		case 'F': case 'f':
 			Licpy(ARGR,sqlfields);
 			return;
+		case 'I': case 'i':
+			Licpy(ARGR,(unsigned long)mysql_insert_id(sql));
+			return;
+		default:
+			Lerror(ERR_INCORRECT_CALL,0);
 	}
 } /* R_dbinfo */
 
@@ -303,8 +354,7 @@ void R_dbinfo( const int func )
 void RxMySQLInitialize()
 {
 	RxRegFunction("DBCONNECT",	R_dbconnect,	0);
-	RxRegFunction("DBCLOSE",	R_dbcloseins,	_enum_close);
-	RxRegFunction("DBINSERTID",	R_dbcloseins,	_enum_insertid);
+	RxRegFunction("DBCLOSE",	R_dbclose,	0);
 	RxRegFunction("DBERROR",	R_dberror,	0);
 	RxRegFunction("DBESCSTR",	R_dbescstring,	0);
 	RxRegFunction("DBFIELD",	R_dbfield,	0);
@@ -317,5 +367,5 @@ void RxMySQLInitialize()
 void RxMySQLFinalize()
 {
 	ARGN=0;
-	R_dbcloseins(_enum_close);
+	R_dbclose(0);
 } /* RxMySQLFinalize */
