@@ -1,6 +1,9 @@
 /*
- * $Id: verify.c,v 1.3 2002/06/11 12:37:15 bnv Exp $
+ * $Id: verify.c,v 1.4 2004/08/16 15:26:40 bnv Exp $
  * $Log: verify.c,v $
+ * Revision 1.4  2004/08/16 15:26:40  bnv
+ * Spaces...
+ *
  * Revision 1.3  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -17,14 +20,14 @@
 
 /* --------------------- Lverify  ----------------------- *
  *  str      -  string that we check every char           *
- * 		if it exists on 'ref'                     *
+ *		if it exists on 'ref'                     *
  *  ref      -  reference characters                      *
  *  match    -  FALSE = find non matching chars           *
  *		TRUE  = find only matching chars          *
  *  start    -	starting position [1,len]                 *
  * returns                                                *
  *    0		if every char is found (or not found)     *
- * 		according to match                        *
+ *		according to match                        *
  *   pos	else non matching (or matching) position  *
  * ------------------------------------------------------ */
 long __CDECL
