@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/interpre.c,v 1.3 1999/03/10 16:53:32 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/interpre.c,v 1.4 1999/03/15 09:01:57 bnv Exp $
  * $Log: interpre.c,v $
+ * Revision 1.4  1999/03/15 09:01:57  bnv
+ * Corrected: error_trace
+ *
  * Revision 1.3  1999/03/10 16:53:32  bnv
  * Added MSC support
  *
@@ -230,8 +233,8 @@ I_StoreOption( const PLstr value, const int opt )
 
 		case trace_opt:
 			TraceSet(value);
-			if ((_Proc[_rx_proc].trace == normal_trace) ||
-				(_Proc[_rx_proc].trace == off_trace))
+			if (_Proc[_rx_proc].trace &
+				(normal_trace | off_trace | error_trace))
 					_trace = FALSE;
 			else
 					_trace = TRUE;
@@ -566,8 +569,7 @@ I_ReturnProc( void )
 	Rx_id = _Proc[_rx_proc].id;
 	VarScope = _Proc[_rx_proc].scope;
 
-	if ((_Proc[_rx_proc].trace == normal_trace) ||
-		(_Proc[_rx_proc].trace == off_trace))
+	if (_Proc[_rx_proc].trace & (normal_trace | off_trace | error_trace))
 			_trace = FALSE;
 	else
 			_trace = TRUE;
@@ -635,8 +637,8 @@ RxDoneInterStr( void )
 		/* fix ip and stack */
 	if (_Proc[_rx_proc].calltype == CT_INTERACTIVE) {
 		LPFREE(InteractiveStr);
-		if ((_Proc[_rx_proc].trace == normal_trace) ||
-			(_Proc[_rx_proc].trace == off_trace))
+		if (_Proc[_rx_proc].trace &
+			(normal_trace | off_trace | error_trace))
 				_trace = FALSE;
 			else
 				_trace = TRUE;
@@ -732,8 +734,7 @@ RxInterpret( void )
 	Rxcip   = (CIPTYPE*)((byte huge *)Rxcodestart + _Proc[_rx_proc].ip);
 	_Proc[_rx_proc].stack = RxStckTop;
 
-	if ((_Proc[_rx_proc].trace == normal_trace) ||
-		(_Proc[_rx_proc].trace == off_trace))
+	if (_Proc[_rx_proc].trace & (normal_trace | off_trace | error_trace))
 			_trace = FALSE;
 	else
 			_trace = TRUE;
