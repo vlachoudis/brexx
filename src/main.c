@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/main.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/main.c,v 1.2 1999/02/10 15:43:16 bnv Exp $
  * $Log: main.c,v $
+ * Revision 1.2  1999/02/10 15:43:16  bnv
+ * Additions from Generoso Martello
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
@@ -12,6 +15,11 @@
 
 #include <rexx.h>
 #include <rxdefs.h>
+
+/* ------- Includes for any other external library ------- */
+#ifdef RXGEXT
+#include <rxgext.h>
+#endif
 
 /* --------------------- main ---------------------- */
 int
@@ -39,6 +47,11 @@ main(int ac, char *av[])
 
 	/* --- Initialise --- */
 	RxInitialize(av[0]);
+
+	/* --- Register functions of external libraries --- */
+#ifdef RXGEXT
+	RxGExtInitialize();
+#endif
 
 	/* --- scan arguments --- */
 	ia = 1;
