@@ -1,6 +1,9 @@
 /*
- * $Id: rxfiles.c,v 1.9 2003/10/30 13:16:28 bnv Exp $
+ * $Id: rxfiles.c,v 1.10 2004/04/30 15:29:14 bnv Exp $
  * $Log: rxfiles.c,v $
+ * Revision 1.10  2004/04/30 15:29:14  bnv
+ * Spaces...
+ *
  * Revision 1.9  2003/10/30 13:16:28  bnv
  * Variable name change
  *
@@ -35,7 +38,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <bmem.h>
 #include <lerror.h>
 #include <lstring.h>
 
@@ -131,7 +133,7 @@ find_file( const PLstr fn )
 #endif
 
 	/* search to see if it is a number */
-	if ((LTYPE(*fn)==LSTRING_TY) && (_Lisnum(fn) == LINTEGER_TY)) 
+	if ((LTYPE(*fn)==LSTRING_TY) && (_Lisnum(fn) == LINTEGER_TY))
 		j = (int)Lrdint(fn);
 	else
 	if (LTYPE(*fn) == LINTEGER_TY)
