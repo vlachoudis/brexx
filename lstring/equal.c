@@ -1,6 +1,9 @@
 /*
- * $Id: equal.c,v 1.5 2002/06/11 12:37:15 bnv Exp $
+ * $Id: equal.c,v 1.6 2004/03/26 22:51:11 bnv Exp $
  * $Log: equal.c,v $
+ * Revision 1.6  2004/03/26 22:51:11  bnv
+ * Increased the accuracy
+ *
  * Revision 1.5  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -59,7 +62,7 @@ Lequal(const PLstr A, const PLstr B)
 
 	/* is B also a number */
 	if (tb != LSTRING_TY) {
-		if (fabs(ra-rb)<=1E-14)
+		if (fabs(ra-rb)<=1E-20)
 			return 0;
 		else
 		if (ra>rb)
@@ -89,6 +92,6 @@ eq_str:
 	else
 	if (a<ae && b<be)
 		return (*a<*b) ? -1 : 1 ;
-	else 
+	else
 		return (a<ae) ? 1 : -1 ;
 } /* Lequal */
