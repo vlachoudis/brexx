@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/atan2.c,v 1.1 1998/07/02 17:16:35 bnv Exp $
+ * $Id: atan2.c,v 1.2 2001/06/25 18:49:48 bnv Exp $
  * $Log: atan2.c,v $
+ * Revision 1.2  2001/06/25 18:49:48  bnv
+ * Header changed to Id
+ *
  * Revision 1.1  1998/07/02 17:16:35  bnv
  * Initial revision
  *

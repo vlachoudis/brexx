@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/print.c,v 1.5 1999/11/26 12:52:25 bnv Exp $
+ * $Id: print.c,v 1.6 2001/06/25 18:49:48 bnv Exp $
  * $Log: print.c,v $
+ * Revision 1.6  2001/06/25 18:49:48  bnv
+ * Header changed to Id
+ *
  * Revision 1.5  1999/11/26 12:52:25  bnv
  * Added: Windows CE support
  * Changed: the ANSI_PRINTF to keep the gcc compiler happy

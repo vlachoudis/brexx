@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/trunc.c,v 1.2 1999/11/26 12:52:25 bnv Exp $
+ * $Id: trunc.c,v 1.3 2001/06/25 18:49:48 bnv Exp $
  * $Log: trunc.c,v $
+ * Revision 1.3  2001/06/25 18:49:48  bnv
+ * Header changed to Id
+ *
  * Revision 1.2  1999/11/26 12:52:25  bnv
  * Changed: To use the fcvt()
  *

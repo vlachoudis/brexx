@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/lstring.c,v 1.3 1999/11/26 12:52:25 bnv Exp $
+ * $Id: lstring.c,v 1.4 2001/06/25 18:49:48 bnv Exp $
  * $Log: lstring.c,v $
+ * Revision 1.4  2001/06/25 18:49:48  bnv
+ * Header changed to Id
+ *
  * Revision 1.3  1999/11/26 12:52:25  bnv
  * Added: Windows CE support
  * Added: Lwscpy, for unicode string copy
@@ -469,18 +472,19 @@ L2str( const PLstr s )
 #endif
 		LLEN(*s) = STRLEN(LSTR(*s));
 	} else {	/* LREAL_TY */
-/*////		sprintf(LSTR(*s), lFormatStringToReal, LREAL(*s)); */
-		GCVT(LREAL(*s),lNumericDigits,LSTR(*s));
+		/* There is a problem with the Windows CE */
+		char	str[50];
+		size_t	len;
+
+		GCVT(LREAL(*s),lNumericDigits,str);
+		/* --- remove the last dot from the number --- */
+		len = STRLEN(str);
 #ifdef WCE
-		{
-			/* --- remove the last dot from the number --- */
-			size_t	len = STRLEN(LSTR(*s));
-			if (LSTR(*s)[len-1] == '.') len--;
-			LLEN(*s) = len;
-		}
-#else
-		LLEN(*s) = STRLEN(LSTR(*s));
+		if (str[len-1] == '.') len--;
 #endif
+		if (len>=LMAXLEN(*s)) Lfx(s,len);
+		MEMCPY(LSTR(*s),str,len);
+		LLEN(*s) = len;
 	}
 	LTYPE(*s) = LSTRING_TY;
 } /* L2str */

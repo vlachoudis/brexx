@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/changest.c,v 1.3 2000/09/28 15:52:19 bnv Exp $
+ * $Id: changest.c,v 1.4 2001/06/25 18:49:48 bnv Exp $
  * $Log: changest.c,v $
+ * Revision 1.4  2001/06/25 18:49:48  bnv
+ * Header changed to Id
+ *
  * Revision 1.3  2000/09/28 15:52:19  bnv
  * Corrected a bug if the input string had repeated targets.
  *

@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/space.c,v 1.2 1998/11/06 08:55:18 bnv Exp $
+ * $Id: space.c,v 1.3 2001/06/25 18:49:48 bnv Exp $
  * $Log: space.c,v $
+ * Revision 1.3  2001/06/25 18:49:48  bnv
+ * Header changed to Id
+ *
  * Revision 1.2  1998/11/06 08:55:18  bnv
  * Corrected: When type != string
  *

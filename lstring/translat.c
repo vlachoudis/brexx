@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/translat.c,v 1.2 1999/03/01 11:07:22 bnv Exp $
+ * $Id: translat.c,v 1.3 2001/06/25 18:49:48 bnv Exp $
  * $Log: translat.c,v $
+ * Revision 1.3  2001/06/25 18:49:48  bnv
+ * Header changed to Id
+ *
  * Revision 1.2  1999/03/01 11:07:22  bnv
  * Added '{..}' to avoid nesting if () {} else {} errors.
  *

@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/d2c.c,v 1.1 1998/07/02 17:17:00 bnv Exp $
+ * $Id: d2c.c,v 1.2 2001/06/25 18:49:48 bnv Exp $
  * $Log: d2c.c,v $
+ * Revision 1.2  2001/06/25 18:49:48  bnv
+ * Header changed to Id
+ *
  * Revision 1.1  1998/07/02 17:17:00  bnv
  * Initial revision
  *

@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/strip.c,v 1.2 1998/11/06 08:54:58 bnv Exp $
+ * $Id: strip.c,v 1.3 2001/06/25 18:49:48 bnv Exp $
  * $Log: strip.c,v $
+ * Revision 1.3  2001/06/25 18:49:48  bnv
+ * Header changed to Id
+ *
  * Revision 1.2  1998/11/06 08:54:58  bnv
  * Corrected: When length=0
  *

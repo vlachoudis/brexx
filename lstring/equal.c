@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/equal.c,v 1.3 1999/11/26 09:56:55 bnv Exp $
+ * $Id: equal.c,v 1.4 2001/06/25 18:49:48 bnv Exp $
  * $Log: equal.c,v $
+ * Revision 1.4  2001/06/25 18:49:48  bnv
+ * Header changed to Id
+ *
  * Revision 1.3  1999/11/26 09:56:55  bnv
  * Changed: To use the new macros.
  * Changed: From char* to byte* comparison, to avoid signed char problems.

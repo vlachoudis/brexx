@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/read.c,v 1.3 2000/04/07 07:11:01 bnv Exp $
+ * $Id: read.c,v 1.4 2001/06/25 18:49:48 bnv Exp $
  * $Log: read.c,v $
+ * Revision 1.4  2001/06/25 18:49:48  bnv
+ * Header changed to Id
+ *
  * Revision 1.3  2000/04/07 07:11:01  bnv
  * Corrected: When trying to read a complete file from STDIN, it was reporting
  * size=1, where it should be negative (unknown)

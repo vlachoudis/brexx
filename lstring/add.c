@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/add.c,v 1.3 1999/11/26 09:50:50 bnv Exp $
+ * $Id: add.c,v 1.4 2001/06/25 18:49:48 bnv Exp $
  * $Log: add.c,v $
+ * Revision 1.4  2001/06/25 18:49:48  bnv
+ * Header changed to Id
+ *
  * Revision 1.3  1999/11/26 09:50:50  bnv
  * Cleaned up a little
  *

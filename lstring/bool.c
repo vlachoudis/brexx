@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/bool.c,v 1.2 1999/11/26 09:52:45 bnv Exp $
+ * $Id: bool.c,v 1.3 2001/06/25 18:49:48 bnv Exp $
  * $Log: bool.c,v $
+ * Revision 1.3  2001/06/25 18:49:48  bnv
+ * Header changed to Id
+ *
  * Revision 1.2  1999/11/26 09:52:45  bnv
  * Changed: To make use of the LastScannedNumber
  *

@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/date.c,v 1.3 2000/10/09 07:17:19 bnv Exp $
+ * $Id: date.c,v 1.4 2001/06/25 18:49:48 bnv Exp $
  * $Log: date.c,v $
+ * Revision 1.4  2001/06/25 18:49:48  bnv
+ * Header changed to Id
+ *
  * Revision 1.3  2000/10/09 07:17:19  bnv
  * Corrected the year format
  *
@@ -88,7 +91,7 @@ Ldate( const PLstr datestr, char option )
 			sprintf(LSTR(*datestr),"%ld",length) ;
 #else
 			length = day_of_year(&time) +
-			(long)(((float)time.wYear%100-1)*365.25) + 365;
+			(long)((time.wYear%100-1)*365.25) + 365;
 			swprintf(buf,TEXT("%ld"),length) ;
 #endif
 			break;
