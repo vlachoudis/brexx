@@ -1,0 +1,268 @@
+# Top-level makefile for BREXX V2  (for Borland-C)
+#
+# BREXX interpreter
+# Version:  2.0
+# Copyright (C) 1991-1998  Vasilis Vlachoudis (Vasilis.Vlachoudis@cern.ch)
+#
+# This interpreter is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+
+.AUTODEPEND
+
+#		*Translator Definitions*
+CC = bcc +LSTRING.CFG
+TASM = TASM
+TLIB = tlib /0
+TLINK = tlink
+LIBPATH = C:\SOFT\BC\LIB;LIB
+INCPATH = C:\SOFT\BC\INC;..\INC
+
+# .path.obj = OBJ\
+
+#		*Implicit Rules*
+.c.obj:
+	$(CC) -c {$* }
+
+#	$(TLIB) ..\lib\lstr.lib -+ $@
+
+OBJS =  \
+	abbrev.obj \
+	abs.obj \
+	add.obj \
+	atan2.obj \
+	b2x.obj \
+	bitand.obj \
+	bitor.obj \
+	bitxor.obj \
+	bool.obj \
+	c2d.obj \
+	c2x.obj \
+	center.obj \
+	changest.obj \
+	countstr.obj \
+	charin.obj \
+	charout.obj \
+	chars.obj \
+	compare.obj \
+	copies.obj \
+	d2c.obj \
+	d2x.obj \
+	datatype.obj \
+	date.obj \
+	dec.obj \
+	delstr.obj \
+	delword.obj \
+	div.obj \
+	equal.obj \
+	errortxt.obj \
+	expose.obj \
+	format.obj \
+	hashvalu.obj \
+	inc.obj \
+	index.obj \
+	insert.obj \
+	intdiv.obj \
+	justify.obj \
+	lastpos.obj \
+	linein.obj \
+	lineout.obj \
+	lines.obj \
+	lmath.obj \
+	lower.obj \
+	lstring.obj \
+	mod.obj \
+	mult.obj \
+	neg.obj \
+	overlay.obj \
+	pow.obj \
+	print.obj \
+	read.obj \
+	reverse.obj \
+	right.obj \
+	sign.obj \
+	space.obj \
+	stderr.obj \
+	strip.obj \
+	soundex.obj \
+	sub.obj \
+	substr.obj \
+	subword.obj \
+	time.obj \
+	translat.obj \
+	trunc.obj \
+	upper.obj \
+	verify.obj \
+	word.obj \
+	wordidx.obj \
+	wordlen.obj \
+	wordpos.obj \
+	words.obj \
+	write.obj \
+	x2b.obj \
+	x2c.obj \
+	x2d.obj \
+	xrange.obj
+
+LINKOBJS =  \
+	-+abbrev.obj \
+	-+abs.obj \
+	-+add.obj \
+	-+atan2.obj \
+	-+b2x.obj \
+	-+bitand.obj \
+	-+bitor.obj \
+	-+bitxor.obj \
+	-+bool.obj \
+	-+c2d.obj \
+	-+c2x.obj \
+	-+center.obj \
+	-+changest.obj \
+	-+countstr.obj \
+	-+charin.obj \
+	-+charout.obj \
+	-+chars.obj \
+	-+compare.obj \
+	-+copies.obj \
+	-+d2c.obj \
+	-+d2x.obj \
+	-+datatype.obj \
+	-+date.obj \
+	-+dec.obj \
+	-+delstr.obj \
+	-+delword.obj \
+	-+div.obj \
+	-+equal.obj \
+	-+errortxt.obj \
+	-+expose.obj \
+	-+format.obj \
+	-+hashvalu.obj \
+	-+inc.obj \
+	-+index.obj \
+	-+insert.obj \
+	-+intdiv.obj \
+	-+justify.obj \
+	-+lastpos.obj \
+	-+linein.obj \
+	-+lineout.obj \
+	-+lines.obj \
+	-+lmath.obj \
+	-+lower.obj \
+	-+lstring.obj \
+	-+mod.obj \
+	-+mult.obj \
+	-+neg.obj \
+	-+overlay.obj \
+	-+pow.obj \
+	-+print.obj \
+	-+read.obj \
+	-+reverse.obj \
+	-+right.obj \
+	-+sign.obj \
+	-+space.obj \
+	-+stderr.obj \
+	-+strip.obj \
+	-+soundex.obj \
+	-+sub.obj \
+	-+substr.obj \
+	-+subword.obj \
+	-+time.obj \
+	-+translat.obj \
+	-+trunc.obj \
+	-+upper.obj \
+	-+verify.obj \
+	-+word.obj \
+	-+wordidx.obj \
+	-+wordlen.obj \
+	-+wordpos.obj \
+	-+words.obj \
+	-+write.obj \
+	-+x2b.obj \
+	-+x2c.obj \
+	-+x2d.obj \
+	-+xrange.obj
+
+
+# Library dependencies
+..\lib\lstr.lib: lstring.cfg $(OBJS)
+    $(TLIB) $@ @&&!
+    &
+$(LINKOBJS)
+!
+
+#		*Compiler Configuration File*
+
+!if $d(__DEBUG__)
+
+### DEBUG version
+
+lstring.cfg: makefile.bc
+  copy &&|
+-P-c
+-3
+-ml
+-R
+-v
+-y
+-vi-
+-weas
+-wpre
+-H=lstring.sym
+-I$(INCPATH)
+-L$(LIBPATH)
+-DMSDOS=1;__DEBUG__=1;__GREEK__
+| lstring.cfg
+
+!else
+
+### Optimised version ###
+
+!if $d(__8086__)
+## Create a 8086 version
+lstring.cfg: makefile.bc
+  copy &&|
+-P-c
+-1-
+-a-
+-d
+-G-
+-ml
+-vi-
+-weas
+-wpre
+-H=lstring.sym
+-I$(INCPATH)
+-L$(LIBPATH)
+-DMSDOS=1;__GREEK__
+| lstring.cfg
+
+!else
+
+# If we want to use the FPU
+#-f287
+#-ff
+
+lstring.cfg: makefile.bc
+  copy &&|
+-P-c
+-3
+-a
+-d
+-h
+-G
+-Z
+-O2
+-ml
+-vi-
+-weas
+-wpre
+-H=lstring.sym
+-I$(INCPATH)
+-L$(LIBPATH)
+-DMSDOS=1;__GREEK__
+| lstring.cfg
+!endif
+
+!endif
+

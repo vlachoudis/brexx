@@ -1,0 +1,33 @@
+BREXX for CMS (VM/370 and above)
+--------------------------------
+
+To compile brexx for CMS, you will need a suitable CMS C
+compiler such as GCCCMS.
+
+You then need to transfer all the .c, .h .exec and .txt to the
+mainframe. Then run "compile.exec". See zipcms.bat for information
+on where all the files are. Note that you need a special config.h.
+It is called mvs_config.h and resides in the "mvs" directory. It
+needs to be renamed to config.h. zipcms.bat does this.
+
+
+Note that the batch file "allcms.bat" provides an example of how
+the process was automated at one site.
+
+
+The end result of this process is that a brexx load module
+will be created.
+
+
+
+
+Version:
+
+See config.h for the version number
+or display it the way compile.exec does.
+
+
+Support:
+
+For BREXX for CMS support, try here:
+http://tech.groups.yahoo.com/group/hercules-os380/

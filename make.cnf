@@ -1,0 +1,274 @@
+# Top-level makefile for BREXX V2
+
+# BREXX interpreter
+# Version:  2.1
+# Copyright (C) 1991-2011  Vasilis Vlachoudis (Vasilis.Vlachoudis@cern.ch)
+#
+# This interpreter is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+
+# The following variables are passed to each Makefile:
+#
+# REXX_EXE	interpreter executable name usually (rexx)
+# LSTR_LIB	the name of the lstring "lstr" library file (usually liblstr.a)
+# CC		the C compiler (usually cc or gcc)
+# CFLAGS	flags to C compiler (usually -O)
+# MAKELIB	the command and flags to make a library file (usually "ar rcv")
+# ALIGN		Normally this option should be set for faster results.
+#
+# HAVE_SETENV	if the compiler has the setenv() function.
+# HAVE_READLINE	use the readline package for input
+# HAVE_READLINE_HISTORY
+#
+# To add a new system configuration just follow the examples below and update
+# the top-level Makefile.
+
+#
+# The allowable defines can be found in the inc/os.h file
+#
+
+############## Some COMMON macros ##################
+INCDIR = ../inc
+LIBDIR = ../lstring
+
+# Android paths
+ANDNDK    = /opt/android-ndk
+ANDOS     = 8
+#ANDOS     = 18
+#ANDVER    = 4.4.3
+ANDVER    = 4.8
+ANDARCH   = arm
+ANDBIT     = linux-x86
+#ANDBIT     = linux-x86_64
+ANDBIN   := $(ANDNDK)/toolchains/${ANDARCH}-linux-androideabi-${ANDVER}/prebuilt/${ANDBIT}/bin
+ANDROOT  := $(ANDNDK)/platforms/android-${ANDOS}/arch-${ANDARCH}
+ANDARM   := $(ANDBIN)/${ANDARCH}-linux-androideabi
+ANDLINKER = /system/bin/linker
+
+# Support of Greek character set
+#GREEK=-DGREEK
+# Remove the last new-line character of the output of a system command
+# like  say 'date'()
+RMLAST    = -DRMLAST
+MAIN      = main.c
+# For DOS32 it is overiden below
+RM        = rm -f
+EXTRA     =
+
+# Static or dynamic linking
+STATIC    = yes
+
+CC        = cc
+CPP       = cpp
+MAKELIB   = ar ruv
+REXX_EXE  = rexx
+LSTR_LIB  = liblstring.a
+LSTR_SO   = liblstring.so
+CCOPTIONS = $(CFLAGS) $(GREEK) $(RMLAST) -I$(INCDIR)
+USRLIB    = /usr/lib
+
+################### Install Directories ###############
+INSTALL   = install
+ifeq (.$(prefix),.)
+	prefix    = /usr/local
+endif
+INSBIN   := $(prefix)/bin
+INSINC   := $(prefix)/include/brexx
+INSLIB   := $(prefix)/lib/
+INSLIBR  := $(prefix)/lib/brexx
+INSSHA   := $(prefix)/share/brexx
+INSDOC   := $(prefix)/share/doc/brexx
+
+################### OS specific #######################
+aix:
+	$(MAKE) targets \
+	"EXTRA = rxunix.c" \
+	"CFLAGS = -Aa -O3 -DALIGN"
+
+aix_debug:
+	$(MAKE) targets \
+	"EXTRA = rxunix.c" \
+	"CFLAGS = -Aa -g -D__DEBUG__ -DALIGN"
+
+alpha:
+	$(MAKE) targets \
+	"EXTRA = rxunix.c" \
+	"CFLAGS = -O3 -DALIGN -DHAVE_SETENV"
+
+alpha_debug:
+	$(MAKE) targets \
+	"EXTRA = rxunix.c" \
+	"CFLAGS = -g -D__DEBUG__ -DALIGN -DHAVE_SETENV"
+
+amiga:
+	$(MAKE) targets \
+	"CC = gcc" \
+	"CFLAGS = -O2 -DALIGN -DINLINE"
+
+android:
+	$(MAKE) targets \
+	"CC       = $(ANDARM)-gcc" \
+	"CPP      = $(ANDARM)-cpp" \
+	"STATIC   = no" \
+	"CFLAGS   = -O -fpic -rdynamic -DALIGN -DINLINE -DANDROID --sysroot=$(ANDROOT)" \
+	"LDEXTRA  = -ldl -lm" \
+	"LIBEXTRA = -ldl -lm"
+
+android_debug:
+	$(MAKE) targets \
+	"CC       = $(ANDARM)-gcc" \
+	"CPP      = $(ANDARM)-cpp" \
+	"STATIC   = no" \
+	"CFLAGS   = -O0 -g -fpic -rdynamic -D__DEBUG__ -DALIGN -DINLINE -DANDROID --sysroot=$(ANDROOT)" \
+	"LDEXTRA  = -ldl -lm" \
+	"LIBEXTRA = -ldl -lm"
+
+bc:
+	$(MAKE) targets \
+	"REXX_EXE = rexx.exe" \
+	"LSTR_LIB = lstr.lib" \
+	"CC = bcc" \
+	"CFLAGS = -g -D__DEBUG__ -DALIGN" \
+	"MAKELIB = tlib lstr.lib -+"
+
+dos32:
+	$(MAKE) targets \
+	"REXX_EXE = rexx.exe" \
+	"CC = gcc" \
+	"RM = del" \
+        "CFLAGS = -O2 -DMSDOS -DALIGN -DINLINE -DRXCONIO" \
+	"EXTRA = rxconio.c"
+
+gcc:
+	$(MAKE) targets \
+	"CC = gcc" \
+	"CFLAGS = -O -DALIGN -DINLINE"
+
+gcc_debug:
+	$(MAKE) targets \
+	"CC = gcc" \
+	"CFLAGS = -g -pg -Wall -DALIGN -D__DEBUG__"
+
+# linux dynamic
+linux:
+	$(MAKE) targets \
+	"CC = gcc" \
+	"STATIC = no" \
+	"EXTRA = " \
+	"CFLAGS = -O2 -fno-stack-protector -fpic -rdynamic -DALIGN -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
+	"LDEXTRA = -nostdlib -lreadline -lnsl -ldl -lm" \
+	"LIBEXTRA = -lreadline -lnsl -ldl -lm -Wl,-rpath"
+
+# linux debug
+linux_debug:
+	$(MAKE) targets \
+	"CC = gcc" \
+	"EXTRA = " \
+	"CFLAGS = -g -fno-stack-protector -fpic -rdynamic -D__DEBUG__ -DALIGN -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
+	"LDEXTRA = -nostdlib -lreadline -lnsl -ldl -lm" \
+	"LIBEXTRA = -lreadline -lnsl -ldl -lm"
+
+linux32:
+	$(MAKE) targets \
+	"CC = gcc" \
+	"STATIC = no" \
+	"EXTRA = " \
+	"CFLAGS = -O2 -m32 -fno-stack-protector -fpic -rdynamic -DALIGN -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
+	"LDEXTRA = -nostdlib -lreadline -lnsl -ldl -lm" \
+	"LIBEXTRA = -lreadline -lnsl -ldl -lm -Wl,-rpath"
+
+# linux debug
+linux32_debug:
+	$(MAKE) targets \
+	"CC = gcc" \
+	"EXTRA = " \
+	"CFLAGS = -g -m32 -fno-stack-protector -fpic -rdynamic -D__DEBUG__ -DALIGN -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
+	"LDEXTRA = -nostdlib -lreadline -lnsl -ldl -lm" \
+	"LIBEXTRA = -lreadline -lnsl -ldl -lm"
+
+linux64:
+	$(MAKE) targets \
+	"CC = gcc" \
+	"USRLIB = /usr/lib64" \
+	"STATIC = no" \
+	"EXTRA = " \
+	"CFLAGS = -O2 -m64 -fno-stack-protector -fpic -rdynamic -DALIGN -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
+	"LDEXTRA = -nostdlib -lreadline -lnsl -ldl -lm" \
+	"LIBEXTRA = -lreadline -lnsl -ldl -lm -Wl,-rpath"
+
+# linux debug
+linux64_debug:
+	$(MAKE) targets \
+	"CC = gcc" \
+	"USRLIB = /usr/lib64" \
+	"EXTRA = " \
+	"CFLAGS = -g -m64 -fno-stack-protector -fpic -rdynamic -D__DEBUG__ -DALIGN -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
+	"LDEXTRA = -nostdlib -lreadline -lnsl -ldl -lm" \
+	"LIBEXTRA = -lreadline -lnsl -ldl -lm"
+
+linux_noalign:
+	$(MAKE) targets \
+	"CC = gcc" \
+	"EXTRA = rxunix.c" \
+	"CFLAGS = -O2 -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
+	"LIBEXTRA = -lreadline -lhistory -lcurses"
+
+linux_noalign_debug:
+	$(MAKE) targets \
+	"CC = gcc" \
+	"EXTRA = rxunix.c" \
+	"CFLAGS = -g -pg -Wall -D__DEBUG__ -DHAVE_SETENV -DHAVE_READLINE" \
+	"LIBEXTRA = -lreadline -lhistory -lcurses"
+
+linux_intel:
+	$(MAKE) targets \
+	"CC = icc" \
+	"CFLAGS = -O -DALIGN -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
+	"LIBEXTRA = -lreadline -lhistory -lcurses"
+
+linux_intel_debug:
+	$(MAKE) targets \
+	"CC = icc" \
+	"CFLAGS = -g -pg -Wall -DALIGN -D__DEBUG__ -DHAVE_SETENV -DHAVE_READLINE" \
+	"LIBEXTRA = -lreadline -lhistory -lcurses"
+hpux:
+	$(MAKE) targets \
+	"EXTRA = rxunix.c" \
+	"CFLAGS = -Aa +O2 -D_HPUX_SOURCE -DALIGN"
+
+hpux_debug:
+	$(MAKE) targets \
+	"EXTRA = rxunix.c" \
+	"CFLAGS = -Aa -g -D__DEBUG__ -D_HPUX_SOURCE -DALIGN"
+
+hpux-gcc:
+	$(MAKE) targets \
+	"CC = gcc" \
+	"EXTRA = rxunix.c" \
+	"CFLAGS = -O2 -DALIGN"
+
+hpux-gcc_debug:
+	$(MAKE) targets \
+	"CC = gcc" \
+	"EXTRA = rxunix.c" \
+	"CFLAGS = -g -pg -Wall -D__DEBUG__ -DALIGN"
+
+custom:
+	$(MAKE) targets \
+	"CC = gcc" \
+	"CFLAGS = -O2 -DALIGN -DINLINE -DHAVE_SETENV"
+
+test:
+	$(MAKE) targets \
+	"CC = gcc" \
+	"MAIN = maintest.c" \
+	"CFLAGS = -O2 -DALIGN -DINLINE -DHAVE_SETENV"
+
+test_debug:
+	$(MAKE) targets \
+	"CC = gcc" \
+	"MAIN = maintest.c" \
+	"CFLAGS = -g -pg -Wall -DALIGN -D__DEBUG__ -DHAVE_SETENV"
+

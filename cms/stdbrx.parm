@@ -1,0 +1,1 @@
+-Os -S -DHAVE_CONFIG_H -o dd:out -

@@ -1,0 +1,209 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+REXXICON                ICON    DISCARDABLE     "rexx.ico"
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Data
+//
+#if _WIN32_WCE > 211
+IDM_MAIN_MENU RCDATA DISCARDABLE
+BEGIN
+    IDM_MAIN_MENU,
+    3,		// Count of Items
+
+    I_IMAGENONE,
+    ID_ACTION,
+    TBSTATE_ENABLED,
+    TBSTYLE_DROPDOWN | TBSTYLE_AUTOSIZE,
+    IDS_CAP_ACTION,
+    0,
+    0,
+
+    I_IMAGENONE,
+    ID_EDIT,
+    TBSTATE_ENABLED,
+    TBSTYLE_DROPDOWN | TBSTYLE_AUTOSIZE,
+    IDS_CAP_EDIT,
+    0,
+    1,
+
+    I_IMAGENONE,
+    ID_VIEW,
+    TBSTATE_ENABLED,
+    TBSTYLE_DROPDOWN | TBSTYLE_AUTOSIZE,
+    IDS_CAP_VIEW,
+    0,
+    2
+END
+#endif
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menubar
+//
+
+IDM_MAIN_MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "Action"
+    BEGIN
+        MENUITEM "&Break",                      ID_ACTION_BREAK
+        MENUITEM "&About",                      ID_ACTION_ABOUT
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_ACTION_EXIT
+    END
+    POPUP "Edit"
+    BEGIN
+        MENUITEM "Copy &All\tAlt-A",            ID_EDIT_COPYALL
+        MENUITEM "&Paste\tAlt-V",               ID_EDIT_PASTE
+        MENUITEM "&Clear\tAlt-C",               ID_EDIT_CLEAR
+        MENUITEM SEPARATOR
+        MENUITEM "Mar&k or Pan\tAlt-K",         ID_EDIT_MARK, CHECKED
+        MENUITEM "&Track Cursor\tAlt-T",        ID_EDIT_TRACKCURSOR
+    END
+    POPUP "View"
+    BEGIN
+        POPUP "Font"
+        BEGIN
+            MENUITEM "6",                           ID_FONT_6
+            MENUITEM "7",                           ID_FONT_7
+            MENUITEM "8",                           ID_FONT_8
+            MENUITEM "9",                           ID_FONT_9
+            MENUITEM "10",                          ID_FONT_10
+            MENUITEM "11",                          ID_FONT_11
+            MENUITEM "12",                          ID_FONT_12
+            MENUITEM "14",                          ID_FONT_14
+            MENUITEM "16",                          ID_FONT_16
+            MENUITEM "18",                          ID_FONT_18
+            MENUITEM "20",                          ID_FONT_20
+        END
+        MENUITEM "Scroll Bars\tAlt-B",          ID_VIEW_SCROLLBARS, CHECKED
+        MENUITEM "Menu\tAlt-M",                 ID_VIEW_MENU, CHECKED
+        MENUITEM "Refresh\tAlt-R",              ID_VIEW_REFRESH
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDM_MAIN_MENU ACCELERATORS MOVEABLE PURE 
+BEGIN
+    "-",            ID_FONTDEC,             ASCII,  ALT, NOINVERT
+    "=",            ID_FONTINC,             ASCII,  ALT, NOINVERT
+    "A",            ID_EDIT_COPYALL,        VIRTKEY, ALT, NOINVERT
+    "B",            ID_VIEW_SCROLLBARS,     VIRTKEY, ALT, NOINVERT
+    "C",            ID_EDIT_CLEAR,          VIRTKEY, ALT, NOINVERT
+    "K",            ID_EDIT_MARK,           VIRTKEY, ALT, NOINVERT
+    "L",            ID_FONTINC,             VIRTKEY, ALT, NOINVERT
+    "M",            ID_VIEW_MENU,           VIRTKEY, ALT, NOINVERT
+    "R",            ID_VIEW_REFRESH,        VIRTKEY, ALT, NOINVERT
+    "S",            ID_FONTDEC,             VIRTKEY, ALT, NOINVERT
+    "T",            ID_EDIT_TRACKCURSOR,    VIRTKEY, ALT, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, ALT, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 128, 80
+STYLE WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_CAPTIONOKBTN
+CAPTION "About BRexx"
+FONT 8, "Tahoma"
+BEGIN
+    ICON            REXXICON,IDC_STATIC,4,4,21,20
+    LTEXT           "BRexx Version 2.x",IDC_STATIC,28,6,62,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 1990-2005",IDC_STATIC,28,18,100,8
+    LTEXT           "Author: Vasilis.Vlachoudis@cern.ch",IDC_STATIC,4,38,118,
+                    70
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_CAP_ACTION          "Action"
+    IDS_CAP_EDIT            "Edit"
+    IDS_CAP_VIEW            "View"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

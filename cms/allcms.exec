@@ -1,0 +1,28 @@
+* Usage - ALLCMS <SRC> <EXE>
+
+* This script compiles all the files on SRC disk (default is A)
+* and copies the resultant modules to the EXE disk (default B)
+
+&SRC = A
+&EXE = B
+
+
+&IF &INDEX EQ 0 &GOTO -FINARGS
+&SRC = &1
+&ARGS &2 &3 &4 &5 &6 &7 &8 &9
+
+&IF &INDEX EQ 0 &GOTO -FINARGS
+&EXE = &1
+
+-FINARGS
+
+
+FILEDEF INPUT TAP1 (LRECL 80 BLKSIZE 32720 RECFM FB
+MVSUNZIP DD:INPUT &SRC
+FILEDEF INPUT CLEAR
+
+
+EXEC COMPILE &SRC &EXE
+
+
+VMARC PACK * * &EXE (TAP2 BLOCK 80

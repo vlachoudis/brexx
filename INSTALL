@@ -1,0 +1,71 @@
+                                                                        o o
+                                                                      ____oo_
+                                 R  E  X  X               1992-2011  /||    |\
+                                  Ver. 2.x                   BNV      ||    |
+                                 for  MSDOS                MARMITA    `.___.'
+                                  and Unix
+
+
+                 Author.........Vasilis N. Vlachoudis
+                 Address........19Q rue du Jura
+                                St.Genis-Pouilly F-1630
+                                France
+                 Computer addr..Vasilis.Vlachoudis@cern.ch
+                 Http addr......http://home.cern.ch/bnv
+                 Last updated...Jun-2011
+
+
+Installation for the impatient
+==============================
+
+1. Compile the program
+	make <os>
+   Where os is the os you want to compile e.g
+	make linux
+   Type make alone to get a list of predefined systems.
+   If your system is not there please use the "make custom"
+   but modify the make.cnf appropriately
+
+2. Install
+	make install
+
+* To create and compile the rpm files modify and run the ./mkrpm
+
+BRexx specific options
+======================
+
+  --disable-shared        build shared libraries default=yes
+        Disabling the shared libraries will result in a bigger
+	executable, 10-30% faster in execution time.
+	It will reduce the possibility to extend the code with
+	external shared libraries (look the IMPORT function)
+
+  --enable-debug          Build a debugging version.
+                          Combine it with the --disable-shared.
+
+  --enable-profile        Include profiling information.
+
+  --disable-removecr      Disable removal of trailing CR from system commands
+        Redirected system commands (ie.  dir="pwd"()) by default have
+	the ending carriage return stripped
+
+  --disable-align         Disable DWORD align of the bytecode
+        Aligning the bytecode is mandatory on RISC architectures, while
+	the INTEL CPU's can handle both types. Aligning the bytecode
+	results in a compiled rexxcode which executes faster than the
+	non-aligned version, while increasing by 50% the memory requirements
+
+  --enable-greek          Enable the GREEK character set
+
+  --enable-mysqlstatic    Enables static support of mysql
+        Compile statically the mySQL support instead of a shared library
+	which has to be imported with the CALL IMPORT command.
+
+Optional Packages:
+  --with-readline         use readline instead of standard input
+        Replace the standard input with readline package. Readline
+	offers editing on the input line and history.
+
+  --with-mysql=DIR        Sets the mySQL path, default=/usr/lib/mysql
+        Set's the mySQL path and compiles the shared library for mySQL
+  --without-mysql         To disable the mySQL package

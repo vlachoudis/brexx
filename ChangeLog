@@ -1,0 +1,228 @@
+04/2011 Vasilis Vlachoudis <Vasilis.Vlachoudis@cern.ch>
+	* Release 2.1.9:
+		Support for ANDROID
+		Removed configure scripts using old makefile
+
+01/2009 <Paul Edwards>
+	* Release 2.1.7:
+		Support to MVS/CMS
+
+01/2009 <Paul Edwards>
+	* Release 2.1.6:
+		Changes to support MVS and CMS, plus other development from Vasilis.
+11/2006 <Vasilis.Vlachoudis@cern.ch>
+	* Release 2.1.3-1:
+		Minor corrections to keep compiler happy
+01/2005 <Vasilis.Vlachoudis@cern.ch>
+	* Release 2.1.3:
+		Added indirect variable exposure for procedures
+		Corrected: Files with filename as floating point
+		Changed RxVar...Old() -> RxVar...Name()
+
+08/2004 <Vasilis.Vlachoudis@cern.ch>
+	* Release 2.1.2: New additions and corrections on the windows CE
+	  version
+	* lstring/read.c: Corrected bug for the
+	  piping though another command the standard input.
+
+03/2004 <Vasilis.Vlachoudis@cern.ch>
+	* Release 2.1.1: Based on the corrections and bugs send from
+	  Leland Lucius <llucius@tiny.net>
+	* lines.c, chars.c: Corrections when operating on transient or
+	  persistent files
+	* lstring.c: Use of limits.h instead of value.h. Increase of the
+	  allowable numeric digits for unix machines
+	* builtin.c: Fixed problem with the sourceline() after an interpret
+	  statement
+	* compile.c: Allow the procedure statement to be in the next lines
+	  following the label
+	* nextsymb.c: Corrected the line number after a continuation with
+	  comma at the end of the line
+	* interpret.c: Corrected the "SIGNAL VALUE"
+
+11/2003 <Vasilis.Vlachoudis@cern.ch>
+	* inc/os.h, src/address.c: Switched back to mktemp instead of
+	mkstemp. Since, mkstemp was creating the temporary file and
+	returning the handle of the open file.
+
+04/2003 <Vasilis.Vlachoudis@cern.ch>
+	* Release 2.1.0
+	* expr.c: Expressions like a || || b was resulting to segmentation fault
+	* template.c: Insert a TMP before the -() target in template
+
+03/2003	<Vasilis.Vlachoudis@cern.ch>
+	* interpret.c:	Call of system functions did not set the RESULT
+	  Call of a non existing function, calls the program to IMPORT
+	  the file if it exists
+
+02/2003	<Vasilis.Vlachoudis@cern.cn>
+	* MKTIME(), GMTIME() Added in dates.r
+
+01/2003	<Vasilis.Vlachoudis@cern.cn>
+	* src/builtin.c: VALUE() now accepts negative values
+	for pool (relative to current procedure)
+
+01/2003	<Vasilis.Vlachoudis@cern.cn>
+	* lstring/hashvalu.c: Hashvalue function addition
+
+01/2003	<Vasilis.Vlachoudis@cern.cn>
+	Bug corrected when comment appears after a comma_sy search
+
+08/2002	<Vasilis.Vlachoudis@cern.cn>
+	Bug correction for parse var str str rest; rest was always null
+
+07/2002	<Vasilis.Vlachoudis@cern.cn>
+	Addition to OPEN() for WIN32 to open serial ports
+
+06/2002	<Vasilis.Vlachoudis@cern.cn>
+	Addition of mySQL commands
+
+01/2002	<Vasilis.Vlachoudis@cern.cn>
+	Corrected the crashing, when an empty program
+	was supplied from cmdline
+
+01/2002	<Vasilis.Vlachoudis@cern.cn>
+	Multiple directory support on RXLIB
+
+12/2001	<Vasilis.Vlachoudis@cern.cn>
+	Corrected the seek error on Windows CE
+
+11/2001	<Vasilis.Vlachoudis@cern.cn>
+	Corrected the error handling when trace is off
+
+09/2001	<Vasilis.Vlachoudis@cern.cn>
+	Addition of Bitwise functions AND,OR,XOR,NOT
+
+07/2001	<Vasilis.Vlachoudis@cern.cn>
+	Addition of READLINE for unix environment
+
+06/2001	<Vasilis.Vlachoudis@cern.cn>
+	* lstring/format.c: Correction in the Lformat
+	Format like in the L2str
+
+04/2001	<Vasilis.Vlachoudis@cern.cn>
+	* lstring/lstring.c: Correction in the L2str
+
+10/2000	<Vasilis.Vlachoudis@cern.cn>
+	* lstring/changestr.c: to accept continuous multiple
+	targets
+	* lstring/date.c: correction
+
+04/2000	<Vasilis.Vlachoudis@cern.cn>
+	* lstring/read.c: when reading a complete file from STDIN
+
+02/2000	<Vasilis.Vlachoudis@cern.cn>
+	* lstring/changestr.c: correction
+
+11/1999	<Vasilis.Vlachoudis@cern.cn>
+	Modifications in the HTML documentation.
+
+11/1999	<Vasilis.Vlachoudis@cern.cn>
+	Some small changes for working correctly with
+	ALPHA and MIPS-64 processor.
+
+10/1999	<Vasilis.Vlachoudis@cern.cn>
+	Windows CE Alpha release is now working.
+
+08/1999	<Vasilis.Vlachoudis@cern.cn>
+	* equal.c: Lequal, was using signed comparison for
+	strings, corrected to unsigned.
+
+08/1999	<Vasilis.Vlachoudis@cern.cn>
+	* lstring.c: Maximum numeric digits limit is set.
+
+07/1999	<Vasilis.Vlachoudis@cern.cn>
+	A lot of minor changes to support output on a Ms-Window and CE.
+
+07/1999	<Vasilis.Vlachoudis@cern.cn>
+	* lstring.c: The string to number conversion is
+	done within the Lisnum() routine.
+
+07/1999	<Vasilis.Vlachoudis@cern.cn>
+	* trace.c: Corrected a bug in the interactive trace. Instead
+	of using a local variable for the interactive trace a
+	variable from the interpreter stack is used.
+
+06/1999	<Vasilis.Vlachoudis@cern.cn>
+	* interpre.c: When a called procedure with local variables returns
+	a variable the variable contents was freed first
+	before copied to the RESULT.
+
+05/1999	<Vasilis.Vlachoudis@cern.cn>
+	* compile.c: ITERATE was jumping to the wrong position
+	inside a "DO UNTIL" loop
+
+05/1999	<Vasilis.Vlachoudis@cern.cn>
+	* compile.c: Corrected a bug in label registration
+
+03/1999	<Vasilis.Vlachoudis@cern.cn>
+	* trace.c: Corrected the "trace error"
+
+03/1999	<Vasilis.Vlachoudis@cern.cn>
+	Added Microsoft-C, support
+
+03/1999	<Vasilis.Vlachoudis@cern.cn>
+	* src/makefile.bc: Added the floating point
+	emulation, for old 386 without FPU
+
+03/1999	<Vasilis.Vlachoudis@cern.cn>
+	* interpre.c: Corrected a bug in the interpret_mn.
+	It wasn't cleaning correctly the internal stack.
+
+02/1999	<Vasilis.Vlachoudis@cern.cn>
+	*rxmath.c: Stupid mistake with "pow10()".
+	Borland-C pow10() is for long and not double numbers.
+
+02/1999	Generoso Martello <generoso@martello.com>
+	32bit version for DOS with GCC
+	which is ~2 times faster, accepts long file names.
+	Furthermore he implemented the ANSI.R routines as built-in.
+
+01/1999	<Vasilis.Vlachoudis@cern.cn>
+	* Release 2.0: Interactive tracing is not well implemented!
+
+12/1998	<Vasilis.Vlachoudis@cern.cn>
+	* stripc.: Bug fixed, when argument has length 0.
+
+11/1998	<Vasilis.Vlachoudis@cern.cn>
+	* space.c: Bug fixed, when argument type is not a string
+
+11/1998	<Vasilis.Vlachoudis@cern.cn>
+	* equal.c: Real comparison is done with
+	fabs(a-b)<SMALLNUMBER to avoid precision errors.
+
+11/1998	<Vasilis.Vlachoudis@cern.cn>
+	Correction in the treatment of real numbers with
+	mantissa zero.  Now they are handled as integers.
+
+11/1998	<Vasilis.Vlachoudis@cern.cn>
+	* R_verify: Variable 'match' was character
+	where is should be boolean.
+
+09/1998	<Vasilis.Vlachoudis@cern.cn>
+	Correction in the "const" argument passing.
+
+5-9/1998 <Vasilis.Vlachoudis@cern.cn>
+	Several bugs fixed...
+
+1998	<Vasilis.Vlachoudis@cern.cn>
+	* Release 2.0b:
+	Try to rewrite BRexx from the scratch.
+	First attempt was in C++, but it didn't proved to be so fast
+	as I was excpecting. Then I've rewrote the code in C.
+	The result was fast and with a small size.
+	Uploaded on the net as 2.0a and then as 2.0b.
+	A lot of bugs are fixed and now it seems to be stable.  ...
+
+1994	<Vasilis.Vlachoudis@cern.cn>
+	* Release 1.3: Small in size and very slow.
+	Supporting Paradox engine
+
+1992	<Vasilis.Vlachoudis@cern.cn>
+	* Release 1.0a: Slow and full of bugs
+
+1991	<Vasilis.Vlachoudis@cern.cn>
+	First attempt to create a Rexx interpreter in C
+
+1990	<Vasilis.Vlachoudis@cern.cn>
+	First version of a rexx routine library in Pascal

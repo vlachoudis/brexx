@@ -1,0 +1,47 @@
+BREXX for MVS (3.8 and above)
+-----------------------------
+
+To compile brexx for MVS, you will need a suitable MVS C
+compiler such as GCCMVS.
+
+You then need to transfer all the source code to the
+mainframe. zipmvs.bat may be useful for doing this, but the
+process of transferring files is beyond the scope of this
+document and site-specific.
+
+
+On the mainframe, modify (according to your site's
+requirements), then run, the following bits of JCL:
+brexx1.jcl
+brexx2.jcl
+brexx3.jcl (optional - example only)
+brexx4.jcl (optional - example only)
+brexx5.jcl
+brexx6.jcl
+brexx7.jcl
+
+Note that the batch file "allmvs" provides an example of how
+the process was automated at one site.
+
+
+The end result of that process is that a BISON load module
+will be created in BISON.LINKLIB.
+
+
+
+
+Version:
+
+See config.h for the version number
+or display it the way brexx7.jcl does.
+
+
+Support:
+
+For BREXX for MVS support, try here:
+http://tech.groups.yahoo.com/group/hercules-os380/
+
+
+JCC:
+Note - if you wish to use the JCC compiler instead,
+use "makejcc" after obvious modifications.

@@ -1,0 +1,225 @@
+/*
+ * $Id: bstr.c,v 1.4 2004/08/16 15:34:53 bnv Exp $
+ * $Log: bstr.c,v $
+ * Revision 1.4  2004/08/16 15:34:53  bnv
+ * Spaces
+ *
+ * Revision 1.3  2002/06/11 12:38:06  bnv
+ * Added: CDECL
+ *
+ * Revision 1.2  2001/06/25 18:52:24  bnv
+ * Header -> Id
+ *
+ * Revision 1.1  1999/09/13 15:06:41  bnv
+ * Initial revision
+ *
+ *
+ * This file provides a substitute for the common strxxx commands
+ * that unfortunatelly do not exist on the Windows CE of Visual C++.
+ * They exist only in a UNICODE format.
+ */
+
+#ifdef WCE
+
+#include <windows.h>
+#include "os.h"
+#include "ldefs.h"
+#include "bstr.h"
+#include <stdlib.h>
+#ifdef __BORLANDC__
+#	include <string.h>
+#endif
+
+char	_Bctype[] = {
+	0x00, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x21, 0x21, 0x21, 0x21, 0x21, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x01, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40,
+	0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40,
+	0x40, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
+	0x02, 0x02, 0x02, 0x40, 0x40, 0x40, 0x40, 0x40,
+	0x40, 0x40, 0x14, 0x14, 0x14, 0x14, 0x14, 0x14,
+	0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
+	0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
+	0x04, 0x04, 0x04, 0x04, 0x40, 0x40, 0x40, 0x40,
+	0x40, 0x40, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
+	0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+	0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
+	0x08, 0x08, 0x08, 0x08, 0x40, 0x40, 0x40, 0x40,
+	0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+/* ------------- Bstrcpy ------------- */
+char* __CDECL
+Bstrcpy(char *dest, const char *src)
+{
+	register char	*d=dest;
+	register const char	*s=src;
+	do {} while ((*d++=*s++) != 0);
+	return dest;
+} /* Bstrcpy */
+
+/* ------------- Bstrlen ------------- */
+unsigned __CDECL
+Bstrlen(const char *s)
+{
+	register unsigned	len=0;
+	register const char	*str=s;
+	while (*str++) len++;
+	return len;
+} /* Bstrlen */
+
+/* ------------- Bstrcmp ------------- */
+int __CDECL
+Bstrcmp(const char *s1, const char *s2)
+{
+	register const char	*a=s1;
+	register const char	*b=s2;
+
+	for (; *a && *b; a++, b++) {
+		if (*a<*b)
+			return -1;
+		else
+		if (*a>*b)
+			return  1;
+	}
+	if (*a) return  1;
+	if (*b) return -1;
+	return 0;
+} /* Bstrcmp */
+
+/* ------------- Bstrcat ------------- */
+char* __CDECL
+Bstrcat(char *dest, const char *src)
+{
+	register char	*d=dest;
+	register const char	*s=src;
+	do {} while (*d++ != 0);
+	d--;
+	do {} while ((*d++=*s++) != 0);
+	return dest;
+} /* Bstrcat */
+
+/* ------------- Bstrchr ------------- */
+char* __CDECL
+Bstrchr(const char *s, int c)
+{
+	register const char *str=s;
+	for ( ;*str; str++)
+		if (*str==(char)c)
+			return (char *)str;
+	return (char *)0;
+} /* Bstrchr */
+
+/* ------------- Bi2a ------------- */
+/* Format an integer number
+ * if length=0, then only the necessary digits will be returned
+ * if length>0, will be padded in front with spaces
+ * if length<0, it will be padded with zeros
+ * return a pointer to the buffer
+ */
+char* __CDECL
+Bl2a( char *buf, const long num, int length, const int radix )
+{
+	char	str[10];
+	char	*dst, *src;
+	char	pad;
+
+	dst = buf;
+	src = str;
+
+	if (length<0) {
+		pad = '0';
+		length = -length;
+	} else
+		pad = ' ';
+
+	LTOA(num,str,radix);
+        if (length) {
+		length -= STRLEN(str);
+		if ((num<0) && (pad=='0')) {
+			*dst++ = '-';
+			src++;
+		}
+		while (length-->0)
+			*dst++ = pad;
+	}
+	while (*src)
+		*dst++ = *src++;
+	*dst = 0;
+	return buf;
+} /* Bl2a */
+
+/* ---- Bprintf ---- *
+int __CDECL
+Bprintf(const char *format, ...)
+{
+	char dlin[1024], *dl = dlin;
+	va_list ap;
+	va_start(ap,ln);
+	vsprintf(dlin, ln, ap);
+	va_end(ap);
+	while (*dl)
+		wputchar(wnd, *dl++);
+} * Bprintf */
+
+#if 0
+/* -------------- Bltoa -------------- */
+char* __CDECL
+Bltoa(long num, char *str)
+{
+	int	sign, len, i;
+	char	buf[20];
+	char	*c, *b;
+	ldiv_t	ld;
+
+	if (num==0L) {
+		str[0] = '0';
+		str[1] = 0;
+		return str;
+	}
+	if (num<0) {
+		sign = 1;
+		num = -num;
+	} else
+		sign = 0;
+
+	c = buf;
+	while (num>0) {
+		ld = ldiv(num,10);
+		*c++ = '0' + (char)ld.rem;
+		num = ld.quot;
+	}
+
+	b = str;
+	if (sign) *b++ = '-';
+
+	// --- Swap the bytes ---
+	len = c-buf;
+	c--;
+	for (i=0; i<len; i++) {
+		*b++ = *c--;
+	}
+
+	*b = 0;
+	return str;
+} /* Bltoa */
+#endif
+
+#endif

@@ -1,0 +1,26 @@
+<HTML>
+<HEAD><TITLE>Fibonachi</TITLE></HEAD>
+<BODY>
+<rexx>
+	N = 10
+	call InitFib N
+</rexx>
+<H1>$N$ Fibonachi numbers</H1>
+<TABLE BORDER>
+<rexx> do i=1 to N </rexx>
+		<TR><TD> $i$ </TD><TD> $f.i$ </TD></TR>
+<rexx> end </rexx>
+</TABLE>
+</BODY></HTML>
+<rexx>
+exit
+
+InitFib: procedure expose f.
+	parse arg N
+	f.0 = 0; f.1 = 1
+	do i=2 to N
+		i1=i-1; i2=i-2
+		f.i = f.i1+f.i2
+	end
+return
+</rexx>

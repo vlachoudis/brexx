@@ -1,0 +1,96 @@
+.AUTODEPEND
+
+#		*Translator Definitions*
+CC = Z:\PROGRAMS\MSC.600\BIN\cl +LSTRING.CFG
+INCPATH=Z:\PROGRAMS\MSC.600\INCLUDE
+CCOPTS = /AL /Ox /G2 /I$(INCPATH) /I..\INC -DMSDOS=1;__GREEK__
+LIB = Z:\PROGRAMS\MSC.600\BIN\lib
+LIBNAME = ..\lib\lstr.lib
+LINK = link
+
+#		*Implicit Rules*
+.c.obj:
+	$(CC) -c $(CCOPTS) $<
+	$(LIB) $(LIBNAME) -+$@ ,NUL ,$(LIBNAME)
+
+OBJS =  \
+	abbrev.obj \
+	abs.obj \
+	add.obj \
+	atan2.obj \
+	b2x.obj \
+	bitand.obj \
+	bitor.obj \
+	bitxor.obj \
+	bool.obj \
+	c2d.obj \
+	c2x.obj \
+	center.obj \
+	changest.obj \
+	countstr.obj \
+	charin.obj \
+	charout.obj \
+	chars.obj \
+	compare.obj \
+	copies.obj \
+	d2c.obj \
+	d2x.obj \
+	datatype.obj \
+	date.obj \
+	dec.obj \
+	delstr.obj \
+	delword.obj \
+	div.obj \
+	equal.obj \
+	errortxt.obj \
+	expose.obj \
+	format.obj \
+	hashvalu.obj \
+	inc.obj \
+	index.obj \
+	insert.obj \
+	intdiv.obj \
+	justify.obj \
+	lastpos.obj \
+	linein.obj \
+	lineout.obj \
+	lines.obj \
+	lmath.obj \
+	lower.obj \
+	lstring.obj \
+	mod.obj \
+	mult.obj \
+	neg.obj \
+	overlay.obj \
+	pow.obj \
+	print.obj \
+	read.obj \
+	reverse.obj \
+	right.obj \
+	sign.obj \
+	space.obj \
+	stderr.obj \
+	strip.obj \
+	soundex.obj \
+	sub.obj \
+	substr.obj \
+	subword.obj \
+	time.obj \
+	translat.obj \
+	trunc.obj \
+	upper.obj \
+	verify.obj \
+	word.obj \
+	wordidx.obj \
+	wordlen.obj \
+	wordpos.obj \
+	words.obj \
+	write.obj \
+	x2b.obj \
+	x2c.obj \
+	x2d.obj \
+	xrange.obj
+
+
+# Library dependencies
+..\lib\lstr.lib: $(OBJS)

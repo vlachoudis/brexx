@@ -1,0 +1,223 @@
+# Top-level makefile for BREXX V2	(Borland-C)
+#
+# BREXX interpreter
+# Version:  2.0
+# Copyright (C) 1991-1998  Vasilis Vlachoudis (Vasilis.Vlachoudis@cern.ch)
+#
+# This interpreter is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+.AUTODEPEND
+
+#		*Translator Definitions*
+CC = bcc +REXX.CFG
+ASM = tasm
+TLIB = tlib
+TLINK = tlink
+STRIP = C:\SOFT\DEBUG\tdstrip
+LIBPATH = C:\SOFT\BC\LIB;C:\SOFT\USR\LIB;LIB
+INCPATH = C:\SOFT\BC\INC;..\INC
+
+# .path.obj = OBJ\
+
+#		*Implicit Rules*
+.c.obj:
+  $(CC) -c {$< }
+
+.cpp.obj:
+  $(CC) -c {$< }
+
+.cc.obj:
+  $(CC) -c {$< }
+
+.a.obj:
+  $(TASM) /ml $<
+
+#		*List Macros*
+
+
+OBJS =  \
+ main.obj \
+ rexx.obj \
+ compile.obj \
+ template.obj \
+ expr.obj \
+ interpre.obj \
+ nextsymb.obj \
+ rexxfunc.obj \
+ builtin.obj \
+ rxstr.obj \
+ rxword.obj \
+ rxconv.obj \
+ rxfiles.obj \
+ rxmath.obj \
+ address.obj \
+ variable.obj \
+ trace.obj \
+ error.obj \
+ stack.obj \
+ dqueue.obj \
+ bintree.obj \
+ bmem.obj \
+ systemx.obj \
+ spawnx.obj \
+ int2e.obj 
+
+#		*Explicit Rules*
+..\bin\rexx.exe: rexx.cfg $(OBJS)
+  $(TLINK) /v/x/c/P-/Vt/L$(LIBPATH) @&&|
+c0l.obj+
+main.obj+
+rexx.obj+
+compile.obj+
+template.obj+
+expr.obj+
+interpre.obj+
+nextsymb.obj+
+rexxfunc.obj+
+builtin.obj+
+rxstr.obj+
+rxword.obj+
+rxconv.obj+
+rxfiles.obj+
+rxmath.obj+
+address.obj+
+variable.obj+
+trace.obj+
+error.obj+
+stack.obj+
+bintree.obj+
+dqueue.obj+
+bmem.obj+
+systemx.obj+
+spawnx.obj+
+int2e.obj
+..\bin\rexx
+		# no map file
+..\lib\lstr.lib+
+fp87.lib+
+mathl.lib+
+cl.lib
+|
+#(STRIP) %@
+
+clean:
+	del rexx.exe obj\*.obj *.sym
+
+# ****** Individual file dependencies ******
+int2e.obj: int2e.asm
+	$(ASM) /ml int2e.asm
+
+spawnx.obj: spawnx.asm
+	$(ASM) /ml spawnx.asm
+
+#		*Compiler Configuration File*
+!if $d(__DEBUG__)
+
+## Debug version 
+rexx.cfg: makefile.bc
+  copy &&|
+-3
+-ml
+-R
+-v
+-y
+-vi-
+-wbbf
+-wpin
+-wamb
+-wamp
+-wasm
+-wpro
+-wcln
+-wdef
+-wsig
+-wnod
+-wstv
+-wucp
+-wuse
+-weas
+-wpre
+-I$(INCPATH)
+-L$(LIBPATH)
+-H=rexx.sym
+-DMSDOS=1;__DEBUG__=1;__GREEK__
+| rexx.cfg
+
+!else 
+
+## Optimasation version 
+
+!if $d(__8086__)
+## Create a 8086 version
+rexx.cfg: makefile.bc
+  copy &&|
+-P-c
+-1-
+-a-
+-d
+-G-
+-ml
+-vi-
+-wbbf
+-wpin
+-wamb
+-wamp
+-wasm
+-wpro
+-wcln
+-wdef
+-wsig
+-wnod
+-wstv
+-wucp
+-wuse
+-weas
+-wpre
+-I$(INCPATH)
+-L$(LIBPATH)
+-H=rexx.sym
+-DMSDOS=1;__GREEK__
+| rexx.cfg
+
+!else
+
+# if we want to use the FPU
+#-ff
+#-f287
+
+rexx.cfg: makefile.bc
+  copy &&|
+-3
+-a
+-d
+-G
+-h
+-ml
+-O2
+-vi-
+-wbbf
+-wpin
+-wamb
+-wamp
+-wasm
+-wpro
+-wcln
+-wdef
+-wsig
+-wnod
+-wstv
+-wucp
+-wuse
+-weas
+-wpre
+-I$(INCPATH)
+-L$(LIBPATH)
+-H=rexx.sym
+-DMSDOS=1;__GREEK__
+| rexx.cfg
+!endif
+
+!endif
+
