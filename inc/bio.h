@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/bio.h,v 1.1 1999/11/26 08:53:29 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/bio.h,v 1.2 1999/11/29 14:57:42 bnv Exp $
  * $Log: bio.h,v $
+ * Revision 1.2  1999/11/29 14:57:42  bnv
+ * Changed: Defines only
+ *
  * Revision 1.1  1999/11/26 08:53:29  bnv
  * Initial revision
  *
@@ -27,7 +30,7 @@
 
 #define	EOF		(-1)
 
-#if !defined(SEEK_SET)
+#ifndef SEEK_SET
 #	define	SEEK_SET	(FILE_BEGIN)
 #	define	SEEK_CUR	(FILE_CURRENT)
 #	define	SEEK_END	(FILE_END)
@@ -48,7 +51,7 @@ typedef struct {
 
 BFILE	*Bfopen(const char *filename, const char *mode);
 int	Bfclose(BFILE *stream);
-#if defined(__BORLANDC__)
+#ifdef __BORLANDC__
 #	define Bfseek(s,o,w)	_llseek(s->handle,o,w)
 #else
 #	define Bfseek(s,o,w)	SetFilePointer(s->handle,o,0,w)
