@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/interpre.c,v 1.2 1999/03/01 10:54:37 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/interpre.c,v 1.3 1999/03/10 16:53:32 bnv Exp $
  * $Log: interpre.c,v $
+ * Revision 1.3  1999/03/10 16:53:32  bnv
+ * Added MSC support
+ *
  * Revision 1.2  1999/03/01 10:54:37  bnv
  * Corrected: To clean correctly the RxStck after an interpret_mn
  *
@@ -586,7 +589,7 @@ RxInitInterStr( PLstr str )
 	pr->ip		= (size_t)((byte huge *)Rxcip - (byte huge *)Rxcodestart);
 	pr->codelen	= LLEN(*_code);
 	pr->clauselen	= CompileCurClause;
-	pr->stack	= RxStckTop-1;		// Because we copied string
+	pr->stack	= RxStckTop-1;		/* before temporary str */
 	pr->stacktop	= RxStckTop;
 
 	/* setup arguments */
