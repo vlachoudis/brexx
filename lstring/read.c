@@ -1,6 +1,9 @@
 /*
- * $Id: read.c,v 1.8 2003/02/26 16:29:24 bnv Exp $
+ * $Id: read.c,v 1.9 2004/03/26 22:52:26 bnv Exp $
  * $Log: read.c,v $
+ * Revision 1.9  2004/03/26 22:52:26  bnv
+ * Added FIFO support
+ *
  * Revision 1.8  2003/02/26 16:29:24  bnv
  * Changed: READLINE definitions
  *
@@ -83,7 +86,7 @@ Lread( FILEP f, const PLstr line, long size )
 		if (f==STDIN) {
 			struct stat buf;
 			fstat(0,&buf);
-			if (S_ISCHR(buf.st_mode)) {
+			if (S_ISCHR(buf.st_mode) || S_ISFIFO(buf.st_mode)) {
 				char *str = readline(NULL);
 #ifdef HAVE_READLINE_HISTORY
 				if (str && *str)
