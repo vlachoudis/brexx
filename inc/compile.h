@@ -1,6 +1,9 @@
 /*
- * $Id: compile.h,v 1.4 2002/06/11 12:37:56 bnv Exp $
+ * $Id: compile.h,v 1.5 2004/08/16 15:30:30 bnv Exp $
  * $Log: compile.h,v $
+ * Revision 1.5  2004/08/16 15:30:30  bnv
+ * Changed: name of mnemonic operands from xxx_mn to O_XXX
+ *
  * Revision 1.4  2002/06/11 12:37:56  bnv
  * Added: CDECL
  *
@@ -18,7 +21,9 @@
 #ifndef __COMPILE_H__
 #define __COMPILE_H__
 
-#include <bmem.h>
+#ifndef WIN
+#	include <bmem.h>
+#endif
 #include <lstring.h>
 #include <bintree.h>
 #include <nextsymb.h>
@@ -99,108 +104,108 @@ enum expr_type {
 
 /* ---------------- mnemonic codes --------------- */
 enum mnemonic_type {
-	 newclause_mn	/* new command used for trace	*/
-	,nop_mn		/* Nothing dummy instruction	*/
-	,push_mn	/* push lstring			*/
-	,pushtmp_mn	/* push a temporary lstring	*/
-	,pop_mn		/* pop lstring			*/
-	,dup_mn		/* DUP [relative] duplicates something from stack	*/
-	,copy_mn	/* COPY to previous (Lstrcpy)*/
-	,copy2tmp_mn	/* COPY a value to temporary	*/
-	,patch_mn	/* PATCH [relative] [byte] in code	*/
-	,raise_mn	/* raise a condition error	*/
+	 OP_NEWCLAUSE	/* new command used for trace	*/
+	,OP_NOP		/* Nothing dummy instruction	*/
+	,OP_PUSH	/* push lstring			*/
+	,OP_PUSHTMP	/* push a temporary lstring	*/
+	,OP_POP		/* pop lstring			*/
+	,OP_DUP		/* DUP [relative] duplicates something from stack	*/
+	,OP_COPY	/* COPY to previous (Lstrcpy)*/
+	,OP_COPY2TMP	/* COPY a value to temporary	*/
+	,OP_PATCH	/* PATCH [relative] [byte] in code	*/
+	,OP_RAISE	/* raise a condition error	*/
 
-	,loadarg_mn	/* load argument	*/
-	,loadopt_mn	/* load internal data	*/
-	,storeopt_mn	/* save internal data	*/
-	,load_mn	/* load a variable	*/
-	,create_mn	/* create/load a var	*/
-	,drop_mn	/* drop a variable	*/
-	,dropind_mn	/* drop a var indirect	*/
-	,assignstem_mn	/* assign array		*/
+	,OP_LOADARG	/* load argument	*/
+	,OP_LOADOPT	/* load internal data	*/
+	,OP_STOREOPT	/* save internal data	*/
+	,OP_LOAD	/* load a variable	*/
+	,OP_CREATE	/* create/load a var	*/
+	,OP_DROP	/* drop a variable	*/
+	,OP_DROPIND	/* drop a var indirect	*/
+	,OP_ASSIGNSTEM	/* assign array		*/
 
-	,byinit_mn	/* DO .. BY .. init	*/
-	,forinit_mn	/* DO FOR initialise	*/
-	,decfor_mn	/* DEC of a DO FOR loop	*/
+	,OP_BYINIT	/* DO .. BY .. init	*/
+	,OP_FORINIT	/* DO FOR initialise	*/
+	,OP_DECFOR	/* DEC of a DO FOR loop	*/
 
-	,toint_mn	/* transform mnemonics	*/
-	,lower_mn	/* to lowercase	a lit	*/
-	,upper_mn	/* to uppercase	a lit	*/
+	,OP_TOINT	/* transform mnemonics	*/
+	,OP_LOWER	/* to lowercase	a lit	*/
+	,OP_UPPER	/* to uppercase	a lit	*/
 
-	,signal_mn	/* Clear up stack and jmp rel	*/
-	,signalval_mn	/* evaluate and jump	*/
+	,OP_SIGNAL	/* Clear up stack and jmp rel	*/
+	,OP_SIGNALVAL	/* evaluate and jump	*/
 
-	,jmp_mn		/* Unconditional jump	*/
-	,jf_mn		/* Jump if false (0)	*/
-	,jt_mn		/* Jump if true (1)	*/
-	,call_mn	/* Call a procedure	*/
-	,return_mn	/* return from a proc	*/
-	,returnf_mn	/* return from a func	*/
+	,OP_JMP		/* Unconditional jump	*/
+	,OP_JF		/* Jump if false (0)	*/
+	,OP_JT		/* Jump if true (1)	*/
+	,OP_CALL	/* Call a procedure	*/
+	,OP_RETURN	/* return from a proc	*/
+	,OP_RETURNF	/* return from a func	*/
 
-	,interpret_mn	/* interpret a string	*/
-	,inter_end_mn	/* end of interpret	*/
+	,OP_INTERPRET	/* interpret a string	*/
+	,OP_INTER_END	/* end of interpret	*/
 
-	,proc_mn	/* start procedure	*/
+	,OP_PROC	/* start procedure	*/
 
-	,say_mn		/* print on stdout	*/
-	,system_mn	/* execute a system command	*/
-	,exit_mn	/* normal terminate prg	*/
+	,OP_SAY		/* print on stdout	*/
+	,OP_SYSTEM	/* execute a system command	*/
+	,OP_EXIT	/* normal terminate prg	*/
 
-	,parse_mn	/* load a template to parse	*/
-	,pvar_mn	/* parse into a variable	*/
-	,pdot_mn	/* parse to a dot	*/
-	,tr_space_mn	/* trigger a space	*/
-	,tr_lit_mn	/* trigger a litteral	*/
-	,tr_abs_mn	/* trigger absolute pos	*/
-	,tr_rel_mn	/* trigger relative pos	*/
-	,tr_end_mn	/* trigger to end	*/
+	,OP_PARSE	/* load a template to parse	*/
+	,OP_PVAR	/* parse into a variable	*/
+	,OP_PDOT	/* parse to a dot	*/
+	,OP_TR_SPACE	/* trigger a space	*/
+	,OP_TR_LIT	/* trigger a litteral	*/
+	,OP_TR_ABS	/* trigger absolute pos	*/
+	,OP_TR_REL	/* trigger relative pos	*/
+	,OP_TR_END	/* trigger to end	*/
 
-	,rx_queue_mn
-	,rx_push_mn
-	,rx_pull_mn
-	,rx_external_mn
+	,OP_RX_QUEUE
+	,OP_RX_PUSH
+	,OP_RX_PULL
+	,OP_RX_EXTERNAL
 
-	,eq_mn		/* checking mnemonics	*/
-	,ne_mn
-	,gt_mn
-	,ge_mn
-	,lt_mn
-	,le_mn
-	,deq_mn
-	,dne_mn
-	,dgt_mn
-	,dge_mn
-	,dlt_mn
-	,dle_mn
+	,OP_EQ		/* checking mnemonics	*/
+	,OP_NE
+	,OP_GT
+	,OP_GE
+	,OP_LT
+	,OP_LE
+	,OP_DEQ
+	,OP_DNE
+	,OP_DGT
+	,OP_DGE
+	,OP_DLT
+	,OP_DLE
 
-	,teq_mn		/* return to tmp */
-	,tne_mn
-	,tdeq_mn
-	,tdne_mn
-	,tgt_mn	
-	,tge_mn	
-	,tlt_mn	
-	,tle_mn	
+	,OP_TEQ		/* return to tmp */
+	,OP_TNE
+	,OP_TDEQ
+	,OP_TDNE
+	,OP_TGT
+	,OP_TGE
+	,OP_TLT
+	,OP_TLE
 
-	,not_mn
-	,and_mn
-	,or_mn
-	,xor_mn
+	,OP_NOT
+	,OP_AND
+	,OP_OR
+	,OP_XOR
 
-	,concat_mn	/* concat two string	*/
-	,bconcat_mn	/* concat two strings with space	*/
+	,OP_CONCAT	/* concat two string	*/
+	,OP_BCONCAT	/* concat two strings with space	*/
 
-	,neg_mn
-	,inc_mn
-	,dec_mn
+	,OP_NEG
+	,OP_INC
+	,OP_DEC
 
-	,add_mn
-	,sub_mn
-	,mul_mn
-	,div_mn
-	,idiv_mn
-	,mod_mn
-	,pow_mn
+	,OP_ADD
+	,OP_SUB
+	,OP_MUL
+	,OP_DIV
+	,OP_IDIV
+	,OP_MOD
+	,OP_POW
 };
 
 /* ------- function prototypes ----- */
