@@ -1,44 +1,22 @@
 /*
- * $Id: datatype.c,v 1.7 2011/06/29 08:33:09 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/datatype.c,v 1.1 1998/07/02 17:17:00 bnv Exp $
  * $Log: datatype.c,v $
- * Revision 1.7  2011/06/29 08:33:09  bnv
- * char to unsigned
- *
- * Revision 1.6  2011/06/20 08:31:19  bnv
- * Corrected 'w'
- *
- * Revision 1.5  2008/07/15 07:40:54  bnv
- * #include changed from <> to ""
- *
- * Revision 1.4  2002/06/11 12:37:15  bnv
- * Added: CDECL
- *
- * Revision 1.3  2001/06/25 18:49:48  bnv
- * Header changed to Id
- *
- * Revision 1.2  1999/11/26 09:53:28  bnv
- * Changed: To use the new macros.
- *
  * Revision 1.1  1998/07/02 17:17:00  bnv
  * Initial revision
  *
  */
 
-#include <math.h>
 #include <ctype.h>
-#include "lstring.h"
+#include <lstring.h>
 
 /* --------------- Ldatatype ----------------- */
-/* returns 1 on success                        */
-/*         0 on failure                        */
-/*        -1 on error type                     */
-int __CDECL
+/* returns -1 on error type                    */
+int
 Ldatatype( const PLstr str, char type )
 {
 	Lstr	ref;
 	int	t,j,digits;
-	unsigned char	*c;
-	double	 d;
+	char	*c;
 
 	type = l2u[(byte)type];
 
@@ -58,12 +36,12 @@ Ldatatype( const PLstr str, char type )
 			break;
 		case 'B':
 			/* check blanks in allowed places */
-			if (ISSPACE(LSTR(*str)[0])) return 0;
+			if (isspace(LSTR(*str)[0])) return 0;
 			c = LSTR(*str) + (LLEN(*str)-1);
-			if (ISSPACE(*c)) return 0;
+			if (isspace(*c)) return 0;
 			digits = 0;
 			for (j=LLEN(*str); j>0; j--, c--) {
-				if (ISSPACE(*c)) {
+				if (isspace(*c)) {
 					/* Blanks need four Binary
 						Digits to the right of them */
 					if (digits%4!=0) return 0;
@@ -97,32 +75,16 @@ Ldatatype( const PLstr str, char type )
 			Lscpy(&ref,cUPPER);
 			break;
 		case 'W':
-			if (LTYPE(*str)==LSTRING_TY) {
-				LASCIIZ(*str);
-				switch (_Lisnum(str)) {
-					case LINTEGER_TY:
-						return 1;
-
-					case LREAL_TY:
-						return fabs((double)(long)lLastScannedNumber-lLastScannedNumber)<=SMALL;
-
-					default:
-						return 0;
-				}
-			} else
-			if (LTYPE(*str)==LREAL_TY)
-				return fabs((double)(int)LREAL(*str) - LREAL(*str))<=SMALL;
-			else
-				return 1;
+			Lscpy(&ref,cdigits);
 			break;
 		case 'X':
 			/* check blanks in allowed places */
-			if (ISSPACE(LSTR(*str)[0])) return 0;
+			if (isspace(LSTR(*str)[0])) return 0;
 			c = LSTR(*str) + (LLEN(*str)-1);
-			if (ISSPACE(*c)) return 0;
+			if (isspace(*c)) return 0;
 			digits = 0;
 			for (j=LLEN(*str); j>0; j--, c--) {
-				if (ISSPACE(*c)) {
+				if (isspace(*c)) {
 					/* Blanks need a pair of Hex
 						Digits to the right of them */
 					if (digits%2!=0) return 0;
@@ -132,6 +94,7 @@ Ldatatype( const PLstr str, char type )
 				}
 			}
 			return 1;
+			break;
 		default:
 			return -1;
 	}
