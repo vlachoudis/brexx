@@ -1,6 +1,9 @@
 /*
- * $Id: os.h,v 1.2 2001/06/25 18:52:04 bnv Exp $
+ * $Id: os.h,v 1.3 2002/06/06 08:22:54 bnv Exp $
  * $Log: os.h,v $
+ * Revision 1.3  2002/06/06 08:22:54  bnv
+ * Added: MKTEMP
+ *
  * Revision 1.2  2001/06/25 18:52:04  bnv
  * Header -> Id
  *
@@ -47,6 +50,12 @@
 #	define	SHELL    "SHELL"
 #	define	FILESEP  '\\'
 #	define	PATHSEP  ';'
+#	if !defined(ALIGN)
+#		error "Please define the ALIGN"
+#	endif
+#	if !defined(WIN)
+#		error "Please define the WIN"
+#	endif
 
 #elif defined(MSDOS)
 
@@ -174,12 +183,14 @@
 #	define	STRCAT		_fstrcat
 #	define	STRCHR		_fstrchr
 #	define	STRLEN		_fstrlen
+#	define	MKTEMP		mktemp
 #elif defined(HAS_STRING)
 #	define	STRCPY		strcpy
 #	define	STRCMP		strcmp
 #	define	STRCAT		strcat
 #	define	STRCHR		strchr
 #	define	STRLEN		strlen
+#	define	MKTEMP		mkstemp
 #else
 #	define	STRCPY		Bstrcpy
 #	define	STRCMP		Bstrcmp
