@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.c,v 1.6 2002/06/11 12:37:15 bnv Exp $
+ * $Id: lstring.c,v 1.7 2003/02/26 16:29:24 bnv Exp $
  * $Log: lstring.c,v $
+ * Revision 1.7  2003/02/26 16:29:24  bnv
+ * Changed: READLINE definitions
+ *
  * Revision 1.6  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -34,11 +37,14 @@
 #	include <values.h>
 #endif
 
-#ifdef USE_READLINE
-#	include <sys/stat.h>
-#	include <readline/readline.h>
-#	include <readline/history.h>
-#endif
+#ifdef HAVE_READLINE_HISTORY
+#	if defined(HAVE_READLINE_HISTORY_H)
+#		include <readline/history.h>
+#	elif defined(HAVE_HISTORY_H)
+#		include <history.h>
+#	endif
+		/* no history */
+#endif /* HAVE_READLINE_HISTORY */
 
 /* ================= Lstring routines ================== */
 
@@ -65,7 +71,7 @@ Linit( LerrorFunc Lerr)
 		u2l[ (byte)cUPPER[i] & 0xFF ] = clower [i];
 	}
 
-#ifdef USE_READLINE
+#ifdef HAVE_READLINE_HISTORY
 	using_history();
 #endif
 
