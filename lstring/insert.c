@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/insert.c,v 1.1 1998/07/02 17:18:00 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/insert.c,v 1.2 1999/11/26 12:52:25 bnv Exp $
  * $Log: insert.c,v $
+ * Revision 1.2  1999/11/26 12:52:25  bnv
+ * Space
+ *
  * Revision 1.1  1998/07/02 17:18:00  bnv
  * Initial Version
  *
@@ -11,7 +14,7 @@
 /* ------------------ Linsert ------------------- */
 void
 Linsert( const PLstr to, const PLstr newstr, const PLstr target, 
-                   long n, long length, const char pad)
+			long n, long length, const char pad)
 {
 	Lstr	tmp;
 
