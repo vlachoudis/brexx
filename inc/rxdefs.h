@@ -1,6 +1,9 @@
 /*
- * $Id: rxdefs.h,v 1.3 2001/06/25 18:52:04 bnv Exp $
+ * $Id: rxdefs.h,v 1.4 2002/06/06 08:23:36 bnv Exp $
  * $Log: rxdefs.h,v $
+ * Revision 1.4  2002/06/06 08:23:36  bnv
+ * Added: logical operations
+ *
  * Revision 1.3  2001/06/25 18:52:04  bnv
  * Header -> Id
  *
@@ -97,7 +100,9 @@ enum functions {
  f_atan2,    f_cos  ,    f_cosh ,    f_exp  ,
  f_log  ,    f_log10,    f_pow  ,    f_pow10,
  f_sin  ,    f_sinh ,    f_sign ,    f_sqrt ,
- f_tan  ,    f_tanh,
+ f_tan  ,    f_tanh ,
+
+ f_and  ,    f_or   ,    f_xor  ,    f_not  ,
 
 #ifdef _WIN32_WCE
  f_lasterror,	f_a2u,	f_u2a,
