@@ -1,6 +1,9 @@
 /*
- * $Id: address.c,v 1.8 2003/10/30 13:14:55 bnv Exp $
+ * $Id: address.c,v 1.9 2003/11/04 09:48:00 bnv Exp $
  * $Log: address.c,v $
+ * Revision 1.9  2003/11/04 09:48:00  bnv
+ * Corrected for the mkstemp
+ *
  * Revision 1.8  2003/10/30 13:14:55  bnv
  * Some corrections
  *
@@ -117,6 +120,7 @@ mkfntemp(char *fn, size_t length)
 	int	l;
 	char	*c;
 
+
 	fn[0] = '\0'; c = getenv("TEMP");
 	if (c) STRCPY(fn,c);
 	l = STRLEN(fn);
@@ -165,7 +169,6 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr outputstr)
 		old_stdout = dup(LOW_STDOUT);
 		fileout = open(fnout,O_WRONLY|O_CREAT,0600);
 		dup2(fileout,LOW_STDOUT);
-//fprintf(stderr,"name=%s fileout=%d old_stdout=%d\n",fnout,fileout,old_stdout);
 		close(fileout);
 	}
 
