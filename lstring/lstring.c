@@ -1,6 +1,12 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/lstring.c,v 1.2 1999/05/14 13:11:47 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/lstring.c,v 1.3 1999/11/26 12:52:25 bnv Exp $
  * $Log: lstring.c,v $
+ * Revision 1.3  1999/11/26 12:52:25  bnv
+ * Added: Windows CE support
+ * Added: Lwscpy, for unicode string copy
+ * Changed: _Lisnum, it creates immediately a double number contained in
+ * the string, for faster access. The value is hold in lLastScannedNumber
+ *
  * Revision 1.2  1999/05/14 13:11:47  bnv
  * Minor changes
  *
@@ -11,14 +17,13 @@
 
 #define __LSTRING_C__
 
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
+#include <math.h>
 #include <lerror.h>
 #include <lstring.h>
 
+#ifndef WIN
+#	include <values.h>
+#endif
 /* ================= Lstring routines ================== */
 
 /* -------------------- Linit ---------------- */
@@ -28,10 +33,14 @@ Linit( LerrorFunc Lerr)
 	size_t	i;
 
 	/* setup error function */
+#ifndef WCE
 	if (Lerr)
 		Lerror = Lerr;
 	else
 		Lerror = Lstderr;
+#else
+	Lerror = Lerr;
+#endif
 
 	/* setup upper */
 	for (i=0; i<256; i++)  u2l[i] = l2u[i] = i;
@@ -62,12 +71,21 @@ Lfx( const PLstr s, const size_t len )
 		LLEN(*s) = 0;
 		LMAXLEN(*s) = max;
 		LTYPE(*s) = LSTRING_TY;
+#ifdef USEOPTION
 		LOPT(*s) = 0;
+#endif
 	} else
+#ifdef USEOPTION
 	if (!LOPTION(*s,LOPTFIX) && LMAXLEN(*s)<len) {
 		LSTR(*s) = (char *) REALLOC( LSTR(*s), (max=LNORMALISE(len))+LEXTRA);
 		LMAXLEN(*s) = max;
 	}
+#else
+	if (LMAXLEN(*s)<len) {
+		LSTR(*s) = (char *) REALLOC( LSTR(*s), (max=LNORMALISE(len))+LEXTRA);
+		LMAXLEN(*s) = max;
+	}
+#endif
 } /* Lfx */
 
 /* ---------------- Licpy ------------------ */
@@ -94,16 +112,33 @@ Lscpy( const PLstr to, const char *from )
 {
 	size_t	len;
 
-	if (!from) {
+	if (!from)
 		Lfx(to,len=0);
-		LLEN(*to) = 0;
-	} else {
+	else {
 		Lfx(to,len = STRLEN(from));
 		MEMCPY( LSTR(*to), from, len );
 	}
 	LLEN(*to) = len;
 	LTYPE(*to) = LSTRING_TY;
 } /* Lscpy */
+
+#ifdef WCE
+/* ---------------- Lwscpy ------------------ */
+void
+Lwscpy(const PLstr to, const wchar_t *from )
+{
+	size_t	len;
+
+	if (!from)
+		Lfx(to,len=0);
+	else {
+		Lfx(to,len = wcslen(from));
+		wcstombs(LSTR(*to), from ,len );
+	}
+	LLEN(*to) = len;
+	LTYPE(*to) = LSTRING_TY;
+} /* Lwscpy */
+#endif
 
 /* ---------------- Lcat ------------------- */
 void
@@ -276,7 +311,7 @@ _Lsubstr( const PLstr to, const PLstr from, size_t start, size_t length )
 /* ------------------------ _Lisnum ----------------------- */
 /* _Lisnum      - returns if it is possible to convert      */
 /*               a LSTRING to NUMBER                        */
-/*               and a LREAL to LINTEGER                    */
+/*               a LREAL_TY or LINTEGER_TY                  */
 /* There is one possibility that is missing...              */
 /* that is to hold an integer number as a real in a string. */
 /* ie.   '  2.0 '  this should be LINTEGER not LREAL        */
@@ -287,13 +322,22 @@ _Lisnum( const PLstr s )
 	bool	F, R;
 	register char	*ch;
 
+	int	sign;
+	int	exponent;
+	int	expsign;
+	int	fractionDigits;
+
+	lLastScannedNumber = 0.0;
+
 /* ---
+#ifdef USEOPTION
 	if (LOPT(*s) & (LOPTINT | LOPTREAL)) {
 		if (LOPT(*s) & LOPTINT)
 			return LINTEGER_TY;
 		else
 			return LREAL_TY;
 	}
+#endif
 --- */
 
 	ch = LSTR(*s);
@@ -302,20 +346,37 @@ _Lisnum( const PLstr s )
 				///// before all the calls to Lisnum */
 
 	/* skip leading spaces */
-	while (isspace(*ch)) ch++;
+	while (ISSPACE(*ch)) ch++;
 
 	/* accept one sign */
-	if (*ch=='-' || *ch=='+') ch++;
+	if (*ch=='-') {
+		sign = TRUE;
+		ch++;
+	} else {
+		sign=FALSE;
+		if (*ch=='+')
+			ch++;
+	}
 
 	/* skip following spaces after sign */
-	while (isspace(*ch)) ch++;
+	while (ISSPACE(*ch)) ch++;
 
 	/* accept many digits */
 	R = FALSE;
+
+	lLastScannedNumber = 0.0;
+	fractionDigits=0;
+	exponent=0;
+	expsign=FALSE;
+
 	if (IN_RANGE('0',*ch,'9')) {
+		lLastScannedNumber = lLastScannedNumber*10.0 + (*ch-'0');
 		ch++;
 		F = TRUE;
-		while (IN_RANGE('0',*ch,'9')) ch++;
+		while (IN_RANGE('0',*ch,'9')) {
+			lLastScannedNumber = lLastScannedNumber*10.0 + (*ch-'0');
+			ch++;
+		}
 		if (!*ch) goto isnumber;
 	} else
 		F = FALSE;
@@ -327,8 +388,14 @@ _Lisnum( const PLstr s )
 
 		/* accept many digits */
 		if (IN_RANGE('0',*ch,'9')) {
+			lLastScannedNumber = lLastScannedNumber*10.0 + (*ch-'0');
+			fractionDigits++;
 			ch++;
-			while (IN_RANGE('0',*ch,'9')) ch++;
+			while (IN_RANGE('0',*ch,'9')) {
+				lLastScannedNumber = lLastScannedNumber*10.0 + (*ch-'0');
+				fractionDigits++;
+				ch++;
+			}
 		} else
 			if (!F) return LSTRING_TY;
 
@@ -342,26 +409,52 @@ _Lisnum( const PLstr s )
 		ch++;
 		R = TRUE;
 		/* accept one sign */
-		if (*ch=='-' || *ch=='+') ch++;
+		if (*ch=='-') {
+			expsign = TRUE;
+			ch++;
+		} else
+		if (*ch=='+')
+			ch++;
+
 		/* accept many digits */
 		if (IN_RANGE('0',*ch,'9')) {
+			exponent = exponent*10+(*ch-'0');
 			ch++;
-			while (IN_RANGE('0',*ch,'9')) ch++;
+			while (IN_RANGE('0',*ch,'9')) {
+				exponent = exponent*10+(*ch-'0');
+				ch++;
+			}
 		} else
 			return LSTRING_TY;
 	}
 
 	/* accept many blanks */
-	while (isspace(*ch)) ch++;
+	while (ISSPACE(*ch)) ch++;
 
 	/* is it end of string */
 	if (*ch) return LSTRING_TY;
 
 isnumber:
-	if (R)
-		return LREAL_TY;
-	else
-		return LINTEGER_TY;
+	if (expsign) exponent = -exponent;
+
+	exponent -= fractionDigits;
+
+	if (exponent)
+#ifdef __BORLAND_C__
+		lLastScannedNumber *= pow10(exponent);
+#else
+		lLastScannedNumber *= pow(10.0,(double)exponent);
+#endif
+
+	if (lLastScannedNumber>MAXLONG)
+		R = TRUE;	/* Treat it as real number */
+
+	if (sign)
+		lLastScannedNumber = -lLastScannedNumber;
+
+	if (R) return LREAL_TY;
+
+	return LINTEGER_TY;
 } /* _Lisnum */
 
 /* ------------------ L2str ------------------- */
@@ -369,11 +462,25 @@ void
 L2str( const PLstr s )
 {
 	if (LTYPE(*s)==LINTEGER_TY) {
+#if defined(WCE) || defined(__BORLANDC__)
+		LTOA(LINT(*s),LSTR(*s),10);
+#else
 		sprintf(LSTR(*s), "%ld", LINT(*s));
+#endif
 		LLEN(*s) = STRLEN(LSTR(*s));
 	} else {	/* LREAL_TY */
-		sprintf(LSTR(*s), formatStringToReal, LREAL(*s));
+/*////		sprintf(LSTR(*s), lFormatStringToReal, LREAL(*s)); */
+		GCVT(LREAL(*s),lNumericDigits,LSTR(*s));
+#ifdef WCE
+		{
+			/* --- remove the last dot from the number --- */
+			size_t	len = STRLEN(LSTR(*s));
+			if (LSTR(*s)[len-1] == '.') len--;
+			LLEN(*s) = len;
+		}
+#else
 		LLEN(*s) = STRLEN(LSTR(*s));
+#endif
 	}
 	LTYPE(*s) = LSTRING_TY;
 } /* L2str */
@@ -391,11 +498,13 @@ L2int( const PLstr s )
 		LASCIIZ(*s);
 		switch (_Lisnum(s)) {
 			case LINTEGER_TY:
-				LINT(*s) = atol( LSTR(*s) );
+				/*///LINT(*s) = atol( LSTR(*s) ); */
+				LINT(*s) = (long)lLastScannedNumber;
 				break;
 
 			case LREAL_TY:
-				LREAL(*s) = strtod( LSTR(*s), NULL );
+				/*///LREAL(*s) = strtod( LSTR(*s), NULL ); */
+				LREAL(*s) = lLastScannedNumber;
 				if ((double)((long)LREAL(*s)) == LREAL(*s))
 					LINT(*s) = (long)LREAL(*s);
 				else
@@ -419,7 +528,8 @@ L2real( const PLstr s )
 	else { /* LSTRING_TY */
 		LASCIIZ(*s);
 		if (_Lisnum(s)!=LSTRING_TY)
-			LREAL(*s) = strtod( LSTR(*s), NULL );
+			/*/////LREAL(*s) = strtod( LSTR(*s), NULL ); */
+			LREAL(*s) = lLastScannedNumber;
 		else
 			Lerror(ERR_BAD_ARITHMETIC,0);
 	}
@@ -436,13 +546,15 @@ _L2num( const PLstr s, const int type )
 	LASCIIZ(*s);
 	switch (type) {
 		case LINTEGER_TY:
-			LINT(*s) = atol( LSTR(*s) );
+			/*////LINT(*s) = atol( LSTR(*s) ); */
+			LINT(*s) = (long)lLastScannedNumber;
 			LTYPE(*s) = LINTEGER_TY;
 			LLEN(*s) = sizeof(long);
 			break;
 
 		case LREAL_TY:
-			LREAL(*s) = strtod( LSTR(*s), NULL );
+			/*////LREAL(*s) = strtod( LSTR(*s), NULL ); */
+			LREAL(*s) = lLastScannedNumber;
 			if ((double)((long)LREAL(*s)) == LREAL(*s)) {
 				LINT(*s) = (long)LREAL(*s);
 				LTYPE(*s) = LINTEGER_TY;
@@ -461,17 +573,17 @@ _L2num( const PLstr s, const int type )
 void
 L2num( const PLstr s )
 {
-	LASCIIZ(*s);
-
 	switch (_Lisnum(s)) {
 		case LINTEGER_TY:
-			LINT(*s) = atol( LSTR(*s) );
+			/*//LINT(*s) = atol( LSTR(*s) ); */
+			LINT(*s) = (long)lLastScannedNumber;
 			LTYPE(*s) = LINTEGER_TY;
 			LLEN(*s) = sizeof(long);
 			break;
 
 		case LREAL_TY:
-			LREAL(*s) = strtod( LSTR(*s), NULL );
+			/*///LREAL(*s) = strtod( LSTR(*s), NULL ); */
+			LREAL(*s) = lLastScannedNumber;
 /*
 //// Numbers like 2.0 should be treated as real and not as integer
 //// because in cases like factorial while give an error result
@@ -497,8 +609,6 @@ L2num( const PLstr s )
 long
 Lrdint( const PLstr s )
 {
-	double	d;
-
 	if (LTYPE(*s)==LINTEGER_TY) return LINT(*s);
 
 	if (LTYPE(*s)==LREAL_TY) {
@@ -510,12 +620,15 @@ Lrdint( const PLstr s )
 		LASCIIZ(*s);
 		switch (_Lisnum(s)) {
 			case LINTEGER_TY:
-				return atol( LSTR(*s) );
+				/*///return atol( LSTR(*s) ); */
+				return (long)lLastScannedNumber;
 
 			case LREAL_TY:
-				d = strtod( LSTR(*s), NULL );
-				if ((double)((long)d) == d)
-					return (long)d;
+				/*///d = strtod( LSTR(*s), NULL );
+				//////if ((double)((long)d) == d)
+				//////	return (long)d; */
+				if ((double)((long)lLastScannedNumber) == lLastScannedNumber)
+					return (long)lLastScannedNumber;
 				else
 					Lerror(ERR_INVALID_INTEGER,0);
 				break;
@@ -538,7 +651,8 @@ Lrdreal( const PLstr s )
 	else { /* LSTRING_TY */
 		LASCIIZ(*s);
 		if (_Lisnum(s)!=LSTRING_TY)
-			return strtod( LSTR(*s), NULL );
+			/*///// return strtod( LSTR(*s), NULL ); */
+			return lLastScannedNumber;
 		else
 			Lerror(ERR_BAD_ARITHMETIC,0);
 	}
