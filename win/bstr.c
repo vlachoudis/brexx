@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/win/RCS/bstr.c,v 1.1 1999/09/13 15:06:41 bnv Exp $
+ * $Id: bstr.c,v 1.2 2001/06/25 18:52:24 bnv Exp $
  * $Log: bstr.c,v $
+ * Revision 1.2  2001/06/25 18:52:24  bnv
+ * Header -> Id
+ *
  * Revision 1.1  1999/09/13 15:06:41  bnv
  * Initial revision
  *

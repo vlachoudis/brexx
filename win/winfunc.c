@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/win/RCS/winfunc.c,v 1.2 1999/11/26 13:22:36 bnv Exp $
+ * $Id: winfunc.c,v 1.3 2001/06/25 18:52:24 bnv Exp $
  * $Log: winfunc.c,v $
+ * Revision 1.3  2001/06/25 18:52:24  bnv
+ * Header -> Id
+ *
  * Revision 1.2  1999/11/26 13:22:36  bnv
  * Added: The routine CE_GetRegData
  *

@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/win/RCS/winio.c,v 1.2 1999/11/26 13:22:36 bnv Exp $
+ * $Id: winio.c,v 1.3 2001/06/25 18:52:24 bnv Exp $
  * $Log: winio.c,v $
+ * Revision 1.3  2001/06/25 18:52:24  bnv
+ * Header -> Id
+ *
  * Revision 1.2  1999/11/26 13:22:36  bnv
  * Changed: The marking mechanism to avoid flickering.
  *
@@ -645,6 +648,7 @@ WindowScroll(int Action, int Thumb)
 			Y = Range.y;
 			break;
 		case SB_THUMBPOSITION:
+		case SB_THUMBTRACK:
 			Y = Thumb;
 			break;
 		default:
@@ -773,6 +777,38 @@ _WinIOProc(HWND Window, UINT Message, WPARAM WParam, LONG LParam)
 			/* A little tricky find one word to mark */
 			//break;
 		case WM_KEYDOWN:
+			if (GetAsyncKeyState(VK_SHIFT)) {
+				//TCHAR	buf[100];
+				//wsprintf(buf,_T("Key=%d\n"),WParam);
+				//WWriteBuf(buf,wcslen(buf));
+				switch (WParam) {
+					case 33:
+						WindowScroll(SB_PAGEUP,1);
+						break;
+					case 34:
+						WindowScroll(SB_PAGEDOWN,1);
+						break;
+					//case 35:
+					//	WindowScroll(SB_PAGERIGHT,1);
+					//	break;
+					//case 36:
+					//	WindowScroll(SB_PAGELEFT,1);
+					//	break;
+
+					//case 37:
+					//	WindowScroll(SB_LINELEFT,1);
+					//	break;
+					case 38:
+						WindowScroll(SB_LINEUP,1);
+						break;
+					//case 39:
+					//	WindowScroll(SB_LINERIGHT,1);
+					//	break;
+					case 40:
+						WindowScroll(SB_LINEDOWN,1);
+						break;
+				}
+			} else
 			if (IN_RANGE(33,(BYTE)WParam,46)) {
 				AddKey(0);
 				AddKey((BYTE)WParam);
