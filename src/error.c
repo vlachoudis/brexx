@@ -1,6 +1,9 @@
 /*
- * $Id: error.c,v 1.6 2003/10/30 13:16:28 bnv Exp $
+ * $Id: error.c,v 1.7 2004/04/30 15:29:44 bnv Exp $
  * $Log: error.c,v $
+ * Revision 1.7  2004/04/30 15:29:44  bnv
+ * const removed
+ *
  * Revision 1.6  2003/10/30 13:16:28  bnv
  * Variable name change
  *
@@ -84,7 +87,7 @@ RxSignalCondition( int cnd )
 
 /* ------------------ Rerror ------------------- */
 void __CDECL
-Rerror( int errno, int subno, ... ) 
+Rerror( const int errno, const int subno, ... )
 {
 	int	line;
 	RxFile	*rxf;
