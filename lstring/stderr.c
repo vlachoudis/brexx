@@ -1,6 +1,9 @@
 /*
- * $Id: stderr.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
+ * $Id: stderr.c,v 1.5 2004/08/16 15:26:30 bnv Exp $
  * $Log: stderr.c,v $
+ * Revision 1.5  2004/08/16 15:26:30  bnv
+ * Spaces
+ *
  * Revision 1.4  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -22,7 +25,7 @@
 #endif
 /* ------------------ Lstderr ------------------- */
 void __CDECL
-Lstderr( const int errno, const int subno, ... ) 
+Lstderr( const int errno, const int subno, ... )
 {
 	Lstr	errmsg;
 	va_list	ap;
@@ -39,7 +42,7 @@ Lstderr( const int errno, const int subno, ... )
 		LASCIIZ(errmsg);
 		if (subno==0)
 			fprintf(STDERR,"Error %d: %s\n",errno,LSTR(errmsg));
-		else 
+		else
 			fprintf(STDERR,"Error %d.%d: %s\n",errno,subno,LSTR(errmsg));
 	}
 
