@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/rexx.h,v 1.1 1998/07/02 17:35:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/rexx.h,v 1.2 1999/03/10 16:58:05 bnv Exp $
  * $Log: rexx.h,v $
+ * Revision 1.2  1999/03/10 16:58:05  bnv
+ * New release 2.0
+ *
  * Revision 1.1  1998/07/02 17:35:50  bnv
  * Initial revision
  *
@@ -48,7 +51,7 @@
 #endif
 
 /* ------------ some defines ------------------ */
-#define	VERSION		"REXX_BNV R2.0b " ## __DATE__
+#define	VERSION		"REXX_BNV R2.0 " ## __DATE__
 #define	AUTHOR		"Vassilis N. Vlachoudis <V.Vlachoudis@cern.ch>"
 #define	SCIENTIFIC	0
 #define ENGINEERING	1
