@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.h,v 1.10 2003/02/26 16:31:22 bnv Exp $
+ * $Id: lstring.h,v 1.11 2004/03/27 08:35:51 bnv Exp $
  * $Log: lstring.h,v $
+ * Revision 1.11  2004/03/27 08:35:51  bnv
+ * Changed: Max Numeric digits for numbers on unix
+ *
  * Revision 1.10  2003/02/26 16:31:22  bnv
  * Added: LMKCONST
  *
@@ -174,13 +177,18 @@ typedef Lstr	*PLstr;
 #define LREADINCSIZE	32
 #define LREADLINE	0
 #define LREADFILE	-1
-#define	LMAXNUMERICDIGITS	14
+//#define	LMAXNUMERICDIGITS	14
+#define	LMAXNUMERICDIGITS	30
 
 /* --- for interal use of lstring --- */
 /* With some extra chars */
 /* it must have enough space to allow transformation from */
 /* int or real to string without resizing */
-#define LNORMALISE(size)	((size) | 0x000F)
+#if LMAXNUMERICDIGITS<16
+#	define LNORMALISE(size)	((size) | 0x000F)
+#else
+#	define LNORMALISE(size)	((size) | 0x001F)
+#endif
 #define LEXTRA	1
 
 #ifdef __cplusplus
@@ -370,9 +378,6 @@ DECLMATH( tanh );
 		*crxsymb = "@#$_.?!";
 
 	double	lLastScannedNumber=0.0;
-#ifndef WIN
-	char	lFormatStringToReal[10] = "%.8lG";
-#endif
 	int	lNumericDigits = LMAXNUMERICDIGITS;
 	/* int  form */
 	byte l2u[256], u2l[256];
@@ -385,9 +390,6 @@ DECLMATH( tanh );
 		*chex,
 		*crxsymb;
 	extern double	lLastScannedNumber;
-#ifndef WIN
-	extern char lFormatStringToReal[];
-#endif
 	extern int  lNumericDigits;
 	extern byte l2u[], u2l[];
 	extern LerrorFunc Lerror;
