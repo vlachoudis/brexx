@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/time.c,v 1.2 1998/11/06 08:57:08 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/time.c,v 1.3 1999/03/01 11:06:33 bnv Exp $
  * $Log: time.c,v $
+ * Revision 1.3  1999/03/01 11:06:33  bnv
+ * Change in the format to long int for tv.tv_usec just to keep compiler happy
+ *
  * Revision 1.2  1998/11/06 08:57:08  bnv
  * Added: in the includes the time.h and sys/time.h
  *
@@ -103,7 +106,7 @@ Ltime( const PLstr timestr, char option )
 				t.ti_hour, t.ti_min, t.ti_sec, t.ti_hund);
 #else
 			gettimeofday(&tv,&tz);
-			sprintf(LSTR(*timestr), "%02d:%02d:%02d.%06d",
+			sprintf(LSTR(*timestr), "%02d:%02d:%02d.%06ld",
 				tmdata->tm_hour, tmdata->tm_min,
 				tmdata->tm_sec, tv.tv_usec) ;
 #endif
