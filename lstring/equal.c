@@ -1,6 +1,11 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/equal.c,v 1.2 1998/11/10 13:36:14 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/equal.c,v 1.3 1999/11/26 09:56:55 bnv Exp $
  * $Log: equal.c,v $
+ * Revision 1.3  1999/11/26 09:56:55  bnv
+ * Changed: To use the new macros.
+ * Changed: From char* to byte* comparison, to avoid signed char problems.
+ * Changed: To use the lLastScannedNumber
+ *
  * Revision 1.2  1998/11/10 13:36:14  bnv
  * Comparison for reals is done with fabs(a-b)<smallnumber
  *
@@ -19,38 +24,35 @@ int
 Lequal(const PLstr A, const PLstr B)
 {
 	int	ta, tb;
-	char	*a, *b;		/* start position in string */
-	char	*ae, *be;	/* ending position in string */
+	byte	*a, *b;		/* start position in string */
+	byte	*ae, *be;	/* ending position in string */
 	double	ra, rb;
 
-	if (LTYPE(*A)==LSTRING_TY)
+	if (LTYPE(*A)==LSTRING_TY) {
 		ta = _Lisnum(A);
-	else
-		ta = LTYPE(*A);
 
-	/* check to see if the first argument is string? */
-	if (ta == LSTRING_TY) {
-		L2STR(B);	/* make string and the second	*/
-		goto eq_str;	/* go and check strings		*/
+		/* check to see if the first argument is string? */
+		if (ta == LSTRING_TY) {
+			L2STR(B);	/* make string and the second	*/
+			goto eq_str;	/* go and check strings		*/
+		}
+
+		ra = lLastScannedNumber;
+	} else {
+		ta = LTYPE(*A);
+		ra = TOREAL(*A);
 	}
 
-	if (LTYPE(*B)==LSTRING_TY)
+	if (LTYPE(*B)==LSTRING_TY) {
 		tb = _Lisnum(B);
-	else
+		rb = lLastScannedNumber;
+	} else {
 		tb = LTYPE(*B);
+		rb = TOREAL(*B);
+	}
 
 	/* is B also a number */
 	if (tb != LSTRING_TY) {
-		if (LTYPE(*A) == LSTRING_TY)
-			ra = strtod(LSTR(*A),NULL);
-		else
-			ra = TOREAL(*A);
-
-		if (LTYPE(*B) == LSTRING_TY)
-			rb = strtod(LSTR(*B),NULL);
-		else
-			rb = TOREAL(*B);
-
 		if (fabs(ra-rb)<=1E-14)
 			return 0;
 		else
@@ -63,18 +65,18 @@ Lequal(const PLstr A, const PLstr B)
 	/* nope it was a string */
 	L2STR(A);		/* convert A string */
 eq_str:
-	a = LSTR(*A);
+	a = (byte*)LSTR(*A);
 	ae = a + LLEN(*A);
-	for(; (a<ae) && isspace(*a); a++) ;
+	for(; (a<ae) && ISSPACE(*a); a++) ;
 
-	b = LSTR(*B);
+	b = (byte*)LSTR(*B);
 	be = b + LLEN(*B);
-	for(; (b<be) && isspace(*b); b++) ;
+	for(; (b<be) && ISSPACE(*b); b++) ;
 
 	for(;(a<ae) && (b<be) && (*a==*b); a++,b++) ;
-               
-	for(; (a<ae) && isspace(*a);a++) ;
-	for(; (b<be) && isspace(*b);b++) ;
+
+	for(; (a<ae) && ISSPACE(*a);a++) ;
+	for(; (b<be) && ISSPACE(*b);b++) ;
 
 	if (a==ae && b==be)
 		return 0;
