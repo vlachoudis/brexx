@@ -1,6 +1,12 @@
 /*
- * $Id: bio.c,v 1.6 2003/02/26 16:30:00 bnv Exp $
+ * $Id: bio.c,v 1.7 2004/08/16 15:33:58 bnv Exp $
  * $Log: bio.c,v $
+ * Revision 1.7  2004/08/16 15:33:58  bnv
+ * Corrected: Append
+ *
+ * Revision 1.7  2003/10/30 13:17:47  bnv
+ * Cosmetics
+ *
  * Revision 1.6  2003/02/26 16:30:00  bnv
  * Export of the CrtWindow
  *
@@ -49,7 +55,7 @@ Bfopen( const char *filename, const char *mode )
 	char	*ch;
 
 	/* scan mode string to find options */
-	for (ch=(const char *)mode; *ch; ch++) {
+	for (ch=(char *)mode; *ch; ch++) {
 		switch (*ch) {
 			case 'r':
 				bitmode |= BIO_READ;
@@ -61,8 +67,11 @@ Bfopen( const char *filename, const char *mode )
 				textmode = 0;
 				bitmode |= BIO_BINARY;
 				break;
+			case 'a':
+				bitmode |= (BIO_READ|BIO_WRITE|BIO_APPEND);
+				break;
 			case '+':
-				bitmode |= BIO_APPEND;
+				bitmode |= (BIO_READ|BIO_WRITE);
 				break;
 			case 'u':
 				bitmode |= BIO_UNICODE;
@@ -93,7 +102,7 @@ Bfopen( const char *filename, const char *mode )
 	if (wch != NULL) {
 		wch++;
 		wcscpy(options,wch);
-		*wch = (TCHAR)0;	
+		*wch = (TCHAR)0;
 	} else
 		options[0] = (TCHAR)0;
 
@@ -103,7 +112,7 @@ Bfopen( const char *filename, const char *mode )
 				OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
 	} else
 	if (bitmode & BIO_READ) {
-		hnd = CreateFile(path, 
+		hnd = CreateFile(path,
 				GENERIC_READ, FILE_SHARE_READ, NULL,
 				OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
 	} else
@@ -173,6 +182,9 @@ Bfopen( const char *filename, const char *mode )
 	f = (BFILE*)malloc(sizeof(BFILE));
 	f->handle = hnd;
 	f->mode = bitmode;
+
+	if (bitmode & BIO_APPEND)
+		Bfseek(f,0,SEEK_END);
 	return f;
 } /* Bfopen */
 
@@ -355,8 +367,26 @@ Bputch( char ch )
 void __CDECL
 Bputs( const char *str )
 {
-	while (*str)
-		Bputch(*str++);
+#define BUFFER_LEN	132
+	TCHAR	buffer[BUFFER_LEN];
+	LPTSTR	ch;
+	int	count;
+
+	ch = buffer;
+	count = 0;
+	while (*str) {
+		*ch++ = *str++;
+		if (++count == BUFFER_LEN-1) {
+			*ch=_T('\0');
+			WWriteBuf(buffer,count);
+			ch = buffer;
+			count = 0;
+		}
+	}
+	if (count != 0) {
+		*ch=_T('\0');
+		WWriteBuf(buffer,count);
+	}
 } /* Bputs */
 
 /* ------ Write a number ----- */
