@@ -1,6 +1,9 @@
 /*
- * $Id: address.c,v 1.5 2001/11/29 13:12:52 bnv Exp $
+ * $Id: address.c,v 1.6 2002/06/06 08:23:46 bnv Exp $
  * $Log: address.c,v $
+ * Revision 1.6  2002/06/06 08:23:46  bnv
+ * Changed: mkstemp to MKTEMP
+ *
  * Revision 1.5  2001/11/29 13:12:52  bnv
  * Corrected: The error handling when trace is off
  *
@@ -124,7 +127,7 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr)
 				fnin[l+1] = '\0';
 			}
 		STRCAT(fnin,"OXXXXXX");
-		mkstemp(fnin);
+		MKTEMP(fnin);
 
 		if ((f=fopen(fnin,"w"))!=NULL) {
 			while (StackQueued()>0) {
@@ -154,7 +157,7 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr)
 				fnout[l+1] = '\0';
 			}
 		STRCAT(fnout,"OXXXXXX");
-		mkstemp(fnout);
+		MKTEMP(fnout);
 		old_stdout = dup(LOW_STDOUT);
 		fileout = creat(fnout,S_IWRITE);
 		dup2(fileout,LOW_STDOUT);
