@@ -1,6 +1,9 @@
 /*
- * $Id: os.h,v 1.4 2002/06/11 12:37:56 bnv Exp $
+ * $Id: os.h,v 1.5 2002/08/22 12:30:34 bnv Exp $
  * $Log: os.h,v $
+ * Revision 1.5  2002/08/22 12:30:34  bnv
+ * Added: UNIX define
+ *
  * Revision 1.4  2002/06/11 12:37:56  bnv
  * Added: CDECL
  *
@@ -86,6 +89,8 @@
 #	define	HAS_XTOY
 
 #else
+
+#	define	UNIX	1
 
 #	define	OS       "UNIX"
 #	define	SHELL    "SHELL"
