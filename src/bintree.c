@@ -1,6 +1,9 @@
 /*
- * $Id: bintree.c,v 1.6 2003/10/30 13:15:12 bnv Exp $
+ * $Id: bintree.c,v 1.7 2004/04/30 15:24:38 bnv Exp $
  * $Log: bintree.c,v $
+ * Revision 1.7  2004/04/30 15:24:38  bnv
+ * Added: include file os.h
+ *
  * Revision 1.6  2003/10/30 13:15:12  bnv
  * default removed
  *
@@ -27,7 +30,7 @@
  * Very general purpose routines for binary tree implemetation.
  * Each leaf contains a (PLstr)key with the name of the leaf
  * and a (void*)value which contains the value of the leaf.
- * 
+ *
  * The searching is done with the key's checked with _Lstrcmp
  * that means that an INTEGER or a REAL is stored according
  * to its binary representation in memory.
@@ -36,6 +39,7 @@
  * and the value.
  */
 
+#include <os.h>
 #include <bmem.h>
 #ifndef WCE
 #	include <stdio.h>
