@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/space.c,v 1.1 1998/07/02 17:18:00 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/space.c,v 1.2 1998/11/06 08:55:18 bnv Exp $
  * $Log: space.c,v $
+ * Revision 1.2  1998/11/06 08:55:18  bnv
+ * Corrected: When type != string
+ *
  * Revision 1.1  1998/07/02 17:18:00  bnv
  * Initial Version
  *
@@ -15,7 +18,10 @@ Lspace( const PLstr to, const PLstr from, long n, const char pad )
 	size_t	p,lp;
 	Lstr	space, sub;
 
-	if (LTYPE(*from) != LSTRING_TY) return;
+	if (LTYPE(*from) != LSTRING_TY) {
+		Lstrcpy(to,from);
+		return;
+	}
 
 	LINITSTR(space);
 	LINITSTR(sub);
