@@ -1,6 +1,11 @@
 /*
- * $Id: winio.h,v 1.3 2002/06/11 12:37:56 bnv Exp $
+ * $Id: winio.h,v 1.4 2004/08/16 15:33:11 bnv Exp $
  * $Log: winio.h,v $
+ * Revision 1.4  2004/08/16 15:33:11  bnv
+ * Added: Colors, Scrollbars, new windows functions
+ * Corrected: Scrolling behaviour
+ * Corrected: Menus
+ *
  * Revision 1.3  2002/06/11 12:37:56  bnv
  * Added: CDECL
  *
@@ -29,13 +34,19 @@ void	__CDECL WClreol(void);
 
 void	__CDECL WSignal(int sig, void (__CDECL *func)(int));
 
-void	__CDECL WWriteBuf(LPTSTR Buffer, WORD Count);
+void	__CDECL WWriteBuf(LPTSTR Buffer, int Count);
 void	__CDECL WWriteChar(TCHAR Ch);
 BOOL	__CDECL WKeyPressed(void);
 int	__CDECL WReadKey(void);
-WORD	__CDECL WReadBuf(char *Buffer, WORD Count);
+long	__CDECL WMessage(UINT msg, WPARAM wParam, LONG lParam);
+void	__CDECL WSetColor(BYTE);
+BYTE	__CDECL	WGetColor(void);
+int	__CDECL	WGetFontSize(void);
+void	__CDECL WSetFontSize(int);
+void	__CDECL	WSetScrollBars(BOOL show);
+BOOL	__CDECL	WGetScrollBars(void);
 
-void	__CDECL WInitWinIO(HINSTANCE,HINSTANCE,int);
+int	__CDECL WInitWinIO(HINSTANCE,HINSTANCE,int);
 void	__CDECL WExitWinIO(void);
 
 #endif
