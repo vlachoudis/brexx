@@ -1,6 +1,9 @@
 /*
- * $Id: rxfiles.c,v 1.10 2004/04/30 15:29:14 bnv Exp $
+ * $Id: rxfiles.c,v 1.11 2004/08/16 15:29:21 bnv Exp $
  * $Log: rxfiles.c,v $
+ * Revision 1.11  2004/08/16 15:29:21  bnv
+ * Spaces
+ *
  * Revision 1.10  2004/04/30 15:29:14  bnv
  * Spaces...
  *
@@ -552,7 +555,7 @@ R_read( )
 	if (i==-1) i = open_file(ARG1,"r");
 	if (i==-1)
 		Lerror(ERR_CANT_OPEN_FILE,0);
-	
+
 	if (exist(2)) {
 		/* search to see if it is a number */
 		if ((LTYPE(*ARG2)==LSTRING_TY) && (_Lisnum(ARG2) == LINTEGER_TY))
@@ -563,7 +566,7 @@ R_read( )
 		else
 		if (LTYPE(*ARG2) == LREAL_TY)
 			l = Lrdint(ARG2);
-		else 
+		else
 		if (LTYPE(*ARG2) == LSTRING_TY) {
 			switch (l2u[(byte)LSTR(*ARG2)[0]]) {
 				case 'F':
