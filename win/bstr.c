@@ -1,6 +1,9 @@
 /*
- * $Id: bstr.c,v 1.2 2001/06/25 18:52:24 bnv Exp $
+ * $Id: bstr.c,v 1.3 2002/06/11 12:38:06 bnv Exp $
  * $Log: bstr.c,v $
+ * Revision 1.3  2002/06/11 12:38:06  bnv
+ * Added: CDECL
+ *
  * Revision 1.2  2001/06/25 18:52:24  bnv
  * Header -> Id
  *
@@ -58,7 +61,7 @@ char	_Bctype[] = {
 };
 
 /* ------------- Bstrcpy ------------- */
-char*
+char* __CDECL
 Bstrcpy(char *dest, const char *src)
 {
 	register char	*d=dest;
@@ -68,7 +71,7 @@ Bstrcpy(char *dest, const char *src)
 } /* Bstrcpy */
 
 /* ------------- Bstrlen ------------- */
-unsigned
+unsigned __CDECL
 Bstrlen(const char *s)
 {
 	register unsigned	len=0;
@@ -78,7 +81,7 @@ Bstrlen(const char *s)
 } /* Bstrlen */
 
 /* ------------- Bstrcmp ------------- */
-int
+int __CDECL
 Bstrcmp(const char *s1, const char *s2)
 {
 	register const char	*a=s1;
@@ -97,7 +100,7 @@ Bstrcmp(const char *s1, const char *s2)
 } /* Bstrcmp */
 
 /* ------------- Bstrcat ------------- */
-char*
+char* __CDECL
 Bstrcat(char *dest, const char *src)
 {
 	register char	*d=dest;
@@ -109,7 +112,7 @@ Bstrcat(char *dest, const char *src)
 } /* Bstrcat */
 
 /* ------------- Bstrchr ------------- */
-const char*
+const char* __CDECL
 Bstrchr(const char *s, int c)
 {
 	register const char *str=s;
@@ -126,7 +129,7 @@ Bstrchr(const char *s, int c)
  * if length<0, it will be padded with zeros
  * return a pointer to the buffer
  */
-char*
+char* __CDECL
 Bl2a( char *buf, const long num, int length, const int radix )
 {
 	char	str[10];

@@ -1,6 +1,9 @@
 /*
- * $Id: bio.c,v 1.3 2002/01/14 09:14:19 bnv Exp $
+ * $Id: bio.c,v 1.4 2002/06/11 12:38:06 bnv Exp $
  * $Log: bio.c,v $
+ * Revision 1.4  2002/06/11 12:38:06  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2002/01/14 09:14:19  bnv
  * Added: Bfseek function
  *
@@ -104,7 +107,7 @@ Bfopen( const char *filename, const char *mode )
 } /* Bfopen */
 
 /* ----- Bfclose ----- */
-int
+int __CDECL
 Bfclose( BFILE *stream )
 {
 	if (!stream) return EOF;
@@ -118,7 +121,7 @@ Bfclose( BFILE *stream )
 } /* Bfclose */
 
 /* ----- Bfflush ----- */
-int
+int __CDECL
 Bfseek(BFILE *stream, int distance, int method)
 {
 	if (!stream) return 0;
@@ -127,7 +130,7 @@ Bfseek(BFILE *stream, int distance, int method)
 } /* Bfseek */
 
 /* ----- Bfflush ----- */
-int
+int __CDECL
 Bfflush(BFILE *stream)
 {
 	if (!stream) return EOF;
@@ -135,7 +138,7 @@ Bfflush(BFILE *stream)
 } /* Bfflush */
 
 /* ----- Bfeof ----- */
-int
+int __CDECL
 Bfeof(BFILE *stream)
 {
 	if (stream)
@@ -145,7 +148,7 @@ Bfeof(BFILE *stream)
 } /* Bfeof */
 
 /* ----- Bfgetc ----- */
-int
+int __CDECL
 Bfgetc( BFILE *stream )
 {
 	char	c;
@@ -187,7 +190,7 @@ Bfgetc( BFILE *stream )
 } /* Bfgetc */
 
 /* ----- Bputc ----- */
-int
+int __CDECL
 Bfputc( char ch, BFILE *stream )
 {
 #if !defined(__BORLANDC__)
@@ -215,7 +218,7 @@ Bfputc( char ch, BFILE *stream )
 } /* Bfgetc */
 
 /* ------ Bfputs -------- */
-void
+void __CDECL
 Bfputs( const char *s, BFILE *stream )
 {
 	while (*s)
@@ -223,7 +226,7 @@ Bfputs( const char *s, BFILE *stream )
 } /* Bfputs */
 
 /* ------ Read a Character -------- */
-char
+char __CDECL
 Bgetchar()
 {
 	char	c;
@@ -269,7 +272,7 @@ Bgetchar()
 } /* Bgetchar */
 
 /* ------ Write an ASCII char ----- */
-void
+void __CDECL
 Bputch( char ch )
 {
 	TCHAR	tch;
@@ -279,7 +282,7 @@ Bputch( char ch )
 
 /* ------ Write an ASCII string ----- */
 // Wanring: DIFFERENT behavior from puts(). It doesn't append a new line
-void
+void __CDECL
 Bputs( const char *str )
 {
 	while (*str)
@@ -287,7 +290,7 @@ Bputs( const char *str )
 } /* Bputs */
 
 /* ------ Write a number ----- */
-void
+void __CDECL
 Bputint( long num, int length, int radix )
 {
 	char	str[10];

@@ -1,6 +1,9 @@
 /*
- * $Id: winfunc.c,v 1.3 2001/06/25 18:52:24 bnv Exp $
+ * $Id: winfunc.c,v 1.4 2002/06/11 12:38:06 bnv Exp $
  * $Log: winfunc.c,v $
+ * Revision 1.4  2002/06/11 12:38:06  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2001/06/25 18:52:24  bnv
  * Header -> Id
  *
@@ -24,7 +27,7 @@ extern	HWND		_CrtWindow;
 extern	HINSTANCE	_CrtInstance;
 
 /* --------------------------------------------------------------- */
-BOOL
+BOOL __CDECL
 CE_GetRegData(HKEY key, TCHAR *keyPath, TCHAR *varName,
 		DWORD type, LPBYTE pvData, LPDWORD cbData )
 {
@@ -50,7 +53,7 @@ CE_GetRegData(HKEY key, TCHAR *keyPath, TCHAR *varName,
 /* --------------------------------------------------------------- */
 /*  MSGBOX(text, title, [option])                                  */
 /* --------------------------------------------------------------- */
-void
+void __CDECL
 CE_MsgBox()
 {
 	TCHAR	*msgText, *msgTitle;
@@ -89,7 +92,7 @@ CE_MsgBox()
 /* -------------------------------------------------------------- */
 /*  WHEREY()                                                      */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 CE_O(const int func)
 {
 	if (ARGN) Lerror(ERR_INCORRECT_CALL,0);
@@ -124,7 +127,7 @@ CE_O(const int func)
 /* -------------------------------------------------------------- */
 /*  GOTOXY(x,y)                                                   */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 CE_gotoxy()
 {
 	int	x, y;
@@ -141,7 +144,7 @@ CE_gotoxy()
 /* -------------------------------------------------------------- */
 /*  MOVEFILE(src,dst)                                             */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 CE_SS(const int func)
 {
 	TCHAR	src[MAX_PATH];
@@ -170,7 +173,7 @@ CE_SS(const int func)
 /* -------------------------------------------------------------- */
 /*  WINDOWTITLE(title)                                            */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 CE_oS()
 {
 	TCHAR	path[MAX_PATH];
@@ -194,7 +197,7 @@ CE_oS()
 /* -------------------------------------------------------------- */
 /*  DELFILE(file)                                                  */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 CE_S(const int func)
 {
 	TCHAR	path[MAX_PATH];
@@ -252,7 +255,7 @@ CE_FileDialog()
 /*  CLIPBOARD([type|cmd [,data]])                                 */
 /*  cmd = 'List' | 'Clear'                                        */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 CE_Clipboard()
 {
 	char	cmd;
@@ -316,7 +319,7 @@ CE_Clipboard()
 /*  Return a string containing the complet directory, entries     */
 /*  are separated with "\n"                                       */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 CE_Dir()
 {
 	HANDLE		findHandle;

@@ -1,6 +1,9 @@
 /*
- * $Id: winio.c,v 1.4 2002/01/14 09:14:46 bnv Exp $
+ * $Id: winio.c,v 1.5 2002/06/11 12:38:06 bnv Exp $
  * $Log: winio.c,v $
+ * Revision 1.5  2002/06/11 12:38:06  bnv
+ * Added: CDECL
+ *
  * Revision 1.4  2002/01/14 09:14:46  bnv
  * Corrected: To handle correctly the requested fonts
  *
@@ -84,7 +87,7 @@ static	TCHAR	ModuleName[80];
 
 /* ---- WSignal ---- */
 /* Substitue of the signal(), for trapping the Control-C */
-void
+void __CDECL
 WSignal(int sig, void (*func)(int sig))
 {
 	switch (sig) {
@@ -99,7 +102,7 @@ WSignal(int sig, void (*func)(int sig))
 } /* WSignal */
 
 /* ---- WSetTitle ---- */
-void
+void __CDECL
 WSetTitle(const char *title)
 {
 	size_t	len;
@@ -202,7 +205,7 @@ _ScrollTo(int X, int Y)
 } /* _ScrollTo */
 
 /* ----- Scroll to make cursor visible ------ */
-void
+void __CDECL
 WTrackCursor(void)
 {
 	_ScrollTo(max(_Cursor.x - ClientSize.x + 1,
@@ -259,7 +262,7 @@ NewLine(int *L, int *R)
 } /* NewLine */
 
 /* --------- Write the contents of Buffer ----------- */
-void
+void __CDECL
 WWriteBuf(LPTSTR Buffer, WORD Count)
 {
 	int L, R;
@@ -320,14 +323,14 @@ WWriteBuf(LPTSTR Buffer, WORD Count)
 } /* WWriteBuf */
 
 /* ------- Write character to window ---------- */
-void
+void __CDECL
 WWriteChar(TCHAR Ch)
 {
 	WWriteBuf(&Ch, 1);
 } /* WWriteChar */
 
 /* ------ Return keyboard status -------- */
-BOOL
+BOOL __CDECL 
 WKeyPressed(void)
 {
 	MSG M;
@@ -340,7 +343,7 @@ WKeyPressed(void)
 } /* WKeyPressed */
 
 /* ------- Read key from window ---------- */
-int
+int __CDECL
 WReadKey(void)
 {
 	int readkey;
@@ -374,28 +377,28 @@ WReadKey(void)
 } /* WReadKey */
 
 /* -------- Set cursor position ------------- */
-void
+void __CDECL
 WGotoXY(int X, int Y)
 {
 	_CursorTo(X - 1, Y - 1);
 } /* WGotoXY */
 
 /* ------- Return cursor X position --------- */
-int
+int __CDECL
 WWhereX(void)
 {
 	return (_Cursor.x + 1);
 } /* WWhereX */
 
 /* ------- Return cursor Y position ------- */
-int
+int __CDECL
 WWhereY(void)
 {
 	return(_Cursor.y + 1);
 } /* WWhereY */
 
 /* ------ Clear screen ------ */
-void
+void __CDECL
 WClrscr(void)
 {
 	unicodeMemSet(ScreenBuffer, TEXT(' '),_ScreenSize.x * _ScreenSize.y);
@@ -409,7 +412,7 @@ WClrscr(void)
 } /* Wclrscr */
 
 /* ------ Clear to end of line --------- */
-void
+void __CDECL
 WClreol(void)
 {
 	unicodeMemSet(ScreenPtr(_Cursor.x,_Cursor.y),TEXT(' '),
@@ -558,7 +561,7 @@ WindowResize(void)
 		// For the first time create the font (WCE)
 		memset ((char *)&lf, 0, sizeof(lf));
 		lf.lfPitchAndFamily = FIXED_PITCH | FF_MODERN;
-		lf.lfHeight = -_FontHeight;
+		lf.lfHeight = -(int)_FontHeight;
 		_hFont = CreateFontIndirect (&lf);
 
 		// Initialise the Device Context
@@ -851,7 +854,7 @@ _WinIOProc(HWND Window, UINT Message, WPARAM WParam, LONG LParam)
 } /* _WinIOProc */
 
 /* ----- Create window if required ----- */
-void
+void __CDECL
 WInitWinIO(HINSTANCE hInst, HINSTANCE hPrev, int cmdShow)
 {
 	WNDCLASS	CrtClass = {
@@ -887,7 +890,7 @@ WInitWinIO(HINSTANCE hInst, HINSTANCE hPrev, int cmdShow)
 } /* WInitWinIO */
 
 /* ------ WinIO unit exit procedure ----- */
-void
+void __CDECL
 WExitWinIO(void)
 {
 	MSG	Message;
