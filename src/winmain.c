@@ -1,6 +1,9 @@
 /*
- * $Id: winmain.c,v 1.2 2001/06/25 18:51:48 bnv Exp $
+ * $Id: winmain.c,v 1.3 2002/06/06 08:26:05 bnv Exp $
  * $Log: winmain.c,v $
+ * Revision 1.3  2002/06/06 08:26:05  bnv
+ * Corrected: Font handling
+ *
  * Revision 1.2  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -32,10 +35,13 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	DWORD	len;
 	SYSTEMTIME	time;
 
+#if defined(WIN32) || defined(WCE)
+	_szRxAppKey = REGAPPKEY;
+#endif
+
 	len = sizeof(_FontHeight);
 	if (!RXREGGETDATA(TEXT("HT"),REG_DWORD,&_FontHeight,&len))
-		_FontHeight = 14;
-
+		_FontHeight = 12;
 	WInitWinIO(hInstance,hPrevInstance,nCmdShow);
 
 	/* Set our Icon */
