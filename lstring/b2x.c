@@ -1,12 +1,14 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/b2x.c,v 1.1 1998/07/02 17:16:35 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/b2x.c,v 1.2 1999/11/26 09:51:19 bnv Exp $
  * $Log: b2x.c,v $
+ * Revision 1.2  1999/11/26 09:51:19  bnv
+ * Changed: To use the new macros.
+ *
  * Revision 1.1  1998/07/02 17:16:35  bnv
  * Initial revision
  *
  */
 
-#include <ctype.h>
 #include <lerror.h>
 #include <lstring.h>
 
@@ -23,7 +25,7 @@ Lb2x( const PLstr to, const PLstr from )
 	c = LSTR(*to);
 
 	for (i=j=k=0; i<LLEN(*to); i++) {
-		if (isspace(LSTR(*to)[i])) continue;
+		if (ISSPACE(LSTR(*to)[i])) continue;
 		if (LSTR(*to)[i]<'0' || LSTR(*to)[i]>'1')
 			Lerror(ERR_INVALID_HEX_CONST,0);
 
