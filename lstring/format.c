@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/format.c,v 1.2 1999/06/10 14:09:24 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/format.c,v 1.3 1999/11/26 09:56:55 bnv Exp $
  * $Log: format.c,v $
+ * Revision 1.3  1999/11/26 09:56:55  bnv
+ * Changed: Use of swprintf in CE version.
+ *
  * Revision 1.2  1999/06/10 14:09:24  bnv
  * Added the possibility to use the E,F or G format of C printf
  *
@@ -9,7 +12,6 @@
  *
  */
 
-#include <stdio.h>
 #include <lstring.h>
 
 /* ---------------- Lformat ------------------ */
@@ -136,15 +138,26 @@ Lfo20:
 	double	r;
 
 	r = Lrdreal(from);
-
 	Lfx(to,(size_t)(before+after+10));
-	LZEROSTR(*to);
+	LTYPE(*to) = LSTRING_TY;
+
 	if (before<0) before = 0;
 	if (after<0)  after  = 0;
 	if (after) before += (after+1);
+#ifndef WCE
 	sprintf(LSTR(*to),
 		(expp<=0)? "%#*.*lf":
 			(expp==1)? "%#*.*lG" : "%#*.*lE",
 		(int)before,(int)after,r);
 	LLEN(*to) = STRLEN(LSTR(*to));
+#else
+	{
+		TCHAR	buf[20];
+//	GCVT(r,before,LSTR(*to));
+		swprintf(buf,(expp<=0)? TEXT("%#*.*lf"):
+			(expp==1)? TEXT("%#*.*lG") : TEXT("%#*.*lE"),
+			(int)before,(int)after,r);
+		wcstombs(LSTR(*to),buf,LLEN(*to)=wcslen(buf));
+	}
+#endif
 } /* Lformat */
