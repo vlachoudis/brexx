@@ -1,6 +1,9 @@
 /*
- * $Id: winfunc.c,v 1.4 2002/06/11 12:38:06 bnv Exp $
+ * $Id: winfunc.c,v 1.5 2004/08/16 15:34:53 bnv Exp $
  * $Log: winfunc.c,v $
+ * Revision 1.5  2004/08/16 15:34:53  bnv
+ * Added: Color and Scrollbar functions
+ *
  * Revision 1.4  2002/06/11 12:38:06  bnv
  * Added: CDECL
  *
@@ -23,7 +26,28 @@
 
 #include <cefunc.h>
 
-extern	HWND		_CrtWindow;
+enum	ce_msgs {
+		f_bgcolor,
+		f_clreol,
+		f_clrscr,
+		f_copyfile,
+		f_createdirectory,
+		f_deletefile,
+		f_fgcolor,
+		f_getch,
+		f_kbhit,
+		f_movefile,
+		f_removedirectory,
+		f_setcolor,
+		f_setfontsize,
+		f_scrollbars,
+		f_wherex,
+		f_wherey,
+		f_windowtitle,
+		f_winexit
+};
+
+extern	HWND		_crtWindow;
 extern	HINSTANCE	_CrtInstance;
 
 /* --------------------------------------------------------------- */
@@ -54,7 +78,7 @@ CE_GetRegData(HKEY key, TCHAR *keyPath, TCHAR *varName,
 /*  MSGBOX(text, title, [option])                                  */
 /* --------------------------------------------------------------- */
 void __CDECL
-CE_MsgBox()
+CE_MsgBox(const int func)
 {
 	TCHAR	*msgText, *msgTitle;
 	long	opt;
@@ -67,13 +91,13 @@ CE_MsgBox()
 
 	LASCIIZ(*ARG1);
 	LASCIIZ(*ARG2);
-	msgText = (TCHAR *)MALLOC(sizeof(TCHAR)*LLEN(*ARG1)+2,NULL);
+	msgText  = (TCHAR *)MALLOC(sizeof(TCHAR)*LLEN(*ARG1)+2,NULL);
 	msgTitle = (TCHAR *)MALLOC(sizeof(TCHAR*)LLEN(*ARG1)+2,NULL);
 	mbstowcs(msgText,LSTR(*ARG1),LLEN(*ARG1));	msgText[LLEN(*ARG1)] = 0;
 	mbstowcs(msgTitle,LSTR(*ARG2),LLEN(*ARG2));	msgTitle[LLEN(*ARG2)] = 0;
 
-	Licpy(ARGR, MessageBox(_CrtWindow, msgText, msgTitle, opt));
-	InvalidateRect(_CrtWindow,NULL,TRUE);
+	Licpy(ARGR, MessageBox(_crtWindow, msgText, msgTitle, opt));
+	InvalidateRect(_crtWindow,NULL,TRUE);
 	FREE(msgText);
 	FREE(msgTitle);
 	return;
@@ -91,6 +115,12 @@ CE_MsgBox()
 /*  WHEREX()                                                      */
 /* -------------------------------------------------------------- */
 /*  WHEREY()                                                      */
+/* -------------------------------------------------------------- */
+/*  FGCOLOR()                                                     */
+/* -------------------------------------------------------------- */
+/*  BGCOLOR()                                                     */
+/* -------------------------------------------------------------- */
+/*  WINEXIT()                                                     */
 /* -------------------------------------------------------------- */
 void __CDECL
 CE_O(const int func)
@@ -119,6 +149,15 @@ CE_O(const int func)
 		case f_kbhit:
 			Licpy(ARGR,WKeyPressed());
 			break;
+		case f_winexit:
+			WMessage(WM_DESTROY,0,0);
+			break;
+		case f_fgcolor:
+			Licpy(ARGR,WGetColor()&0xf);
+			break;
+		case f_bgcolor:
+			Licpy(ARGR,(WGetColor()>>4)&0xf);
+			break;
 		default:
 			Lerror(ERR_INTERPRETER_FAILURE,0);
 	}
@@ -128,7 +167,7 @@ CE_O(const int func)
 /*  GOTOXY(x,y)                                                   */
 /* -------------------------------------------------------------- */
 void __CDECL
-CE_gotoxy()
+CE_gotoxy(const int func)
 {
 	int	x, y;
 	if (ARGN!=2)
@@ -138,6 +177,28 @@ CE_gotoxy()
 	WGotoXY(x,y);
 	LZEROSTR(*ARGR);
 } /* CE_gotoxy */
+
+/* -------------------------------------------------------------- */
+/*  SETCOLOR(fg[,bg])                                             */
+/* -------------------------------------------------------------- */
+void __CDECL
+CE_setcolor(const int func)
+{
+	int	fg, bg;
+
+	if (ARGN>2)
+		Lerror(ERR_INCORRECT_CALL,0);
+
+	get_i0(1,fg);
+
+	if (ARGN==2) {
+		get_i0(2,bg);
+	} else
+		bg = ((WGetColor()>>4)&0x0f);
+
+	Licpy(ARGR,WGetColor());
+	WSetColor((BYTE)(((bg&0x0f)<<4)|(fg&0x0f)));
+} /* CE_setcolor */
 
 /* -------------------------------------------------------------- */
 /*  COPYFILE(src,dst)                                             */
@@ -174,14 +235,14 @@ CE_SS(const int func)
 /*  WINDOWTITLE(title)                                            */
 /* -------------------------------------------------------------- */
 void __CDECL
-CE_oS()
+CE_oS(const int func)
 {
 	TCHAR	path[MAX_PATH];
 
 	if (ARGN>1)
 		Lerror(ERR_INCORRECT_CALL,0);
 
-	GetWindowText(_CrtWindow, path, sizeof(path)/sizeof(TCHAR));
+	GetWindowText(_crtWindow, path, sizeof(path)/sizeof(TCHAR));
 	Lwscpy(ARGR, path);
 	if (ARGN==1) {
 		L2STR(ARG1);
@@ -191,11 +252,58 @@ CE_oS()
 } /* CE_oS */
 
 /* -------------------------------------------------------------- */
+/*  SETFONTSIZE(n)                                                */
+/* -------------------------------------------------------------- */
+void __CDECL
+CE_I(const int func)
+{
+	int	size;
+
+	if (ARGN!=1)
+		Lerror(ERR_INCORRECT_CALL,0);
+
+	get_i(1,size);
+
+	if (size<6)
+		size=6;
+	else
+	if (size>50)
+		size=50;
+
+	Licpy(ARGR,WGetFontSize());
+	WSetFontSize(size);
+} /* CE_I */
+
+/* -------------------------------------------------------------- */
+/*  SCROLLBARS([0|1])                                             */
+/* -------------------------------------------------------------- */
+void __CDECL
+CE_B(const int func)
+{
+	int	b;
+
+	if (ARGN>1)
+		Lerror(ERR_INCORRECT_CALL,0);
+
+	get_oiv(1,b,-1);
+	if (b<-1 || b>1)
+		Lerror(ERR_INCORRECT_CALL,0);
+
+//	switch (func) {
+//		case f_scrollbars:
+			Licpy(ARGR,WGetScrollBars());
+			if (b>=0)
+				WSetScrollBars(b);
+//			break;
+//	}
+} /* CE_scrollbars */
+
+/* -------------------------------------------------------------- */
 /*  MKDIR(directory)                                              */
 /* -------------------------------------------------------------- */
 /*  RMDIR(directory)                                              */
 /* -------------------------------------------------------------- */
-/*  DELFILE(file)                                                  */
+/*  DELFILE(file)                                                 */
 /* -------------------------------------------------------------- */
 void __CDECL
 CE_S(const int func)
@@ -244,7 +352,7 @@ CE_FileDialog()
 
 	memset(ofn,0,sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = _CrtWindow;
+	ofn.hwndOwner = _crtWindow;
 	ofn.hInstance = _CrtInstance;
 
 
@@ -256,7 +364,7 @@ CE_FileDialog()
 /*  cmd = 'List' | 'Clear'                                        */
 /* -------------------------------------------------------------- */
 void __CDECL
-CE_Clipboard()
+CE_Clipboard(const int func)
 {
 	char	cmd;
 
@@ -271,7 +379,7 @@ CE_Clipboard()
 	} else
 		cmd = 'L';
 
-	OpenClipboard(_CrtWindow);
+	OpenClipboard(_crtWindow);
 	LZEROSTR(*ARGR);
 	switch (cmd) {
 		case 'C':
@@ -320,7 +428,7 @@ CE_Clipboard()
 /*  are separated with "\n"                                       */
 /* -------------------------------------------------------------- */
 void __CDECL
-CE_Dir()
+CE_Dir(const int func)
 {
 	HANDLE		findHandle;
 	WIN32_FIND_DATA	findData;
@@ -397,3 +505,30 @@ CE_Dir()
 
 	FindClose(findHandle);
 } /* CE_Dir */
+
+/* --- RxCEInitialize --- */
+void RxCEInitialize()
+{
+	RxRegFunction( "BGCOLOR",	CE_O		,f_bgcolor	);
+	RxRegFunction( "CLIPBOARD",	CE_Clipboard	,0		);
+	RxRegFunction( "CLREOL",	CE_O		,f_clreol	);
+	RxRegFunction( "CLRSCR",	CE_O		,f_clrscr	);
+	RxRegFunction( "COPYFILE",	CE_SS		,f_copyfile	);
+	RxRegFunction( "DELFILE",	CE_S		,f_deletefile	);
+	RxRegFunction( "DIR",		CE_Dir		,0		);
+	RxRegFunction( "FGCOLOR",	CE_O		,f_fgcolor	);
+	RxRegFunction( "GETCH",		CE_O		,f_getch	);
+	RxRegFunction( "GOTOXY",	CE_gotoxy	,0		);
+	RxRegFunction( "KBHIT",		CE_O		,f_kbhit	);
+	RxRegFunction( "MKDIR",		CE_S		,f_createdirectory);
+	RxRegFunction( "MOVEFILE",	CE_SS		,f_movefile	);
+	RxRegFunction( "MSGBOX",	CE_MsgBox	,0		);
+	RxRegFunction( "RMDIR",		CE_S		,f_removedirectory);
+	RxRegFunction( "SCROLLBARS",	CE_B		,f_scrollbars	);
+	RxRegFunction( "SETCOLOR",	CE_setcolor	,f_setcolor	);
+	RxRegFunction( "SETFONTSIZE",	CE_I		,f_setfontsize	);
+	RxRegFunction( "WHEREX",	CE_O		,f_wherex	);
+	RxRegFunction( "WHEREY",	CE_O		,f_wherey	);
+	RxRegFunction( "WINDOWEXIT",	CE_O		,f_winexit	);
+	RxRegFunction( "WINDOWTITLE",	CE_oS		,f_windowtitle	);
+} /* RxCEInitialize */
