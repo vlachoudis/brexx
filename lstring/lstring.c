@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.c,v 1.7 2003/02/26 16:29:24 bnv Exp $
+ * $Id: lstring.c,v 1.8 2004/03/26 22:51:11 bnv Exp $
  * $Log: lstring.c,v $
+ * Revision 1.8  2004/03/26 22:51:11  bnv
+ * values to limits
+ *
  * Revision 1.7  2003/02/26 16:29:24  bnv
  * Changed: READLINE definitions
  *
@@ -34,7 +37,7 @@
 #include <lstring.h>
 
 #ifndef WIN
-#	include <values.h>
+#	include <limits.h>
 #endif
 
 #ifdef HAVE_READLINE_HISTORY
@@ -472,7 +475,7 @@ isnumber:
 		lLastScannedNumber *= pow(10.0,(double)exponent);
 #endif
 
-	if (lLastScannedNumber>MAXLONG)
+	if (lLastScannedNumber>LONG_MAX)
 		R = TRUE;	/* Treat it as real number */
 
 	if (sign)
