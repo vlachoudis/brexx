@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/add.c,v 1.1 1998/07/02 17:16:35 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/add.c,v 1.2 1999/03/10 16:55:55 bnv Exp $
  * $Log: add.c,v $
+ * Revision 1.2  1999/03/10 16:55:55  bnv
+ * Corrected, the use of 'ta' and 'tb'
+ *
  * Revision 1.1  1998/07/02 17:16:35  bnv
  * Initial revision
  *
@@ -32,6 +35,7 @@ Ladd( const PLstr to, const PLstr A, const PLstr B)
 			for (; isspace(*eptr); eptr++);
 			if (*eptr) Lerror(ERR_BAD_ARITHMETIC,0);
 		}
+		ta = LREAL_TY;
 	} else {
 		ta = LTYPE(*A);
 		r = TOREAL(*A);
@@ -49,6 +53,7 @@ Ladd( const PLstr to, const PLstr A, const PLstr B)
 			for (; isspace(*eptr); eptr++);
 			if (*eptr) Lerror(ERR_BAD_ARITHMETIC,0);
 		}
+		tb = LREAL_TY;
 	} else {
 		tb = LTYPE(*B);
 		r += TOREAL(*B);
