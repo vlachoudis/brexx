@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.h,v 1.11 2004/03/27 08:35:51 bnv Exp $
+ * $Id: lstring.h,v 1.12 2004/08/16 15:32:27 bnv Exp $
  * $Log: lstring.h,v $
+ * Revision 1.12  2004/08/16 15:32:27  bnv
+ * PACKAGE
+ *
  * Revision 1.11  2004/03/27 08:35:51  bnv
  * Changed: Max Numeric digits for numbers on unix
  *
@@ -39,15 +42,18 @@
 #ifndef __LSTRING_H__
 #define __LSTRING_H__
 
-#include <bmem.h>
 #include <ldefs.h>
-#include <config.h>
+#include <os.h>
+
 #ifdef WIN
 #	include <windows.h>
 #	include <winio.h>
 #	include	<bio.h>
+#	define PACKAGE_NAME "brexx"
+#	define PACKAGE_STRING PACKAGE_NAME " V2.1"
+#else
+#	include <config.h>
 #endif
-#include <os.h>
 
 #ifdef WCE
 #	include <bstr.h>
@@ -55,6 +61,8 @@
 #	include <ctype.h>
 #	include <stdio.h>
 #endif
+
+#include <bmem.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -64,7 +72,11 @@ enum	TYPES	{ LSTRING_TY,
 		LINTEGER_TY,
 		LREAL_TY };
 
-typedef void	(*LerrorFunc)(const int,const int,...);
+#ifdef WCE
+	typedef void	 (*LerrorFunc)(const int,const int,...);
+#else
+	typedef void	__CDECL (*LerrorFunc)(const int,const int,...);
+#endif
 
 /* ------------------------- */
 /* --- Lstring structure --- */
@@ -177,8 +189,12 @@ typedef Lstr	*PLstr;
 #define LREADINCSIZE	32
 #define LREADLINE	0
 #define LREADFILE	-1
-//#define	LMAXNUMERICDIGITS	14
-#define	LMAXNUMERICDIGITS	30
+
+#ifdef MSDOS
+#	define	LMAXNUMERICDIGITS	14
+#else
+#	define	LMAXNUMERICDIGITS	30
+#endif
 
 /* --- for interal use of lstring --- */
 /* With some extra chars */
