@@ -1,6 +1,9 @@
 /*
- * $Id: variable.c,v 1.7 2002/08/22 12:31:28 bnv Exp $
+ * $Id: variable.c,v 1.8 2003/02/12 16:41:49 bnv Exp $
  * $Log: variable.c,v $
+ * Revision 1.8  2003/02/12 16:41:49  bnv
+ * Added: Negative pool reference
+ *
  * Revision 1.7  2002/08/22 12:31:28  bnv
  * Removed CR's
  *
@@ -978,7 +981,7 @@ int __CDECL
 RxPoolGet( PLstr pool, PLstr name, PLstr value )
 {
 	PBinLeaf leaf;
-	int	poolnum=-1;
+	int	poolnum;
 	int	found;
 
 	/* check to see if it is internal pool */
@@ -987,6 +990,8 @@ RxPoolGet( PLstr pool, PLstr name, PLstr value )
 
 		Lstr	str;
 		poolnum = (int)Lrdint(pool);
+		if (poolnum<0)
+			poolnum = _rx_proc+poolnum;
 		if (poolnum<0 || poolnum>_rx_proc)
 			return 'P';
 
@@ -1029,7 +1034,7 @@ int __CDECL
 RxPoolSet( PLstr pool, PLstr name, PLstr value )
 {
 	PBinLeaf leaf;
-	int	poolnum=-1;
+	int	poolnum;
 	int	found;
 
 	/* check to see if it is internal pool */
@@ -1039,6 +1044,8 @@ RxPoolSet( PLstr pool, PLstr name, PLstr value )
 	    (LTYPE(*pool)==LSTRING_TY && _Lisnum(pool)==LINTEGER_TY)) {
 		Lstr	str;
 		poolnum = (int)Lrdint(pool);
+		if (poolnum<0)
+			poolnum = _rx_proc+poolnum;
 		if (poolnum<0 || poolnum>_rx_proc)
 			return 'P';
 		/* search in the appropriate scope */
