@@ -1,6 +1,9 @@
 /*
- * $Id: interpre.c,v 1.11 2002/06/11 12:37:38 bnv Exp $
+ * $Id: interpre.c,v 1.12 2002/07/03 13:15:08 bnv Exp $
  * $Log: interpre.c,v $
+ * Revision 1.12  2002/07/03 13:15:08  bnv
+ * Changed: Version define
+ *
  * Revision 1.11  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -207,7 +210,7 @@ I_LoadOption( const PLstr value, const int opt )
 			break;
 		
 		case version_opt:
-			Lscpy(value,VERSION);
+			Lscpy(value,VERSIONSTR);
 			break;
 
 		case os_opt:

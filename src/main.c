@@ -1,6 +1,9 @@
 /*
- * $Id: main.c,v 1.7 2002/06/11 12:37:38 bnv Exp $
+ * $Id: main.c,v 1.8 2002/07/03 13:15:08 bnv Exp $
  * $Log: main.c,v $
+ * Revision 1.8  2002/07/03 13:15:08  bnv
+ * Changed: Version define
+ *
  * Revision 1.7  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -59,7 +62,7 @@ main(int ac, char *av[])
 
 	if (ac<2) {
 		puts("\nsyntax: rexx [-[trace]|-F] <filename> <args>...\n\trexx -\tto use stdin\n\trexx -F\tloop over standard input\n\t\t\'linein\' contains each line from stdin.\n");
-		puts(VERSION);
+		puts(VERSIONSTR);
 		puts("Author: "AUTHOR);
 		puts("Please report bugs, errors or comments to the above address.\n");
 		return 0;

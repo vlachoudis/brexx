@@ -1,6 +1,9 @@
 /*
- * $Id: maintest.c,v 1.5 2002/06/11 12:37:38 bnv Exp $
+ * $Id: maintest.c,v 1.6 2002/07/03 13:15:08 bnv Exp $
  * $Log: maintest.c,v $
+ * Revision 1.6  2002/07/03 13:15:08  bnv
+ * Changed: Version define
+ *
  * Revision 1.5  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -168,7 +171,7 @@ main(int ac, char *av[])
 
 	if (ac<2) {
 		puts("\nsyntax: rexx [-[trace]] <filename> <args>...\nrexx - (to use stdin)\n");
-		puts(VERSION);
+		puts(VERSIONSTR);
 		puts("Author: "AUTHOR);
 		puts("Please report any bugs, fatal errors or comments to the");
 		puts("above address, or to <bnv@nisyros.physics.auth.gr>\n");
