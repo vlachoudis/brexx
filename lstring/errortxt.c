@@ -1,6 +1,9 @@
 /*
- * $Id: errortxt.c,v 1.5 2002/07/03 13:14:45 bnv Exp $
+ * $Id: errortxt.c,v 1.6 2003/02/26 16:28:55 bnv Exp $
  * $Log: errortxt.c,v $
+ * Revision 1.6  2003/02/26 16:28:55  bnv
+ * Added: New error message for IMPORT error on shared library
+ *
  * Revision 1.5  2002/07/03 13:14:45  bnv
  * Added: MySQL error
  *
@@ -330,6 +333,8 @@ ErrorMsg	errortext[] = {
 	{ ERRNUM(55,1),	"Database is not openned" },
 	{ ERRNUM(55,2),	"Field not found" },
 
+	{ ERRNUM(56,0),	"Shared library error \"<dlopen>\"" },
+
 	{ ERRNUM(57,0),	"Cannot open file" },
 	{ ERRNUM(58,0),	"File not found" },
 	{ ERRNUM(59,0),	"File not opened" }
@@ -337,7 +342,7 @@ ErrorMsg	errortext[] = {
 
 /* ------------------ Lerrortext ------------------- */
 void __CDECL
-Lerrortext( const PLstr to, const int errno, const int subno, va_list *ap)
+Lerrortext( const PLstr to, const int errn, const int subn, va_list *ap)
 {
 	word	err;
 	int	first, middle, last, found;
@@ -348,9 +353,9 @@ Lerrortext( const PLstr to, const int errno, const int subno, va_list *ap)
 #endif
 
 #ifndef WCE
-	err = ERRNUM(errno,subno);
+	err = ERRNUM(errn,subn);
 #else
-	err = ERRNUM(errno,0);	// Ignore the 'subno'
+	err = ERRNUM(errn,0);	// Ignore the 'subn'
 #endif
 	LZEROSTR(*to);
 
@@ -359,11 +364,11 @@ Lerrortext( const PLstr to, const int errno, const int subno, va_list *ap)
 	last  = DIMENSION(errortext)-1;
 	while (first<=last)   {
 		middle = (first+last)/2;
-		if (err==errortext[middle].errno) {
+		if (err==errortext[middle].errorno) {
 			found=1;
 			break;
 		} else
-		if (err < errortext[middle].errno)
+		if (err < errortext[middle].errorno)
 			last = middle-1;
 		else
 			first = middle+1;
@@ -374,9 +379,9 @@ Lerrortext( const PLstr to, const int errno, const int subno, va_list *ap)
 #ifndef WCE
 	/* --- found --- */
 	if (ap==NULL)
-		Lscpy(to,errortext[middle].errmsg);
+		Lscpy(to,errortext[middle].errormsg);
 	else {
-		chstart = errortext[middle].errmsg;
+		chstart = errortext[middle].errormsg;
 		while (1) {
 			ch = STRCHR(chstart,'<');
 			if (ch==NULL) {
@@ -396,7 +401,7 @@ Lerrortext( const PLstr to, const int errno, const int subno, va_list *ap)
 		}
 	}
 #else	/* For the CE version just copy the error message */
-	Lscpy(to,errortext[middle].errmsg);
+	Lscpy(to,errortext[middle].errormsg);
 #endif
 /*
 /////////
