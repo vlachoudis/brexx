@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.h,v 1.8 2002/06/11 12:37:56 bnv Exp $
+ * $Id: rexx.h,v 1.9 2002/07/03 13:14:17 bnv Exp $
  * $Log: rexx.h,v $
+ * Revision 1.9  2002/07/03 13:14:17  bnv
+ * Changed: Version string
+ *
  * Revision 1.8  2002/06/11 12:37:56  bnv
  * Added: CDECL
  *
@@ -57,7 +60,8 @@
 #endif
 
 /* ------------ some defines ------------------ */
-#define	VERSION		"REXX_BNV R2.0.6 " __DATE__
+#define	VERSION		"2.0.6"
+#define	VERSIONSTR	"REXX_BNV R"VERSION __DATE__
 #define	AUTHOR		"Vasilis N. Vlachoudis <Vasilis.Vlachoudis@cern.ch>"
 #define REGAPPKEY	TEXT("Software\\Marmita\\BRexx")
 #define	SCIENTIFIC	0
