@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/variable.c,v 1.2 1999/11/26 13:13:47 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/variable.c,v 1.3 2000/12/15 14:06:11 bnv Exp $
  * $Log: variable.c,v $
+ * Revision 1.3  2000/12/15 14:06:11  bnv
+ * Corrected: The RxScanVarTree(), variable aux wasn't fixed before using it.
+ *
  * Revision 1.2  1999/11/26 13:13:47  bnv
  * Changed: To use the new macros.
  *
@@ -880,7 +883,7 @@ RxScanVarTree( PLstr result, PBinLeaf leaf, PLstr head, int depth, int option )
 	RxScanVarTree(result,leaf->right,head,depth+1,option);
 
 	if (option==RVT_DEPTH) {
-		LINITSTR(aux);
+		LINITSTR(aux);	Lfx(&aux,1);
 		Licpy(&aux,depth);
 		Lstrcat(result,&aux);
 		Lcat(result," ");
