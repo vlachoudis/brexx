@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/format.c,v 1.3 1999/11/26 09:56:55 bnv Exp $
+ * $Id: format.c,v 1.4 2001/06/25 18:49:18 bnv Exp $
  * $Log: format.c,v $
+ * Revision 1.4  2001/06/25 18:49:18  bnv
+ * Corrected: The calculation of the final size of the Lstring
+ *
  * Revision 1.3  1999/11/26 09:56:55  bnv
  * Changed: Use of swprintf in CE version.
  *
@@ -136,28 +139,25 @@ Lfo20:
 	LFREESTR(exponent);
 *********************/
 	double	r;
+	TCHAR	str[50];
 
 	r = Lrdreal(from);
-	Lfx(to,(size_t)(before+after+10));
-	LTYPE(*to) = LSTRING_TY;
-
 	if (before<0) before = 0;
 	if (after<0)  after  = 0;
-	if (after) before += (after+1);
+	if (after)    before += (after+1);
 #ifndef WCE
-	sprintf(LSTR(*to),
-		(expp<=0)? "%#*.*lf":
-			(expp==1)? "%#*.*lG" : "%#*.*lE",
-		(int)before,(int)after,r);
-	LLEN(*to) = STRLEN(LSTR(*to));
+	sprintf(
 #else
-	{
-		TCHAR	buf[20];
-//	GCVT(r,before,LSTR(*to));
-		swprintf(buf,(expp<=0)? TEXT("%#*.*lf"):
-			(expp==1)? TEXT("%#*.*lG") : TEXT("%#*.*lE"),
-			(int)before,(int)after,r);
-		wcstombs(LSTR(*to),buf,LLEN(*to)=wcslen(buf));
-	}
+	swprintf(
+#endif
+		str,
+		(expp<=0)? TEXT("%#*.*lf") :
+		(expp==1)? TEXT("%#*.*lG") : TEXT("%#*.*lE"),
+		(int)before, (int)after, r);
+
+#ifndef WCE
+	Lscpy(to,str);
+#else
+	Lwscpy(to,str);
 #endif
 } /* Lformat */
