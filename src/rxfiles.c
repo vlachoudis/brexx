@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/rxfiles.c,v 1.3 1999/01/22 17:29:17 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/rxfiles.c,v 1.4 1999/02/10 15:43:36 bnv Exp $
  * $Log: rxfiles.c,v $
+ * Revision 1.4  1999/02/10 15:43:36  bnv
+ * Long file name support for Win95/98/NT
+ *
  * Revision 1.3  1999/01/22 17:29:17  bnv
  * Added the xxxBINARY options in the STREAM function
  *
@@ -127,7 +130,9 @@ find_file( const PLstr fn )
 	L2STR(fn);
 	LINITSTR(str); Lfx(&str,LLEN(*fn));
 	Lstrcpy(&str,fn);
-#ifdef MSDOS
+
+#if defined(MSDOS) || defined(DOS32)
+	/* Make case insensity search */
 	Lupper(&str);
 #endif
 
@@ -174,9 +179,6 @@ open_file( const PLstr fn, const char *mode )
 
 	LINITSTR(str); Lfx(&str,LLEN(*fn));
 	Lstrcpy(&str,fn);
-#ifdef MSDOS
-	Lupper(&str);
-#endif
 
 	LASCIIZ(str);
 
@@ -185,6 +187,10 @@ open_file( const PLstr fn, const char *mode )
 		return -1;
 	}
 	LPMALLOC(file[i].name);
+#if defined(MSDOS) || defined(DOS32)
+	/* For MSDOS or 32bit DOS store the name in uppercase */
+	Lupper(&str);
+#endif
 	Lstrcpy(file[i].name,&str);
 	file[i].line = 1;
 	LFREESTR(str);
