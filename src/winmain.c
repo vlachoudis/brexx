@@ -1,6 +1,9 @@
 /*
- * $Id: winmain.c,v 1.5 2002/08/22 12:27:47 bnv Exp $
+ * $Id: winmain.c,v 1.6 2004/08/16 15:29:30 bnv Exp $
  * $Log: winmain.c,v $
+ * Revision 1.6  2004/08/16 15:29:30  bnv
+ * Changed: Fonts, check for active window
+ *
  * Revision 1.5  2002/08/22 12:27:47  bnv
  * Deleted: time checking
  *
@@ -26,10 +29,11 @@
 #include <windows.h>
 #include <winio.h>
 #include <cefunc.h>
-#include "resource.h"
 
-extern	HWND	_CrtWindow;
-extern	DWORD	_FontHeight;
+extern	HWND	_crtWindow;
+extern	void	RxCEInitialize(void);
+
+//#define RUNFILE	"\\cecolors.r"
 
 /* --------------------- WinMain ---------------------- */
 int WINAPI
@@ -37,33 +41,33 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	LPTSTR lpCmdLine, int nCmdShow )
 {
 	Lstr	args, file, tmp;
-	char	*prgname;
-	DWORD	len;
+	DWORD	err;
 
 #if defined(WIN32) || defined(WCE)
 	_szRxAppKey = REGAPPKEY;
 #endif
+	if (lpCmdLine[0]==0 && FindWindow(TEXT(PACKAGE_NAME),NULL)) {
+		SetForegroundWindow(FindWindow(TEXT(PACKAGE_NAME),NULL));
+		return FALSE;
+	}
 
-	len = sizeof(_FontHeight);
-	if (!RXREGGETDATA(TEXT("HT"),REG_DWORD,&_FontHeight,&len))
-		_FontHeight = 12;
-	WInitWinIO(hInstance,hPrevInstance,nCmdShow);
+	if (err = WInitWinIO(hInstance,hPrevInstance,nCmdShow))
+		return err;
 
-	/* Set our Icon */
-	SendMessage(_CrtWindow,WM_SETICON,FALSE,
-		(LPARAM)LoadImage(hInstance,MAKEINTRESOURCE(REXXICON),
-				IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR));
-
+#if !defined(RUNFILE)
 	if (lpCmdLine[0]==0) {
 		WSetTitle("BRexx");
-		PUTS("rexx \"<filename>\" <args>...\n"
-			VERSIONSTR"\n"
+		WSetColor(0xF1);
+		PUTS("rexx \"<filename>\" <args>...\n");
+		WSetColor(0xF4);
+		PUTS(VERSIONSTR"\n"
 			"Author: "AUTHOR"\n"
 			"Please report any bugs, fatal errors or comments to the\n"
 			"above address.");
 		WExitWinIO();
 		return 0;
 	}
+#endif
 
 	LINITSTR(tmp);
 #ifdef __BORLANDC__
@@ -75,8 +79,11 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	LINITSTR(args);
 	LINITSTR(file);
+
+#if !defined(RUNFILE)
 	if ((LSTR(tmp)[0] == '\"') || (LSTR(tmp)[0] == '\'')) {
-		char	*ch = STRCHR(LSTR(tmp)+1,LSTR(tmp)[0]);
+		DWORD len;
+		const char *ch = STRCHR(LSTR(tmp)+1,LSTR(tmp)[0]);
 		if (ch)
 			len = (DWORD)ch - (DWORD)LSTR(tmp);
 		else
@@ -85,11 +92,14 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		Lsubstr(&args, &tmp, len+3, LREST, ' ');
 	} else {
 		Lword(&file, &tmp, 1);
- 		Lsubword(&args, &tmp, 2, LREST);
+		Lsubword(&args, &tmp, 2, LREST);
 	}
+#else
+	Lscpy(&file,RUNFILE);
+#endif
+
 	Lstrcpy(&tmp,&args);
 	Lstrip(&args,&tmp,LBOTH,' '); /* Strip arguments from spaces */
-	LASCIIZ(file);
 	LFREESTR(tmp);
 
 #ifdef __DEBUG__
@@ -100,17 +110,17 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	/* --- Initialise --- */
 	RxInitialize("brexxce");
+	RxCEInitialize();
 
 	/* --- Run the program --- */
 	RxRun(LSTR(file),NULL,&args,NULL,NULL);
 
 	/* --- Free everything --- */
 	RxFinalize();
-	free(prgname);
 	LFREESTR(args);
 	LFREESTR(file);
 
 	WExitWinIO();
 
-	return RxReturnCode;
+	return rxReturnCode;
 } /* WinMain */
