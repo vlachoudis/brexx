@@ -1,6 +1,9 @@
 /*
- * $Id: winmain.c,v 1.3 2002/06/06 08:26:05 bnv Exp $
+ * $Id: winmain.c,v 1.4 2002/07/03 13:15:08 bnv Exp $
  * $Log: winmain.c,v $
+ * Revision 1.4  2002/07/03 13:15:08  bnv
+ * Changed: Version define
+ *
  * Revision 1.3  2002/06/06 08:26:05  bnv
  * Corrected: Font handling
  *
@@ -62,7 +65,7 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	if (lpCmdLine[0]==0) {
 		WSetTitle("BRexx");
 		PUTS("rexx \"<filename>\" <args>...\n"
-			VERSION"\n"
+			VERSIONSTR"\n"
 			"Author: "AUTHOR"\n"
 			"Please report any bugs, fatal errors or comments to the\n"
 			"above address.");
