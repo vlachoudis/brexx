@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/format.c,v 1.1 1998/07/02 17:18:00 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/format.c,v 1.2 1999/06/10 14:09:24 bnv Exp $
  * $Log: format.c,v $
+ * Revision 1.2  1999/06/10 14:09:24  bnv
+ * Added the possibility to use the E,F or G format of C printf
+ *
  * Revision 1.1  1998/07/02 17:18:00  bnv
  * Initial Version
  *
@@ -139,10 +142,9 @@ Lfo20:
 	if (before<0) before = 0;
 	if (after<0)  after  = 0;
 	if (after) before += (after+1);
-#ifdef __BORLANDC__
-	sprintf(LSTR(*to),"%*.*lf",(int)before,(int)after,r);
-#else
-	sprintf(LSTR(*to),"%*.*f",(int)before,(int)after,r);
-#endif
+	sprintf(LSTR(*to),
+		(expp<=0)? "%#*.*lf":
+			(expp==1)? "%#*.*lG" : "%#*.*lE",
+		(int)before,(int)after,r);
 	LLEN(*to) = STRLEN(LSTR(*to));
 } /* Lformat */
