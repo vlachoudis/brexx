@@ -1,6 +1,10 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/rxfiles.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/rxfiles.c,v 1.2 1998/11/06 08:58:10 bnv Exp $
  * $Log: rxfiles.c,v $
+ * Revision 1.2  1998/11/06 08:58:10  bnv
+ * Corrected: real numbers with mantissa zero (integer)
+ *            are treated as integers
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
@@ -110,6 +114,9 @@ find_file( const PLstr fn )
 	else
 	if (LTYPE(*fn) == LINTEGER_TY)
 		j = (int)LINT(*fn);
+	else
+	if (LTYPE(*fn) == LREAL_TY)
+		j = Lrdint(fn);
 
 	if (IN_RANGE(0,j,file_size-1))
 	if (file[j].name != NULL) return j;
@@ -495,6 +502,9 @@ R_read( )
 		else
 		if (LTYPE(*ARG2) == LINTEGER_TY)
 			l = (int)LINT(*ARG2);
+		else
+		if (LTYPE(*ARG2) == LREAL_TY)
+			l = Lrdint(ARG2);
 		else 
 		if (LTYPE(*ARG2) == LSTRING_TY) {
 			switch (l2u[(byte)LSTR(*ARG2)[0]]) {
