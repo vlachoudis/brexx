@@ -1,6 +1,9 @@
 /*
- * $Id: builtin.c,v 1.6 2003/02/12 16:41:40 bnv Exp $
+ * $Id: builtin.c,v 1.7 2003/10/30 13:15:51 bnv Exp $
  * $Log: builtin.c,v $
+ * Revision 1.7  2003/10/30 13:15:51  bnv
+ * Cosmetics
+ *
  * Revision 1.6  2003/02/12 16:41:40  bnv
  * *** empty log message ***
  *
@@ -84,20 +87,20 @@ R_O( const int func )
 
 	switch (func) {
 		case f_address:
-			if (_Proc[_rx_proc].env == NULL)
-				Lstrcpy(ARGR,&(SystemStr->key));
+			if (_proc[_rx_proc].env == NULL)
+				Lstrcpy(ARGR,&(systemStr->key));
 			else
-				Lstrcpy(ARGR,_Proc[_rx_proc].env);
+				Lstrcpy(ARGR,_proc[_rx_proc].env);
 			break;
 
 		case f_desbuf:
 			items = 0;
 			while (1) {
 				items += StackQueued();
-				if (StackList.items>1)
+				if (rxStackList.items>1)
 					DeleteStack();
 				else {
-					DQFlush(DQPEEK(&StackList),_Lfree);
+					DQFlush(DQPEEK(&rxStackList),_Lfree);
 					break;
 				}
 			}
@@ -105,23 +108,23 @@ R_O( const int func )
 			break;
 
 		case f_digits:
-			Licpy(ARGR,_Proc[_rx_proc].digits);
+			Licpy(ARGR,_proc[_rx_proc].digits);
 			break;
 
 		case f_form:
-			if (_Proc[_rx_proc].form==SCIENTIFIC)
+			if (_proc[_rx_proc].form==SCIENTIFIC)
 				Lscpy(ARGR,"SCIENTIFIC");
 			else
 				Lscpy(ARGR,"ENGINEERING");
 			break;
 
 		case f_fuzz:
-			Licpy(ARGR,_Proc[_rx_proc].fuzz);
+			Licpy(ARGR,_proc[_rx_proc].fuzz);
 			break;
 
 		case f_makebuf:  
 			CreateStack();
-			Licpy(ARGR,StackList.items);
+			Licpy(ARGR,rxStackList.items);
 			break;
 #ifdef WCE
 		case f_lasterror:
@@ -170,9 +173,9 @@ R_C( const int func )
 
 		case f_trace:
 			i = 0;
-			if (_Proc[_rx_proc].interactive_trace)
+			if (_proc[_rx_proc].interactive_trace)
 				LSTR(*ARGR)[i++] = '?';
-			switch (_Proc[_rx_proc].trace) {
+			switch (_proc[_rx_proc].trace) {
 				case all_trace:		LSTR(*ARGR)[i++] = 'A'; break;
 				case commands_trace:	LSTR(*ARGR)[i++] = 'C'; break;
 				case error_trace:	LSTR(*ARGR)[i++] = 'E'; break;
@@ -195,7 +198,7 @@ R_C( const int func )
 					break;
 				} else
 				if (option=='B') {
-					Licpy(ARGR,StackList.items);
+					Licpy(ARGR,rxStackList.items);
 					break;
 				} else
 				if (option=='A') /* nothing */;
@@ -205,7 +208,7 @@ R_C( const int func )
 
 			/* count all buffers */
 			items = 0;
-			for (qe=StackList.head; qe; qe=qe->next)
+			for (qe=rxStackList.head; qe; qe=qe->next)
 				items += ((DQueue*)(qe->dat))->items;
 			Licpy(ARGR,items);
 			break;
@@ -253,13 +256,13 @@ R_oSoS( )
 
 	LZEROSTR(*ARGR);
 	if (ARG1==NULL)
-		RxReadVarTree(ARGR,_Proc[_rx_proc].scope,NULL,option);
+		RxReadVarTree(ARGR,_proc[_rx_proc].scope,NULL,option);
 	else {
 		if (Ldatatype(ARG1,'S')==0) return;
 		LINITSTR(str);
 		Lstrcpy(&str,ARG1);
 		Lupper(&str); LASCIIZ(str);
-		leaf = RxVarFindOld(_Proc[_rx_proc].scope,&str,&found);
+		leaf = RxVarFindOld(_proc[_rx_proc].scope,&str,&found);
 		if (found == 0) return;
 		var = (Variable*)(leaf->value);
 		if (var->stem == NULL)
@@ -318,7 +321,7 @@ R_SoSoS( int func )
 		} else
 			poolnum = _rx_proc;
 
-		leaf = RxVarFindOld(_Proc[poolnum].scope,&str,&found);
+		leaf = RxVarFindOld(_proc[poolnum].scope,&str,&found);
 		LFREESTR(str);
 		if (!found) {
 			Licpy(ARGR,-1);
@@ -385,7 +388,7 @@ R_arg( )
 {
 	int	a;
 
-	RxProc	*pr = &(_Proc[_rx_proc]);
+	RxProc	*pr = &(_proc[_rx_proc]);
 
 	switch (ARGN) {
 		case  0:
@@ -480,10 +483,10 @@ R_dropbuf( )
 	else {
 		for (;n>0;n--) {
 			items += StackQueued();
-			if (StackList.items>1)
+			if (rxStackList.items>1)
 				DeleteStack();
 			else {
-				DQFlush(DQPEEK(&StackList),_Lfree);
+				DQFlush(DQPEEK(&rxStackList),_Lfree);
 				break;
 			}
 		}
@@ -594,107 +597,6 @@ R_port( )
 #endif
 
 /* -------------------------------------------------------------- */
-/*  LOAD( filename )                                              */
-/*      load a rexx file so it can be used as a library           */
-/*      returns a return code from loadfile                       */
-/*        "-1" when file is already loaded                        */
-/*         "0" on success                                         */
-/*         "1" on error opening the file                          */
-/* -------------------------------------------------------------- */
-static jmp_buf	old_trap;
-void __CDECL
-R_load( )
-{
-	RxFile  *rxf,*rxf2;
-	int     i;
-	size_t	ip;
-	char	*start, *stop;
-	Lstr	rxlib_path;
-#ifndef WCE
-	char	*rxlib;
-#else
-	TCHAR	pathvalue[128];
-	DWORD	pathlen;
-#endif
-
-	if (ARGN!=1)
-		Lerror(ERR_INCORRECT_CALL,0);
-	L2STR(ARG1);
-	LASCIIZ(*ARG1);
-
-	/* ====== try first to load the file ====== */
-	/* find the last in the queue */
-	rxf2 = rxfile;
-	while (rxf2->next != NULL)
-		rxf2 = rxf2->next;
-
-	rxf = (RxFile*)MALLOC(sizeof(RxFile),"RxFile");
-	MEMSET(rxf,0,sizeof(RxFile));
-	rxf2->next = rxf;
-
-	Lstrcpy(&(rxf->filename), ARG1);	LASCIIZ(rxf->filename);
-
-	if (RxLoadFile( rxf )) goto FILELOADED;
-
-	/* let's try at the directory of rxlib */
-	LINITSTR(rxlib_path);
-
-#ifndef WCE
-	if ((rxlib=getenv("RXLIB"))!=NULL) {
-		Lscpy(&rxlib_path,rxlib);
-#else
-	pathlen = sizeof(pathvalue);
-	if (RXREGGETDATA(TEXT("LIB"),REG_SZ,pathvalue,&pathlen)) {
-		Lwscpy(&rxlib_path,pathvalue);
-#endif
-
-		LASCIIZ(rxlib_path);
-		start = LSTR(rxlib_path);
-		while (start!=NULL && *start) {
-			// Find first directory
-			stop = STRCHR(start,PATHSEP);
-			if (stop!=NULL) {
-				*stop='\0';
-				stop++;
-			}
-			Lscpy(&(rxf->filename),start);
-
-			i = LLEN(rxf->filename);
-			if (LSTR(rxf->filename)[i-1] != FILESEP) {
-				LSTR(rxf->filename)[i] = FILESEP;
-				LLEN(rxf->filename)++;
-			}
-			Lstrcat(&(rxf->filename),ARG1);
-			LASCIIZ(rxf->filename);
-			if (RxLoadFile( rxf )) {
-				LFREESTR( rxlib_path );
-				goto FILELOADED;
-			}
-			start = stop;
-		}
-	}
-	LFREESTR( rxlib_path );
-	rxf2->next = NULL;
-	LFREESTR(rxf->filename);
-	FREE(rxf);
-	Licpy(ARGR,1);		/* Error */
-	return;
-
-FILELOADED:
-	ip = (size_t)((byte huge *)Rxcip - (byte huge *)Rxcodestart);
-	MEMCPY(old_trap,_error_trap,sizeof(_error_trap));
-	RxInitCompile(rxf,NULL);
-	RxCompile();
-
-	/* restore state */
-	MEMCPY(_error_trap,old_trap,sizeof(_error_trap));
-	Rxcodestart = (CIPTYPE*)LSTR(*_code);
-	Rxcip = (CIPTYPE*)((byte huge *)Rxcodestart + ip);
-	if (RxReturnCode) RxSignalCondition(SC_SYNTAX);
-	Licpy(ARGR,0);
-} /* R_load */
-
-/* -------------------------------------------------------------- */
 /*   MAX(number[,number]..])                                      */
 /* -------------------------------------------------------------- */
 void __CDECL
@@ -707,15 +609,15 @@ R_max( )
 		Lerror(ERR_INCORRECT_CALL,0);
 
 	i = 0;
-	while ((i<ARGN) && (Rxarg.a[i]==NULL)) i++;
+	while ((i<ARGN) && (rxArg.a[i]==NULL)) i++;
 	if (i==MAXARGS) Lerror(ERR_INCORRECT_CALL,0);
 
-	L2REAL((Rxarg.a[i]));
-	r = LREAL(*(Rxarg.a[i]));
+	L2REAL((rxArg.a[i]));
+	r = LREAL(*(rxArg.a[i]));
 	for (i++; i<ARGN; i++)
-		if (Rxarg.a[i] != NULL)  {
-			L2REAL((Rxarg.a[i]));
-			r = MAX(r,LREAL(*(Rxarg.a[i])));
+		if (rxArg.a[i] != NULL)  {
+			L2REAL((rxArg.a[i]));
+			r = MAX(r,LREAL(*(rxArg.a[i])));
 		}
 	Lrcpy(ARGR,r);
 } /* R_max */
@@ -733,15 +635,15 @@ R_min( )
 		Lerror(ERR_INCORRECT_CALL,0);
 
 	i = 0;
-	while ((i<ARGN) && (Rxarg.a[i]==NULL)) i++;
+	while ((i<ARGN) && (rxArg.a[i]==NULL)) i++;
 	if (i==MAXARGS) Lerror(ERR_INCORRECT_CALL,0);
 
-	L2REAL((Rxarg.a[i]));
-	r = LREAL(*(Rxarg.a[i]));
+	L2REAL((rxArg.a[i]));
+	r = LREAL(*(rxArg.a[i]));
 	for (i++; i<ARGN; i++)
-		if (Rxarg.a[i] != NULL)  {
-			L2REAL((Rxarg.a[i]));
-			r = MIN(r,LREAL(*(Rxarg.a[i])));
+		if (rxArg.a[i] != NULL)  {
+			L2REAL((rxArg.a[i]));
+			r = MIN(r,LREAL(*(rxArg.a[i])));
 		}
 	Lrcpy(ARGR,r);
 } /* R_min */
