@@ -1,6 +1,9 @@
 /*
- * $Id: compile.c,v 1.11 2004/03/27 08:33:34 bnv Exp $
+ * $Id: compile.c,v 1.12 2004/04/30 15:30:01 bnv Exp $
  * $Log: compile.c,v $
+ * Revision 1.12  2004/04/30 15:30:01  bnv
+ * Fixed: When tracing no clause was appearing after END
+ *
  * Revision 1.11  2004/03/27 08:33:34  bnv
  * Corrected: If procedure was following on the next line after the label
  *
@@ -302,14 +305,10 @@ _CodeAddDWord( dword d )
 #endif
 
 /* --------------- _CodeAddPtr ---------------- */
-#ifndef ALIGN
-word
-#else
 dword
-#endif
 _CodeAddPtr( void *ptr )
 {
-	word pos;
+	dword pos;
 	if (CompileCodeLen+sizeof(ptr) >= LMAXLEN(*CompileCode)) {
 		Lfx(CompileCode, CompileCodeLen + CODE_INC);
 		CompileCodePtr = (byte*)LSTR(*CompileCode) + CompileCodeLen;
@@ -1767,7 +1766,7 @@ C_instr(bool until_end)
 		longjmp(_error_trap,1);	/* Everything is Ok */
 	}
 
-	CreateClause();
+	if (!identCMP("END")) CreateClause();
 
 	if (symbol==label_sy)
 		Lerror(ERR_UNEXPECTED_LABEL,0);
