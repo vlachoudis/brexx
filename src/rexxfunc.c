@@ -1,12 +1,14 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/rexxfunc.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/rexxfunc.c,v 1.2 1999/11/26 13:13:47 bnv Exp $
  * $Log: rexxfunc.c,v $
+ * Revision 1.2  1999/11/26 13:13:47  bnv
+ * Added: Windows CE routines.
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
  */
 
-#include <bnv.h>
 #include <math.h>
 
 #include <lerror.h>
@@ -15,6 +17,10 @@
 #include <rexx.h>
 #include <rxdefs.h>
 #include <compile.h>
+
+#ifdef WCE
+#	include <cefunc.h>
+#endif
 
 #define DECL( A )  void R_##A ( const int );
 
@@ -45,14 +51,24 @@ DECL( stream )
 DECL( abs_sign  )
 DECL( math )
 DECL( atanpow )
+#undef DECL
+
+#ifdef WCE
+#define DECL( A )  void CE_##A ( const int );
+DECL( MsgBox    )  DECL( O         )  DECL( gotoxy     )  DECL( oS       )
+DECL( S         )  DECL( SS        )  DECL( Clipboard  )  DECL( Dir      )
+#undef DECL
+#endif
 
 /* ------------- Register Functions Tree ----------- */
 static BinTree	*ExtraFuncs = NULL;
-
 /* !!!!!!!!!!!! WARNING THE LIST MUST BE SORTED !!!!!!!!!!! */
 static
 TBltFunc
 rexx_routine[] = {
+#ifdef WCE
+	{ "A2U",	R_S		,f_a2u		},
+#endif
 	{ "ABBREV",	R_SSoI		,f_abbrev	},
 	{ "ABS",	R_abs_sign	,f_abs		},
 	{ "ACOS",	R_math		,f_acos		},
@@ -74,9 +90,19 @@ rexx_routine[] = {
 	{ "CHARIN",	R_charlinein	,f_charin	},
 	{ "CHAROUT",	R_charlineout	,f_charout	},
 	{ "CHARS",	R_charslines	,f_chars	},
+#ifdef WCE
+	{ "CLIPBOARD",	CE_Clipboard,	0		},
+#endif
 	{ "CLOSE",	R_close		,f_close	},
+#ifdef WCE
+	{ "CLREOL",	CE_O,		f_clreol	},
+	{ "CLRSCR",	CE_O,		f_clrscr	},
+#endif
 	{ "COMPARE",	R_compare	,f_compare	},
 	{ "COPIES",	R_copies	,f_copies	},
+#ifdef WCE
+	{ "COPYFILE",	CE_SS,		f_copyfile	},
+#endif
 	{ "COS",	R_math		,f_cos		},
 	{ "COSH",	R_math		,f_cosh		},
 	{ "COUNTSTR",	R_SS		,f_countstr	},
@@ -84,10 +110,16 @@ rexx_routine[] = {
 	{ "D2X",	R_IoI		,f_d2x		},
 	{ "DATATYPE",	R_datatype	,f_datatype	},
 	{ "DATE",	R_C		,f_date		},
+#ifdef WCE
+	{ "DELFILE",	CE_S,		f_deletefile	},
+#endif
 	{ "DELSTR",	R_SIoI		,f_delstr	},
 	{ "DELWORD",	R_SIoI		,f_delword	},
 	{ "DESBUF",	R_O		,f_desbuf	},
 	{ "DIGITS",	R_O		,f_digits	},
+#ifdef WCE
+	{ "DIR",	CE_Dir,		0		},
+#endif
 	{ "DROPBUF",	R_dropbuf	,f_dropbuf	},
 	{ "EOF",	R_eof		,f_eof		},
 	{ "ERRORTEXT",	R_errortext	,f_errortext	},
@@ -97,13 +129,25 @@ rexx_routine[] = {
 	{ "FORM",	R_O		,f_form		},
 	{ "FORMAT",	R_format	,f_format	},
 	{ "FUZZ",	R_O		,f_fuzz		},
+#ifdef WCE
+	{ "GETCH",	CE_O,		f_getch		},
+#endif
+#ifndef WCE
 	{ "GETENV",	R_S		,f_getenv	},
+#endif
+#ifdef WCE
+	{ "GOTOXY",	CE_gotoxy,	0		},
+#endif
 	{ "INDEX",	R_SSoI		,f_index	},
 	{ "INSERT",	R_SSoIoIoC	,f_insert	},
-#if defined(__BORLANDC__) && !defined(__WIN32__)
+#if defined(__BORLANDC__) && !defined(__WIN32__) && !defined(WCE)
 	{ "INTR",	R_intr		,f_intr		},
 #endif
 	{ "JUSTIFY",	R_SIoC		,f_justify	},
+#ifdef WCE
+	{ "KBHIT",	CE_O,		f_kbhit		},
+	{ "LASTERROR",	R_O		,f_lasterror	},
+#endif
 	{ "LASTPOS",	R_SSoI		,f_lastpos	},
 	{ "LEFT",	R_SIoC		,f_left		},
 	{ "LENGTH",	R_S		,f_length	},
@@ -116,20 +160,30 @@ rexx_routine[] = {
 	{ "MAKEBUF",	R_O		,f_makebuf	},
 	{ "MAX",	R_max		,f_max		},
 	{ "MIN",	R_min		,f_min		},
+#ifdef WCE
+	{ "MKDIR",	CE_S,		f_createdirectory	},
+	{ "MOVEFILE",	CE_SS,		f_movefile	},
+	{ "MSGBOX",	CE_MsgBox,	0		},
+#endif
 	{ "OPEN",	R_open		,f_open		},
 	{ "OVERLAY",	R_SSoIoIoC	,f_overlay	},
-#if defined(__BORLANDC__) && !defined(__WIN32__)
+#if defined(__BORLANDC__) && !defined(__WIN32__) && !defined(WCE)
 	{ "PORT",	R_port		,f_port		},
 #endif
 	{ "POS",	R_SSoI		,f_pos		},
 	{ "POW",	R_atanpow	,f_pow		},
 	{ "POW10",	R_math		,f_pow10	},
+#ifndef WCE
 	{ "PUTENV",	R_SS		,f_putenv	},
+#endif
 	{ "QUEUED",	R_C		,f_queued	},
 	{ "RANDOM",	R_random	,f_random	},
 	{ "READ",	R_read		,f_read		},
 	{ "REVERSE",	R_S		,f_reverse	},
 	{ "RIGHT",	R_SIoC		,f_right	},
+#ifdef WCE
+	{ "RMDIR",	CE_S,		f_removedirectory	},
+#endif
 	{ "SEEK",	R_seek		,f_seek		},
 	{ "SIGN",	R_abs_sign	,f_sign		},
 	{ "SIN",	R_math		,f_sin		},
@@ -150,9 +204,17 @@ rexx_routine[] = {
 	{ "TRACE",	R_C		,f_trace	},
 	{ "TRANSLATE",	R_translate	,f_translate	},
 	{ "TRUNC",	R_trunc		,f_trunc	},
+#ifdef WCE
+	{ "U2A",	R_S		,f_u2a		},
+#endif
 	{ "VALUE",	R_SoSoS		,f_value	},
 	{ "VARDUMP",	R_oSoS		,f_vartree	},
 	{ "VERIFY",	R_verify	,f_verify	},
+#ifdef WCE
+	{ "WHEREX",	CE_O,		f_wherex	},
+	{ "WHEREY",	CE_O,		f_wherey	},
+	{ "WINDOWTITLE",CE_oS,		f_windowtitle	},
+#endif
 	{ "WORD",	R_SI		,f_word		},
 	{ "WORDINDEX",	R_SI		,f_wordindex	},
 	{ "WORDLENGTH",	R_SI		,f_wordlength	},
