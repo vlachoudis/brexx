@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/lstring.h,v 1.4 1999/05/14 13:06:01 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/lstring.h,v 1.5 1999/11/29 14:58:00 bnv Exp $
  * $Log: lstring.h,v $
+ * Revision 1.5  1999/11/29 14:58:00  bnv
+ * Changed: Some defines
+ *
  * Revision 1.4  1999/05/14 13:06:01  bnv
  * Minor corrections
  *
@@ -18,47 +21,31 @@
 #ifndef __LSTRING_H__
 #define __LSTRING_H__
 
-#include <bnv.h>
 #include <bmem.h>
-#include <stdio.h>
+#include <ldefs.h>
+#ifdef WIN
+#	include <windows.h>
+#	include <winio.h>
+#	include	<bio.h>
+#endif
+#include <os.h>
+
+#ifdef WCE
+#	include <bstr.h>
+#else
+#	include <ctype.h>
+#	include <stdio.h>
+#endif
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
-#if defined(__BORLANDC__)&&(defined(__HUGE__)||defined(__LARGE__))
-/* //// There isn't any _fmemmove!!!!!! //// */
-#	define	MEMMOVE(a,b,s)	memmove(a,b,s)
-#	define	MEMCPY(a,b,s)	_fmemcpy(a,b,s)
-#	define	MEMCMP(a,b,s)	_fmemcmp(a,b,s)
-#	define	MEMCHR(s,c,n)	_fmemchr(s,c,n)
-#	define	MEMSET(s,c,n)	_fmemset(s,c,n)
-#	define	STRCPY(a,b)	_fstrcpy(a,b)
-#	define	STRCMP(a,b)	_fstrcmp(a,b)
-#	define	STRCAT(a,b)	_fstrcat(a,b)
-#	define	STRCHR(a,b)	_fstrchr(a,b)
-#	define	STRLEN(a)	_fstrlen(a)
-#else
-#	ifndef __BORLANDC__
-#		define huge
-#	endif
-#	define	MEMMOVE(a,b,s)	memmove(a,b,s)
-#	define	MEMCPY(a,b,s)	memcpy(a,b,s)
-#	define	MEMCMP(a,b,s)	memcmp(a,b,s)
-#	define	MEMCHR(s,c,n)	memchr(s,c,n)
-#	define	MEMSET(s,c,n)	memset(s,c,n)
-#	define	STRCPY(a,b)	strcpy(a,b)
-#	define	STRCMP(a,b)	strcmp(a,b)
-#	define	STRCAT(a,b)	strcat(a,b)
-#	define	STRCHR(a,b)	strchr(a,b)
-#	define	STRLEN(a)	strlen(a)
-#endif
-
 /* --- Lstring types --- */
-enum	TYPES { LSTRING_TY,
+enum	TYPES	{ LSTRING_TY,
 		LINTEGER_TY,
 		LREAL_TY };
 
-typedef void    (*LerrorFunc)(const int,const int,...);
+typedef void	(*LerrorFunc)(const int,const int,...);
 
 /* ------------------------- */
 /* --- Lstring structure --- */
@@ -68,7 +55,9 @@ typedef struct Lstr_st {
 	size_t	len;		/* Actual length of string(data)	*/
 	size_t	maxlen;		/* Maximum length allocated for string	*/
 	short	type;		/* Type of data STRING, INT, REAL	*/
-	short	options;	/* Bit-options				*/
+#ifdef USEOPTION
+	short   options;	/* Bit-options				*/
+#endif
 } Lstr;
 
 typedef Lstr	*PLstr;
@@ -98,9 +87,11 @@ typedef Lstr	*PLstr;
 #define IS_INT(A)	(LREAL(A) == (double)(long)LREAL(A))
 #define TOREAL(A)	((LTYPE(A)==LINTEGER_TY)? (double) LINT(A): LREAL(A))
 #define TOINT(A)	((LTYPE(A)==LINTEGER_TY)? LINT(A): (long)LREAL(A))
-#define ODD(n)		(n&0x1)
+#define ODD(n)		((n)&0x1)
 
 /* --- allocate strings --- */
+#ifdef USEOPTION
+
 #define LINITSTR(s)	{(s).pstr=NULL;(s).len=0;(s).maxlen=0; \
 			(s).type=LSTRING_TY;(s).options=0;}
 #define LFREESTR(s)	{if ((s).pstr && !LOPTION((s),LOPTFIX)) \
@@ -115,13 +106,27 @@ typedef Lstr	*PLstr;
 #define LPFREE(s)	{if ((s)->pstr && !LOPTION((*s),LOPTFIX)) \
 				FREE((s)->pstr); FREE((s));}
 
+#else		/* DO NOT USE OPTION */
+
+#define LINITSTR(s)	{(s).pstr=NULL;(s).len=0;(s).maxlen=0; \
+			(s).type=LSTRING_TY;}
+#define LFREESTR(s)	{if ((s).pstr) FREE((s).pstr); }
+#define LMOVESTR(d,s)	{(d).pstr=(s).pstr;	(s).pstr=NULL; \
+			(d).len=(s).len;	(s).len=0; \
+			(d).maxlen=(s).maxlen;	(s).maxlen=0; \
+			(d).type=(s).type;	(s).type=0;}
+
+#define LPMALLOC(s)	{(s)=(PLstr)MALLOC(sizeof(Lstr),"PLstr");LINITSTR(*(s));}
+#define LPFREE(s)	{if ((s)->pstr) FREE((s)->pstr); FREE((s));}
+#endif
+
 #define LICPY(s,i)	{	LINT(s)  = (i); \
 				LLEN(s)  = sizeof(long); \
 				LTYPE(s) = LINTEGER_TY; }
 
 /* --- word --- */
 #define LSKIPBLANKS(S,P) {while (((P)<LLEN(S)) && ISSPACE(LSTR(S)[P])) (P)++;}
-#define LSKIPWORD(S,P)   {while (((P)<LLEN(S)) && !ISSPACE(LSTR(S)[P])) (P)++;}
+#define LSKIPWORD(S,P)	 {while (((P)<LLEN(S)) && !ISSPACE(LSTR(S)[P])) (P)++;}
 
 /* --- transform --- */
 #define L2INT(s)	if (LTYPE(*(s))!=LINTEGER_TY)	L2int((s))
@@ -142,21 +147,22 @@ typedef Lstr	*PLstr;
 #define LTRAILING	'T'
 
 /* --- position options --- */
-#define LREST		-1      /* for rest of string ie in substr */
-#define LNOTFOUND	0       /* for not found ie Lindex         */
+#define LREST		-1	/* for rest of string ie in substr	*/
+#define LNOTFOUND	0	/* for not found ie Lindex		*/
 
 /* --- file options --- */
 #define LSTARTPOS	-1
 #define LREADINCSIZE	32
-#define LREADLINE	 0
+#define LREADLINE	0
 #define LREADFILE	-1
+#define	LMAXNUMERICDIGITS	7
 
 /* --- for interal use of lstring --- */
 /* With some extra chars */
 /* it must have enough space to allow transformation from */
 /* int or real to string without resizing */
 #define LNORMALISE(size)	((size) | 0x000F)
-#define LEXTRA		1
+#define LEXTRA	1
 
 /* --------------- Lstr function prototypes --------------- */
 void  Linit(LerrorFunc);		/* must be called at initialisation */
@@ -167,6 +173,7 @@ void  Lfx   (const PLstr  s, const size_t len );
 void  Licpy (const PLstr to, const long   from );
 void  Lrcpy (const PLstr to, const double from );
 void  Lscpy (const PLstr to, const char *from );
+void  Lwscpy(const PLstr to, const wchar_t *from );
 void  Lcat  (const PLstr to, const char *from );
 int   Lcmp  (const PLstr  a, const char *b );
 
@@ -206,10 +213,10 @@ void  Lcenter ( const PLstr to, const PLstr str, const long length,
 void  Lchangestr(const PLstr to, const PLstr oldstr, const PLstr str,
 		const PLstr newstr);
 long  Lcountstr(const PLstr target, const PLstr source);
-void  Lcharin ( FILE *f, const PLstr line, const long start,
+void  Lcharin ( FILEP f, const PLstr line, const long start,
 		const long length );
-void  Lcharout( FILE *f, const PLstr line, const long start );
-long  Lchars  ( FILE *f );
+void  Lcharout( FILEP f, const PLstr line, const long start );
+long  Lchars  ( FILEP f );
 long  Lcompare( const PLstr A, const PLstr B, const char pad);
 void  Lcopies ( const PLstr to, const PLstr str, long n );
 void  Ld2c    ( const PLstr to, const PLstr from, long n );
@@ -218,7 +225,7 @@ int   Ldatatype(const PLstr str, char type );
 void  Ldate   ( const PLstr datestr, char option );
 void  Ldelstr ( const PLstr to, const PLstr str, long start, long length );
 void  Ldelword( const PLstr to, const PLstr str, long start, long length );
-void  Lerrortext( const PLstr to, const int errno, const int subno, va_list ap);
+void  Lerrortext( const PLstr to, const int errno, const int subno, va_list *ap);
 void  Lformat ( const PLstr to, const PLstr num, long before,
 		long after, long expp, long expt );
 word  Lhashvalue( const PLstr s );
@@ -227,15 +234,15 @@ void  Linsert ( const PLstr to, const PLstr target, const PLstr newstr,
 		long n, long length, const char pad);
 void  Ljustify( const PLstr to, const PLstr str, long length, char pad);
 long  Llastpos( const PLstr needle, const PLstr haystack, long p );
-void  Llinein ( FILE *f, const PLstr line, long *curline,
+void  Llinein ( FILEP f, const PLstr line, long *curline,
 		long start, long length );
-int   Llineout( FILE *f, const PLstr line, long *curline, long start );
-long  Llines  ( FILE *f );
+int   Llineout( FILEP f, const PLstr line, long *curline, long start );
+long  Llines  ( FILEP f );
 void  Llower  ( const PLstr s );
 void  Loverlay( const PLstr to, const PLstr str, const PLstr target,
 		long n, long length, const char pad);
-void  Lprint  ( FILE *f, const PLstr str );
-void  Lread   ( FILE *f, const PLstr line, long size );
+void  Lprint  ( FILEP f, const PLstr str );
+void  Lread   ( FILEP f, const PLstr line, long size );
 void  Lreverse( const PLstr s);
 void  Lright  ( const PLstr to, const PLstr str, const long length,
 		const char pad);
@@ -259,7 +266,7 @@ long  Lwordindex( const PLstr str, long n );
 long  Lwordlength( const PLstr str, long n);
 long  Lwordpos( const PLstr phrase, const PLstr s, long n );
 long  Lwords  ( const PLstr from );
-void  Lwrite  ( FILE *f, const PLstr line, const bool newline );
+void  Lwrite  ( FILEP f, const PLstr line, const bool newline );
 void  Lx2b    ( const PLstr to, const PLstr from );
 void  Lx2c    ( const PLstr to, const PLstr from );
 void  Lx2d    ( const PLstr to, const PLstr from, long n);
@@ -320,14 +327,14 @@ DECLMATH( tanh );
 /* ====================== Some variables ================ */
 #ifdef __LSTRING_C__
 	char
-#	if defined(GREEK)
-#		if defined(MSDOS)
+#	ifdef GREEK
+#	   ifdef MSDOS
 		*clower="abcdefghijklmnopqrstuvwxyz˜™š›œžŸ ¡¢£¤¥¦§¨©«¬­®¯àªáâãåæçéäè",
 		*cUPPER="ABCDEFGHIJKLMNOPQRSTUVWXYZ€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—‘êëìíîïðˆ“",
-#		else
+#	   else
 		*clower="abcdefghijklmnopqrstuvwxyzáâãäåæçèéêëìíîïðñóôõö÷øùÜÝÞßúÀüýûàþò",
 		*cUPPER="ABCDEFGHIJKLMNOPQRSTUVWXYZÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÓÔÕÖ×ØÙ¶¸¹ºÚÚ¼¾ÛÛ¿Ó",
-#		endif
+#	   endif
 #	else
 		*clower="abcdefghijklmnopqrstuvwxyz",
 		*cUPPER="ABCDEFGHIJKLMNOPQRSTUVWXYZ",
@@ -336,7 +343,12 @@ DECLMATH( tanh );
 		*chex    = "0123456789ABCDEFabcdef",
 		*crxsymb = "@#$_.?!";
 
-	char formatStringToReal[10] = "%.8lG";
+	double	lLastScannedNumber=0.0;
+#ifndef WIN
+	char	lFormatStringToReal[10] = "%.8lG";
+#endif
+	int	lNumericDigits = LMAXNUMERICDIGITS;
+	/* int  form */
 	byte l2u[256], u2l[256];
 	LerrorFunc Lerror;
 #else
@@ -346,7 +358,11 @@ DECLMATH( tanh );
 		*cdigits,
 		*chex,
 		*crxsymb;
-	extern char formatStringToReal[];
+	extern double	lLastScannedNumber;
+#ifndef WIN
+	extern char lFormatStringToReal[];
+#endif
+	extern int  lNumericDigits;
 	extern byte l2u[], u2l[];
 	extern LerrorFunc Lerror;
 #endif

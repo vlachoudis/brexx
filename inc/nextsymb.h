@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/nextsymb.h,v 1.1 1998/07/02 17:35:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/nextsymb.h,v 1.2 1999/11/29 14:58:00 bnv Exp $
  * $Log: nextsymb.h,v $
+ * Revision 1.2  1999/11/29 14:58:00  bnv
+ * Changed: Some defines
+ *
  * Revision 1.1  1998/07/02 17:35:50  bnv
  * Initial revision
  *
@@ -9,7 +12,6 @@
 #ifndef __NEXTSYMBOL_H__
 #define __NEXTSYMBOL_H__
 
-#include <bnv.h>
 #include <lstring.h>
 
 #ifdef __NEXTSYMB_C__

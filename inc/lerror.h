@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/lerror.h,v 1.1 1998/07/02 17:35:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/lerror.h,v 1.2 1999/11/29 14:58:00 bnv Exp $
  * $Log: lerror.h,v $
+ * Revision 1.2  1999/11/29 14:58:00  bnv
+ * Changed: Some defines
+ *
  * Revision 1.1  1998/07/02 17:35:50  bnv
  * Initial revision
  *
@@ -9,7 +12,7 @@
 #ifndef	__ERROR_H__
 #define	__ERROR_H__
 
-#include <bnv.h>
+#include <ldefs.h>
 
 #define	ERR_MESSAGE		0
 #define	ERR_FINALIZATION	2
