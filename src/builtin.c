@@ -1,6 +1,9 @@
 /*
- * $Id: builtin.c,v 1.7 2003/10/30 13:15:51 bnv Exp $
+ * $Id: builtin.c,v 1.8 2004/03/27 08:32:37 bnv Exp $
  * $Log: builtin.c,v $
+ * Revision 1.8  2004/03/27 08:32:37  bnv
+ * Corrected: sourceline was reporting wrong lines after an interpret statement
+ *
  * Revision 1.7  2003/10/30 13:15:51  bnv
  * Cosmetics
  *
@@ -782,8 +785,11 @@ R_sourceline( )
 	if (l==0) {	/* count the lines of the program */
 		i = 0;
 		rxf = CompileClause[0].fptr;
-		while (rxf == CompileClause[i].fptr)
+		while (rxf==CompileClause[i].fptr
+				&& CompileClause[i+1].line>=CompileClause[i].line) {
 			i++;
+			l = CompileClause[i].line;
+		}
 		i--;
 		l = CompileClause[i].line;
 		c = CompileClause[i].ptr;
@@ -794,7 +800,8 @@ R_sourceline( )
 	} else {
 		if (l>1) {
 			rxf = CompileClause[0].fptr;
-			for (i=0; rxf==CompileClause[i].fptr; i++) {
+			for (i=0; rxf==CompileClause[i].fptr
+					&& CompileClause[i+1].line>=CompileClause[i].line; i++) {
 				if (CompileClause[i].line==l) {
 					c = CompileClause[i].ptr;
 					while (*c!='\n')
