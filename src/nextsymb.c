@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/nextsymb.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/nextsymb.c,v 1.2 1999/11/26 13:13:47 bnv Exp $
  * $Log: nextsymb.c,v $
+ * Revision 1.2  1999/11/26 13:13:47  bnv
+ * Changed: Some spaces to tabs.
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
@@ -8,9 +11,7 @@
 
 #define  __NEXTSYMB_C__
 
-#include <bnv.h>
 #include <bmem.h>
-#include <stdio.h>
 
 #include <lerror.h>
 #include <lstring.h>
@@ -23,14 +24,14 @@ static bool	commentfound;	/* if comment found in nextchar		*/
 
 bool	_in_nextsymbol;		/* Used only to track error inside nextsymb*/
 
-/* ------------- function prototypes ------------------- */
+/* ------------------- function prototypes ----------------------- */
 static void literal(void);
 static void identifier(int isnumber);
 
-/* ----------------------------------------------------------- */
-/*return the next character and advance the input stream by one*/
-/*also it searches for comments                                */
-/* ----------------------------------------------------------- */
+/* --------------------------------------------------------------- */
+/*  return the next character and advance the input stream by one  */
+/*  also it searches for comments                                  */
+/* --------------------------------------------------------------- */
 static void
 nextchar(int instring)
 {
@@ -94,10 +95,10 @@ InitNextsymbol( PLstr str )
 	symbolstat = normal_st;
 } /* InitNextsymbol */
 
-/* -------------------------------------------------------------- */
-/*           P A R S E   next  B A S I C   S Y M B O L            */
-/* Return the next basic symbol and advance the input stream      */
-/* -------------------------------------------------------------- */
+/* --------------------------------------------------------------- */
+/*            P A R S E   next  B A S I C   S Y M B O L            */
+/*  Return the next basic symbol and advance the input stream      */
+/* --------------------------------------------------------------- */
 void
 nextsymbol(void)
 {
@@ -425,9 +426,9 @@ _NEXTSYMBOL:
 	_in_nextsymbol = FALSE;
 } /* nextsymbol */
 
-/* -------------------------------------------------------------- */
-/*     find the identifier                                        */
-/* -------------------------------------------------------------- */
+/* --------------------------------------------------------------- */
+/*      find the identifier                                        */
+/* --------------------------------------------------------------- */
 static void
 identifier(int isnumber)
 {
@@ -449,7 +450,7 @@ identifier(int isnumber)
 			commentfound = FALSE;
 			*s='\0';
 			LLEN(symbolstr) = l;
-			goto leave;
+			goto Nleave;
 		}
 			
 		switch (l2u[(byte)*symbolptr]) {
@@ -500,12 +501,12 @@ identifier(int isnumber)
 					} else {
 						*s='\0';
 						LLEN(symbolstr) = l;
-						goto leave;
+						goto Nleave;
 					}
 				} else {
 					*s='\0';
 					LLEN(symbolstr) = l;
-					goto leave;
+					goto Nleave;
 				}
 				break;
 
@@ -546,7 +547,7 @@ identifier(int isnumber)
 
 				/* literal finished and it is not a label? */
 				if (*symbolptr!=':')
-					goto leave;
+					goto Nleave;
 
 				/* literal is label */
 				symbol = label_sy;
@@ -556,10 +557,10 @@ identifier(int isnumber)
 			default:
 				*s='\0';
 				LLEN(symbolstr) = l;
-				goto leave;
+				goto Nleave;
 		}  /* end of switch */
 	} /* end of for */
-leave:
+Nleave:
 	if (symbol!=ident_sy) return ;
 
 	if (symbolhasdot == LLEN(symbolstr))
@@ -580,9 +581,9 @@ leave:
 	}
 } /* identifier */
 
-/* -------------------------------------------------------------- */
-/* extract a literal symbol                                       */
-/* -------------------------------------------------------------- */
+/* --------------------------------------------------------------- */
+/*  extract a literal symbol                                       */
+/* --------------------------------------------------------------- */
 static void
 literal(void)
 {
@@ -598,7 +599,7 @@ literal(void)
 	l = 0;
 	symbolisstr = TRUE;
 
-	for (;;)  {                   /* -+-  l > maxlen ? */
+	for (;;)  {			/* -+-  l > maxlen ? */
 		nextchar(TRUE);
 		if (l>=LMAXLEN(symbolstr))
 			Lerror(ERR_TOO_LONG_STRING,0);
