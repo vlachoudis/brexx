@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/changest.c,v 1.1 1998/07/02 17:17:00 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/changest.c,v 1.2 2000/02/07 11:21:35 bnv Exp $
  * $Log: changest.c,v $
+ * Revision 1.2  2000/02/07 11:21:35  bnv
+ * Corrected: The case where the old string has length equal to ZERO.
+ *
  * Revision 1.1  1998/07/02 17:17:00  bnv
  * Initial revision
  *
@@ -15,6 +18,11 @@ Lchangestr( const PLstr to, const PLstr oldstr,
 {
 	size_t	pos, foundpos;
 	Lstr	tmp;
+
+	if (LLEN(*oldstr)==0) {
+		Lstrcpy(to,str);
+		return;
+	}
 
 	Lfx(to,LLEN(*str));
 	LZEROSTR(*to);
