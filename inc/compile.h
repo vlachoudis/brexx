@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/compile.h,v 1.1 1998/07/02 17:35:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/compile.h,v 1.2 1999/11/29 14:58:00 bnv Exp $
  * $Log: compile.h,v $
+ * Revision 1.2  1999/11/29 14:58:00  bnv
+ * Changed: Some defines
+ *
  * Revision 1.1  1998/07/02 17:35:50  bnv
  * Initial revision
  *
@@ -15,19 +18,19 @@
 #include <nextsymb.h>
 
 #ifdef __COMPILE_C__
-#define EXTERN
+#	define EXTERN
 #else
-#define EXTERN extern
+#	define EXTERN extern
 #endif
 
 /* ----------- local defines --------------- */
-#define UNKNOWN_LABEL	0xFFFF
-#define CMP(a)		Lcmp(&symbolstr,a)
-#define identCMP(a)	((symbol==ident_sy) && !CMP(a))
+#define UNKNOWN_LABEL		0xFFFF
+#define CMP(a)			Lcmp(&symbolstr,a)
+#define identCMP(a)		((symbol==ident_sy) && !CMP(a))
 #define MUSTBE_SEMICOLON	_mustbe(semicolon_sy, ERR_EXTRAD_DATA,1)
-#define SKIP_SEMICOLONS	while (symbol==semicolon_sy) nextsymbol()
+#define SKIP_SEMICOLONS		while (symbol==semicolon_sy) nextsymbol()
 
-#define SYMBOLADD2LITS	_Add2Lits(&symbolstr,symbolhasdot)
+#define SYMBOLADD2LITS		_Add2Lits(&symbolstr,symbolhasdot)
 #define	SYMBOLADD2LITS_KEY	&(((PBinLeaf)SYMBOLADD2LITS)->key)
 
 /* ----------- Function structure ----------- */
@@ -51,7 +54,7 @@ typedef struct tfunction {
 EXTERN RxFile	*CompileRxFile;		/* Rexx file pointer	*/
 EXTERN byte	*CompileCodePtr;	/* code pointer		*/
 EXTERN PLstr	CompileCode;		/* code space		*/
-#if !defined(ALIGN)
+#ifndef ALIGN
 EXTERN word	CompileCodeLen;		/* code length		*/
 #else
 EXTERN dword	CompileCodeLen;		/* code length		*/
@@ -121,10 +124,10 @@ enum mnemonic_type {
 	,signal_mn	/* Clear up stack and jmp rel	*/
 	,signalval_mn	/* evaluate and jump	*/
 
-	,jmp_mn         /* Unconditional jump	*/
-	,jf_mn          /* Jump if false (0)	*/
+	,jmp_mn		/* Unconditional jump	*/
+	,jf_mn		/* Jump if false (0)	*/
 	,jt_mn		/* Jump if true (1)	*/
-	,call_mn        /* Call a procedure	*/
+	,call_mn	/* Call a procedure	*/
 	,return_mn	/* return from a proc	*/
 	,returnf_mn	/* return from a func	*/
 
@@ -199,7 +202,7 @@ void	RxInitCompile( RxFile *rxf, PLstr src );
 void	RxDoneCompile( void );
 int	RxCompile( void );
 
-#if !defined(ALIGN)
+#ifndef ALIGN
 	word	_CodeInsByte( word pos, byte b );
 	word	_CodeAddByte( byte b );
 	word	_CodeAddWord( word w );
