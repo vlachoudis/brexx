@@ -1,6 +1,9 @@
 /*
- * $Id: expr.c,v 1.5 2003/10/30 13:16:28 bnv Exp $
+ * $Id: expr.c,v 1.6 2004/03/27 08:34:07 bnv Exp $
  * $Log: expr.c,v $
+ * Revision 1.6  2004/03/27 08:34:07  bnv
+ * Nothing
+ *
  * Revision 1.5  2003/10/30 13:16:28  bnv
  * Variable name change
  *
@@ -65,7 +68,7 @@ C_expr( int calltype )
 		case exp_tmp:
 			_CodeAddByte(copy2tmp_mn);
 			break;
-		
+
 		case exp_normal:
 			/* do nothing */
 			break;
