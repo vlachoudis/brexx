@@ -1,6 +1,9 @@
 /*
- * $Id: bmem.c,v 1.6 2003/10/30 13:15:29 bnv Exp $
+ * $Id: bmem.c,v 1.7 2004/08/16 15:27:58 bnv Exp $
  * $Log: bmem.c,v $
+ * Revision 1.7  2004/08/16 15:27:58  bnv
+ * Error message if the WCE version is compiled with bmem
+ *
  * Revision 1.6  2003/10/30 13:15:29  bnv
  * Create a coredump in case of error
  *
@@ -23,6 +26,10 @@
  */
 
 #define __BMEM_C__
+
+#ifdef WCE
+#	error "bmem.c: should not be included in the CE version"
+#endif
 
 #include <ctype.h>
 #include <stdio.h>
