@@ -1,6 +1,9 @@
 /*
- * $Id: winio.c,v 1.6 2002/08/19 15:38:49 bnv Exp $
+ * $Id: winio.c,v 1.7 2002/08/22 12:29:46 bnv Exp $
  * $Log: winio.c,v $
+ * Revision 1.7  2002/08/22 12:29:46  bnv
+ * CR removed!
+ *
  * Revision 1.6  2002/08/19 15:38:49  bnv
  * Corrected: Cursor behavior
  *
