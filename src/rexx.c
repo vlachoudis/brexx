@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.c,v 1.5 2002/06/11 12:37:38 bnv Exp $
+ * $Id: rexx.c,v 1.6 2003/10/30 13:16:28 bnv Exp $
  * $Log: rexx.c,v $
+ * Revision 1.6  2003/10/30 13:16:28  bnv
+ * Variable name change
+ *
  * Revision 1.5  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -35,6 +38,10 @@
 #include <interpre.h>
 #include <nextsymb.h>
 
+#ifdef UNIX
+#	include <dlfcn.h>
+#endif
+
 /* ----------- Function prototypes ------------ */
 void	__CDECL Rerror(int,int,...);
 void    __CDECL RxInitFiles(void);
@@ -49,9 +56,9 @@ static void
 RxInitProc( void )
 {
 	_rx_proc = -1;
-	_Proc_size = PROC_INC;
-	_Proc = (RxProc*) MALLOC( _Proc_size * sizeof(RxProc), "RxProc" );
-	MEMSET(_Proc,0,_Proc_size*sizeof(RxProc));
+	_proc_size = PROC_INC;
+	_proc = (RxProc*) MALLOC( _proc_size * sizeof(RxProc), "RxProc" );
+	MEMSET(_proc,0,_proc_size*sizeof(RxProc));
 } /* RxInitProc */
 
 /* ----------------- RxInitialize ----------------- */
@@ -77,9 +84,9 @@ RxInitialize( char *prorgram_name )
 
 	_procidcnt = 1;		/* Program id counter	*/
 
-	DQINIT(StackList);	/* initialise stacks	*/
+	DQINIT(rxStackList);	/* initialise stacks	*/
 	CreateStack();		/* create first stack	*/
-	rxfile = NULL;		/* intialise rexx files	*/
+	rxFileList = NULL;	/* intialise rexx files	*/
 	LPMALLOC(_code);
 	CompileClause = NULL;
 
@@ -89,22 +96,22 @@ RxInitialize( char *prorgram_name )
 	RxInitVariables();	/* initialise hash table for variables	*/
 
 	BINTREEINIT(_labels);	/* initialise labels	*/
-	BINTREEINIT(Litterals);	/* initialise litterals	*/
+	BINTREEINIT(rxLitterals);	/* initialise litterals	*/
 
-		Lscpy(&str,"HALT");	HaltStr   = _Add2Lits( &str, FALSE );
+		Lscpy(&str,"HALT");	haltStr   = _Add2Lits( &str, FALSE );
 
-		Lscpy(&str,"1");	OneStr    = _Add2Lits( &str, FALSE );
-		Lscpy(&str,"");		NullStr   = _Add2Lits( &str, FALSE );
-		Lscpy(&str,"0");	ZeroStr   = _Add2Lits( &str, FALSE );
-		Lscpy(&str,"ERROR");	ErrorStr  = _Add2Lits( &str, FALSE );
+		Lscpy(&str,"1");	oneStr    = _Add2Lits( &str, FALSE );
+		Lscpy(&str,"");		nullStr   = _Add2Lits( &str, FALSE );
+		Lscpy(&str,"0");	zeroStr   = _Add2Lits( &str, FALSE );
+		Lscpy(&str,"ERROR");	errorStr  = _Add2Lits( &str, FALSE );
 
-		Lscpy(&str,"RESULT");	ResultStr = _Add2Lits( &str, FALSE );
-		Lscpy(&str,"NOVALUE");	NoValueStr= _Add2Lits( &str, FALSE );
-		Lscpy(&str,"NOTREADY");NotReadyStr= _Add2Lits( &str, FALSE );
-		Lscpy(&str,"SIGL");	SiglStr   = _Add2Lits( &str, FALSE );
+		Lscpy(&str,"RESULT");	resultStr = _Add2Lits( &str, FALSE );
+		Lscpy(&str,"NOVALUE");	noValueStr= _Add2Lits( &str, FALSE );
+		Lscpy(&str,"NOTREADY");	notReadyStr= _Add2Lits( &str, FALSE );
+		Lscpy(&str,"SIGL");	siglStr   = _Add2Lits( &str, FALSE );
 		Lscpy(&str,"RC");	RCStr     = _Add2Lits( &str, FALSE );
-		Lscpy(&str,"SYNTAX");	SyntaxStr = _Add2Lits( &str, FALSE );
-		Lscpy(&str,"SYSTEM");	SystemStr = _Add2Lits( &str, FALSE );
+		Lscpy(&str,"SYNTAX");	syntaxStr = _Add2Lits( &str, FALSE );
+		Lscpy(&str,"SYSTEM");	systemStr = _Add2Lits( &str, FALSE );
 
 	LFREESTR(str);
 } /* RxInitialize */
@@ -116,40 +123,215 @@ RxFinalize( void )
 	LFREESTR(symbolstr);	/* delete symbol string	*/
 	LFREESTR(errmsg);	/* delete error msg str	*/
 	RxDoneInterpret();
-	FREE(_Proc);		/* free prg list	*/
-	while (StackList.items>0) DeleteStack();
+	FREE(_proc);		/* free prg list	*/
+	while (rxStackList.items>0) DeleteStack();
 	LPFREE(_code);	_code = NULL;
 
 	RxDoneFiles();		/* close all files	*/
 
-		/* will free also NullStr, Zero and OneStr	*/
-	BinDisposeLeaf(&Litterals,Litterals.parent,FREE);
+		/* will free also nullStr, zeroStr and oneStr	*/
+	BinDisposeLeaf(&rxLitterals,rxLitterals.parent,FREE);
 	BinDisposeLeaf(&_labels,_labels.parent,FREE);
 	RxDoneVariables();
 	RxRegFunctionDone();	/* initialise register functions 	*/
 } /* RxFinalize */
 
-/* ----------------- RxLoadFile ------------------- */
+/* ----------------- RxFileAlloc ------------------- */
+RxFile* __CDECL
+RxFileAlloc(char *fname)
+{
+	RxFile	*rxf;
+
+	rxf = (RxFile*)MALLOC(sizeof(RxFile),"RxFile");
+	if (rxf==NULL)
+		return rxf;
+	MEMSET(rxf,0,sizeof(RxFile));
+	Lscpy(&(rxf->name), fname);
+	LASCIIZ(rxf->name);
+
+	return rxf;
+} /* RxFileAlloc */
+
+/* ----------------- RxFileType ------------------- */
+void __CDECL
+RxFileType(RxFile *rxf)
+{
+	char	*c;
+
+	/* find file type */
+	c = LSTR(rxf->name)+LLEN(rxf->name);
+	for (;c>LSTR(rxf->name) && *c!='.';c--) ;;
+	if (*c=='.')
+		rxf->filetype = c;
+	for (;c>LSTR(rxf->name) && *c!=FILESEP;c--) ;;
+	if (c>LSTR(rxf->name))
+		c++;
+	rxf->filename = c;
+} /* RxFileType */
+
+/* ----------------- RxFileFree ------------------- */
+void __CDECL
+RxFileFree(RxFile *rxf)
+{
+	RxFile *f;
+	
+	while (rxf) {
+		f = rxf;
+		rxf = rxf->next;
+		LFREESTR(f->name);
+		LFREESTR(f->file);
+#ifdef UNIX
+		if (f->libHandle!=NULL)
+			dlclose(f->libHandle);
+#endif
+		FREE(f);
+	}
+} /* RxFileFree */
+
+/* ----------------- RxFileLoad ------------------- */
 int __CDECL
-RxLoadFile( RxFile *rxf )
+RxFileLoad( RxFile *rxf )
 {
 	FILEP f;
-
-	if ((f=FOPEN(LSTR(rxf->filename),"r"))==NULL)
+	if ((f=FOPEN(LSTR(rxf->name),"r"))==NULL)
 		return FALSE;
 	Lread(f,&(rxf->file), LREADFILE);
 	FCLOSE(f);
 	return TRUE;
-} /* RxLoadFile */
+} /* RxFileLoad */
+
+/* --- _LoadRexxLibrary --- */
+static jmp_buf	old_trap;
+static int
+_LoadRexxLibrary(RxFile *rxf, PLstr libname)
+{
+	size_t	ip;
+	char	*start, *stop;
+	Lstr	rxlib_path;
+#ifndef WCE
+	char	*rxlib;
+#else
+	TCHAR	pathvalue[128];
+	DWORD	pathlen;
+#endif
+
+	if (RxFileLoad( rxf ))
+		goto FILEFOUND;
+
+	/* let's try at the directory of rxlib */
+	LINITSTR(rxlib_path);
+
+#ifndef WCE
+	if ((rxlib=getenv("RXLIB"))!=NULL) {
+		Lscpy(&rxlib_path,rxlib);
+#else
+	pathlen = sizeof(pathvalue);
+	if (RXREGGETDATA(TEXT("LIB"),REG_SZ,pathvalue,&pathlen)) {
+		Lwscpy(&rxlib_path,pathvalue);
+#endif
+		LASCIIZ(rxlib_path);
+		start = LSTR(rxlib_path);
+		while (start!=NULL && *start) {
+			// Find first directory
+			stop = STRCHR(start,PATHSEP);
+			if (stop!=NULL)
+				*stop++='\0';
+			Lscpy(&(rxf->name),start);
+
+			ip = LLEN(rxf->name);
+			if (LSTR(rxf->name)[ip-1] != FILESEP) {
+				LSTR(rxf->name)[ip] = FILESEP;
+				LLEN(rxf->name)++;
+			}
+			Lstrcat(&(rxf->name),libname);
+			LASCIIZ(rxf->name);
+			if (RxFileLoad( rxf )) {
+				LFREESTR( rxlib_path );
+				goto FILEFOUND;
+			}
+			start = stop;
+		}
+	}
+	LFREESTR( rxlib_path );
+	return 1;
+
+FILEFOUND:
+	ip = (size_t)((byte huge *)Rxcip - (byte huge *)Rxcodestart);
+	MEMCPY(old_trap,_error_trap,sizeof(_error_trap));
+	RxFileType(rxf);
+	RxInitCompile(rxf,NULL);
+	RxCompile();
+
+	/* restore state */
+	MEMCPY(_error_trap,old_trap,sizeof(_error_trap));
+	Rxcodestart = (CIPTYPE*)LSTR(*_code);
+	Rxcip = (CIPTYPE*)((byte huge *)Rxcodestart + ip);
+	if (rxReturnCode)
+		RxSignalCondition(SC_SYNTAX);
+	return 0;
+} /* _LoadRexxLibrary */
+
+/* ----------------- RxLoadLibrary ------------------- */
+int __CDECL
+RxLoadLibrary( PLstr libname, bool shared )
+{
+	RxFile  *rxf, *last;
+	Lstr	tmpstr;
+	char	*dlerrorstr, *ch;
+
+	/* Convert to ASCIIZ */
+	L2STR(libname); LASCIIZ(*libname);
+
+	/* check to see if it is already loaded */
+	for (rxf = rxFileList; rxf != NULL; rxf = rxf->next)
+		if (!strcmp(rxf->filename,LSTR(*libname)))
+			return -1;
+
+	/* create  a RxFile structure */
+	rxf = RxFileAlloc(LSTR(*libname));
+
+#ifdef UNIX
+	if (shared) {
+		/* try to load it as a shared library */
+		rxf->libHandle = dlopen(LSTR(rxf->name),RTLD_NOW);
+		dlerrorstr = dlerror();
+		if (rxf->libHandle!=NULL) {
+			/* load the main function and execute it...*/
+			RxFileType(rxf);
+			goto LIB_LOADED;
+		}
+		/* Unfortunatelly we have to handle errors with strings */
+		if (dlerrorstr != NULL) {
+			ch = STRCHR(dlerrorstr,':')+2;
+			if (MEMCMP(ch,"invalid ELF header",18) &&
+			    MEMCMP(ch,"cannot open shared object file",30)) {
+				LMKCONST(tmpstr,dlerrorstr);
+				Lerror(ERR_LIBRARY,0,&tmpstr);
+			}
+		}
+	}
+#endif
+
+	/* try first to load the file as rexx library */
+	if (_LoadRexxLibrary(rxf,libname)) {
+		RxFileFree(rxf);
+		return 1;
+	}
+
+LIB_LOADED:
+	/* find the last in the queue */
+	for (last = rxFileList; last->next != NULL; )
+		last = last->next;
+	last->next = rxf;
+	return 0;
+} /* RxLoadLibrary */
 
 /* ----------------- RxRun ------------------ */
 int __CDECL
 RxRun( char *filename, PLstr programstr,
 	PLstr arguments, PLstr tracestr, char *environment )
 {
-	RxFile	*rxf;
 	RxProc	*pr;
-	char	*c;
 	int	i;
 
 	/* --- set exit jmp position --- */
@@ -157,55 +339,41 @@ RxRun( char *filename, PLstr programstr,
 		goto run_exit;
 	/* --- set temporary error trap --- */
 	if (setjmp(_error_trap)!=0)
-		return RxReturnCode;
+		return rxReturnCode;
 
 	/* ====== first load the file ====== */
-	rxfile = (RxFile*)MALLOC(sizeof(RxFile),"RxFile");
-	MEMSET(rxfile,0,sizeof(RxFile));
-
 	if (filename) {
-		/* --- copy the filename --- */
-		Lscpy(&(rxfile->filename), filename);
-		LASCIIZ(rxfile->filename);
-
-		/* find file type */
-		rxfile->filetype = NULL;
-		c = LSTR(rxfile->filename)+LLEN(rxfile->filename);
-		for (;c>LSTR(rxfile->filename) && *c!='.';c--) ;;
-		if (*c=='.')
-			rxfile->filetype = c+1;
+		rxFileList = RxFileAlloc(filename);
 
 		/* --- Load file --- */
-		if (!RxLoadFile( rxfile )) {
+		if (!RxFileLoad( rxFileList )) {
 #ifndef WCE
 			fprintf(STDERR,"Error %d running \"%s\": File not found\n",
-					ERR_FILE_NOT_FOUND, LSTR(rxfile->filename));
+					ERR_FILE_NOT_FOUND, LSTR(rxFileList->name));
 #else
 			PUTS("Error: File not found.");
 #endif
-			LFREESTR(rxfile->filename);
-			FREE(rxfile);
+			RxFileFree(rxFileList);
 			return 1;
 		}
 	} else {
-		Lscpy(&(rxfile->filename), "<STDIN>");
-		rxfile->filetype = NULL;
-		LASCIIZ(rxfile->filename);
-		Lfx(&(rxfile->file), 0);
-		Lstrcpy(&(rxfile->file), programstr);
+		rxFileList = RxFileAlloc("<STDIN>");
+		Lfx(&(rxFileList->file), LLEN(*programstr));
+		Lstrcpy(&(rxFileList->file), programstr);
 	}
-	LASCIIZ(rxfile->file);
+	RxFileType(rxFileList);
+	LASCIIZ(rxFileList->file);
 
 #ifdef __DEBUG__
 	if (__debug__) {
-		printf("File is:\n%s\n",LSTR(rxfile->file));
+		printf("File is:\n%s\n",LSTR(rxFileList->file));
 		getchar();
 	}
 #endif
 
 	/* ====== setup procedure ====== */
 	_rx_proc++;		/* increase program items	*/
-	pr = _Proc+_rx_proc;	/* pr = Proc pointer		*/
+	pr = _proc+_rx_proc;	/* pr = Proc pointer		*/
 
 	/* set program id counter */
 	pr->id = _procidcnt++;
@@ -232,29 +400,29 @@ RxRun( char *filename, PLstr programstr,
 	if (environment)
 		Lscpy(pr->env,environment);
 	else
-		Lstrcpy(pr->env,&(SystemStr->key));
+		Lstrcpy(pr->env,&(systemStr->key));
 	pr->digits = LMAXNUMERICDIGITS;
 	pr->fuzz = 0;
 	pr->form = SCIENTIFIC;
 	pr->condition = 0;
-	pr->lbl_error    = &(ErrorStr->key);
-	pr->lbl_halt     = &(HaltStr->key);
-	pr->lbl_novalue  = &(NoValueStr->key);
-	pr->lbl_notready = &(NotReadyStr->key);
-	pr->lbl_syntax   = &(SyntaxStr->key);
+	pr->lbl_error    = &(errorStr->key);
+	pr->lbl_halt     = &(haltStr->key);
+	pr->lbl_novalue  = &(noValueStr->key);
+	pr->lbl_notready = &(notReadyStr->key);
+	pr->lbl_syntax   = &(syntaxStr->key);
 	pr->codelen = 0;
 	pr->trace = normal_trace;
 	pr->interactive_trace = FALSE;
 	if (tracestr && LLEN(*tracestr)) TraceSet(tracestr);
 
 	/* ======= Compile file ====== */
-	RxInitCompile(rxfile,NULL);
+	RxInitCompile(rxFileList,NULL);
 	RxCompile();
 
 #ifdef __DEBUG__
 	if (__debug__) {
 		printf("Litterals are:\n");
-		BinPrint(Litterals.parent);
+		BinPrint(rxLitterals.parent);
 		getchar();
 
 		printf("Labels(&functions) are:\n");
@@ -265,25 +433,19 @@ RxRun( char *filename, PLstr programstr,
 #endif
 
 	/* ======= Execute code ======== */
-	if (!RxReturnCode)
+	if (!rxReturnCode)
 		RxInterpret();
 
 run_exit:
 		/* pr pointer might have changed if Proc was resized */
-	pr = _Proc+_rx_proc;
+	pr = _proc+_rx_proc;
 #ifdef __DEBUG__
 	if (__debug__)
-		printf("Return Code = %d\n",RxReturnCode);
+		printf("Return Code = %d\n",rxReturnCode);
 #endif
 
 	/* ======== free up memory ======== */
-	while (rxfile) {
-		rxf = rxfile;
-		rxfile = rxfile->next;
-		LFREESTR(rxf->filename);
-		LFREESTR(rxf->file);
-		FREE(rxf);
-	}
+	RxFileFree(rxFileList);
 
 	LPFREE(pr->env);
 	if (CompileClause) {
@@ -295,5 +457,5 @@ run_exit:
 	FREE(pr->scope);
 	_rx_proc--;
 
-	return RxReturnCode;
+	return rxReturnCode;
 } /* RxRun */

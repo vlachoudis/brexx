@@ -1,6 +1,9 @@
 /*
- * $Id: main.c,v 1.9 2002/08/22 12:27:09 bnv Exp $
+ * $Id: main.c,v 1.10 2003/10/30 13:16:28 bnv Exp $
  * $Log: main.c,v $
+ * Revision 1.10  2003/10/30 13:16:28  bnv
+ * Variable name change
+ *
  * Revision 1.9  2002/08/22 12:27:09  bnv
  * Added: Unix initialisation commands
  *
@@ -38,15 +41,8 @@
 #include <sys/stat.h>
 
 /* ------- Includes for any other external library ------- */
-#ifdef RXCONIO
-extern void __CDECL RxConIOInitialize();
-#endif
-#ifdef RXMYSQL
-extern void __CDECL RxMySQLInitialize();
-extern void __CDECL RxMySQLFinalize();
-#endif
-#ifdef UNIX
-extern void __CDECL RxUnixInitialize();
+#ifdef RXMYSQLSTATIC
+#	include "rxmysql.c"
 #endif
 
 /* --------------------- main ---------------------- */
@@ -56,7 +52,7 @@ main(int ac, char *av[])
 	Lstr	args, tracestr, file;
 	int	ia,ir;
 	bool	input, loop_over_stdin;
-#if defined(USE_READLINE)
+#if defined(HAVE_READLINE)
 	Lstr	line;
 	LINITSTR(line);
 #endif
@@ -81,14 +77,8 @@ main(int ac, char *av[])
 	RxInitialize(av[0]);
 
 	/* --- Register functions of external libraries --- */
-#ifdef RXCONIO
-	RxConIOInitialize();
-#endif
-#ifdef RXMYSQL
+#ifdef RXMYSQLSTATIC
 	RxMySQLInitialize();
-#endif
-#ifdef UNIX
-	RxUnixInitialize();
 #endif
 
 	/* --- scan arguments --- */
@@ -118,7 +108,7 @@ main(int ac, char *av[])
 		RxRun(av[ia],NULL,&args,&tracestr,NULL);
 	} else {
 		if (ia>=ac) {
-#if !defined(USE_READLINE)
+#if !defined(HAVE_READLINE)
 			Lread(STDIN,&file,LREADFILE);
 #else
 			struct stat buf;
@@ -157,10 +147,10 @@ main(int ac, char *av[])
 	LFREESTR(args);
 	LFREESTR(tracestr);
 	LFREESTR(file);
-#if defined(USE_READLINE)
+#if defined(HAVE_READLINE)
 	LFREESTR(line);
 #endif
-#ifdef RXMYSQL
+#ifdef RXMYSQLSTATIC
 	RxMySQLFinalize();
 #endif
 
@@ -171,5 +161,5 @@ main(int ac, char *av[])
 	}
 #endif
 
-	return RxReturnCode;
+	return rxReturnCode;
 } /* main */

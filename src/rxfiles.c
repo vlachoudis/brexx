@@ -1,6 +1,9 @@
 /*
- * $Id: rxfiles.c,v 1.8 2002/06/11 12:37:38 bnv Exp $
+ * $Id: rxfiles.c,v 1.9 2003/10/30 13:16:28 bnv Exp $
  * $Log: rxfiles.c,v $
+ * Revision 1.9  2003/10/30 13:16:28  bnv
+ * Variable name change
+ *
  * Revision 1.8  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -486,7 +489,7 @@ R_charlineout( const int func )
 		L2STR(ARG2);
 		str = ARG2;
 	} else
-		str = &(NullStr->key);
+		str = &(nullStr->key);
 
 	get_oiv(3,start,LSTARTPOS);
 

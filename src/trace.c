@@ -1,6 +1,9 @@
 /*
- * $Id: trace.c,v 1.5 2002/06/11 12:37:38 bnv Exp $
+ * $Id: trace.c,v 1.6 2003/10/30 13:16:28 bnv Exp $
  * $Log: trace.c,v $
+ * Revision 1.6  2003/10/30 13:16:28  bnv
+ * Variable name change
+ *
  * Revision 1.5  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -56,7 +59,7 @@ TraceCurline( RxFile **rxf, int print )
 
 	if (symbolptr==NULL) {	/* we are in intepret */
 		if (CompileClause==NULL) {
-			if (rxf) *rxf = rxfile;
+			if (rxf) *rxf = rxFileList;
 			return -1;
 		}
 
@@ -155,14 +158,14 @@ TraceSet( PLstr trstr )
 		ch++;
 	} else
 	if (*ch=='?') {
-		_Proc[_rx_proc].interactive_trace
-			= 1 - _Proc[_rx_proc].interactive_trace;
-		if (_Proc[_rx_proc].interactive_trace)
+		_proc[_rx_proc].interactive_trace
+			= 1 - _proc[_rx_proc].interactive_trace;
+		if (_proc[_rx_proc].interactive_trace)
 #ifndef WIN
-			fprintf(STDERR,"       +++ %s +++\n",errortext[2].errmsg);
+			fprintf(STDERR,"       +++ %s +++\n",errortext[2].errormsg);
 #else
 			PUTS("       +++ ");
-			PUTS(errortext[0].errmsg);
+			PUTS(errortext[0].errormsg);
 			PUTS(" +++\n");
 #endif
 		ch++;
@@ -170,37 +173,37 @@ TraceSet( PLstr trstr )
 
 	switch (*ch) {
 		case 'A':
-			_Proc[_rx_proc].trace = all_trace;
+			_proc[_rx_proc].trace = all_trace;
 			break;
 		case 'C':
-			_Proc[_rx_proc].trace = commands_trace;
+			_proc[_rx_proc].trace = commands_trace;
 			break;
 		case 'E':
-			_Proc[_rx_proc].trace = error_trace;
+			_proc[_rx_proc].trace = error_trace;
 			break;
 /*
 ///		case 'F':
-///			_Proc[_rx_proc].trace = ;
+///			_proc[_rx_proc].trace = ;
 ///			break;
 */
 		case 'I':
-			_Proc[_rx_proc].trace = intermediates_trace;
+			_proc[_rx_proc].trace = intermediates_trace;
 			break;
 		case 'L':
-			_Proc[_rx_proc].trace = labels_trace;
+			_proc[_rx_proc].trace = labels_trace;
 			break;
 		case 'N':
-			_Proc[_rx_proc].trace = normal_trace;
+			_proc[_rx_proc].trace = normal_trace;
 			break;
 		case 'O':
-			_Proc[_rx_proc].trace = off_trace;
-			_Proc[_rx_proc].interactive_trace = FALSE;
+			_proc[_rx_proc].trace = off_trace;
+			_proc[_rx_proc].interactive_trace = FALSE;
 			break;
 		case 'R':
-			_Proc[_rx_proc].trace = results_trace;
+			_proc[_rx_proc].trace = results_trace;
 			break;
 		case 'S':
-			_Proc[_rx_proc].trace = scan_trace;
+			_proc[_rx_proc].trace = scan_trace;
 			break;
 #ifdef __DEBUG__
 		case 'D':
@@ -232,7 +235,7 @@ TraceByte( int middlechar )
 void __CDECL
 TraceClause( void )
 {
-	if (_Proc[_rx_proc].interactive_trace) {
+	if (_proc[_rx_proc].interactive_trace) {
 		/* return if user specified a string for interactive trace */
 		if (TraceInteractive(TRUE))
 			return;
@@ -248,7 +251,7 @@ void __CDECL
 TraceInstruction( byte inst )
 {
 	if ((inst & TB_MIDDLECHAR) != nothing_middle)
-		if (_Proc[_rx_proc].trace == intermediates_trace) {
+		if (_proc[_rx_proc].trace == intermediates_trace) {
 			int	i;
 #ifndef WIN
 			fprintf(STDERR,"       >%c>  ",TraceChar[ inst & TB_MIDDLECHAR ]);
@@ -285,14 +288,14 @@ TraceInteractive( int frominterpret )
 	_trace = FALSE;
 
 	RxInitInterStr();
-	_Proc[_rx_proc].calltype = CT_INTERACTIVE;
+	_proc[_rx_proc].calltype = CT_INTERACTIVE;
 	if (frominterpret) {
-		_Proc[_rx_proc].calltype = CT_INTERACTIVE;
+		_proc[_rx_proc].calltype = CT_INTERACTIVE;
 		/* lets go again to NEWCLAUSE */
 #ifdef ALIGN
-		_Proc[_rx_proc].ip-=sizeof(dword);
+		_proc[_rx_proc].ip-=sizeof(dword);
 #else
-		_Proc[_rx_proc].ip--;
+		_proc[_rx_proc].ip--;
 #endif
 	}
 	return TRUE;

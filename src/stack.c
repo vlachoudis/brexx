@@ -1,6 +1,9 @@
 /*
- * $Id: stack.c,v 1.4 2002/06/11 12:37:38 bnv Exp $
+ * $Id: stack.c,v 1.5 2003/10/30 13:16:28 bnv Exp $
  * $Log: stack.c,v $
+ * Revision 1.5  2003/10/30 13:16:28  bnv
+ * Variable name change
+ *
  * Revision 1.4  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -33,7 +36,7 @@ CreateStack( void )
 
 	stck = (DQueue*) MALLOC(sizeof(DQueue),"Stack");
 	DQINIT(*stck);
-	DQPUSH(&StackList,stck);
+	DQPUSH(&rxStackList,stck);
 } /* CreateStack */
 
 /* ----------------- DeleteStack ----------------------- */
@@ -41,7 +44,7 @@ void __CDECL
 DeleteStack( void )
 {
 	DQueue *stck;
-	stck = DQPop(&StackList);
+	stck = DQPop(&rxStackList);
 	DQFlush(stck,_Lfree);
 	FREE(stck);
 } /* DeleteStack */
@@ -51,7 +54,7 @@ void __CDECL
 Queue2Stack( PLstr str )
 {
 	DQueue *stck;
-	stck = DQPEEK(&StackList);
+	stck = DQPEEK(&rxStackList);
 	DQAdd2Head(stck,str);
 } /* Queue2Stack */
 
@@ -60,7 +63,7 @@ void __CDECL
 Push2Stack( PLstr str )
 {
 	DQueue *stck;
-	stck = DQPEEK(&StackList);
+	stck = DQPEEK(&rxStackList);
 	DQAdd2Tail(stck,str);
 } /* Push2Stack */
 
@@ -69,7 +72,7 @@ PLstr __CDECL
 PullFromStack( )
 {
 	DQueue *stck;
-	stck = DQPEEK(&StackList);
+	stck = DQPEEK(&rxStackList);
 	return (PLstr)DQPop(stck);
 } /* PullFromStack */
 
@@ -78,6 +81,6 @@ long __CDECL
 StackQueued( void )
 {
 	DQueue *stck;
-	stck = DQPEEK(&StackList);
+	stck = DQPEEK(&rxStackList);
 	return stck->items;
 } /* StackQueued*/

@@ -1,6 +1,9 @@
 /*
- * $Id: rxmath.c,v 1.6 2002/06/11 12:37:38 bnv Exp $
+ * $Id: rxmath.c,v 1.7 2003/10/30 13:16:28 bnv Exp $
  * $Log: rxmath.c,v $
+ * Revision 1.7  2003/10/30 13:16:28  bnv
+ * Variable name change
+ *
  * Revision 1.6  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -143,17 +146,23 @@ R_atanpow( const int func )
 void __CDECL
 R_bitwise( const int func )
 {
-	if (ARGN!=2) Lerror(ERR_INCORRECT_CALL,0);
-	L2INT(ARG1);
-	L2INT(ARG2);
+	int	i;
+	int	num;
+	if (ARGN<2) Lerror(ERR_INCORRECT_CALL,0);
+
 	Lstrcpy(ARGR,ARG1);
-	if (func==f_and)
-		LINT(*ARGR) = (LINT(*ARGR) & LINT(*ARG2));
-	else
-	if (func==f_or)
-		LINT(*ARGR) = (LINT(*ARGR) | LINT(*ARG2));
-	else
-		LINT(*ARGR) = (LINT(*ARGR) ^ LINT(*ARG2));
+	L2INT(ARGR);
+
+	for (i=1; i<ARGN; i++) {
+		num = Lrdint(rxArg.a[i]);
+		if (func==f_and)
+			LINT(*ARGR) &= num;
+		else
+		if (func==f_or)
+			LINT(*ARGR) |= num;
+		else
+			LINT(*ARGR) ^= num;
+	}
 } /* R_bitwise */
 
 /* --------------------------------------------------------------- */

@@ -1,6 +1,9 @@
 /*
- * $Id: rxmysql.c,v 1.2 2002/07/03 13:15:08 bnv Exp $
+ * $Id: rxmysql.c,v 1.3 2003/10/30 13:16:28 bnv Exp $
  * $Log: rxmysql.c,v $
+ * Revision 1.3  2003/10/30 13:16:28  bnv
+ * Variable name change
+ *
  * Revision 1.2  2002/07/03 13:15:08  bnv
  * Corrected: Various stuf
  *
@@ -180,7 +183,7 @@ void R_dbfield( const int func )
 		enum enum_field_types type;
 		char *name;
 	} fieldtypes[] = {
-		{ FIELD_TYPE_TINY, 	"TINY"},
+		{ FIELD_TYPE_TINY,	"TINY"},
 		{ FIELD_TYPE_SHORT,	"SHORT"},
 		{ FIELD_TYPE_LONG,	"LONG"},
 		{ FIELD_TYPE_INT24,	"INT24"},
@@ -362,10 +365,23 @@ void RxMySQLInitialize()
 	RxRegFunction("DBISNULL",	R_dbgetnull,	_enum_isnull);
 	RxRegFunction("DBSQL",		R_dbsql,	0);
 	RxRegFunction("DBINFO",		R_dbinfo,	0);
-} /* RxMySQLInitialize */
+} /* RxMySQLInitialize() */
 
 void RxMySQLFinalize()
 {
 	ARGN=0;
 	R_dbclose(0);
 } /* RxMySQLFinalize */
+
+#ifndef RXMYSQLSTATIC
+/* --- Shared library init/fini functions --- */
+void _init(void)
+{
+	RxMySQLInitialize();
+} /* _init */
+
+void _fini(void)
+{
+	RxMySQLFinalize();
+} /* RxMySQLFinalize */
+#endif

@@ -1,6 +1,9 @@
 /*
- * $Id: expr.c,v 1.4 2002/06/11 12:37:38 bnv Exp $
+ * $Id: expr.c,v 1.5 2003/10/30 13:16:28 bnv Exp $
  * $Log: expr.c,v $
+ * Revision 1.5  2003/10/30 13:16:28  bnv
+ * Variable name change
+ *
  * Revision 1.4  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -51,7 +54,7 @@ C_expr( int calltype )
 	/* If nothing was processed in the expr then push a Null string */
 	if (exp_pos == CompileCodeLen) {
 		_CodeAddByte(push_mn);
-			_CodeAddPtr(&(NullStr->key));
+			_CodeAddPtr(&(nullStr->key));
 			TraceByte( nothing_middle );
 	}
 	switch (exp_ct) {
@@ -97,7 +100,7 @@ static void __CDECL
 Exp0( void )
 {
 	enum mnemonic_type orxor;
-	CTYPE	pos;
+	CTYPE	pos, pos2;
 
 	pos = CompileCodeLen;
 	Exp1();
@@ -105,7 +108,9 @@ Exp0( void )
 	while ((symbol==or_sy) || (symbol==xor_sy)) {  /* Logical OR; XOR */
 		if (CompileCodeLen==pos) Lerror(ERR_INVALID_EXPRESSION,0);
 		nextsymbol(); 
+		pos2 = CompileCodeLen;
 		Exp1();
+		if (CompileCodeLen==pos2) Lerror(ERR_INVALID_EXPRESSION,0);
 		InsTmp(pos,TRUE);
 		_CodeAddByte(orxor);
 			TraceByte( operator_middle );
@@ -117,14 +122,16 @@ Exp0( void )
 static void __CDECL
 Exp1( void )
 {
-	CTYPE	pos;
+	CTYPE	pos, pos2;
 
 	pos = CompileCodeLen;
 	Exp2();
 	while (symbol == and_sy) {	/* Logical AND  */
 		if (CompileCodeLen==pos) Lerror(ERR_INVALID_EXPRESSION,0);
 		nextsymbol();
+		pos2 = CompileCodeLen;
 		Exp2();
+		if (CompileCodeLen==pos2) Lerror(ERR_INVALID_EXPRESSION,0);
 		InsTmp(pos,TRUE);
 		_CodeAddByte( and_mn );
 			TraceByte( operator_middle );
@@ -136,7 +143,7 @@ static void __CDECL
 Exp2( void )
 {
 	enum  symboltype  _symbol;
-	CTYPE	pos;
+	CTYPE	pos, pos2;
 
 	pos = CompileCodeLen;
 	Exp3();
@@ -146,7 +153,9 @@ Exp2( void )
 	if  ((symbol >= eq_sy)  && (symbol <= dgt_sy)) {
 		if (CompileCodeLen==pos) Lerror(ERR_INVALID_EXPRESSION,0);
 		nextsymbol();
+		pos2 = CompileCodeLen;
 		Exp3();
+		if (CompileCodeLen==pos2) Lerror(ERR_INVALID_EXPRESSION,0);
 /****
 //		if (!InsTmp(pos,FALSE)) {	* do we need to add a pushtmp *
 *****/
@@ -197,7 +206,7 @@ Exp3( void )
 {
 	int   _Concat;
 	int   _Pblank;
-	CTYPE	pos;
+	CTYPE	pos, pos2;
 
 	pos = CompileCodeLen;
 	Exp4();
@@ -208,7 +217,9 @@ Exp3( void )
 	while ((symbol <= not_sy) ||  _Concat) {
 		if (CompileCodeLen==pos) Lerror(ERR_INVALID_EXPRESSION,0);
 		if (_Concat) nextsymbol();
+		pos2 = CompileCodeLen;
 		Exp4();
+		if (CompileCodeLen==pos2) Lerror(ERR_INVALID_EXPRESSION,0);
 		InsTmp(pos,TRUE);	/* add the pushtmp byte */
 		if (_Concat || !_Pblank)
 			_CodeAddByte(concat_mn);
@@ -227,7 +238,7 @@ static void __CDECL
 Exp4( void )
 {
 	enum symboltype _symbol;
-	CTYPE	pos;
+	CTYPE	pos, pos2;
 
 	pos = CompileCodeLen;
 	Exp5();
@@ -236,7 +247,9 @@ Exp4( void )
 	while ((symbol==plus_sy) || (symbol==minus_sy)) {
 		if (CompileCodeLen==pos) Lerror(ERR_INVALID_EXPRESSION,0);
 		nextsymbol();
+		pos2 = CompileCodeLen;
 		Exp5();
+		if (CompileCodeLen==pos2) Lerror(ERR_INVALID_EXPRESSION,0);
 		InsTmp(pos,TRUE);
 		if (_symbol==plus_sy)
 			_CodeAddByte(add_mn);
@@ -252,7 +265,7 @@ static void __CDECL
 Exp5( void )
 {
 	enum  symboltype _symbol;
-	CTYPE	pos;
+	CTYPE	pos, pos2;
 
 	pos = CompileCodeLen;
 	Exp6();
@@ -262,7 +275,9 @@ Exp5( void )
 	while ((symbol >= times_sy) && (symbol<=intdiv_sy)) {
 		if (CompileCodeLen==pos) Lerror(ERR_INVALID_EXPRESSION,0);
 		nextsymbol();
+		pos2 = CompileCodeLen;
 		Exp6();
+		if (CompileCodeLen==pos2) Lerror(ERR_INVALID_EXPRESSION,0);
 		InsTmp(pos,TRUE);
 		switch (_symbol) {
 			case times_sy  : _CodeAddByte(mul_mn);   break;
@@ -281,14 +296,16 @@ Exp5( void )
 static void __CDECL
 Exp6( void )
 {
-	CTYPE	pos;
+	CTYPE	pos, pos2;
 
 	pos = CompileCodeLen;
 	Exp7();
 	while (symbol==power_sy) {
 		if (CompileCodeLen==pos) Lerror(ERR_INVALID_EXPRESSION,0);
 		nextsymbol();
+		pos2 = CompileCodeLen;
 		Exp7();
+		if (CompileCodeLen==pos2) Lerror(ERR_INVALID_EXPRESSION,0);
 		InsTmp(pos,TRUE);
 		_CodeAddByte(pow_mn);
 			TraceByte( operator_middle );

@@ -1,6 +1,9 @@
 /*
- * $Id: error.c,v 1.5 2002/08/22 12:31:28 bnv Exp $
+ * $Id: error.c,v 1.6 2003/10/30 13:16:28 bnv Exp $
  * $Log: error.c,v $
+ * Revision 1.6  2003/10/30 13:16:28  bnv
+ * Variable name change
+ *
  * Revision 1.5  2002/08/22 12:31:28  bnv
  * Removed CR's
  *
@@ -35,7 +38,7 @@ Lstr	errmsg;			/* initialise string from beggining  */
 void __CDECL
 RxHaltTrap( int cnd )
 {
-	if (_Proc[_rx_proc].condition & SC_HALT)
+	if (_proc[_rx_proc].condition & SC_HALT)
 		RxSignalCondition(SC_HALT);
 	else
 		Lerror(ERR_PROG_INTERRUPT,0);
@@ -52,25 +55,25 @@ RxSignalCondition( int cnd )
 /*///////// first we need to terminate all the interpret strings */
 	switch (cnd) {
 		case SC_ERROR:
-			cndstr = _Proc[_rx_proc].lbl_error;
+			cndstr = _proc[_rx_proc].lbl_error;
 			break;
 		case SC_HALT:
-			cndstr = _Proc[_rx_proc].lbl_halt;
+			cndstr = _proc[_rx_proc].lbl_halt;
 			break;
 		case SC_NOVALUE:
-			cndstr = _Proc[_rx_proc].lbl_novalue;
+			cndstr = _proc[_rx_proc].lbl_novalue;
 			break;
 		case SC_NOTREADY:
-			cndstr = _Proc[_rx_proc].lbl_notready;
+			cndstr = _proc[_rx_proc].lbl_notready;
 			break;
 		case SC_SYNTAX:
-			cndstr = _Proc[_rx_proc].lbl_syntax;
+			cndstr = _proc[_rx_proc].lbl_syntax;
 			break;
 	}
 	leaf = BinFind(&_labels,cndstr);
 	if (leaf==NULL || ((RxFunc*)(leaf->value))->label==UNKNOWN_LABEL) {
 		if (cnd==SC_SYNTAX) /* disable the error handling */
-			_Proc[_rx_proc].condition &= ~SC_SYNTAX;
+			_proc[_rx_proc].condition &= ~SC_SYNTAX;
 		Lerror(ERR_UNEXISTENT_LABEL,1,cndstr);
 	}
 	func = (RxFunc*)(leaf->value);
@@ -89,12 +92,12 @@ Rerror( int errno, int subno, ... )
 	va_list	ap;
 #endif
 
-	if (_Proc[_rx_proc].condition & SC_SYNTAX) {
+	if (_proc[_rx_proc].condition & SC_SYNTAX) {
 		RxSetSpecialVar(RCVAR,errno);
 		if (symbolptr==NULL)	/* we are in intepret	*/
 			RxSignalCondition(SC_SYNTAX);
 		else {			/* we are in compile	*/
-			RxReturnCode = errno;
+			rxReturnCode = errno;
 			longjmp(_error_trap,JMP_ERROR);
 		}
 	} else {
@@ -115,7 +118,7 @@ Rerror( int errno, int subno, ... )
 				fprintf(STDERR,
 					"Error %d running %s, line %d: %s\n",
 						errno,
-						LSTR(rxf->filename),
+						LSTR(rxf->name),
 						line,
 						LSTR(errmsg));
 			else 
@@ -123,7 +126,7 @@ Rerror( int errno, int subno, ... )
 					"Error %d.%d running %s, line %d: %s\n",
 						errno,
 						subno,
-						LSTR(rxf->filename),
+						LSTR(rxf->name),
 						line,
 						LSTR(errmsg));
 		}
@@ -132,7 +135,7 @@ Rerror( int errno, int subno, ... )
 			PUTS("Error ");
 			PUTINT(errno,0,10);
 			PUTS(" running ");
-			PUTS(LSTR(rxf->filename));
+			PUTS(LSTR(rxf->name));
 			PUTS(" line ");
 			PUTINT(line,0,10);
 			PUTS(": ");
@@ -141,7 +144,7 @@ Rerror( int errno, int subno, ... )
 			PUTCHAR('\n');
 		}
 #endif
-		RxReturnCode = errno;
+		rxReturnCode = errno;
 		longjmp(_exit_trap,JMP_EXIT);
 	}
 } /* Rerror */

@@ -1,6 +1,9 @@
 /*
- * $Id: rexxfunc.c,v 1.6 2003/01/30 08:22:37 bnv Exp $
+ * $Id: rexxfunc.c,v 1.7 2003/10/30 13:16:28 bnv Exp $
  * $Log: rexxfunc.c,v $
+ * Revision 1.7  2003/10/30 13:16:28  bnv
+ * Variable name change
+ *
  * Revision 1.6  2003/01/30 08:22:37  bnv
  * HASHVALUE added
  *
@@ -43,7 +46,7 @@ DECL( SS       )   DECL( SoSoS )
 
 DECL( arg       )  DECL( compare   )  DECL( copies    )  DECL( close     )
 DECL( datatype  )  DECL( eof       )  DECL( errortext )
-DECL( filesize  )  DECL( format    )  DECL( intr      )  DECL( load      )
+DECL( filesize  )  DECL( format    )  DECL( intr      )
 DECL( max       )  DECL( min       )  DECL( open      )  DECL( random    )
 DECL( read      )  DECL( seek      )  DECL( substr    )  DECL( sourceline)
 DECL( strip     )  DECL( storage   )  DECL( space     )  DECL( translate )
@@ -154,6 +157,7 @@ rexx_routine[] = {
 #endif
 	{ "HASHVALUE",	R_S		,f_hashvalue	},
 	{ "IAND",	R_bitwise	,f_and		},
+	{ "IMPORT",	R_S		,f_import	},
 	{ "INDEX",	R_SSoI		,f_index	},
 	{ "INOT",	R_not		,0		},
 	{ "INSERT",	R_SSoIoIoC	,f_insert	},
@@ -173,7 +177,7 @@ rexx_routine[] = {
 	{ "LINEIN",	R_charlinein	,f_linein	},
 	{ "LINEOUT",	R_charlineout	,f_lineout	},
 	{ "LINES",	R_charslines	,f_lines	},
-	{ "LOAD",	R_load		,f_load		},
+	{ "LOAD",	R_S		,f_load		},
 	{ "LOG",	R_math		,f_log		},
 	{ "LOG10",	R_math		,f_log10	},
 	{ "MAKEBUF",	R_O		,f_makebuf	},
@@ -281,8 +285,10 @@ C_isBuiltin( PLstr func )
 int __CDECL
 RxRegFunction( char *name, void (__CDECL *func)(int), int opt )
 {
-	Lstr	fn;
-	TBltFunc *fp;
+	Lstr		fn;
+	TBltFunc	*fp;
+	PBinLeaf	leaf;
+	RxFunc		*fc;
 
 	if (ExtraFuncs==NULL) {
 		ExtraFuncs = (BinTree*)MALLOC(sizeof(BinTree),"ExtraFuncs");
@@ -293,14 +299,34 @@ RxRegFunction( char *name, void (__CDECL *func)(int), int opt )
 	Lscpy(&fn,name);
 	Lupper(&fn);	/* translate to upper case */
 
-	fp = (TBltFunc*)MALLOC(sizeof(TBltFunc),"RegFunc");
+	/* Function Already exists */
+	if (C_isBuiltin(&fn)) {
+		LFREESTR(fn);
+		return TRUE;
+	}
 
+	/* create the structure */
+	fp = (TBltFunc*)MALLOC(sizeof(TBltFunc),"RegFunc");
 	if (!fp) return TRUE;
+
 	fp->name = NULL;
 	fp->func = func;
 	fp->opt  = opt;
+
+	/* Check the labels */
+	leaf = BinFind(&_labels, &fn);
+	if (leaf != NULL) {
+		fc = (RxFunc*)(leaf->value);
+		fc->type = FT_BUILTIN;
+		fc->builtin = fp;
+	} /* if it does not exists, it will be added when needed */
+
+	/* Add it to the ExtraFuncs.
+	 * fn after BinAdd will be empty,
+	 * so the BinAdd should be the last
+	 */
 	BinAdd(ExtraFuncs,&fn,fp);
-	LFREESTR(fn);
+
 	return FALSE;
 } /* RxRegFunction */
 

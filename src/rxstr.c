@@ -1,6 +1,9 @@
 /*
- * $Id: rxstr.c,v 1.6 2003/01/30 08:22:37 bnv Exp $
+ * $Id: rxstr.c,v 1.7 2003/10/30 13:16:28 bnv Exp $
  * $Log: rxstr.c,v $
+ * Revision 1.7  2003/10/30 13:16:28  bnv
+ * Variable name change
+ *
  * Revision 1.6  2003/01/30 08:22:37  bnv
  * HASHVALUE added
  *
@@ -153,6 +156,16 @@ R_SIoC( const int func )
 /* --------------------------------------------------------------- */
 /*  X2C(string)                                                    */
 /* --------------------------------------------------------------- */
+/*  IMPORT( filename )                                             */
+/*      loads a shared library or a rexx library                   */
+/* --------------------------------------------------------------- */
+/*  LOAD( filename )                                               */
+/*      load a rexx file so it can be used as a library            */
+/*      returns a return code from loadfile                        */
+/*        "-1" when file is already loaded                         */
+/*         "0" on success                                          */
+/*         "1" on error opening the file                           */
+/* ------------------------------------------------------ -------- */
 /* -- WIN32_WCE -------------------------------------------------- */
 /*  A2U(string)                                                    */
 /* --------------------------------------------------------------- */
@@ -215,7 +228,7 @@ R_S( const int func )
 			LINITSTR(str); Lfx(&str,LLEN(*ARG1));
 			Lstrcpy(&str,ARG1);
 			Lupper(&str); LASCIIZ(str);
-			RxVarFindOld(_Proc[_rx_proc].scope,&str,&found);
+			RxVarFindOld(_proc[_rx_proc].scope,&str,&found);
 			LFREESTR(str);
 			if (found)
 				Lscpy(ARGR,"VAR");
@@ -255,6 +268,11 @@ R_S( const int func )
 #endif
 		case f_hashvalue:
 			Licpy(ARGR,Lhashvalue(ARG1));
+			break;
+
+		case f_load:
+		case f_import:
+			Licpy(ARGR,RxLoadLibrary(ARG1,func==f_import));
 			break;
 
 		default:
@@ -493,7 +511,7 @@ R_SS( int type )
 	else {
 		LASCIIZ(*ARG1);
 		LASCIIZ(*ARG2);
-#	ifdef HAS_SETENV
+#	ifdef HAVE_SETENV
 		Licpy(ARGR,setenv(LSTR(*ARG1),LSTR(*ARG2),TRUE));
 #	else
 		{

@@ -1,6 +1,9 @@
 /*
- * $Id: variable.c,v 1.8 2003/02/12 16:41:49 bnv Exp $
+ * $Id: variable.c,v 1.9 2003/10/30 13:16:28 bnv Exp $
  * $Log: variable.c,v $
+ * Revision 1.9  2003/10/30 13:16:28  bnv
+ * Variable name change
+ *
  * Revision 1.8  2003/02/12 16:41:49  bnv
  * Added: Negative pool reference
  *
@@ -192,7 +195,7 @@ RxVarAdd(Scope scope, PLstr name, int hasdot, PBinLeaf stemleaf )
 /* On input:						*/
 /*	scope	: scope to use				*/
 /*		(for variables indexes it uses the	*/
-/*		current scope _Proc[_rx_proc].scope	*/
+/*		current scope _proc[_rx_proc].scope	*/
 /*	litleaf	: variables litleaf			*/
 /*	found	: if variable is found			*/
 /* Returns:						*/
@@ -270,7 +273,7 @@ RxVarFind(const Scope scope, const PBinLeaf litleaf, bool *found)
 
 		/* construct index */
 		LZEROSTR(varidx);
-		curscope = _Proc[_rx_proc].scope;
+		curscope = _proc[_rx_proc].scope;
 		for (i=1; i<inf->stem; i++) {
 			if (i!=1) {
 				/* append a dot '.' */
@@ -335,7 +338,7 @@ RxVarFind(const Scope scope, const PBinLeaf litleaf, bool *found)
 
 		L2STR(&varidx);
 		if (_trace)
-			if (_Proc[_rx_proc].trace == intermediates_trace) {
+			if (_proc[_rx_proc].trace == intermediates_trace) {
 				int	i;
 				FPUTS("       >C>  ",STDERR);
 				for (i=0;i<_nesting; i++) FPUTC(' ',STDERR);
@@ -625,7 +628,7 @@ RxVarDelOld(Scope scope, PLstr name, PBinLeaf varleaf)
 		BinDel(tree,name,RxVarFree);
 
 		/* Search in the litterals tree to see if it exist */
-		leaf = BinFind(&Litterals,name);
+		leaf = BinFind(&rxLitterals,name);
 		if (leaf) {
 			inf = (IdentInfo*)(leaf->value);
 			inf->id = NO_CACHE;
@@ -681,7 +684,7 @@ RxVarExpose(Scope scope, PBinLeaf litleaf)
 	}
 
 	/* --- else search in the old scope for variable --- */
-	oldscope = _Proc[ _rx_proc-1 ].scope;
+	oldscope = _proc[ _rx_proc-1 ].scope;
 
 	/* --- change curid since we are dealing with old scope --- */
 	oldcurid = Rx_id;
@@ -784,14 +787,14 @@ RxSetSpecialVar( int rcsigl, long num )
 			varleaf = RCStr;
 			break;
 		case SIGLVAR:
-			varleaf = SiglStr;
+			varleaf = siglStr;
 			break;
 	}
 
 	LINITSTR(value);
 	Lfx(&value,0);
 	Licpy(&value,num);
-	RxVarSet(_Proc[_rx_proc].scope,varleaf,&value);
+	RxVarSet(_proc[_rx_proc].scope,varleaf,&value);
 	LFREESTR(value);
 } /* RxSetSpecialVar */
 
@@ -954,7 +957,7 @@ SystemPoolSet(PLstr name, PLstr value)
 #ifndef WCE
 	L2STR(name); LASCIIZ(*name);
 	L2STR(value); LASCIIZ(*value);
-#ifdef HAS_SETENV
+#ifdef HAVE_SETENV
 	return setenv(LSTR(*name),LSTR(*value),TRUE);
 #else
 	{
@@ -1003,7 +1006,7 @@ RxPoolGet( PLstr pool, PLstr name, PLstr value )
 		/* search in the appropriate scope */
 		LINITSTR(str);	/* translate to upper case */
 		Lstrcpy(&str,name); Lupper(&str);
-		leaf = RxVarFindOld(_Proc[poolnum].scope,&str,&found);
+		leaf = RxVarFindOld(_proc[poolnum].scope,&str,&found);
 		if (found) {
 			Lstrcpy(value,LEAFVAL(leaf));
 			LFREESTR(str);
@@ -1051,7 +1054,7 @@ RxPoolSet( PLstr pool, PLstr name, PLstr value )
 		/* search in the appropriate scope */
 		LINITSTR(str);	/* translate to upper case */
 		Lstrcpy(&str,name); Lupper(&str);
-		leaf = RxVarFindOld(_Proc[poolnum].scope,&str,&found);
+		leaf = RxVarFindOld(_proc[poolnum].scope,&str,&found);
 
 		/* set the new value */
 		if (found) {
@@ -1063,7 +1066,7 @@ RxPoolSet( PLstr pool, PLstr name, PLstr value )
 			hasdot = (MEMCHR(LSTR(str),'.',LLEN(str)-1)!=NULL);
 
 			/* added it to the tree */
-			leaf = RxVarAdd(_Proc[poolnum].scope,
+			leaf = RxVarAdd(_proc[poolnum].scope,
 				&str, hasdot, leaf);
 			Lstrcpy(LEAFVAL(leaf),value);
 		}

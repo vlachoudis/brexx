@@ -1,6 +1,9 @@
 /*
- * $Id: maintest.c,v 1.6 2002/07/03 13:15:08 bnv Exp $
+ * $Id: maintest.c,v 1.7 2003/10/30 13:16:28 bnv Exp $
  * $Log: maintest.c,v $
+ * Revision 1.7  2003/10/30 13:16:28  bnv
+ * Variable name change
+ *
  * Revision 1.6  2002/07/03 13:15:08  bnv
  * Changed: Version define
  *
@@ -69,8 +72,8 @@ RxIndirectCall( )
 			/* setup arguments */
 			ARGN--;
 			for (i=0; i<ARGN; i++)
-				Rxarg.a[i] = Rxarg.a[i+1];
-			Rxarg.a[i] = NULL;
+				rxArg.a[i] = rxArg.a[i+1];
+			rxArg.a[i] = NULL;
 			(bltfunc->func)(bltfunc->opt);
 		} else
 			Lerror(ERR_UNEXISTENT_LABEL,1,ARG1);
