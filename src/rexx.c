@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.c,v 1.3 2001/06/25 18:51:48 bnv Exp $
+ * $Id: rexx.c,v 1.4 2002/06/06 08:24:36 bnv Exp $
  * $Log: rexx.c,v $
+ * Revision 1.4  2002/06/06 08:24:36  bnv
+ * Corrected: Registry support for WCE
+ *
  * Revision 1.3  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -55,9 +58,6 @@ RxInitialize( char *prorgram_name )
 	Lstr	str;
 
 	_prgname = prorgram_name;
-#if defined(WIN32) || defined(WCE)
-	_szRxAppKey = REGAPPKEY;
-#endif
 
 	LINITSTR(str);
 
@@ -188,6 +188,7 @@ RxRun( char *filename, PLstr programstr,
 		Lscpy(&(rxfile->filename), "<STDIN>");
 		rxfile->filetype = NULL;
 		LASCIIZ(rxfile->filename);
+		Lfx(&(rxfile->file), 0);
 		Lstrcpy(&(rxfile->file), programstr);
 	}
 	LASCIIZ(rxfile->file);
