@@ -1,6 +1,9 @@
 /*
- * $Id: nextsymb.c,v 1.4 2002/06/11 12:37:38 bnv Exp $
+ * $Id: nextsymb.c,v 1.5 2003/01/30 08:22:37 bnv Exp $
  * $Log: nextsymb.c,v $
+ * Revision 1.5  2003/01/30 08:22:37  bnv
+ * Corrected: comment after the comma_sy search
+ *
  * Revision 1.4  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -273,6 +276,7 @@ _NEXTSYMBOL:
 			symbol = comma_sy;
 			NextBlank = FALSE;
 			symbolPrevBlank = TRUE;
+			commentfound = FALSE;
 			break;
 
 		case '.':
