@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/rexx.h,v 1.4 1999/11/29 14:58:00 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/rexx.h,v 1.5 2000/04/07 07:17:10 bnv Exp $
  * $Log: rexx.h,v $
+ * Revision 1.5  2000/04/07 07:17:10  bnv
+ * Release 2.0.3
+ *
  * Revision 1.4  1999/11/29 14:58:00  bnv
  * Changed: Some defines
  *
@@ -45,7 +48,7 @@
 #endif
 
 /* ------------ some defines ------------------ */
-#define	VERSION		"REXX_BNV R2.0.2 " ## __DATE__
+#define	VERSION		"REXX_BNV R2.0.3 " ## __DATE__
 #define	AUTHOR		"Vassilis N. Vlachoudis <V.Vlachoudis@cern.ch>"
 #define REGAPPKEY	TEXT("Software\\Marmita\\BRexx")
 #define	SCIENTIFIC	0
