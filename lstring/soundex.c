@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/soundex.c,v 1.1 1998/07/02 17:18:00 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/soundex.c,v 1.2 1999/11/26 12:52:25 bnv Exp $
  * $Log: soundex.c,v $
+ * Revision 1.2  1999/11/26 12:52:25  bnv
+ * Nothing important.
+ *
  * Revision 1.1  1998/07/02 17:18:00  bnv
  * Initial Version
  *
@@ -57,7 +60,7 @@ Lsoundex( const PLstr to, const PLstr str )
 	for (i=1; i<len; i++) {
 		c = l2u[(byte)name[i]];
 			/* skip non alpha */
-		if (!isalpha(c))
+		if (!ISALPHA(c))
 			continue;
 
 			/* skip succesive occurance */
