@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/wordpos.c,v 1.1 1998/07/02 17:20:58 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/wordpos.c,v 1.2 1999/11/26 12:52:25 bnv Exp $
  * $Log: wordpos.c,v $
+ * Revision 1.2  1999/11/26 12:52:25  bnv
+ * Changed: To use the new macros
+ *
  * Revision 1.1  1998/07/02 17:20:58  bnv
  * Initial Version
  *
@@ -43,15 +46,15 @@ Lwordpos( const PLstr phrase, const PLstr s, long n )
 		}
 		if (k >= LLEN(*phrase)) {
 			if (p>=LLEN(*s)) return n;
-			if (isspace(LSTR(*s)[p])) return n;
+			if (ISSPACE(LSTR(*s)[p])) return n;
 			k = lk;
 			LSKIPWORD(*s,lp);
 			LSKIPBLANKS(*s,lp);
 			if (lp>=LLEN(*s)) return 0;
 			p = lp;  n++;
 		} else
-			if (isspace(LSTR(*phrase)[k])) {
-				if (isspace(LSTR(*s)[p])) {
+			if (ISSPACE(LSTR(*phrase)[k])) {
+				if (ISSPACE(LSTR(*s)[p])) {
 					LSKIPBLANKS(*phrase,k);
 					if (k>=LLEN(*phrase)) return n;
 					LSKIPBLANKS(*s,p);

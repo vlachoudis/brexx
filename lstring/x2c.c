@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/x2c.c,v 1.1 1998/07/02 17:20:58 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/x2c.c,v 1.2 1999/11/26 12:52:25 bnv Exp $
  * $Log: x2c.c,v $
+ * Revision 1.2  1999/11/26 12:52:25  bnv
+ * Changed: To use the new macros
+ *
  * Revision 1.1  1998/07/02 17:20:58  bnv
  * Initial Version
  *
@@ -23,8 +26,8 @@ Lx2c( const PLstr to, const PLstr from )
 	t = LSTR(*to);	f = LSTR(*from);
 
 	for (i=r=0; i<LLEN(*from); )  {
-		for (; isspace(f[i]) && (i<LLEN(*from)); i++) ;; /*skip spaces*/
-		for (j=i; isxdigit(f[j]) && (j<LLEN(*from)); j++) ;; /* find hexdigits */
+		for (; ISSPACE(f[i]) && (i<LLEN(*from)); i++) ;; /*skip spaces*/
+		for (j=i; ISXDIGIT(f[j]) && (j<LLEN(*from)); j++) ;; /* find hexdigits */
 
 		if ((i<LLEN(*from)) && (j==i)) {	/* Ooops wrong character */
 			Lerror(ERR_INVALID_HEX_CONST,0);

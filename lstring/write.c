@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/write.c,v 1.4 1999/05/26 16:47:42 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/write.c,v 1.5 1999/11/26 12:52:25 bnv Exp $
  * $Log: write.c,v $
+ * Revision 1.5  1999/11/26 12:52:25  bnv
+ * Changed: To use the new macros
+ *
  * Revision 1.4  1999/05/26 16:47:42  bnv
  * Gene corrections in RXCONIO
  *
@@ -15,12 +18,11 @@
  *
  */
 
-#include <stdio.h>
 #include <lstring.h>
 
 /* ---------------- Lwrite ------------------- */
 void
-Lwrite( FILE *f, const PLstr line, const bool newline)
+Lwrite( FILEP f, const PLstr line, const bool newline)
 {
 	long	l;
 	char	*c;
@@ -29,12 +31,12 @@ Lwrite( FILE *f, const PLstr line, const bool newline)
 	c = LSTR(*line);
 	l = LLEN(*line);
 	while (l--)
-#if defined(RXCONIO)
-		if (f==stdout) {
+#ifdef RXCONIO
+		if (f==STDOUT) {
 			putch(*c++);
 		} else
 #endif
-		fputc(*c++,f);
+		FPUTC(*c++,f);
 	if (newline)
-		fputc('\n',f);
+		FPUTC('\n',f);
 } /* Lwrite */

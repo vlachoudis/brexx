@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/x2b.c,v 1.1 1998/07/02 17:20:58 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/x2b.c,v 1.2 1999/11/26 12:52:25 bnv Exp $
  * $Log: x2b.c,v $
+ * Revision 1.2  1999/11/26 12:52:25  bnv
+ * Changed: To use the new macros
+ *
  * Revision 1.1  1998/07/02 17:20:58  bnv
  * Initial Version
  *
@@ -23,8 +26,8 @@ Lx2b( const PLstr to, const PLstr from )
 	c = LSTR(*to);
 
 	for (i=0; i<LLEN(*from); i++) {
-		if (isspace(LSTR(*from)[i])) continue;
-		if (!isxdigit(LSTR(*from)[i]))
+		if (ISSPACE(LSTR(*from)[i])) continue;
+		if (!ISXDIGIT(LSTR(*from)[i]))
 			Lerror(ERR_INVALID_HEX_CONST,0);
 
 		d = HEXVAL(LSTR(*from)[i]);
