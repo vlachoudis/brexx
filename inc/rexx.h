@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.h,v 2.1 2003/02/26 16:33:09 bnv Exp $
+ * $Id: rexx.h,v 2.2 2004/08/16 15:33:00 bnv Exp $
  * $Log: rexx.h,v $
+ * Revision 2.2  2004/08/16 15:33:00  bnv
+ * Changed: name of mnemonic operands from xxx_mn to O_XXX
+ *
  * Revision 2.1  2003/02/26 16:33:09  bnv
  * Version 2.1
  *
@@ -70,7 +73,7 @@
 
 /* ------------ some defines ------------------ */
 #define	VERSIONSTR	PACKAGE_STRING" "__DATE__
-#define	AUTHOR		PACKAGE_BUGREPORT
+#define	AUTHOR		"Vasilis.Vlachoudis@cern.ch"
 #define REGAPPKEY	TEXT("Software\\Marmita\\BRexx")
 #define	SCIENTIFIC	0
 #define ENGINEERING	1
@@ -127,7 +130,7 @@ struct tclause {
 	size_t	code;		/* code start position	*/
 	size_t	line;		/* line number in file	*/
 	int	nesting;	/* nesting level	*/
-	char 	*ptr;		/* pointer in file	*/
+	char	*ptr;		/* pointer in file	*/
 	RxFile	*fptr;		/* RxFile pointer	*/
 } Clause;
 
@@ -177,8 +180,8 @@ struct trxproc {
 	PLstr	lbl_novalue;	/*			*/
 	PLstr	lbl_notready;	/*			*/
 	PLstr	lbl_syntax;	/*			*/
-	int	codelen;	/* used in interpret_mn	*/
-	int	clauselen;	/* used in interpret_mn	*/
+	int	codelen;	/* used in OP_INTERPRET	*/
+	int	clauselen;	/* used in OP_INTERPRET	*/
 	int	trace;		/* trace type		*/
 	bool	interactive_trace;
 } RxProc;
