@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/compile.c,v 1.2 1999/03/10 16:53:32 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/compile.c,v 1.3 1999/03/15 10:08:09 bnv Exp $
  * $Log: compile.c,v $
+ * Revision 1.3  1999/03/15 10:08:09  bnv
+ * Changed: Do not create IdentInfo for non Symbol strings
+ *
  * Revision 1.2  1999/03/10 16:53:32  bnv
  * LoopCtrl changed from word to size_t
  *
@@ -342,7 +345,9 @@ _Add2Lits( PLstr lit, int hasdot )
 		if (LTYPE(newstr) == LREAL_TY)
 			LSETOPT(newstr,LOPTREAL);
 
-		if ((LTYPE(newstr)==LSTRING_TY) && !LISNULL(newstr)) {
+		if ((LTYPE(newstr)==LSTRING_TY) &&
+			!LISNULL(newstr) && Ldatatype(&newstr,'S'))
+		{
 			LASCIIZ(newstr);
 			if (hasdot) {
 				/* count number of dots */
