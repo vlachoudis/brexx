@@ -1,6 +1,9 @@
 /*
- * $Id: interpre.c,v 1.9 2001/06/25 18:50:56 bnv Exp $
+ * $Id: interpre.c,v 1.10 2001/09/28 10:00:39 bnv Exp $
  * $Log: interpre.c,v $
+ * Revision 1.10  2001/09/28 10:00:39  bnv
+ * Added: Quotes arround the arguments of a system-function call
+ *
  * Revision 1.9  2001/06/25 18:50:56  bnv
  * Added: Memory check in debug version at the end of Interpretation
  *
@@ -513,8 +516,9 @@ I_CallFunction( void )
 			LINITSTR(cmd);
 			Lstrcpy(&cmd,&(leaf->key));
 			while (st<=RxStckTop) {
-				Lcat(&cmd," ");
+				Lcat(&cmd," \"");
 				Lstrcat(&cmd,RxStck[st++]);
+				Lcat(&cmd,"\"");
 			}
 			RxRedirectCmd(&cmd,FALSE,TRUE,res);
 			LFREESTR(cmd);
