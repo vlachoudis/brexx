@@ -1,6 +1,9 @@
 /*
- * $Id: main.c,v 1.8 2002/07/03 13:15:08 bnv Exp $
+ * $Id: main.c,v 1.9 2002/08/22 12:27:09 bnv Exp $
  * $Log: main.c,v $
+ * Revision 1.9  2002/08/22 12:27:09  bnv
+ * Added: Unix initialisation commands
+ *
  * Revision 1.8  2002/07/03 13:15:08  bnv
  * Changed: Version define
  *
@@ -42,6 +45,9 @@ extern void __CDECL RxConIOInitialize();
 extern void __CDECL RxMySQLInitialize();
 extern void __CDECL RxMySQLFinalize();
 #endif
+#ifdef UNIX
+extern void __CDECL RxUnixInitialize();
+#endif
 
 /* --------------------- main ---------------------- */
 int __CDECL
@@ -81,7 +87,9 @@ main(int ac, char *av[])
 #ifdef RXMYSQL
 	RxMySQLInitialize();
 #endif
-
+#ifdef UNIX
+	RxUnixInitialize();
+#endif
 
 	/* --- scan arguments --- */
 	ia = 1;
