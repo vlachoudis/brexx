@@ -1,6 +1,9 @@
 /*
- * $Id: bmem.h,v 1.3 2002/06/11 12:37:56 bnv Exp $
+ * $Id: bmem.h,v 1.4 2003/02/26 16:30:16 bnv Exp $
  * $Log: bmem.h,v $
+ * Revision 1.4  2003/02/26 16:30:16  bnv
+ * Added: config.h
+ *
  * Revision 1.3  2002/06/11 12:37:56  bnv
  * Added: CDECL
  *
@@ -16,6 +19,7 @@
 #define __BMEM_H__
 
 #include <os.h>
+#include <config.h>
 #include <stdlib.h>
 #include <malloc.h>
 
