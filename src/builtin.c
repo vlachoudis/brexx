@@ -1,6 +1,9 @@
 /*
- * $Id: builtin.c,v 1.3 2001/06/25 18:51:48 bnv Exp $
+ * $Id: builtin.c,v 1.4 2002/01/14 10:22:48 bnv Exp $
  * $Log: builtin.c,v $
+ * Revision 1.4  2002/01/14 10:22:48  bnv
+ * Changed: Scan all the dirs in the RXLIB path
+ *
  * Revision 1.3  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -603,6 +606,8 @@ R_load( )
 	RxFile  *rxf,*rxf2;
 	int     i;
 	size_t	ip;
+	char	*start, *stop;
+	Lstr	rxlib_path;
 #ifndef WCE
 	char	*rxlib;
 #else
@@ -627,33 +632,53 @@ R_load( )
 
 	Lstrcpy(&(rxf->filename), ARG1);	LASCIIZ(rxf->filename);
 
-	if (RxLoadFile( rxf )) goto fileloaded;
+	if (RxLoadFile( rxf )) goto FILELOADED;
 
 	/* let's try at the directory of rxlib */
+	LINITSTR(rxlib_path);
+
 #ifndef WCE
 	if ((rxlib=getenv("RXLIB"))!=NULL) {
-		Lscpy(&(rxf->filename),rxlib);
+		Lscpy(&rxlib_path,rxlib);
 #else
 	pathlen = sizeof(pathvalue);
 	if (RXREGGETDATA(TEXT("LIB"),REG_SZ,pathvalue,&pathlen)) {
-		Lwscpy(&(rxf->filename),pathvalue);
+		Lwscpy(&rxlib_path,pathvalue);
 #endif
-		i = LLEN(rxf->filename);
-		if (LSTR(rxf->filename)[i-1] != FILESEP) {
-			LSTR(rxf->filename)[i] = FILESEP;
-			LLEN(rxf->filename)++;
+
+		LASCIIZ(rxlib_path);
+		start = LSTR(rxlib_path);
+		while (start!=NULL && *start) {
+			// Find first directory
+			stop = STRCHR(start,PATHSEP);
+			if (stop!=NULL) {
+				*stop='\0';
+				stop++;
+			}
+			Lscpy(&(rxf->filename),start);
+
+			i = LLEN(rxf->filename);
+			if (LSTR(rxf->filename)[i-1] != FILESEP) {
+				LSTR(rxf->filename)[i] = FILESEP;
+				LLEN(rxf->filename)++;
+			}
+			Lstrcat(&(rxf->filename),ARG1);
+			LASCIIZ(rxf->filename);
+			if (RxLoadFile( rxf )) {
+				LFREESTR( rxlib_path );
+				goto FILELOADED;
+			}
+			start = stop;
 		}
-		Lstrcat(&(rxf->filename),ARG1);
-		LASCIIZ(rxf->filename);
-		if (RxLoadFile( rxf )) goto fileloaded;
 	}
+	LFREESTR( rxlib_path );
 	rxf2->next = NULL;
 	LFREESTR(rxf->filename);
 	FREE(rxf);
 	Licpy(ARGR,1);		/* Error */
 	return;
 
-fileloaded:
+FILELOADED:
 	ip = (size_t)((byte huge *)Rxcip - (byte huge *)Rxcodestart);
 	MEMCPY(old_trap,_error_trap,sizeof(_error_trap));
 	RxInitCompile(rxf,NULL);
