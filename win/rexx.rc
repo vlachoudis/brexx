@@ -36,18 +36,18 @@ REXXICON                ICON    DISCARDABLE     "rexx.ico"
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE DISCARDABLE 
+1 TEXTINCLUDE DISCARDABLE
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE DISCARDABLE 
+2 TEXTINCLUDE DISCARDABLE
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE DISCARDABLE 
+3 TEXTINCLUDE DISCARDABLE
 BEGIN
     "\r\n"
     "\0"
@@ -60,7 +60,7 @@ END
 //
 // Data
 //
-#if _WIN32_WCE > 211
+
 IDM_MAIN_MENU RCDATA DISCARDABLE
 BEGIN
     IDM_MAIN_MENU,
@@ -90,7 +90,6 @@ BEGIN
     0,
     2
 END
-#endif
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -98,10 +97,11 @@ END
 // Menubar
 //
 
-IDM_MAIN_MENU MENU DISCARDABLE 
+IDM_MAIN_MENU MENU DISCARDABLE
 BEGIN
     POPUP "Action"
     BEGIN
+        MENUITEM "&Run",                        ID_ACTION_RUN
         MENUITEM "&Break",                      ID_ACTION_BREAK
         MENUITEM "&About",                      ID_ACTION_ABOUT
         MENUITEM SEPARATOR
@@ -109,12 +109,12 @@ BEGIN
     END
     POPUP "Edit"
     BEGIN
-        MENUITEM "Copy &All\tAlt-A",            ID_EDIT_COPYALL
-        MENUITEM "&Paste\tAlt-V",               ID_EDIT_PASTE
-        MENUITEM "&Clear\tAlt-C",               ID_EDIT_CLEAR
+        MENUITEM "Copy &All",                   ID_EDIT_COPYALL
+        MENUITEM "&Paste",                      ID_EDIT_PASTE
+        MENUITEM "&Clear",                      ID_EDIT_CLEAR
         MENUITEM SEPARATOR
-        MENUITEM "Mar&k or Pan\tAlt-K",         ID_EDIT_MARK, CHECKED
-        MENUITEM "&Track Cursor\tAlt-T",        ID_EDIT_TRACKCURSOR
+        MENUITEM "Mark or Pan",                 ID_EDIT_MARK, CHECKED
+        MENUITEM "&Track Cursor",               ID_EDIT_TRACKCURSOR
     END
     POPUP "View"
     BEGIN
@@ -132,41 +132,17 @@ BEGIN
             MENUITEM "18",                          ID_FONT_18
             MENUITEM "20",                          ID_FONT_20
         END
-        MENUITEM "Scroll Bars\tAlt-B",          ID_VIEW_SCROLLBARS, CHECKED
-        MENUITEM "Menu\tAlt-M",                 ID_VIEW_MENU, CHECKED
-        MENUITEM "Refresh\tAlt-R",              ID_VIEW_REFRESH
+        MENUITEM "Scroll Bars",                 ID_VIEW_SCROLLBARS, CHECKED
+        MENUITEM "Refresh",                     ID_VIEW_REFRESH
     END
 END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Accelerator
-//
-
-IDM_MAIN_MENU ACCELERATORS MOVEABLE PURE 
-BEGIN
-    "-",            ID_FONTDEC,             ASCII,  ALT, NOINVERT
-    "=",            ID_FONTINC,             ASCII,  ALT, NOINVERT
-    "A",            ID_EDIT_COPYALL,        VIRTKEY, ALT, NOINVERT
-    "B",            ID_VIEW_SCROLLBARS,     VIRTKEY, ALT, NOINVERT
-    "C",            ID_EDIT_CLEAR,          VIRTKEY, ALT, NOINVERT
-    "K",            ID_EDIT_MARK,           VIRTKEY, ALT, NOINVERT
-    "L",            ID_FONTINC,             VIRTKEY, ALT, NOINVERT
-    "M",            ID_VIEW_MENU,           VIRTKEY, ALT, NOINVERT
-    "R",            ID_VIEW_REFRESH,        VIRTKEY, ALT, NOINVERT
-    "S",            ID_FONTDEC,             VIRTKEY, ALT, NOINVERT
-    "T",            ID_EDIT_TRACKCURSOR,    VIRTKEY, ALT, NOINVERT
-    "V",            ID_EDIT_PASTE,          VIRTKEY, ALT, NOINVERT
-END
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 128, 80
+IDD_ABOUTBOX DIALOGEX 0, 0, 128, 114
 STYLE WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_CAPTIONOKBTN
 CAPTION "About BRexx"
@@ -174,18 +150,17 @@ FONT 8, "Tahoma"
 BEGIN
     ICON            REXXICON,IDC_STATIC,4,4,21,20
     LTEXT           "BRexx Version 2.x",IDC_STATIC,28,6,62,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 1990-2005",IDC_STATIC,28,18,100,8
-    LTEXT           "Author: Vasilis.Vlachoudis@cern.ch",IDC_STATIC,4,38,118,
-                    70
+    LTEXT           "Copyright (C) 1990-2004",IDC_STATIC,28,18,100,8
+    LTEXT           "Author: Vasilis.Vlachoudis@cern.ch"
+                    IDC_STATIC,4,38,118,70
 END
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // String Table
 //
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE DISCARDABLE
 BEGIN
     IDS_CAP_ACTION          "Action"
     IDS_CAP_EDIT            "Edit"
