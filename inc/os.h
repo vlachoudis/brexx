@@ -1,6 +1,9 @@
 /*
- * $Id: os.h,v 1.5 2002/08/22 12:30:34 bnv Exp $
+ * $Id: os.h,v 1.6 2003/02/12 16:38:39 bnv Exp $
  * $Log: os.h,v $
+ * Revision 1.6  2003/02/12 16:38:39  bnv
+ * Added: pragma to disable the signed/unsigned comparison warning
+ *
  * Revision 1.5  2002/08/22 12:30:34  bnv
  * Added: UNIX define
  *
@@ -62,6 +65,8 @@
 #	if !defined(WIN)
 #		error "Please define the WIN"
 #	endif
+
+#	pragma warning(disable : 4018)	/* signed unsigned comparison warning */
 
 #elif defined(MSDOS)
 
