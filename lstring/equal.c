@@ -1,11 +1,15 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/equal.c,v 1.1 1998/07/02 17:18:00 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/equal.c,v 1.2 1998/11/10 13:36:14 bnv Exp $
  * $Log: equal.c,v $
+ * Revision 1.2  1998/11/10 13:36:14  bnv
+ * Comparison for reals is done with fabs(a-b)<smallnumber
+ *
  * Revision 1.1  1998/07/02 17:18:00  bnv
  * Initial Version
  *
  */
 
+#include <math.h>
 #include <ctype.h>
 #include <string.h>
 #include <lstring.h>
@@ -47,7 +51,7 @@ Lequal(const PLstr A, const PLstr B)
 		else
 			rb = TOREAL(*B);
 
-		if (ra==rb)
+		if (fabs(ra-rb)<=1E-14)
 			return 0;
 		else
 		if (ra>rb)
