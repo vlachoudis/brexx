@@ -7,11 +7,11 @@
 ||
 */
 
-//#include <conio.h>
+#include <conio.h>
 
-#include "rexx.h"
-#include "rxdefs.h"
-#include "rxconio.h"
+#include <rexx.h>
+#include <rxdefs.h>
+#include <rxconio.h>
 
 /* -------------------------------------------------------------- */
 /*  ANSICLS()                                                     */
@@ -116,6 +116,7 @@ void R_conio_C( const int func ) {
 			else                                 i=0;
 			ANSI_ATTR(i);
 			break;
+#ifndef RSXWIN
 		case f_setcursor:
 			i=-1;
 			if      (Lcmp(ARG1,"OFF")   ==0) i=_NOCURSOR;
@@ -123,6 +124,7 @@ void R_conio_C( const int func ) {
 			else if (Lcmp(ARG1,"NORMAL")==0) i=_NORMALCURSOR;
 			if (i!=-1) _setcursortype(i);
 			break;
+#endif
 		default:
 			Lerror(ERR_INTERPRETER_FAILURE,0);
 	}
@@ -162,7 +164,7 @@ void R_conio_I( const int func ) {
 /*  ANSICOLOR((forecolor)[,(backcolor)])                          */
 /* -------------------------------------------------------------- */
 void R_conio_ansicolor() {
-	int i=-1, j=-1;
+	int i=-1, j=-1, h=-1;
 	if ((ARGN<1) || (ARGN>2)) Lerror(ERR_INCORRECT_CALL,0);
 	L2STR(ARG1);
 	if      (Lcmp(ARG1,"BLACK")       ==0) i=BLACK;
@@ -173,6 +175,7 @@ void R_conio_ansicolor() {
 	else if (Lcmp(ARG1,"MAGENTA")     ==0) i=MAGENTA;
 	else if (Lcmp(ARG1,"YELLOW")      ==0) i=YELLOW;
 	else if (Lcmp(ARG1,"WHITE")       ==0) i=WHITE;
+#ifndef RSXWIN
 	else if ((Lcmp(ARG1,"BROWN")       ==0) || (Lcmp(ARG1,"BOLDYELLOW") ==0)) i=BROWN;
 	else if ((Lcmp(ARG1,"LIGHTGRAY")   ==0) || (Lcmp(ARG1,"BOLDWHITE")  ==0)) i=LIGHTGRAY;
 	else if ((Lcmp(ARG1,"DARKGRAY")    ==0) || (Lcmp(ARG1,"BOLDBLACK")  ==0)) i=DARKGRAY;
@@ -181,6 +184,16 @@ void R_conio_ansicolor() {
 	else if ((Lcmp(ARG1,"LIGHTCYAN")   ==0) || (Lcmp(ARG1,"BOLDCYAN")   ==0)) i=LIGHTCYAN;
 	else if ((Lcmp(ARG1,"LIGHTRED")    ==0) || (Lcmp(ARG1,"BOLDRED")    ==0)) i=LIGHTRED;
 	else if ((Lcmp(ARG1,"LIGHTMAGENTA")==0) || (Lcmp(ARG1,"BOLDMAGENTA")==0)) i=LIGHTMAGENTA;
+#else
+	else if ((Lcmp(ARG1,"BROWN")       ==0) || (Lcmp(ARG1,"BOLDYELLOW") ==0)) h=YELLOW;
+	else if ((Lcmp(ARG1,"LIGHTGRAY")   ==0) || (Lcmp(ARG1,"BOLDWHITE")  ==0)) h=WHITE;
+	else if ((Lcmp(ARG1,"DARKGRAY")    ==0) || (Lcmp(ARG1,"BOLDBLACK")  ==0)) h=BLACK;
+	else if ((Lcmp(ARG1,"LIGHTBLUE")   ==0) || (Lcmp(ARG1,"BOLDBLUE")   ==0)) h=BLUE;
+	else if ((Lcmp(ARG1,"LIGHTGREEN")  ==0) || (Lcmp(ARG1,"BOLDGREEN")  ==0)) h=GREEN;
+	else if ((Lcmp(ARG1,"LIGHTCYAN")   ==0) || (Lcmp(ARG1,"BOLDCYAN")   ==0)) h=CYAN;
+	else if ((Lcmp(ARG1,"LIGHTRED")    ==0) || (Lcmp(ARG1,"BOLDRED")    ==0)) h=RED;
+	else if ((Lcmp(ARG1,"LIGHTMAGENTA")==0) || (Lcmp(ARG1,"BOLDMAGENTA")==0)) h=MAGENTA;
+#endif
 	if (ARGN==2) {
 		L2STR(ARG2);
 		if      (Lcmp(ARG2,"BLACK")       ==0) j=BLACK;
@@ -193,6 +206,8 @@ void R_conio_ansicolor() {
 		else if (Lcmp(ARG2,"WHITE")       ==0) j=WHITE;
 	}
 	if (j!=-1) { ANSI_COLOR(i,j); } else { ANSI_FG_LCOLOR(i); }
+	if (h!=-1) { ANSI_FG_HCOLOR(h); } 
+
 }
 
 /* -------------------------------------------------------------- */
@@ -209,22 +224,29 @@ void RxConIOInitialize() {
 	RxRegFunction("CLS",			R_conio_O,			f_ansicls);
 	RxRegFunction("ANSICLS",		R_conio_O,			f_ansicls);
 	RxRegFunction("ANSIERASEEOL",		R_conio_O,			f_ansieraseeol);
+#ifndef RSXWIN
 	RxRegFunction("ANSIDELLINE",		R_conio_O,			f_ansidelline);
 	RxRegFunction("ANSIINSLINE",		R_conio_O,			f_ansiinsline);
+#endif
 	RxRegFunction("ANSISAVECURSOR",	R_conio_O,			f_ansisavecursor);
 	RxRegFunction("ANSILOADCURSOR",	R_conio_O,			f_ansiloadcursor);
 	RxRegFunction("GETCH",			R_conio_O,			f_getch);
+#ifndef RSXWIN
 	RxRegFunction("KBHIT",			R_conio_O,			f_kbhit);
 	RxRegFunction("WHEREX",			R_conio_O,			f_wherex);
 	RxRegFunction("WHEREY",			R_conio_O,			f_wherey);
+#endif
 	RxRegFunction("ANSICURSORUP",		R_conio_I,			f_ansicursorup);
 	RxRegFunction("ANSICURSORDOWN",	R_conio_I,			f_ansicursordown);
 	RxRegFunction("ANSICURSORRIGHT",	R_conio_I,			f_ansicursorright);
 	RxRegFunction("ANSICURSORLEFT",	R_conio_I,			f_ansicursorleft);
+
 	RxRegFunction("ANSIMODE",		R_conio_C,			f_ansimode);
 	RxRegFunction("ANSIATTR",		R_conio_C,			f_ansiattr);
+#ifndef RSXWIN
 	RxRegFunction("SETCURSOR",		R_conio_C,			f_setcursor);
 	RxRegFunction("ANSISETCURSOR",	R_conio_C,			f_setcursor);
+#endif
 	RxRegFunction("ANSIGOTO",		R_conio_ansigoto,		0);
 	RxRegFunction("ANSICOLOR",		R_conio_ansicolor,	0);
 }
