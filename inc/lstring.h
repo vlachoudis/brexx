@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.h,v 1.8 2002/06/11 12:37:56 bnv Exp $
+ * $Id: lstring.h,v 1.9 2003/02/12 16:38:39 bnv Exp $
  * $Log: lstring.h,v $
+ * Revision 1.9  2003/02/12 16:38:39  bnv
+ * Added: Lhashvalue
+ *
  * Revision 1.8  2002/06/11 12:37:56  bnv
  * Added: CDECL
  *
@@ -239,7 +242,7 @@ void  __CDECL Ldelword( const PLstr to, const PLstr str, long start, long length
 void  __CDECL Lerrortext( const PLstr to, const int errno, const int subno, va_list *ap);
 void  __CDECL Lformat ( const PLstr to, const PLstr num, long before,
 			long after, long expp, long expt );
-word  __CDECL Lhashvalue( const PLstr s );
+dword __CDECL Lhashvalue( const PLstr s );
 long  __CDECL Lindex  ( const PLstr haystack, const PLstr needle, long p);
 void  __CDECL Linsert ( const PLstr to, const PLstr target, const PLstr newstr,
 			long n, long length, const char pad);
