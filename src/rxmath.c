@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/rxmath.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/rxmath.c,v 1.2 1999/02/26 08:45:49 bnv Exp $
  * $Log: rxmath.c,v $
+ * Revision 1.2  1999/02/26 08:45:49  bnv
+ * Correction of pow10 for BORLANDC.
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
@@ -31,13 +34,6 @@ R_abs_sign( const int func )
 	else
 		Licpy(ARGR,Lsign(ARG1));
 } /* R_abs_sign */
-
-#ifndef __BORLANDC__
-double pow10(double f)
-{
-   return pow(10.0,f);
-}
-#endif
 
 /* ------------------* common math functions *------------- */
 void
@@ -80,7 +76,7 @@ R_math( const int func )
 			break;
 
 		case f_pow10:
-			LREAL(*ARGR) = pow10(LREAL(*ARGR));
+			LREAL(*ARGR) = pow(10.0,LREAL(*ARGR));
 			break;
 
 		case f_sin :
