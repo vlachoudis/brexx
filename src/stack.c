@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/stack.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/stack.c,v 1.2 1999/11/26 13:13:47 bnv Exp $
  * $Log: stack.c,v $
+ * Revision 1.2  1999/11/26 13:13:47  bnv
+ * Changed: To use the new macros.
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
@@ -8,9 +11,7 @@
 
 #define __STACK_C__
 
-#include <bnv.h>
 #include <bmem.h>
-#include <stdio.h>
 
 #include <lerror.h>
 #include <lstring.h>
