@@ -1,6 +1,9 @@
 /*
- * $Id: date.c,v 1.5 2002/06/11 12:37:15 bnv Exp $
+ * $Id: date.c,v 1.6 2004/08/16 15:25:20 bnv Exp $
  * $Log: date.c,v $
+ * Revision 1.6  2004/08/16 15:25:20  bnv
+ * float to double
+ *
  * Revision 1.5  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -90,7 +93,7 @@ Ldate( const PLstr datestr, char option )
 		case 'C':
 #ifndef WCE
 			length = tmdata->tm_yday + 1 +
-			(long)(((float)tmdata->tm_year-1)*365.25) + 365 ;
+			(long)(((double)tmdata->tm_year-1)*365.25) + 365 ;
 			sprintf(LSTR(*datestr),"%ld",length) ;
 #else
 			length = day_of_year(&time) +
