@@ -1,6 +1,9 @@
 /*
- * $Id: hashvalu.c,v 1.5 2003/01/30 08:22:20 bnv Exp $
+ * $Id: hashvalu.c,v 1.6 2003/02/12 16:42:12 bnv Exp $
  * $Log: hashvalu.c,v $
+ * Revision 1.6  2003/02/12 16:42:12  bnv
+ * *** empty log message ***
+ *
  * Revision 1.5  2003/01/30 08:22:20  bnv
  * Java algorithm used
  *
@@ -27,9 +30,6 @@
 dword __CDECL
 Lhashvalue( const PLstr str )
 {
-#ifdef WCE
-#	error "Lhashvalue is not used!"
-#endif
 	dword	value = 0;
 	size_t	i,l;
 
