@@ -1,6 +1,9 @@
 /*
- * $Id: winio.c,v 1.3 2001/06/25 18:52:24 bnv Exp $
+ * $Id: winio.c,v 1.4 2002/01/14 09:14:46 bnv Exp $
  * $Log: winio.c,v $
+ * Revision 1.4  2002/01/14 09:14:46  bnv
+ * Corrected: To handle correctly the requested fonts
+ *
  * Revision 1.3  2001/06/25 18:52:24  bnv
  * Header -> Id
  *
@@ -44,7 +47,7 @@ POINT	_Cursor = { 0, 0 };			// Cursor location
 BOOL	_CheckBreak = TRUE;			// Allow Ctrl-C for break?
 BOOL	_WinTerminated = FALSE;			// Escape exists program
 HFONT	_hFont;					// Current working font
-DWORD	_FontHeight = 14;			// Font Height
+DWORD	_FontHeight = 12;			// Font Height
 HWND	_CrtWindow = 0;				// CRT window handle
 HINSTANCE	_CrtInstance;			// CRT class instance
 
@@ -63,7 +66,7 @@ static BOOL	Reading = FALSE;	// Reading from window?
 static BOOL	Painting = FALSE;	// Handling wm_Paint?
 
 static LPTSTR	ScreenBuffer;		// Screen buffer pointer
-static POINT	CharSize;		// Character cell size
+static POINT	CharSize={0,0};		// Character cell size
 static int	CharAscent;		// Character ascent
 static HDC	DC;			// Global device context
 static PAINTSTRUCT	PS;		// Global paint structure
@@ -518,19 +521,21 @@ WindowPaint(void)
 	Painting = TRUE;
 	InitDeviceContext();
 
-	X1 = max(0, PS.rcPaint.left / CharSize.x + _Origin.x);
-	X2 = min(_ScreenSize.x,
-		(PS.rcPaint.right + CharSize.x - 1) / CharSize.x + _Origin.x);
-	Y1 = max(0, PS.rcPaint.top / CharSize.y + _Origin.y);
-	Y2 = min(_ScreenSize.y,
-		(PS.rcPaint.bottom + CharSize.y - 1) / CharSize.y + _Origin.y);
-	while (Y1 < Y2) {
-		ExtTextOut(DC, (X1 - _Origin.x) * CharSize.x,
-			(Y1 - _Origin.y) * CharSize.y,
-			ETO_OPAQUE, NULL,
-			ScreenPtr(X1, Y1), X2 - X1, NULL);
-		++Y1;
-	}                                                             
+	if (CharSize.x ^= 0) {
+		X1 = max(0, PS.rcPaint.left / CharSize.x + _Origin.x);
+		X2 = min(_ScreenSize.x,
+			(PS.rcPaint.right + CharSize.x - 1) / CharSize.x + _Origin.x);
+		Y1 = max(0, PS.rcPaint.top / CharSize.y + _Origin.y);
+		Y2 = min(_ScreenSize.y,
+			(PS.rcPaint.bottom + CharSize.y - 1) / CharSize.y + _Origin.y);
+		while (Y1 < Y2) {
+			ExtTextOut(DC, (X1 - _Origin.x) * CharSize.x,
+				(Y1 - _Origin.y) * CharSize.y,
+				ETO_OPAQUE, NULL,
+				ScreenPtr(X1, Y1), X2 - X1, NULL);
+			++Y1;
+		}
+	}
 	DoneDeviceContext();
 	Painting = FALSE;
 } /* WindowPaint */
@@ -553,7 +558,7 @@ WindowResize(void)
 		// For the first time create the font (WCE)
 		memset ((char *)&lf, 0, sizeof(lf));
 		lf.lfPitchAndFamily = FIXED_PITCH | FF_MODERN;
-		lf.lfHeight = _FontHeight;
+		lf.lfHeight = -_FontHeight;
 		_hFont = CreateFontIndirect (&lf);
 
 		// Initialise the Device Context
@@ -710,7 +715,7 @@ _WinIOProc(HWND Window, UINT Message, WPARAM WParam, LONG LParam)
 					{
 						TCHAR	AboutMsg[256];
 						swprintf(AboutMsg,
-							TEXT("Program: %s (%s)\nby V. Vlachoudis\n1999"),
+							TEXT("Program: %s (%s)\nby Vasilis.Vlachoudis@cern.ch\n1999"),
 							ModuleName,PRGNAME);
 
 						MessageBox(Window,
@@ -873,6 +878,7 @@ WInitWinIO(HINSTANCE hInst, HINSTANCE hPrev, int cmdShow)
 
 	GetModuleFileName(hInst, ModuleName, sizeof(ModuleName)/sizeof(TCHAR));
 
+	CharSize.x = 0;
 	ShowWindow(_CrtWindow, cmdShow);
 #if defined(WCE)
 	InvalidateRect(_CrtWindow, NULL, TRUE);
