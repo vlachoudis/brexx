@@ -1,6 +1,9 @@
 /*
- * $Id: print.c,v 1.8 2004/03/26 22:52:08 bnv Exp $
+ * $Id: print.c,v 1.9 2004/08/16 15:25:53 bnv Exp $
  * $Log: print.c,v $
+ * Revision 1.9  2004/08/16 15:25:53  bnv
+ * Changed: to buffered printing for WCE
+ *
  * Revision 1.8  2004/03/26 22:52:08  bnv
  * Increased conversion accurary of floats
  *
@@ -58,6 +61,18 @@ Lprint( FILEP f, const PLstr str )
 	switch (LTYPE(*str)) {
 		case LSTRING_TY:
 			c = LSTR(*str);
+#if defined(WIN) || defined(WCE)
+			if (f==STDOUT) {
+				l = 0;
+				LASCIIZ(*str);
+				while (l<LLEN(*str)) {
+					PUTS(c);
+					l += STRLEN(c);
+				}
+			} else
+				for (l=0; l<LLEN(*str); l++)
+					FPUTC(*c++,f);
+#else
 			for (l=0; l<LLEN(*str); l++)
 #ifdef RXCONIO
 				if (f==STDOUT) {
@@ -65,6 +80,7 @@ Lprint( FILEP f, const PLstr str )
 				} else
 #endif
 				FPUTC(*c++,f);
+#endif
 			break;
 
 		case LINTEGER_TY:
