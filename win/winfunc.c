@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/win/RCS/winfunc.c,v 1.1 1999/09/13 15:06:41 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/win/RCS/winfunc.c,v 1.2 1999/11/26 13:22:36 bnv Exp $
  * $Log: winfunc.c,v $
+ * Revision 1.2  1999/11/26 13:22:36  bnv
+ * Added: The routine CE_GetRegData
+ *
  * Revision 1.1  1999/09/13 15:06:41  bnv
  * Initial revision
  *
@@ -16,6 +19,30 @@
 
 extern	HWND		_CrtWindow;
 extern	HINSTANCE	_CrtInstance;
+
+/* --------------------------------------------------------------- */
+BOOL
+CE_GetRegData(HKEY key, TCHAR *keyPath, TCHAR *varName,
+		DWORD type, LPBYTE pvData, LPDWORD cbData )
+{
+	HKEY	hKey;
+	BOOL	fSuccess;
+
+	if ( RegOpenKeyEx(	key,
+				keyPath,
+				0,
+				KEY_ALL_ACCESS,
+				&hKey ) != ERROR_SUCCESS )
+		return FALSE;
+	fSuccess = RegQueryValueEx( hKey,
+			varName,
+			0,
+			&type,
+			pvData,
+			cbData );
+	RegCloseKey( hKey );
+	return (fSuccess==ERROR_SUCCESS);
+} /* CE_GetRegData */
 
 /* --------------------------------------------------------------- */
 /*  MSGBOX(text, title, [option])                                  */
