@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/lstring.h,v 1.6 2000/12/15 16:44:02 bnv Exp $
+ * $Id: lstring.h,v 1.7 2001/06/25 18:52:04 bnv Exp $
  * $Log: lstring.h,v $
+ * Revision 1.7  2001/06/25 18:52:04  bnv
+ * Header -> Id
+ *
  * Revision 1.6  2000/12/15 16:44:02  bnv
  * Changed: LMAXNUMERICDIGITS from 15 to 14. To avoid overflow
  *

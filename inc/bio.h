@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/bio.h,v 1.2 1999/11/29 14:57:42 bnv Exp $
+ * $Id: bio.h,v 1.3 2001/06/25 18:52:04 bnv Exp $
  * $Log: bio.h,v $
+ * Revision 1.3  2001/06/25 18:52:04  bnv
+ * Header -> Id
+ *
  * Revision 1.2  1999/11/29 14:57:42  bnv
  * Changed: Defines only
  *

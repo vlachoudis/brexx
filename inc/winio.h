@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/winio.h,v 1.1 1999/11/29 14:58:00 bnv Exp $
+ * $Id: winio.h,v 1.2 2001/06/25 18:52:04 bnv Exp $
  * $Log: winio.h,v $
+ * Revision 1.2  2001/06/25 18:52:04  bnv
+ * Header -> Id
+ *
  * Revision 1.1  1999/11/29 14:58:00  bnv
  * Initial revision
  *

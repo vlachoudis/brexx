@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/variable.h,v 1.2 1999/11/29 14:58:00 bnv Exp $
+ * $Id: variable.h,v 1.3 2001/06/25 18:52:04 bnv Exp $
  * $Log: variable.h,v $
+ * Revision 1.3  2001/06/25 18:52:04  bnv
+ * Header -> Id
+ *
  * Revision 1.2  1999/11/29 14:58:00  bnv
  * Changed: Some defines
  *

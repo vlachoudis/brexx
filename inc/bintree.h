@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/bintree.h,v 1.1 1998/07/02 17:35:50 bnv Exp $
+ * $Id: bintree.h,v 1.2 2001/06/25 18:52:04 bnv Exp $
  * $Log: bintree.h,v $
+ * Revision 1.2  2001/06/25 18:52:04  bnv
+ * Header -> Id
+ *
  * Revision 1.1  1998/07/02 17:35:50  bnv
  * Initial revision
  *
