@@ -1,6 +1,9 @@
 /*
- * $Id: bio.c,v 1.4 2002/06/11 12:38:06 bnv Exp $
+ * $Id: bio.c,v 1.5 2002/08/22 12:28:17 bnv Exp $
  * $Log: bio.c,v $
+ * Revision 1.5  2002/08/22 12:28:17  bnv
+ * Added: port programming support in the open() function
+ *
  * Revision 1.4  2002/06/11 12:38:06  bnv
  * Added: CDECL
  *
@@ -27,12 +30,16 @@ static	char	buffer[128];
 static	int	bufferpos=0;
 static	BOOL	newline=FALSE;
 
+extern HWND _CrtWindow;
+
 /* ----- Bfopen ----- */
 BFILE*
 Bfopen( const char *filename, const char *mode )
 {
 #ifndef __BORLANDC__
 	TCHAR	path[128];
+	TCHAR	options[128];
+	TCHAR	*wch;
 #endif
 	BFILE	*f;
 	HANDLE	hnd;
@@ -80,6 +87,15 @@ Bfopen( const char *filename, const char *mode )
 #else
 	mbstowcs(path,filename,STRLEN(filename)+1);
 
+	/* Scan for a special file */
+	wch = wcschr(path,_T(':'));
+	if (wch != NULL) {
+		wch++;
+		wcscpy(options,wch);
+		*wch = (TCHAR)0;	
+	} else
+		options[0] = (TCHAR)0;
+
 	if ((bitmode & (BIO_READ|BIO_WRITE)) == (BIO_READ|BIO_WRITE)) {
 		hnd = CreateFile( path,
 				GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, NULL,
@@ -99,6 +115,59 @@ Bfopen( const char *filename, const char *mode )
 
 	if (hnd==INVALID_HANDLE_VALUE)
 		return NULL;
+
+	if (options[0]) {
+		/* Check for serial port */
+		if (path[0]==_T('c') || path[0]==_T('C')) {
+			UINT	speed  = 9600;
+			UINT	length = 8;
+			TCHAR	parity = 'N';
+			UINT	stop   = 1;
+			UINT	buffer = 0;
+			DCB	dcb;
+			COMMTIMEOUTS commTimeouts;
+			BOOL	ready;
+
+			/* Options format COMx:<speed>,<length>,<parity>,<stop>[,buffer]
+			 * length = 300, 600, 1200, 2400, ... 115200
+			 * length = 7 | 8
+			 * parity = N, P, E
+			 * stop   = 1, 2
+			 */
+			swscanf(options,_T("%d,%d,%c,%d,%d"),
+				&speed, &length, &parity, &stop, &buffer);
+			if (buffer == 0) buffer = 128;
+			ready = SetupComm(hnd,buffer,buffer);
+			ready = GetCommState(hnd,&dcb);
+			dcb.BaudRate = speed;
+			dcb.ByteSize = length;
+			switch (parity) {
+				case _T('E'): case _T('e'):
+					dcb.Parity = EVENPARITY;
+					break;
+				case _T('O'): case _T('o'):
+					dcb.Parity = ODDPARITY;
+					break;
+				case _T('M'): case _T('m'):
+					dcb.Parity = MARKPARITY;
+					break;
+				default:
+					dcb.Parity = NOPARITY;
+			}
+			dcb.StopBits = (stop==1)? ONESTOPBIT : TWOSTOPBITS;
+			ready = SetCommState(hnd,&dcb);
+
+			ready = GetCommTimeouts(hnd, &commTimeouts);
+			commTimeouts.ReadIntervalTimeout = 50;
+			commTimeouts.ReadTotalTimeoutConstant = 50;
+			commTimeouts.ReadTotalTimeoutMultiplier = 10;
+			commTimeouts.WriteTotalTimeoutConstant = 50;
+			commTimeouts.WriteTotalTimeoutMultiplier = 10;
+			ready = SetCommTimeouts(hnd, &commTimeouts);
+		} else {
+			/* Unknown type skip options */
+		}
+	}
 #endif
 	f = (BFILE*)malloc(sizeof(BFILE));
 	f->handle = hnd;
