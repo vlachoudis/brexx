@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/rxconv.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/rxconv.c,v 1.2 1999/03/15 15:22:23 bnv Exp $
  * $Log: rxconv.c,v $
+ * Revision 1.2  1999/03/15 15:22:23  bnv
+ * Changed the type cast in Lxrange
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
@@ -177,5 +180,5 @@ R_xrange( )
 	} else
 		stop = 255;
 
-	Lxrange(ARGR,start,stop);
+	Lxrange(ARGR,(byte)start,(byte)stop);
 } /* R_xrange */
