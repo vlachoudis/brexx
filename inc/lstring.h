@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/lstring.h,v 1.2 1998/09/09 08:44:59 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/lstring.h,v 1.3 1999/03/10 16:57:31 bnv Exp $
  * $Log: lstring.h,v $
+ * Revision 1.3  1999/03/10 16:57:31  bnv
+ * Changed: from __GREEK__ to GREEK
+ *
  * Revision 1.2  1998/09/09 08:44:59  bnv
  * Removed somed "const" in function calls
  *
@@ -314,13 +317,13 @@ DECLMATH( tanh );
 /* ====================== Some variables ================ */
 #ifdef __LSTRING_C__
 	char
-#	if defined(__GREEK__)
+#	if defined(GREEK)
 #		if defined(MSDOS)
 		*clower="abcdefghijklmnopqrstuvwxyz˜™š›œŸ ¡¢£¤¥¦§¨©«¬­®¯àªáâãåæçéäè",
 		*cUPPER="ABCDEFGHIJKLMNOPQRSTUVWXYZ€‚ƒ„…†‡ˆ‰Š‹Œ‘’“”•–—‘êëìíîïğˆ“",
 #		else
 		*clower="abcdefghijklmnopqrstuvwxyzáâãäåæçèéêëìíîïğñóôõö÷øùÜİŞßúÀüıûàşò",
-		*cUPPER="ABCDEFGHIJKLMNOPQRSTUVWXYZÁÂÃÅÄÆÇÈÉÊËÌÍÎÏĞÑÓÔÕÖ×ØÙ¶¸¹ºÚÚ¼¾ÛÛ¿Ó",
+		*cUPPER="ABCDEFGHIJKLMNOPQRSTUVWXYZÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÓÔÕÖ×ØÙ¶¸¹ºÚÚ¼¾ÛÛ¿Ó",
 #		endif
 #	else
 		*clower="abcdefghijklmnopqrstuvwxyz",
