@@ -1,6 +1,9 @@
 /*
- * $Id: compile.c,v 1.9 2002/08/22 12:25:41 bnv Exp $
+ * $Id: compile.c,v 1.10 2003/10/30 13:16:10 bnv Exp $
  * $Log: compile.c,v $
+ * Revision 1.10  2003/10/30 13:16:10  bnv
+ * Variable name change
+ *
  * Revision 1.9  2002/08/22 12:25:41  bnv
  * Corrected: copy2tmp added before any call to C_template, to avoid errors like parse var a a b, that b is always null
  *
@@ -215,7 +218,7 @@ word
 _CodeInsByte( word pos, byte b )
 {
 	if (CompileCodeLen+sizeof(b) >= LMAXLEN(*CompileCode)) {
-		Lfx(CompileCode, CompileCodeLen + CODE_INC );
+		Lfx(CompileCode, CompileCodeLen + CODE_INC);
 		CompileCodePtr = (byte*)LSTR(*CompileCode) + CompileCodeLen;
 	}
 	/* shift entire code by one byte */
@@ -232,7 +235,7 @@ word
 _CodeAddByte( byte b )
 {
 	if (CompileCodeLen+sizeof(b) >= LMAXLEN(*CompileCode)) {
-		Lfx(CompileCode, CompileCodeLen + CODE_INC );
+		Lfx(CompileCode, CompileCodeLen + CODE_INC);
 		CompileCodePtr = (byte*)LSTR(*CompileCode) + CompileCodeLen;
 	}
 	*CompileCodePtr++ = b;
@@ -245,7 +248,7 @@ _CodeAddWord( word w )
 {
 	word pos;
 	if (CompileCodeLen+sizeof(w) >= LMAXLEN(*CompileCode)) {
-		Lfx(CompileCode, CompileCodeLen + CODE_INC );
+		Lfx(CompileCode, CompileCodeLen + CODE_INC);
 		CompileCodePtr = (byte*)LSTR(*CompileCode) + CompileCodeLen;
 	}
 	pos = CompileCodeLen;
@@ -263,7 +266,7 @@ dword
 _CodeInsByte( dword pos, dword d )
 {
 	if (CompileCodeLen+sizeof(d) >= LMAXLEN(*CompileCode)) {
-		Lfx(CompileCode, CompileCodeLen + CODE_INC );
+		Lfx(CompileCode, CompileCodeLen + CODE_INC);
 		CompileCodePtr = (byte*)LSTR(*CompileCode) + CompileCodeLen;
 	}
 	/* shift entire code by one dword */
@@ -283,7 +286,7 @@ _CodeAddDWord( dword d )
 	dword pos;
 
 	if (CompileCodeLen+sizeof(d) >= LMAXLEN(*CompileCode)) {
-		Lfx(CompileCode, CompileCodeLen + CODE_INC );
+		Lfx(CompileCode, CompileCodeLen + CODE_INC);
 		CompileCodePtr = (byte*)LSTR(*CompileCode) + CompileCodeLen;
 	}
 	pos = CompileCodeLen;
@@ -305,7 +308,7 @@ _CodeAddPtr( void *ptr )
 {
 	word pos;
 	if (CompileCodeLen+sizeof(ptr) >= LMAXLEN(*CompileCode)) {
-		Lfx(CompileCode, CompileCodeLen + CODE_INC );
+		Lfx(CompileCode, CompileCodeLen + CODE_INC);
 		CompileCodePtr = (byte*)LSTR(*CompileCode) + CompileCodeLen;
 	}
 	pos = CompileCodeLen;
@@ -348,10 +351,10 @@ _Add2Lits( PLstr lit, int hasdot )
 		}
 	}
 
-	leaf = BinFind( &Litterals, tosearch );
+	leaf = BinFind( &rxLitterals, tosearch );
 	if (leaf==NULL)
 		if (tosearch == &numstr)
-			leaf = BinFind(&Litterals,tosearch);
+			leaf = BinFind(&rxLitterals,tosearch);
 
 	if (leaf==NULL) {
 		LINITSTR(newstr); Lfx(&newstr,1);
@@ -423,7 +426,7 @@ _Add2Lits( PLstr lit, int hasdot )
 		} else
 			inf = NULL;
 
-		leaf = BinAdd( &Litterals, &newstr, inf );
+		leaf = BinAdd( &rxLitterals, &newstr, inf );
 	}
 	LFREESTR(numstr);
 	return leaf;
@@ -443,7 +446,7 @@ _AddLabel( int type, size_t offset )
 		Lerror(ERR_UNEXPECTED_LABEL,1,&symbolstr);
 
 	/* --- Find in tree --- */
-	leaf = BinFind(&_labels, &symbolstr );
+	leaf = BinFind(&_labels, &symbolstr);
 	if (leaf==NULL) {
 		LINITSTR(newstr);
 		Lstrcpy(&newstr,&symbolstr);
@@ -453,6 +456,9 @@ _AddLabel( int type, size_t offset )
 		func->label   = offset;
 
 		/* we want to add a function */
+		if (symbolisstr)
+			func->type = FT_SYSTEM;
+		else				
 		if (type==FT_FUNCTION) {
 			isbuiltin = C_isBuiltin(&symbolstr);
 			if (isbuiltin==NULL) {
@@ -465,13 +471,13 @@ _AddLabel( int type, size_t offset )
 				func->builtin = isbuiltin;
 			}
 		}
-		leaf = BinAdd(&_labels, &newstr, func );
+		leaf = BinAdd(&_labels, &newstr, func);
 	} else
 	if (offset != UNKNOWN_LABEL) {
 		func = (RxFunc*)(leaf->value);
 		if (func->label == UNKNOWN_LABEL) {
 			/* label found change function type */
-			if (func->type == FT_BUILTIN)
+			if (func->type==FT_BUILTIN || func->type==FT_SYSTEM)
 				func->type = FT_INTERNAL;
 			func->label = offset;
 		}
@@ -509,7 +515,7 @@ C_address( void )
 {
 	if (symbol == semicolon_sy) {
 		_CodeAddByte(push_mn);
-			_CodeAddPtr(SystemStr);
+			_CodeAddPtr(systemStr);
 			TraceByte( other_middle );
 		_CodeAddByte(storeopt_mn);
 			_CodeAddByte(environment_opt);
@@ -946,9 +952,9 @@ C_exit(void)
 {
 	if (symbol==semicolon_sy) {
 		_CodeAddByte(push_mn);
-			_CodeAddPtr(&(ZeroStr->key));
+			_CodeAddPtr(&(zeroStr->key));
 			TraceByte( nothing_middle );
-	} else 
+	} else
 		C_expr(exp_normal);
 	_CodeAddByte(exit_mn);
 } /* C_exit */
@@ -1150,12 +1156,12 @@ C_numeric(void)
 		nextsymbol();
 		if (symbol==semicolon_sy || identCMP("SCIENTIFIC")) {
 			_CodeAddByte(push_mn);
-				_CodeAddPtr(&(ZeroStr->key));
+				_CodeAddPtr(&(zeroStr->key));
 				TraceByte( nothing_middle );
-		} else 
+		} else
 		if (identCMP("ENGINEERING")) {
 			_CodeAddByte(push_mn);
-				_CodeAddPtr(&(OneStr->key));
+				_CodeAddPtr(&(oneStr->key));
 				TraceByte( nothing_middle );
 		} else
 			Lerror(ERR_INV_SUBKEYWORD,11,&symbolstr);
@@ -1300,7 +1306,7 @@ C_parse(void)
 			_mustbe( with_sy, ERR_INVALID_TEMPLATE,3 );
 			with_chk = TRUE;
 		}  else
-		if (identCMP("AUTHOR")) {  
+		if (identCMP("AUTHOR")) {
 			nextsymbol();
 			_CodeAddByte(loadopt_mn);
 				_CodeAddByte(author_opt);
@@ -1320,7 +1326,7 @@ C_parse(void)
 		if (identCMP("WITH") && !with_chk)
 			nextsymbol();
 		C_template();
-	} 
+	}
 } /* C_parse */
 
 /* -------------------------------------------------------------- */
@@ -1373,7 +1379,7 @@ C_push(void)
 {
 	if (symbol==semicolon_sy) {
 		_CodeAddByte(push_mn);
-			_CodeAddPtr(&(NullStr->key));
+			_CodeAddPtr(&(nullStr->key));
 			TraceByte( nothing_middle );
 	} else
 		C_expr(exp_normal);
@@ -1389,7 +1395,7 @@ C_queue(void)
 {
 	if (symbol==semicolon_sy) {
 		_CodeAddByte(push_mn);
-			_CodeAddPtr(&(NullStr->key));
+			_CodeAddPtr(&(nullStr->key));
 			TraceByte( nothing_middle );
 	} else
 		C_expr(exp_normal);
@@ -1750,7 +1756,7 @@ C_instr(bool until_end)
 			_CodeAddByte(inter_end_mn);
 		else {
 			_CodeAddByte(push_mn);
-				_CodeAddPtr(&(ZeroStr->key));
+				_CodeAddPtr(&(zeroStr->key));
 				TraceByte( nothing_middle );
 			_CodeAddByte(exit_mn);
 		}
@@ -1810,6 +1816,8 @@ C_instr(bool until_end)
 void __CDECL
 RxInitCompile( RxFile *rxf, PLstr src )
 {
+	int	i;
+
 	str_interpreted = (src!=NULL);
 
 	/* copy to our static variables */
@@ -1836,8 +1844,23 @@ RxInitCompile( RxFile *rxf, PLstr src )
 	/* Initialise next symbol */
 	if (str_interpreted)
 		InitNextsymbol(src);
-	else
+	else {
+		/* Mark with a label the begining of the program */
+		if (rxf->filename) {
+			Lscpy(&symbolstr,rxf->filename);
+			Lupper(&symbolstr);
+			/* Remove the extension */
+			for (i=0; i<LLEN(symbolstr); i++)
+				if (LSTR(symbolstr)[i]=='.') {
+					LLEN(symbolstr)=i;
+					break;
+				}
+			symbolisstr = FALSE;
+			symbol = label_sy;
+			_AddLabel(FT_LABEL, CompileCodeLen);
+		}
 		InitNextsymbol(&(rxf->file));
+	}
 } /* RxInitCompile */
 
 /* -------------- RxCompile ----------------- */
@@ -1894,7 +1917,7 @@ CompEnd:
 	symbolptr = NULL;		/* mark end of compilation */
 	CompileCodePtr = NULL;
 
-	if (jc==1) RxReturnCode = 0;
+	if (jc==1) rxReturnCode = 0;
 
-	return RxReturnCode;
+	return rxReturnCode;
 } /* RxCompile */
