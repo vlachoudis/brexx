@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/translat.c,v 1.1 1998/07/02 17:18:00 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/translat.c,v 1.2 1999/03/01 11:07:22 bnv Exp $
  * $Log: translat.c,v $
+ * Revision 1.2  1999/03/01 11:07:22  bnv
+ * Added '{..}' to avoid nesting if () {} else {} errors.
+ *
  * Revision 1.1  1998/07/02 17:18:00  bnv
  * Initial Version
  *
@@ -35,11 +38,12 @@ Ltranslate( const PLstr to, const PLstr from,
 				table[(byte)LSTR(*tablein)[i]] = pad;
 	} else {
 		for (i=0; i<256; i++)
-			if (tableout)
+			if (tableout) {
 				if (i >= LLEN(*tableout))
 					table[i] = pad;
 				else
 					table[i] = LSTR(*tableout)[i];
+			}
 	}
 
 	for (i=0; i<LLEN(*to); i++)
