@@ -1,6 +1,9 @@
 /*
- * $Id: bstr.h,v 1.3 2002/06/11 12:37:56 bnv Exp $
+ * $Id: bstr.h,v 1.4 2004/08/16 15:30:30 bnv Exp $
  * $Log: bstr.h,v $
+ * Revision 1.4  2004/08/16 15:30:30  bnv
+ * Changed: Bstrchr
+ *
  * Revision 1.3  2002/06/11 12:37:56  bnv
  * Added: CDECL
  *
@@ -52,7 +55,7 @@ extern  char	_Bctype[];    /* Character type array */
 char*		__CDECL Bstrcpy(char *dest, const char *src);
 int		__CDECL Bstrcmp(const char *s1, const char *s2);
 char*		__CDECL Bstrcat(char *dest, const char *src);
-const char*	__CDECL Bstrchr(const char *s, int c);
+char*		__CDECL Bstrchr(const char *s, int c);
 unsigned	__CDECL Bstrlen(const char *s);
 char*		__CDECL Bl2a(	char *s, const long num,
 			int length, const int radix);
