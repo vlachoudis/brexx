@@ -1,6 +1,9 @@
 /*
- * $Id: interpre.c,v 1.10 2001/09/28 10:00:39 bnv Exp $
+ * $Id: interpre.c,v 1.11 2002/06/11 12:37:38 bnv Exp $
  * $Log: interpre.c,v $
+ * Revision 1.11  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.10  2001/09/28 10:00:39  bnv
  * Added: Quotes arround the arguments of a system-function call
  *
@@ -123,7 +126,7 @@ int	instr_cnt[256];		/* instruction counter */
 #endif
 
 /* ---------------- RxProcResize ---------------- */
-void
+void __CDECL
 RxProcResize( void )
 {
 	size_t oldsize=_Proc_size;
@@ -178,7 +181,9 @@ I_trigger_litteral(const PLstr lit)
 static void
 I_LoadOption( const PLstr value, const int opt )
 {
+#ifndef WCE
 	char	*ch;
+#endif
 
 	switch (opt) {
 		case environment_opt:
@@ -464,10 +469,13 @@ I_CallFunction( void )
 {
 	PBinLeaf	leaf,litleaf;
 	RxFunc	*func;
-	int	ct,nargs,realarg,st;
+	int	ct,nargs,realarg;
 	CTYPE	existarg, line;
-	Lstr	cmd;
+#ifndef WCE
 	PLstr	res;
+	int	st;
+	Lstr	cmd;
+#endif
 #ifdef __DEBUG__
 	size_t	inst_ip;
 #endif
@@ -612,7 +620,7 @@ I_ReturnProc( void )
 } /* I_ReturnProc */
 
 /* ------------ RxInitInterStr -------------- */
-void
+void __CDECL
 RxInitInterStr()
 {
 	RxProc	*pr;
@@ -698,7 +706,7 @@ RxDoneInterStr( void )
 } /* RxDoneInterStr */
 
 /* ---------------- RxInitInterpret --------------- */
-void
+void __CDECL
 RxInitInterpret( void )
 {
 	int	i;
@@ -716,7 +724,7 @@ RxInitInterpret( void )
 } /* RxInitInterpret */
 
 /* ---------------- RxDoneInterpret --------------- */
-void
+void __CDECL
 RxDoneInterpret( void )
 {
 	int	i;
@@ -747,7 +755,7 @@ RxDoneInterpret( void )
 } /* RxDoneInterpret */
 
 /* ---------------- RxInterpret --------------- */
-int
+int __CDECL
 RxInterpret( void )
 {
 	PLstr	a;

@@ -1,6 +1,9 @@
 /*
- * $Id: bintree.c,v 1.4 2001/06/25 18:51:48 bnv Exp $
+ * $Id: bintree.c,v 1.5 2002/06/11 12:37:38 bnv Exp $
  * $Log: bintree.c,v $
+ * Revision 1.5  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.4  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -42,7 +45,7 @@ static int scandepth( BinLeaf *leaf, int depth );
 #endif
 
 /* ------------------ BinAdd ------------------ */
-BinLeaf *
+BinLeaf* __CDECL
 BinAdd( BinTree *tree, PLstr name, void *dat )
 {
 	BinLeaf	*ThisEntry;
@@ -97,7 +100,7 @@ BinAdd( BinTree *tree, PLstr name, void *dat )
 } /* BinAdd */
 
 /* ------------------ BinFind ----------------- */
-BinLeaf *
+BinLeaf* __CDECL
 BinFind( BinTree *tree, PLstr name )
 {
 	BinLeaf	*leaf;
@@ -118,8 +121,9 @@ BinFind( BinTree *tree, PLstr name )
 } /* BinFind */
 
 /* ----------------- BinDisposeLeaf -------------------- */
-void
-BinDisposeLeaf( BinTree *tree, BinLeaf *leaf, void (BinFreeData)(void *) )
+void __CDECL
+BinDisposeLeaf( BinTree *tree, BinLeaf *leaf,
+		void (__CDECL *BinFreeData)(void *) )
 {
 	if (!leaf) return;
 	if (leaf->left)
@@ -138,8 +142,8 @@ BinDisposeLeaf( BinTree *tree, BinLeaf *leaf, void (BinFreeData)(void *) )
 } /* BinDisposeLeaf */
 
 /* ----------------- BinDisposeTree -------------------- */
-void
-BinDisposeTree( BinTree *tree, void (BinFreeData)(void *) )
+void __CDECL
+BinDisposeTree( BinTree *tree, void (__CDECL *BinFreeData)(void *) )
 {
 	if (tree != NULL) {
 		BinDisposeLeaf(tree,tree->parent,BinFreeData);
@@ -177,8 +181,8 @@ BinDisposeTree( BinTree *tree, void (BinFreeData)(void *) )
 /*                    ....                                        */
 /*                                                                */
 /* -------------------------------------------------------------- */
-void
-BinDel( BinTree *tree, PLstr name, void (BinFreeData)(void *dat) )
+void __CDECL
+BinDel( BinTree *tree, PLstr name, void (__CDECL *BinFreeData)(void *) )
 {
 	BinLeaf	*thisid, *previous, *par_newid, *newid;
 	bool	lefttaken;
@@ -242,7 +246,7 @@ BinDel( BinTree *tree, PLstr name, void (BinFreeData)(void *dat) )
 
 #ifdef __DEBUG__
 /* -------------------- BinPrint ---------------------- */
-void
+void __CDECL
 BinPrint(BinLeaf *leaf)
 {
 	long i;
@@ -360,7 +364,7 @@ LeafConstruct( BinLeaf *head, BinLeaf *tail, int n, int *maxdepth )
 } /* LeafConstruct */
 
 /* -------------------- BinBalance ---------------------- */
-void
+void __CDECL
 BinBalance( BinTree *tree )
 {
 	BinLeaf *head, *tail;

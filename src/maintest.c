@@ -1,6 +1,9 @@
 /*
- * $Id: maintest.c,v 1.4 2001/06/25 18:51:48 bnv Exp $
+ * $Id: maintest.c,v 1.5 2002/06/11 12:37:38 bnv Exp $
  * $Log: maintest.c,v $
+ * Revision 1.5  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.4  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -23,7 +26,7 @@
 #include <compile.h>
 
 /* ----------- MyFunc -------- */
-void
+void __CDECL
 MyFunc( int test )
 {
 	if (test)
@@ -33,16 +36,16 @@ MyFunc( int test )
 } /* MyFunc */
 
 /* ----------- RxFork ---------- *
-void
+void __CDECL
 RxFork( )
 {
 	Licpy(ARGR,fork());
 } * RxFork */
 
 /* ----------- RxIndirectCall ---------- */
-TBltFunc	*C_isBuiltin( PLstr );
-void		RxProcResize();
-void
+TBltFunc* __CDECL C_isBuiltin( PLstr );
+void	__CDECL RxProcResize();
+void __CDECL
 RxIndirectCall( )
 {
 	PBinLeaf	leaf;
@@ -152,7 +155,7 @@ printf("Label FOUND\n");
 } /* RxIndirectCall */
 
 /* --------------------- main ---------------------- */
-int
+int __CDECL
 main(int ac, char *av[])
 {
 	Lstr	args, tracestr, file;

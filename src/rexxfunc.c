@@ -1,6 +1,9 @@
 /*
- * $Id: rexxfunc.c,v 1.4 2001/09/28 10:08:03 bnv Exp $
+ * $Id: rexxfunc.c,v 1.5 2002/06/11 12:37:38 bnv Exp $
  * $Log: rexxfunc.c,v $
+ * Revision 1.5  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.4  2001/09/28 10:08:03  bnv
  * Added new integer bitwise functions AND,OR,NOT,XOR
  *
@@ -28,7 +31,7 @@
 #	include <cefunc.h>
 #endif
 
-#define DECL( A )  void R_##A ( const int );
+#define DECL( A )  void __CDECL R_##A ( const int );
 
 DECL( SSoI     )   DECL( SIoC  )  DECL( S   )   DECL( SIoI )
 DECL( SSoIoIoC )   DECL( SoSoC )  DECL( SoI )   DECL( IoI  )
@@ -62,7 +65,7 @@ DECL( not )
 #undef DECL
 
 #ifdef WCE
-#define DECL( A )  void CE_##A ( const int );
+#define DECL( A )  void __CDECL CE_##A ( const int );
 DECL( MsgBox    )  DECL( O         )  DECL( gotoxy     )  DECL( oS       )
 DECL( S         )  DECL( SS        )  DECL( Clipboard  )  DECL( Dir      )
 #undef DECL
@@ -240,7 +243,7 @@ rexx_routine[] = {
 };
 
 /* ------------- C_isBuiltin --------------- */
-TBltFunc *
+TBltFunc* __CDECL
 C_isBuiltin( PLstr func )
 {
 	int	first, middle, last, cmp;
@@ -271,8 +274,8 @@ C_isBuiltin( PLstr func )
 
 /* ----------- RxRegFunction ------------- */
 /* returns TRUE if an error occurs */
-int
-RxRegFunction( char *name, void (*func)(int), int opt )
+int __CDECL
+RxRegFunction( char *name, void (__CDECL *func)(int), int opt )
 {
 	Lstr	fn;
 	TBltFunc *fp;
@@ -298,7 +301,7 @@ RxRegFunction( char *name, void (*func)(int), int opt )
 } /* RxRegFunction */
 
 /* ----------- RxRegFunctionDone --------- */
-void
+void __CDECL
 RxRegFunctionDone( void )
 {
 	if (!ExtraFuncs) return;

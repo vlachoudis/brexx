@@ -1,6 +1,9 @@
 /*
- * $Id: builtin.c,v 1.4 2002/01/14 10:22:48 bnv Exp $
+ * $Id: builtin.c,v 1.5 2002/06/11 12:37:38 bnv Exp $
  * $Log: builtin.c,v $
+ * Revision 1.5  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.4  2002/01/14 10:22:48  bnv
  * Changed: Scan all the dirs in the RXLIB path
  *
@@ -48,10 +51,6 @@
 #	include <cefunc.h>
 #endif
 
-/* ------------- Function prototypes ----------- */
-int     RxLoadFile( RxFile *rxf );
-int	PoolGet(PLstr,PLstr,PLstr);
-int	PoolSet(PLstr,PLstr,PLstr);
 /* ------------- External variables ------------ */
 extern Lstr     stemvaluenotfound;      /* from variable.c */
 
@@ -72,7 +71,7 @@ extern Lstr     stemvaluenotfound;      /* from variable.c */
 /* -- WIN32_WCE ------------------------------------------------- */
 /*  LASTERROR()                                                   */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 R_O( const int func )
 {
 	long	items;
@@ -142,7 +141,7 @@ R_O( const int func )
 /*  QUEUED((option))                                              */
 /*  Options A=All (default), B=buffers, T=Topmost buffer          */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 R_C( const int func )
 {
 	int	i;
@@ -221,7 +220,7 @@ R_C( const int func )
 /*      returns the result in the format.                         */
 /*      depth var = "value"  <cr>                                 */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 R_oSoS( )
 {
 	int		option = FALSE;
@@ -284,7 +283,7 @@ R_oSoS( )
 /*  if 'pool' exist then the then the function is performed on    */
 /*  this external pool                                            */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 R_SoSoS( int func )
 {
 	char	response;
@@ -347,7 +346,7 @@ R_SoSoS( int func )
 			/* let external pool to handle the value */
 			L2STR(ARG3);
 			LZEROSTR(*ARGR);
-			response = PoolGet(ARG3,ARG1,ARGR);
+			response = RxPoolGet(ARG3,ARG1,ARGR);
 			if (response == 'F' && !exist(2))
 				Lerror(ERR_INCORRECT_CALL,36,ARG1);
 			else
@@ -356,7 +355,7 @@ R_SoSoS( int func )
 
 			if (!exist(2)) return;
 			/* Set the new value */
-			response = PoolSet(ARG3,ARG1,ARG2);
+			response = RxPoolSet(ARG3,ARG1,ARG2);
 			if (response == 'P')
 				Lerror(ERR_INCORRECT_CALL,37,ARG3);
 			else
@@ -367,9 +366,9 @@ R_SoSoS( int func )
 
 			LINITSTR(str); Lfx(&str,sizeof(dword));
 			Licpy(&str,_rx_proc);
-			response = PoolGet(&str,ARG1,ARGR);
+			response = RxPoolGet(&str,ARG1,ARGR);
 			if (exist(2))
-				response = PoolSet(&str,ARG1,ARG2);
+				response = RxPoolSet(&str,ARG1,ARG2);
 			LFREESTR(str);
 		}
 	}
@@ -378,7 +377,7 @@ R_SoSoS( int func )
 /* -------------------------------------------------------------- */
 /*  ARG([n[,option]])                                             */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 R_arg( )
 {
 	int	a;
@@ -426,7 +425,7 @@ R_arg( )
 /* -------------------------------------------------------------- */
 /* DATATYPE(string(,type))                                        */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 R_datatype( )
 {
 	char	type=' ';
@@ -463,7 +462,7 @@ R_datatype( )
 /* -------------------------------------------------------------- */
 /*  DROPBUF((num))                                                */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 R_dropbuf( )
 {
 	long	n=1;
@@ -492,7 +491,7 @@ R_dropbuf( )
 /* -------------------------------------------------------------- */
 /*  ERRORTEXT(n)                                                  */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 R_errortext( )
 {
 	if (ARGN!=1) Lerror(ERR_INCORRECT_CALL,0);
@@ -508,7 +507,7 @@ R_errortext( )
 /*      returns in the same format the registers and flags        */
 /* -------------------------------------------------------------- */
 #if defined(__BORLANDC__) && !defined(__WIN32__) && !defined(WCE)
-void
+void __CDECL
 R_intr( )
 {
 	static char  *s_reg[] = {
@@ -572,7 +571,7 @@ R_intr( )
 /*      and returns it in integer format (IN)                     */
 /*      if value exists then OUTs that value to the port.         */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 R_port( )
 {
 	long port;
@@ -600,7 +599,7 @@ R_port( )
 /*         "1" on error opening the file                          */
 /* -------------------------------------------------------------- */
 static jmp_buf	old_trap;
-void
+void __CDECL
 R_load( )
 {
 	RxFile  *rxf,*rxf2;
@@ -695,7 +694,7 @@ FILELOADED:
 /* -------------------------------------------------------------- */
 /*   MAX(number[,number]..])                                      */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 R_max( )
 {
 	int	i;
@@ -721,7 +720,7 @@ R_max( )
 /* -------------------------------------------------------------- */
 /*   MIN(number[,number]..])                                      */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 R_min( )
 {
 	int	i;
@@ -747,7 +746,7 @@ R_min( )
 /* -------------------------------------------------------------- */
 /* RANDOM((min)(,(max)(,seed)))                                   */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 R_random( )
 {
 	long	min, max;
@@ -800,7 +799,8 @@ R_random( )
 /*      retrieved, storage starting at address is overwritten     */
 /*      with data (the length argument has no effect on this).    */
 /* -------------------------------------------------------------- */
-void R_storage( )
+void __CDECL
+R_storage( )
 {
 	void	*ptr;
 	long	adr;
@@ -862,7 +862,7 @@ void R_storage( )
 /*      return the number of lines in the program, or the nth     */
 /*      line.                                                     */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 R_sourceline( )
 {
 	long	l,sl;

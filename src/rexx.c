@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.c,v 1.4 2002/06/06 08:24:36 bnv Exp $
+ * $Id: rexx.c,v 1.5 2002/06/11 12:37:38 bnv Exp $
  * $Log: rexx.c,v $
+ * Revision 1.5  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.4  2002/06/06 08:24:36  bnv
  * Corrected: Registry support for WCE
  *
@@ -33,10 +36,10 @@
 #include <nextsymb.h>
 
 /* ----------- Function prototypes ------------ */
-void	Rerror(int,int,...);
-void    RxInitFiles(void);
-void    RxDoneFiles(void);
-void	RxRegFunctionDone(void);
+void	__CDECL Rerror(int,int,...);
+void    __CDECL RxInitFiles(void);
+void    __CDECL RxDoneFiles(void);
+void	__CDECL RxRegFunctionDone(void);
 
 /* ----------- External variables ------------- */
 extern Lstr	errmsg;
@@ -52,7 +55,7 @@ RxInitProc( void )
 } /* RxInitProc */
 
 /* ----------------- RxInitialize ----------------- */
-void
+void __CDECL
 RxInitialize( char *prorgram_name )
 {
 	Lstr	str;
@@ -107,7 +110,7 @@ RxInitialize( char *prorgram_name )
 } /* RxInitialize */
 
 /* ----------------- RxFinalize ----------------- */
-void
+void __CDECL
 RxFinalize( void )
 {
 	LFREESTR(symbolstr);	/* delete symbol string	*/
@@ -127,7 +130,7 @@ RxFinalize( void )
 } /* RxFinalize */
 
 /* ----------------- RxLoadFile ------------------- */
-int
+int __CDECL
 RxLoadFile( RxFile *rxf )
 {
 	FILEP f;
@@ -140,7 +143,7 @@ RxLoadFile( RxFile *rxf )
 } /* RxLoadFile */
 
 /* ----------------- RxRun ------------------ */
-int
+int __CDECL
 RxRun( char *filename, PLstr programstr,
 	PLstr arguments, PLstr tracestr, char *environment )
 {

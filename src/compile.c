@@ -1,6 +1,9 @@
 /*
- * $Id: compile.c,v 1.7 2001/06/25 18:51:48 bnv Exp $
+ * $Id: compile.c,v 1.8 2002/06/11 12:37:38 bnv Exp $
  * $Log: compile.c,v $
+ * Revision 1.8  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.7  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -61,9 +64,9 @@
 #endif
 
 /* ---- function prototypes ---- */
-int	C_expr( int );
-void	C_template( void );
-TBltFunc	*C_isBuiltin( PLstr );
+int	__CDECL C_expr( int );
+void	__CDECL C_template( void );
+TBltFunc* __CDECL C_isBuiltin( PLstr );
 
 /* --- static Variables --- */
 static int	str_interpreted;	/* is it a string interpreted */
@@ -189,7 +192,7 @@ CreateClause( void )
 } /* CreateClause */
 
 /* --------------- _mustbe -------------------- */
-void
+void __CDECL
 _mustbe( enum symboltype sym, int errno, int subno )
 {
 	if (symbol==sym)
@@ -1802,7 +1805,7 @@ C_instr(bool until_end)
 } /* C_instr */
 
 /* ------------- RxInitCompile -------------- */
-void
+void __CDECL
 RxInitCompile( RxFile *rxf, PLstr src )
 {
 	str_interpreted = (src!=NULL);
@@ -1836,7 +1839,7 @@ RxInitCompile( RxFile *rxf, PLstr src )
 } /* RxInitCompile */
 
 /* -------------- RxCompile ----------------- */
-int
+int __CDECL
 RxCompile( void )
 {
 	int	jc;

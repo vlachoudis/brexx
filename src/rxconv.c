@@ -1,6 +1,9 @@
 /*
- * $Id: rxconv.c,v 1.4 2001/06/25 18:51:48 bnv Exp $
+ * $Id: rxconv.c,v 1.5 2002/06/11 12:37:38 bnv Exp $
  * $Log: rxconv.c,v $
+ * Revision 1.5  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.4  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -30,7 +33,7 @@
 /* --------------------------------------------------------------- */
 /*  BITXOR(string1[,[string2][,pad]])                              */
 /* --------------------------------------------------------------- */
-void
+void __CDECL
 R_SoSoC( const int func )
 {
 	char	pad;
@@ -78,7 +81,7 @@ R_SoSoC( const int func )
 /* --------------------------------------------------------------- */
 /*  X2D(hex-string[,n])                                            */
 /* --------------------------------------------------------------- */
-void
+void __CDECL
 R_SoI ( const int func )
 {
 	long	n;
@@ -105,7 +108,7 @@ R_SoI ( const int func )
 /* --------------------------------------------------------------- */
 /*  D2X(wholenumber[,n])                                           */
 /* --------------------------------------------------------------- */
-void
+void __CDECL
 R_IoI ( const int func )
 {
 	long	n;
@@ -131,8 +134,8 @@ R_IoI ( const int func )
 /* --------------------------------------------------------------- */
 /*  FORMAT(number(,(before)(,(after)(,(expp)(,expt)))))            */
 /* --------------------------------------------------------------- */
-void
-R_format( )
+void __CDECL
+R_format( const int func )
 {
 	long	before, after, expp, expt;
 
@@ -150,8 +153,8 @@ R_format( )
 /* --------------------------------------------------------------- */
 /*  TRUNC(number(,n))                                              */
 /* --------------------------------------------------------------- */
-void
-R_trunc( )
+void __CDECL
+R_trunc( const int func )
 {
 	long   n;
 
@@ -165,8 +168,8 @@ R_trunc( )
 /* --------------------------------------------------------------- */
 /*  XRANGE([start][,end])                                          */
 /* --------------------------------------------------------------- */
-void
-R_xrange( )
+void __CDECL
+R_xrange( const int func )
 {
 	unsigned int	start, stop;
 

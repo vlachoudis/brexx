@@ -1,6 +1,9 @@
 /*
- * $Id: rxmath.c,v 1.5 2001/09/28 10:08:03 bnv Exp $
+ * $Id: rxmath.c,v 1.6 2002/06/11 12:37:38 bnv Exp $
  * $Log: rxmath.c,v $
+ * Revision 1.6  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.5  2001/09/28 10:08:03  bnv
  * Added new integer bitwise functions AND,OR,NOT,XOR
  *
@@ -32,7 +35,7 @@
 /* --------------------------------------------------------------- */
 /*  SIGN(number)                                                   */
 /* --------------------------------------------------------------- */
-void
+void __CDECL
 R_abs_sign( const int func )
 {
 	if (ARGN!=1) Lerror(ERR_INCORRECT_CALL,0);
@@ -44,7 +47,7 @@ R_abs_sign( const int func )
 } /* R_abs_sign */
 
 /* ----------------------* common math functions *---------------- */
-void
+void __CDECL
 R_math( const int func )
 {
 	if (ARGN!=1) Lerror(ERR_INCORRECT_CALL,0);
@@ -117,7 +120,7 @@ R_math( const int func )
 /* --------------------------------------------------------------- */
 /*  POW(x,y)                                                       */
 /* --------------------------------------------------------------- */
-void
+void __CDECL
 R_atanpow( const int func )
 {
 	if (ARGN!=2) Lerror(ERR_INCORRECT_CALL,0);
@@ -137,7 +140,7 @@ R_atanpow( const int func )
 /* --------------------------------------------------------------- */
 /*  XOR(a,b)                                                       */
 /* --------------------------------------------------------------- */
-void
+void __CDECL
 R_bitwise( const int func )
 {
 	if (ARGN!=2) Lerror(ERR_INCORRECT_CALL,0);
@@ -156,7 +159,7 @@ R_bitwise( const int func )
 /* --------------------------------------------------------------- */
 /*  NOT(n)                                                         */
 /* --------------------------------------------------------------- */
-void
+void __CDECL
 R_not( const int func )
 {
 	if (ARGN!=1) Lerror(ERR_INCORRECT_CALL,0);

@@ -1,6 +1,9 @@
 /*
- * $Id: bmem.c,v 1.4 2001/06/25 18:50:28 bnv Exp $
+ * $Id: bmem.c,v 1.5 2002/06/11 12:37:38 bnv Exp $
  * $Log: bmem.c,v $
+ * Revision 1.5  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.4  2001/06/25 18:50:28  bnv
  * Changed: Some minor changes at mem_chk and mem_list, mem_print
  *
@@ -141,7 +144,7 @@ mem_realloc(void *ptr, size_t size)
 } /* mem_realloc */
 
 /* -------------- mem_free ---------------- */
-void
+void __CDECL
 mem_free(void *ptr)
 {
 	Memory	*mem, *mem_prev, *mem_next;
@@ -201,7 +204,7 @@ mem_print(int count, Memory *mem)
 } /* mem_print */
 
 /* -------------- mem_list ---------------- */
-void
+void __CDECL
 mem_list(void)
 {
 	Memory	*mem;
@@ -223,7 +226,7 @@ mem_list(void)
 } /* mem_list */
 
 /* --------------- mem_chk ------------------- */
-int
+int __CDECL
 mem_chk( void )
 {
 	Memory	*mem;
@@ -245,7 +248,7 @@ mem_chk( void )
 } /* mem_chk */
 
 /* -------------- mem_allocated ----------------- */
-long
+long __CDECL
 mem_allocated( void )
 {
 	return total_mem;

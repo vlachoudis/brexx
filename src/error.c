@@ -1,6 +1,9 @@
 /*
- * $Id: error.c,v 1.3 2001/06/25 18:51:48 bnv Exp $
+ * $Id: error.c,v 1.4 2002/06/11 12:37:38 bnv Exp $
  * $Log: error.c,v $
+ * Revision 1.4  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -26,7 +29,7 @@
 Lstr	errmsg;			/* initialise string from beggining  */
 
 /* ---------------- RxHaltTrap ----------------- */
-void
+void __CDECL
 RxHaltTrap( int cnd )
 {
 	if (_Proc[_rx_proc].condition & SC_HALT)
@@ -36,7 +39,7 @@ RxHaltTrap( int cnd )
 } /* RxHaltTrap */
 
 /* ---------------- RxSignalCondition -------------- */
-void
+void __CDECL
 RxSignalCondition( int cnd )
 {
 	PBinLeaf	leaf;
@@ -74,12 +77,14 @@ RxSignalCondition( int cnd )
 } /* RxSignalCondition */
 
 /* ------------------ Rerror ------------------- */
-void
+void __CDECL
 Rerror( int errno, int subno, ... ) 
 {
 	int	line;
 	RxFile	*rxf;
+#ifndef WCE
 	va_list	ap;
+#endif
 
 	if (_Proc[_rx_proc].condition & SC_SYNTAX) {
 		RxSetSpecialVar(RCVAR,errno);

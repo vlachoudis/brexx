@@ -1,6 +1,9 @@
 /*
- * $Id: nextsymb.c,v 1.3 2001/06/25 18:51:48 bnv Exp $
+ * $Id: nextsymb.c,v 1.4 2002/06/11 12:37:38 bnv Exp $
  * $Log: nextsymb.c,v $
+ * Revision 1.4  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -76,7 +79,7 @@ getnextchar:
 } /* nextchar */
 
 /* --------------- InitNextsymbol -------------------- */
-void
+void __CDECL
 InitNextsymbol( PLstr str )
 {
 	Lcat(str,"\n");	/* We must have a least one new line at the end */
@@ -102,7 +105,7 @@ InitNextsymbol( PLstr str )
 /*            P A R S E   next  B A S I C   S Y M B O L            */
 /*  Return the next basic symbol and advance the input stream      */
 /* --------------------------------------------------------------- */
-void
+void __CDECL
 nextsymbol(void)
 {
 #define NEXTCHAR	{*(ns++)=*symbolptr; LLEN(symbolstr)++; nextchar(FALSE);}

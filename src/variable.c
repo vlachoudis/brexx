@@ -1,6 +1,9 @@
 /*
- * $Id: variable.c,v 1.5 2002/06/06 08:25:40 bnv Exp $
+ * $Id: variable.c,v 1.6 2002/06/11 12:37:38 bnv Exp $
  * $Log: variable.c,v $
+ * Revision 1.6  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.5  2002/06/06 08:25:40  bnv
  * Corrected: A bug when PoolSet was called with variable length 0
  *
@@ -55,7 +58,7 @@ static int SystemPoolGet(PLstr name, PLstr value);
 static int SystemPoolSet(PLstr name,PLstr value);
 
 /* -------------- RxInitVariables ---------------- */
-void
+void __CDECL
 RxInitVariables(void)
 {
 	int	i;
@@ -73,7 +76,7 @@ RxInitVariables(void)
 } /* RxInitVariables */
 
 /* -------------- RxDoneVariables ---------------- */
-void
+void __CDECL
 RxDoneVariables(void)
 {
 	LFREESTR(int_varname);
@@ -83,7 +86,7 @@ RxDoneVariables(void)
 } /* RxDoneVariables */
 
 /* ---------------- RxVarFree -------------------- */
-void
+void __CDECL
 RxVarFree(void *var)
 {
 	Variable	*v;
@@ -107,7 +110,7 @@ RxVarFree(void *var)
 /* VarFind must be done first to initialise     */
 /* several variables                            */
 /* -------------------------------------------- */
-PBinLeaf
+PBinLeaf __CDECL
 RxVarAdd(Scope scope, PLstr name, int hasdot, PBinLeaf stemleaf )
 {
 	Variable *var,*var2;
@@ -193,7 +196,7 @@ RxVarAdd(Scope scope, PLstr name, int hasdot, PBinLeaf stemleaf )
 /*		actuall variable is not found		*/
 /*		but the tree head exist (found=FALSE)	*/
 /* ---------------------------------------------------- */
-PBinLeaf
+PBinLeaf __CDECL
 RxVarFind(const Scope scope, const PBinLeaf litleaf, bool *found)
 {
 	IdentInfo	*inf,*infidx;
@@ -419,7 +422,7 @@ RxVarFind(const Scope scope, const PBinLeaf litleaf, bool *found)
 } /* RxVarFind */
 
 /* ------------------ RxVarFindOld ------------------ */
-PBinLeaf
+PBinLeaf __CDECL
 RxVarFindOld(Scope scope, PLstr name, bool *found)
 {
 	Scope	stemscope;
@@ -535,7 +538,7 @@ RxVarFindOld(Scope scope, PLstr name, bool *found)
 } /* RxVarFindOld */
 
 /* --------------- RxVarDel ------------------- */
-void
+void __CDECL
 RxVarDel(Scope scope, PBinLeaf litleaf, PBinLeaf varleaf)
 {
 	IdentInfo	*inf;
@@ -585,7 +588,7 @@ RxVarDel(Scope scope, PBinLeaf litleaf, PBinLeaf varleaf)
 } /* RxVarDel */
 
 /* --------------- RxVarDelOld ------------------- */
-void
+void __CDECL
 RxVarDelOld(Scope scope, PLstr name, PBinLeaf varleaf)
 {
 	IdentInfo	*inf;
@@ -625,7 +628,7 @@ RxVarDelOld(Scope scope, PLstr name, PBinLeaf varleaf)
 } /* RxVarDelOld */
 
 /* ------------- RxVarDelInd ----------------- */
-void
+void __CDECL
 RxVarDelInd(Scope scope, PLstr vars)
 {
 	Lstr	name;
@@ -645,7 +648,7 @@ RxVarDelInd(Scope scope, PLstr vars)
 } /* RxVarDelInd */
 
 /* -------------- RxVarExpose ----------------- */
-PBinLeaf
+PBinLeaf __CDECL
 RxVarExpose(Scope scope, PBinLeaf litleaf)
 {
 	IdentInfo	*inf;
@@ -732,7 +735,7 @@ RxVarExpose(Scope scope, PBinLeaf litleaf)
 } /* VarExpose */
 
 /* -------------- RxVarSet ------------------ */
-void
+void __CDECL
 RxVarSet( Scope scope, PBinLeaf varleaf, PLstr value )
 {
 	IdentInfo	*inf;
@@ -764,7 +767,7 @@ RxVarSet( Scope scope, PBinLeaf varleaf, PLstr value )
 } /* RxVarSet */
 
 /* ----------------- RxSetSpecialVar ------------------- */
-void
+void __CDECL
 RxSetSpecialVar( int rcsigl, long num )
 {
 	PBinLeaf	varleaf;
@@ -787,7 +790,7 @@ RxSetSpecialVar( int rcsigl, long num )
 } /* RxSetSpecialVar */
 
 /* --------------- RxScopeMalloc ---------------- */
-Scope
+Scope __CDECL
 RxScopeMalloc( void )
 {
 	int	i;
@@ -800,7 +803,7 @@ RxScopeMalloc( void )
 } /* RxScopeMalloc */
 
 /* ---------------- RxScopeFree ----------------- */
-void
+void __CDECL
 RxScopeFree(Scope scope)
 {
 	int	i;
@@ -831,7 +834,7 @@ VarTreeAssign(PBinLeaf leaf, PLstr str, size_t mlen)
 } /* VarTreeAssign */
 
 /* ---------------- RxScopeAssign ---------------- */
-void
+void __CDECL
 RxScopeAssign(PBinLeaf varleaf)
 {
 	int	i;
@@ -852,7 +855,7 @@ RxScopeAssign(PBinLeaf varleaf)
 } /* RxScopeAssign */
 
 /* ---------------- RxVar2Str ------------------- */
-void
+void __CDECL
 RxVar2Str( PLstr result, PBinLeaf leaf, int option )
 {
 	Lstr	aux;
@@ -908,7 +911,7 @@ RxScanVarTree( PLstr result, PBinLeaf leaf, PLstr head, int depth, int option )
 } /* RxScanVarTree */
 
 /* ---------------- RxReadVarTree --------------- */
-void
+void __CDECL
 RxReadVarTree(PLstr result, Scope scope, PLstr head, int option)
 {
 	int	i;
@@ -921,9 +924,9 @@ RxReadVarTree(PLstr result, Scope scope, PLstr head, int option)
 static int
 SystemPoolGet(PLstr name, PLstr value)
 {
+#ifndef WCE
 	char	*env;
 
-#ifndef WCE
 	L2STR(name); LASCIIZ(*name);
 	env = getenv(LSTR(*name));
 	if (env) {
@@ -968,8 +971,8 @@ SystemPoolSet(PLstr name, PLstr value)
 } /* SystemPoolSet */
 
 /* -------------- PoolGet -------------- */
-int
-PoolGet( PLstr pool, PLstr name, PLstr value )
+int __CDECL
+RxPoolGet( PLstr pool, PLstr name, PLstr value )
 {
 	PBinLeaf leaf;
 	int	poolnum=-1;
@@ -1019,8 +1022,8 @@ PoolGet( PLstr pool, PLstr name, PLstr value )
 } /* PoolGet */
 
 /* -------------- PoolSet -------------- */
-int
-PoolSet( PLstr pool, PLstr name, PLstr value )
+int __CDECL
+RxPoolSet( PLstr pool, PLstr name, PLstr value )
 {
 	PBinLeaf leaf;
 	int	poolnum=-1;
@@ -1069,7 +1072,7 @@ PoolSet( PLstr pool, PLstr name, PLstr value )
 } /* PoolSet */
 
 /* ------------ RxRegPool -------------- */
-int
+int __CDECL
 RxRegPool(char *poolname, int (*getf)(PLstr,PLstr),
 			int (*setf)(PLstr,PLstr))
 {

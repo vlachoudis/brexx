@@ -1,6 +1,9 @@
 /*
- * $Id: trace.c,v 1.4 2001/06/25 18:51:23 bnv Exp $
+ * $Id: trace.c,v 1.5 2002/06/11 12:37:38 bnv Exp $
  * $Log: trace.c,v $
+ * Revision 1.5  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.4  2001/06/25 18:51:23  bnv
  * Added: Memory check in debug version when the trace is enabled.
  *
@@ -29,7 +32,7 @@
 #include <nextsymb.h>
 
 /* ---------- function prototypes ------------- */
-void    RxInitInterStr();
+void    __CDECL RxInitInterStr();
 
 /* ---------- Extern variables ---------------- */
 extern	Clause	*CompileClause;		/* compile clauses	*/
@@ -44,7 +47,7 @@ extern	Lstr    _tmpstr[];		/*     -//-		*/
 static	char	TraceChar[] = {' ','>','L','V','C','O','F','.'};
 
 /* ----------------- TraceCurline ----------------- */
-int
+int __CDECL
 TraceCurline( RxFile **rxf, int print )
 {
 	size_t	line;
@@ -139,7 +142,7 @@ TraceCurline( RxFile **rxf, int print )
 } /* TraceCurline */
 
 /* ---------------- TraceSet -------------------- */
-void
+void __CDECL
 TraceSet( PLstr trstr )
 {
 	char	*ch;
@@ -214,7 +217,7 @@ TraceSet( PLstr trstr )
 } /* TraceSet */
 
 /* --------------------- TraceByte -------------------- */
-void
+void __CDECL
 TraceByte( int middlechar )
 {
 	byte	tracebyte=0;
@@ -226,7 +229,7 @@ TraceByte( int middlechar )
 } /* TraceByte */
 
 /* ------------------ TraceClause ----------------- */
-void
+void __CDECL
 TraceClause( void )
 {
 	if (_Proc[_rx_proc].interactive_trace) {
@@ -241,7 +244,7 @@ TraceClause( void )
 } /* TraceClause */
 
 /* ------------------ TraceInstruction ----------------- */
-void
+void __CDECL
 TraceInstruction( byte inst )
 {
 	if ((inst & TB_MIDDLECHAR) != nothing_middle)
@@ -266,7 +269,7 @@ TraceInstruction( byte inst )
 } /* TraceInstruction */
 
 /* ---------------- TraceInteractive ------------------- */
-int
+int __CDECL
 TraceInteractive( int frominterpret )
 {
 	/* Read the interactive string into a tmp var */

@@ -1,6 +1,9 @@
 /*
- * $Id: expr.c,v 1.3 2001/06/25 18:51:48 bnv Exp $
+ * $Id: expr.c,v 1.4 2002/06/11 12:37:38 bnv Exp $
  * $Log: expr.c,v $
+ * Revision 1.4  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -20,16 +23,16 @@
 #include <compile.h>
 
 /*-----------------* local function prototypes *------------ */
-static void Exp0( void );
-static void Exp1( void );
-static void Exp2( void );
-static void Exp3( void );
-static void Exp4( void );
-static void Exp5( void );
-static void Exp6( void );
-static void Exp7( void );
-static void Exp8( void );
-static void C_function( void );
+static void __CDECL Exp0( void );
+static void __CDECL Exp1( void );
+static void __CDECL Exp2( void );
+static void __CDECL Exp3( void );
+static void __CDECL Exp4( void );
+static void __CDECL Exp5( void );
+static void __CDECL Exp6( void );
+static void __CDECL Exp7( void );
+static void __CDECL Exp8( void );
+static void __CDECL C_function( void );
 
 /* ----------- local variables ----------- */
 static	int	exp_ct;
@@ -38,7 +41,7 @@ static	size_t	exp_pos;
 /* ========================= C_expr ========================== */
 /* return if it had exited with another code than copy_mn */
 /* so something is left in stack */
-int
+int __CDECL
 C_expr( int calltype )
 {
 	exp_ct  = calltype;
@@ -71,7 +74,7 @@ C_expr( int calltype )
 } /* C_expr */
 
 /* ---------------- InsTmp ---------------- */
-static int
+static int __CDECL
 InsTmp( size_t pos, int pushtmp)
 {
 	/* do we need to push a tmp value */
@@ -90,7 +93,7 @@ InsTmp( size_t pos, int pushtmp)
 } /* InsTmp */
 
 /* ----------------- Exp0 ----------------- */
-static void
+static void __CDECL
 Exp0( void )
 {
 	enum mnemonic_type orxor;
@@ -111,7 +114,7 @@ Exp0( void )
 } /* Exp0 */
 
 /* ----------------- Exp1 ----------------- */
-static void
+static void __CDECL
 Exp1( void )
 {
 	CTYPE	pos;
@@ -129,7 +132,7 @@ Exp1( void )
 } /* Exp1 */
 
 /* ----------------- Exp2 ----------------- */
-static void
+static void __CDECL
 Exp2( void )
 {
 	enum  symboltype  _symbol;
@@ -189,7 +192,7 @@ Exp2( void )
 } /* Exp2 */
 
 /* ----------------- Exp3 ----------------- */
-static void
+static void __CDECL
 Exp3( void )
 {
 	int   _Concat;
@@ -220,7 +223,7 @@ Exp3( void )
 } /* Exp3 */
 
 /* ----------------- Exp4 ----------------- */
-static void
+static void __CDECL
 Exp4( void )
 {
 	enum symboltype _symbol;
@@ -245,7 +248,7 @@ Exp4( void )
 } /* Exp4 */
 
 /* ----------------- Exp5 ----------------- */
-static void
+static void __CDECL
 Exp5( void )
 {
 	enum  symboltype _symbol;
@@ -275,7 +278,7 @@ Exp5( void )
 }  /* Exp5 */
 
 /* ----------------- Exp6 ----------------- */
-static void
+static void __CDECL
 Exp6( void )
 {
 	CTYPE	pos;
@@ -293,7 +296,7 @@ Exp6( void )
 } /* Exp6 */
 
 /* ----------------- Exp7 ----------------- */
-static void
+static void __CDECL
 Exp7( void )
 {
 	enum symboltype _symbol;
@@ -325,7 +328,7 @@ Exp7( void )
 } /* Exp7 */
 
 /* ----------------- Exp8 ----------------- */
-static void
+static void __CDECL
 Exp8( void )
 {
 	if (symbol == ident_sy) {
@@ -354,7 +357,7 @@ Exp8( void )
 /* -------------------------------------------------------------- */
 /*  [Function] ::= [Identifier]([[Expression][,[Expression]]...]) */
 /* -------------------------------------------------------------- */
-static void
+static void __CDECL
 C_function( void )
 {
 	int	ia,line,realarg=0;

@@ -1,6 +1,9 @@
 /*
- * $Id: dqueue.c,v 1.2 2001/06/25 18:51:48 bnv Exp $
+ * $Id: dqueue.c,v 1.3 2002/06/11 12:37:38 bnv Exp $
  * $Log: dqueue.c,v $
+ * Revision 1.3  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.2  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -13,7 +16,7 @@
 #include <dqueue.h>
 
 /* ------------- DQAdd2Head --------------- */
-void
+void __CDECL
 DQAdd2Head( DQueue *queue, void *dat)
 {
 	DQueueElem *elem;
@@ -31,7 +34,7 @@ DQAdd2Head( DQueue *queue, void *dat)
 } /* DQAdd2Head */
 
 /* ------------- DQAdd2Tail --------------- */
-void
+void __CDECL
 DQAdd2Tail( DQueue *queue, void *dat)
 {
 	DQueueElem *elem;
@@ -49,7 +52,7 @@ DQAdd2Tail( DQueue *queue, void *dat)
 } /* DQAdd2Tail */
 
 /* ---------------- DQDel ------------------ */
-void
+void __CDECL
 DQDel( DQueue *queue, DQueueElem *elem )
 {
 	if (elem==NULL) return;
@@ -86,8 +89,8 @@ DQPop( DQueue *queue )
 } /* DQPop */
 
 /* --------------- DQFlush ----------------- */
-void
-DQFlush( DQueue *queue, void (freefunc)(void *dat) )
+void __CDECL
+DQFlush( DQueue *queue, void (__CDECL *freefunc)(void *) )
 {
 	DQueueElem *elem,*tofree;
 

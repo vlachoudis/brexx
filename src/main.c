@@ -1,6 +1,9 @@
 /*
- * $Id: main.c,v 1.6 2002/06/06 08:24:02 bnv Exp $
+ * $Id: main.c,v 1.7 2002/06/11 12:37:38 bnv Exp $
  * $Log: main.c,v $
+ * Revision 1.7  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.6  2002/06/06 08:24:02  bnv
  * Corrected: READLINE support when using redirected input
  *
@@ -30,15 +33,15 @@
 
 /* ------- Includes for any other external library ------- */
 #ifdef RXCONIO
-extern RxConIOInitialize();
+extern void __CDECL RxConIOInitialize();
 #endif
 #ifdef RXMYSQL
-extern RxMySQLInitialize();
-extern RxMySQLFinalize();
+extern void __CDECL RxMySQLInitialize();
+extern void __CDECL RxMySQLFinalize();
 #endif
 
 /* --------------------- main ---------------------- */
-int
+int __CDECL
 main(int ac, char *av[])
 {
 	Lstr	args, tracestr, file;

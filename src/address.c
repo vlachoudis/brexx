@@ -1,6 +1,9 @@
 /*
- * $Id: address.c,v 1.6 2002/06/06 08:23:46 bnv Exp $
+ * $Id: address.c,v 1.7 2002/06/11 12:37:38 bnv Exp $
  * $Log: address.c,v $
+ * Revision 1.7  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.6  2002/06/06 08:23:46  bnv
  * Changed: mkstemp to MKTEMP
  *
@@ -105,7 +108,7 @@ chkcmd4stack(PLstr cmd, int *in, int *out )
 } /* chkcmd4stack */
 
 /* ------------------ RxRedirectCmd ----------------- */
-int
+int __CDECL
 RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr)
 {
 	char	fnin[250], fnout[250];
@@ -219,7 +222,7 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr)
 #endif
 
 /* ------------------ RxExecuteCmd ----------------- */
-int
+int __CDECL
 RxExecuteCmd( PLstr cmd, PLstr env )
 {
 #ifndef WIN

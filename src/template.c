@@ -1,6 +1,9 @@
 /*
- * $Id: template.c,v 1.3 2001/06/25 18:51:48 bnv Exp $
+ * $Id: template.c,v 1.4 2002/06/11 12:37:38 bnv Exp $
  * $Log: template.c,v $
+ * Revision 1.4  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -75,7 +78,7 @@ position(void)
 /*  position   := NUMBER | vrefp  | Msg38.2                       */
 /*  relative_pos := ('+' | '-') position                          */
 /* -------------------------------------------------------------- */
-void
+void __CDECL
 C_template(void)
 {
 	void	*target_ptr=NULL;

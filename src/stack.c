@@ -1,6 +1,9 @@
 /*
- * $Id: stack.c,v 1.3 2001/06/25 18:51:48 bnv Exp $
+ * $Id: stack.c,v 1.4 2002/06/11 12:37:38 bnv Exp $
  * $Log: stack.c,v $
+ * Revision 1.4  2002/06/11 12:37:38  bnv
+ * Added: CDECL
+ *
  * Revision 1.3  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -23,7 +26,7 @@
 #include <rexx.h>
 
 /* ----------------- CreateStack ----------------------- */
-void
+void __CDECL
 CreateStack( void )
 {
 	DQueue	*stck;
@@ -34,7 +37,7 @@ CreateStack( void )
 } /* CreateStack */
 
 /* ----------------- DeleteStack ----------------------- */
-void
+void __CDECL
 DeleteStack( void )
 {
 	DQueue *stck;
@@ -44,7 +47,7 @@ DeleteStack( void )
 } /* DeleteStack */
 
 /* ----------------- Queue2Stack ----------------------- */
-void
+void __CDECL
 Queue2Stack( PLstr str )
 {
 	DQueue *stck;
@@ -53,7 +56,7 @@ Queue2Stack( PLstr str )
 } /* Queue2Stack */
 
 /* ----------------- Push2Stack ----------------------- */
-void
+void __CDECL
 Push2Stack( PLstr str )
 {
 	DQueue *stck;
@@ -62,7 +65,7 @@ Push2Stack( PLstr str )
 } /* Push2Stack */
 
 /* ----------------- PullFromStack ----------------------- */
-PLstr
+PLstr __CDECL
 PullFromStack( )
 {
 	DQueue *stck;
@@ -71,7 +74,7 @@ PullFromStack( )
 } /* PullFromStack */
 
 /* ----------------- StackQueued ----------------------- */
-long
+long __CDECL
 StackQueued( void )
 {
 	DQueue *stck;
