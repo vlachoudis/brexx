@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/interpre.c,v 1.5 1999/03/15 15:21:36 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/interpre.c,v 1.6 1999/05/14 12:31:22 bnv Exp $
  * $Log: interpre.c,v $
+ * Revision 1.6  1999/05/14 12:31:22  bnv
+ * Minor changes
+ *
  * Revision 1.5  1999/03/15 15:21:36  bnv
  * Corrected to handle the error_trace
  *
@@ -499,7 +502,7 @@ I_CallFunction( void )
 			Rxcip++;
 			RxSetSpecialVar(SIGLVAR,line);
 			I_MakeArgs(ct,nargs,existarg);
-			Rxcip = (CIPTYPE*)((byte huge *)Rxcodestart + func->label);
+			Rxcip = (CIPTYPE*)((byte huge *)Rxcodestart+func->label);
 			Rxcip++;	/* skip the newclause_mn */
 			if (_trace) TraceClause();
 
@@ -1111,7 +1114,7 @@ outofcmd:
 			if (func->label==UNKNOWN_LABEL)
 				Lerror(ERR_UNEXISTENT_LABEL,1,&(leaf->key));
 			/* jump */
-			Rxcip = (CIPTYPE*)((byte huge *)Rxcodestart + (size_t)(func->label));
+			Rxcip=(CIPTYPE*)((byte huge *)Rxcodestart+func->label);
 			goto main_loop;
 
 				/* SIGNALVAL [address]	*/
