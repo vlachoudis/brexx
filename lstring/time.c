@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/time.c,v 1.3 1999/03/01 11:06:33 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/time.c,v 1.4 1999/03/10 16:55:55 bnv Exp $
  * $Log: time.c,v $
+ * Revision 1.4  1999/03/10 16:55:55  bnv
+ * Added MSC support
+ *
  * Revision 1.3  1999/03/01 11:06:33  bnv
  * Change in the format to long int for tv.tv_usec just to keep compiler happy
  *
@@ -13,9 +16,13 @@
  */
 
 #include <stdio.h>
-#if defined(MSDOS) || defined(__WIN32__)
+#if defined(MSDOS) && !defined(__WIN32__) && !defined(_MSC_VER)
 #	include <dos.h>
 #	include <time.h>
+#elif defined(_MSC_VER)
+#	include <time.h>
+#	include <sys/types.h>
+#	include <sys/timeb.h>
 #else
 /* Load both of them time.h and sys/time.h, you never now where the 
  * struct timeval is
@@ -33,17 +40,22 @@ static double elapsed=0;
 void
 _Ltimeinit( void )
 {
-#if defined(MSDOS) || defined(__WIN32__)
+#if defined(MSDOS) && !defined(__WIN32__) && !defined(_MSC_VER)
 	struct time	t;
+#elif defined(_MSC_VER)
+	struct _timeb tb;
 #else
 	struct timeval	tv;
 	struct timezone	tz;
 #endif
 
-#if defined(MSDOS) || defined(__WIN32__)
+#if defined(MSDOS) && !defined(__WIN32__) && !defined(_MSC_VER)
 	gettime(&t);
 	elapsed = (double)t.ti_hour*3600 + (double)t.ti_min*60 +
 		(double)t.ti_sec + (double)t.ti_hund/100.0;
+#elif defined(_MSC_VER)
+	_ftime(&tb);
+	elapsed = (double)tb.time + (double)tb.millitm/1000.0;
 #else
 	gettimeofday(&tv,&tz);
 	elapsed = tv.tv_sec + (double)tv.tv_usec/1000000.0;
@@ -59,8 +71,10 @@ Ltime( const PLstr timestr, char option )
 	time_t	now;
 	double	unow;
 	struct tm *tmdata ;
-#if defined(MSDOS) || defined(__WIN32__)
+#if defined(MSDOS) && !defined(__WIN32__) && !defined(_MSC_VER)
 	struct time t;
+#elif defined(_MSC_VER)
+	struct _timeb tb;
 #else
 	struct timeval tv;
 	struct timezone tz;
@@ -82,10 +96,13 @@ Ltime( const PLstr timestr, char option )
 			break;
 
 		case 'E':
-#if defined(MSDOS) || defined(__WIN32__)
+#if defined(MSDOS) && !defined(__WIN32__) && !defined(_MSC_VER)
 			gettime(&t);
 			unow = (double)t.ti_hour*3600 + (double)t.ti_min*60 +
 				(double)t.ti_sec + (double)t.ti_hund/100.0;
+#elif defined(_MSC_VER)
+			_ftime(&tb);
+			unow = (double)tb.time + (double)tb.millitm/1000.0;
 #else
 			gettimeofday(&tv,&tz);
 			unow = (double)tv.tv_sec + (double)tv.tv_usec/1000000.0;
@@ -100,10 +117,15 @@ Ltime( const PLstr timestr, char option )
 			break;
 
 		case 'L':
-#if defined(MSDOS) || defined(__WIN32__)
+#if defined(MSDOS) && !defined(__WIN32__) && !defined(_MSC_VER)
 			gettime(&t);
 			sprintf(LSTR(*timestr), "%02d:%02d:%02d.%02d",
 				t.ti_hour, t.ti_min, t.ti_sec, t.ti_hund);
+#elif defined(_MSC_VER)
+			_ftime(&tb);
+			sprintf(LSTR(*timestr), "%02d:%02d:%02d.%03ld",
+				tmdata->tm_hour, tmdata->tm_min,
+				tmdata->tm_sec, tb.millitm) ;
 #else
 			gettimeofday(&tv,&tz);
 			sprintf(LSTR(*timestr), "%02d:%02d:%02d.%06ld",
@@ -124,10 +146,13 @@ Ltime( const PLstr timestr, char option )
 			break;
 
 		case 'R':
-#if defined(MSDOS) || defined(__WIN32__)
+#if defined(MSDOS) && !defined(__WIN32__) && !defined(_MSC_VER)
 			gettime(&t);
 			unow = (double)t.ti_hour*3600 + (double)t.ti_min*60 +
 				(double)t.ti_sec + (double)t.ti_hund/100.0;
+#elif defined(_MSC_VER)
+			_ftime(&tb);
+			unow = (double)tb.time + (double)tb.millitm/1000.0;
 #else
 			gettimeofday(&tv,&tz);
 			unow = (double)tv.tv_sec + (double)tv.tv_usec/1000000.0;
