@@ -1,6 +1,9 @@
 /*
- * $Id: address.c,v 1.4 2001/06/25 18:51:48 bnv Exp $
+ * $Id: address.c,v 1.5 2001/11/29 13:12:52 bnv Exp $
  * $Log: address.c,v $
+ * Revision 1.5  2001/11/29 13:12:52  bnv
+ * Corrected: The error handling when trace is off
+ *
  * Revision 1.4  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -250,7 +253,7 @@ RxExecuteCmd( PLstr cmd, PLstr env )
 	LFREESTR(cmdN);
 
 	RxSetSpecialVar(RCVAR,RxReturnCode);
-	if (RxReturnCode) {
+	if (RxReturnCode && !(_Proc[_rx_proc].trace & off_trace)) {
 		if (_Proc[_rx_proc].trace & (error_trace | normal_trace)) {
 			TraceCurline(NULL,TRUE);
 			fprintf(STDERR,"       +++ RC(%d) +++\n",RxReturnCode);
