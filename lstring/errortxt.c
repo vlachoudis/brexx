@@ -1,6 +1,9 @@
 /*
- * $Id: errortxt.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
+ * $Id: errortxt.c,v 1.5 2002/07/03 13:14:45 bnv Exp $
  * $Log: errortxt.c,v $
+ * Revision 1.5  2002/07/03 13:14:45  bnv
+ * Added: MySQL error
+ *
  * Revision 1.4  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -323,6 +326,9 @@ ErrorMsg	errortext[] = {
 #ifndef WCE
 	{ ERRNUM(54,1), "For this STEM APPEND, the value of \"<name>\" must be a count of lines; found: \"<value>\"" },
 #endif
+	{ ERRNUM(55,0),	"DB Error" },
+	{ ERRNUM(55,1),	"Database is not openned" },
+	{ ERRNUM(55,2),	"Field not found" },
 
 	{ ERRNUM(57,0),	"Cannot open file" },
 	{ ERRNUM(58,0),	"File not found" },
