@@ -1,6 +1,9 @@
 /*
- * $Id: rexxfunc.c,v 1.5 2002/06/11 12:37:38 bnv Exp $
+ * $Id: rexxfunc.c,v 1.6 2003/01/30 08:22:37 bnv Exp $
  * $Log: rexxfunc.c,v $
+ * Revision 1.6  2003/01/30 08:22:37  bnv
+ * HASHVALUE added
+ *
  * Revision 1.5  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -149,6 +152,7 @@ rexx_routine[] = {
 #ifdef WCE
 	{ "GOTOXY",	CE_gotoxy	,0		},
 #endif
+	{ "HASHVALUE",	R_S		,f_hashvalue	},
 	{ "IAND",	R_bitwise	,f_and		},
 	{ "INDEX",	R_SSoI		,f_index	},
 	{ "INOT",	R_not		,0		},

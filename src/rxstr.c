@@ -1,6 +1,9 @@
 /*
- * $Id: rxstr.c,v 1.5 2002/06/11 12:37:38 bnv Exp $
+ * $Id: rxstr.c,v 1.6 2003/01/30 08:22:37 bnv Exp $
  * $Log: rxstr.c,v $
+ * Revision 1.6  2003/01/30 08:22:37  bnv
+ * HASHVALUE added
+ *
  * Revision 1.5  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -250,6 +253,9 @@ R_S( const int func )
 			}
 			break;
 #endif
+		case f_hashvalue:
+			Licpy(ARGR,Lhashvalue(ARG1));
+			break;
 
 		default:
 			Lerror(ERR_INTERPRETER_FAILURE,0);
