@@ -1,6 +1,9 @@
 /*
- * $Id: rexxfunc.c,v 1.3 2001/06/25 18:51:48 bnv Exp $
+ * $Id: rexxfunc.c,v 1.4 2001/09/28 10:08:03 bnv Exp $
  * $Log: rexxfunc.c,v $
+ * Revision 1.4  2001/09/28 10:08:03  bnv
+ * Added new integer bitwise functions AND,OR,NOT,XOR
+ *
  * Revision 1.3  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -54,6 +57,8 @@ DECL( stream )
 DECL( abs_sign  )
 DECL( math )
 DECL( atanpow )
+DECL( bitwise )
+DECL( not )
 #undef DECL
 
 #ifdef WCE
@@ -94,17 +99,17 @@ rexx_routine[] = {
 	{ "CHAROUT",	R_charlineout	,f_charout	},
 	{ "CHARS",	R_charslines	,f_chars	},
 #ifdef WCE
-	{ "CLIPBOARD",	CE_Clipboard,	0		},
+	{ "CLIPBOARD",	CE_Clipboard	,0		},
 #endif
 	{ "CLOSE",	R_close		,f_close	},
 #ifdef WCE
-	{ "CLREOL",	CE_O,		f_clreol	},
-	{ "CLRSCR",	CE_O,		f_clrscr	},
+	{ "CLREOL",	CE_O		,f_clreol	},
+	{ "CLRSCR",	CE_O		,f_clrscr	},
 #endif
 	{ "COMPARE",	R_compare	,f_compare	},
 	{ "COPIES",	R_copies	,f_copies	},
 #ifdef WCE
-	{ "COPYFILE",	CE_SS,		f_copyfile	},
+	{ "COPYFILE",	CE_SS		,f_copyfile	},
 #endif
 	{ "COS",	R_math		,f_cos		},
 	{ "COSH",	R_math		,f_cosh		},
@@ -114,14 +119,14 @@ rexx_routine[] = {
 	{ "DATATYPE",	R_datatype	,f_datatype	},
 	{ "DATE",	R_C		,f_date		},
 #ifdef WCE
-	{ "DELFILE",	CE_S,		f_deletefile	},
+	{ "DELFILE",	CE_S		,f_deletefile	},
 #endif
 	{ "DELSTR",	R_SIoI		,f_delstr	},
 	{ "DELWORD",	R_SIoI		,f_delword	},
 	{ "DESBUF",	R_O		,f_desbuf	},
 	{ "DIGITS",	R_O		,f_digits	},
 #ifdef WCE
-	{ "DIR",	CE_Dir,		0		},
+	{ "DIR",	CE_Dir		,0		},
 #endif
 	{ "DROPBUF",	R_dropbuf	,f_dropbuf	},
 	{ "EOF",	R_eof		,f_eof		},
@@ -133,22 +138,26 @@ rexx_routine[] = {
 	{ "FORMAT",	R_format	,f_format	},
 	{ "FUZZ",	R_O		,f_fuzz		},
 #ifdef WCE
-	{ "GETCH",	CE_O,		f_getch		},
+	{ "GETCH",	CE_O		,f_getch	},
 #endif
 #ifndef WCE
 	{ "GETENV",	R_S		,f_getenv	},
 #endif
 #ifdef WCE
-	{ "GOTOXY",	CE_gotoxy,	0		},
+	{ "GOTOXY",	CE_gotoxy	,0		},
 #endif
+	{ "IAND",	R_bitwise	,f_and		},
 	{ "INDEX",	R_SSoI		,f_index	},
+	{ "INOT",	R_not		,0		},
 	{ "INSERT",	R_SSoIoIoC	,f_insert	},
 #if defined(__BORLANDC__) && !defined(__WIN32__) && !defined(WCE)
 	{ "INTR",	R_intr		,f_intr		},
 #endif
+	{ "IOR",	R_bitwise	,f_or		},
+	{ "IXOR",	R_bitwise	,f_xor		},
 	{ "JUSTIFY",	R_SIoC		,f_justify	},
 #ifdef WCE
-	{ "KBHIT",	CE_O,		f_kbhit		},
+	{ "KBHIT",	CE_O		,f_kbhit	},
 	{ "LASTERROR",	R_O		,f_lasterror	},
 #endif
 	{ "LASTPOS",	R_SSoI		,f_lastpos	},
@@ -164,9 +173,9 @@ rexx_routine[] = {
 	{ "MAX",	R_max		,f_max		},
 	{ "MIN",	R_min		,f_min		},
 #ifdef WCE
-	{ "MKDIR",	CE_S,		f_createdirectory	},
-	{ "MOVEFILE",	CE_SS,		f_movefile	},
-	{ "MSGBOX",	CE_MsgBox,	0		},
+	{ "MKDIR",	CE_S		,f_createdirectory},
+	{ "MOVEFILE",	CE_SS		,f_movefile	},
+	{ "MSGBOX",	CE_MsgBox	,0		},
 #endif
 	{ "OPEN",	R_open		,f_open		},
 	{ "OVERLAY",	R_SSoIoIoC	,f_overlay	},
@@ -185,7 +194,7 @@ rexx_routine[] = {
 	{ "REVERSE",	R_S		,f_reverse	},
 	{ "RIGHT",	R_SIoC		,f_right	},
 #ifdef WCE
-	{ "RMDIR",	CE_S,		f_removedirectory	},
+	{ "RMDIR",	CE_S		,f_removedirectory},
 #endif
 	{ "SEEK",	R_seek		,f_seek		},
 	{ "SIGN",	R_abs_sign	,f_sign		},
@@ -214,9 +223,9 @@ rexx_routine[] = {
 	{ "VARDUMP",	R_oSoS		,f_vartree	},
 	{ "VERIFY",	R_verify	,f_verify	},
 #ifdef WCE
-	{ "WHEREX",	CE_O,		f_wherex	},
-	{ "WHEREY",	CE_O,		f_wherey	},
-	{ "WINDOWTITLE",CE_oS,		f_windowtitle	},
+	{ "WHEREX",	CE_O		,f_wherex	},
+	{ "WHEREY",	CE_O		,f_wherey	},
+	{ "WINDOWTITLE",CE_oS		,f_windowtitle	},
 #endif
 	{ "WORD",	R_SI		,f_word		},
 	{ "WORDINDEX",	R_SI		,f_wordindex	},

@@ -1,6 +1,9 @@
 /*
- * $Id: rxmath.c,v 1.4 2001/06/25 18:51:48 bnv Exp $
+ * $Id: rxmath.c,v 1.5 2001/09/28 10:08:03 bnv Exp $
  * $Log: rxmath.c,v $
+ * Revision 1.5  2001/09/28 10:08:03  bnv
+ * Added new integer bitwise functions AND,OR,NOT,XOR
+ *
  * Revision 1.4  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -126,3 +129,39 @@ R_atanpow( const int func )
 	else
 		LREAL(*ARGR) = pow(LREAL(*ARGR),LREAL(*ARG2));
 } /* R_atanpow */
+
+/* --------------------------------------------------------------- */
+/*  AND(a,b)                                                       */
+/* --------------------------------------------------------------- */
+/*  OR(a,b)                                                        */
+/* --------------------------------------------------------------- */
+/*  XOR(a,b)                                                       */
+/* --------------------------------------------------------------- */
+void
+R_bitwise( const int func )
+{
+	if (ARGN!=2) Lerror(ERR_INCORRECT_CALL,0);
+	L2INT(ARG1);
+	L2INT(ARG2);
+	Lstrcpy(ARGR,ARG1);
+	if (func==f_and)
+		LINT(*ARGR) = (LINT(*ARGR) & LINT(*ARG2));
+	else
+	if (func==f_or)
+		LINT(*ARGR) = (LINT(*ARGR) | LINT(*ARG2));
+	else
+		LINT(*ARGR) = (LINT(*ARGR) ^ LINT(*ARG2));
+} /* R_bitwise */
+
+/* --------------------------------------------------------------- */
+/*  NOT(n)                                                         */
+/* --------------------------------------------------------------- */
+void
+R_not( const int func )
+{
+	if (ARGN!=1) Lerror(ERR_INCORRECT_CALL,0);
+
+	Lstrcpy(ARGR,ARG1);
+	L2INT(ARGR);
+	LINT(*ARGR) = ~LINT(*ARGR);
+} /* R_not */
