@@ -1,6 +1,9 @@
 /*
- * $Id: builtin.c,v 1.5 2002/06/11 12:37:38 bnv Exp $
+ * $Id: builtin.c,v 1.6 2003/02/12 16:41:40 bnv Exp $
  * $Log: builtin.c,v $
+ * Revision 1.6  2003/02/12 16:41:40  bnv
+ * *** empty log message ***
+ *
  * Revision 1.5  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -280,8 +283,8 @@ R_oSoS( )
 /*  VALUE(name[,[newvalue][,[pool]]])                             */
 /*  Return the value of variable 'name'                           */
 /*  if 'newvalue' exists then it sets this value to the var 'name */
-/*  if 'pool' exist then the then the function is performed on    */
-/*  this external pool                                            */
+/*  if 'pool' exist then the function is performed on this        */
+/*  external pool                                                 */
 /* -------------------------------------------------------------- */
 void __CDECL
 R_SoSoS( int func )
