@@ -1,6 +1,9 @@
 /*
- * $Id: lines.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
+ * $Id: lines.c,v 1.5 2004/03/26 22:51:11 bnv Exp $
  * $Log: lines.c,v $
+ * Revision 1.5  2004/03/26 22:51:11  bnv
+ * Changed to handle FIFO, devices and files
+ *
  * Revision 1.4  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -15,6 +18,11 @@
  *
  */
 
+#ifndef WIN
+#	include <sys/stat.h>
+#	include <unistd.h>
+#endif
+
 #include <lstring.h>
 
 /* ---------------- Llines ------------------- */
@@ -24,13 +32,20 @@ Llines( FILEP f )
 	long	pos,l;
 	int	ch,prev;
 
+#ifndef WIN
+	struct stat buf;
+	fstat(fileno(f),&buf);
+	if (S_ISCHR(buf.st_mode) || S_ISFIFO(buf.st_mode))
+		return !FEOF(f);
+#endif
+
 	pos = FTELL(f);		/* read current position */
 	l = 0;
-	prev = ' ';
+	prev = -1;
 	while (1) {
 		ch = FGETC(f);
 		if (ch==-1) {
-			if (prev!='\n') l++;
+			if (prev!=-1 && prev!='\n') l++;
 			break;
 		}
 		if (ch=='\n') l++;
