@@ -1,19 +1,23 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/builtin.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/builtin.c,v 1.2 1999/11/26 13:13:47 bnv Exp $
  * $Log: builtin.c,v $
+ * Revision 1.2  1999/11/26 13:13:47  bnv
+ * Added: WIN-32 & Windows CE support
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
  */
 
-#include <bnv.h>
-#include <time.h>
+#ifndef WCE
+#	include <time.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 
 #ifdef __BORLANDC__
-#include <dos.h>
-#include <alloc.h>
+#	include <dos.h>
+//#	include <alloc.h>
 #else
 #	ifndef GCC
 	struct timeval_st {
@@ -34,6 +38,10 @@
 #include <compile.h>
 #include <interpre.h>
 
+#ifdef WCE
+#	include <cefunc.h>
+#endif
+
 /* ------------- Function prototypes ----------- */
 int     RxLoadFile( RxFile *rxf );
 int	PoolGet(PLstr,PLstr,PLstr);
@@ -53,6 +61,10 @@ extern Lstr     stemvaluenotfound;      /* from variable.c */
 /*  FUZZ()                                                        */
 /* -------------------------------------------------------------- */
 /*  QUEUED()                                                      */
+/* -------------------------------------------------------------- */
+
+/* -- WIN32_WCE ------------------------------------------------- */
+/*  LASTERROR()                                                   */
 /* -------------------------------------------------------------- */
 void
 R_O( const int func )
@@ -103,6 +115,11 @@ R_O( const int func )
 			CreateStack();
 			Licpy(ARGR,StackList.items);
 			break;
+#ifdef WCE
+		case f_lasterror:
+			Licpy(ARGR,GetLastError());
+			break;
+#endif
 
 		default:
 			Lerror(ERR_INTERPRETER_FAILURE,0);
@@ -312,10 +329,10 @@ R_SoSoS( int func )
 			default:
 				Lerror(ERR_INCORRECT_CALL,0);
 		}
-#if defined(__BORLANDC__) && !defined(__WIN32__)
+#if defined(__BORLANDC__) && !defined(__WIN32__) && !defined(WCE)
 		addr = (((long)FP_SEG(ptr))<<4) + (long)FP_OFF(ptr);
 #else
-		addr = (long)ptr;
+		addr = (dword)ptr;
 #endif
 		Licpy(ARGR,addr);
 	} else
@@ -340,9 +357,9 @@ R_SoSoS( int func )
 			if (response == 'F')
 				Lerror(ERR_INCORRECT_CALL,36,ARG1);
 		} else {
-			Lstr            str;
+			Lstr	str;
 
-			LINITSTR(str); Lfx(&str,4);
+			LINITSTR(str); Lfx(&str,sizeof(dword));
 			Licpy(&str,_rx_proc);
 			response = PoolGet(&str,ARG1,ARGR);
 			if (exist(2))
@@ -484,7 +501,7 @@ R_errortext( )
 /*      in the format "ax=hex-num bx=hex-num ...."                */
 /*      returns in the same format the registers and flags        */
 /* -------------------------------------------------------------- */
-#if defined(__BORLANDC__) && !defined(__WIN32__)
+#if defined(__BORLANDC__) && !defined(__WIN32__) && !defined(WCE)
 void
 R_intr( )
 {
@@ -580,10 +597,15 @@ static jmp_buf	old_trap;
 void
 R_load( )
 {
-        RxFile  *rxf,*rxf2;
-        int     i;
-        char	*rxlib;
-        size_t	ip;
+	RxFile  *rxf,*rxf2;
+	int     i;
+	size_t	ip;
+#ifndef WCE
+	char	*rxlib;
+#else
+	TCHAR	pathvalue[128];
+	DWORD	pathlen;
+#endif
 
 	if (ARGN!=1)
 		Lerror(ERR_INCORRECT_CALL,0);
@@ -605,8 +627,14 @@ R_load( )
 	if (RxLoadFile( rxf )) goto fileloaded;
 
 	/* let's try at the directory of rxlib */
+#ifndef WCE
 	if ((rxlib=getenv("RXLIB"))!=NULL) {
 		Lscpy(&(rxf->filename),rxlib);
+#else
+	pathlen = sizeof(pathvalue);
+	if (RXREGGETDATA(TEXT("LIB"),REG_SZ,pathvalue,&pathlen)) {
+		Lwscpy(&(rxf->filename),pathvalue);
+#endif
 		i = LLEN(rxf->filename);
 		if (LSTR(rxf->filename)[i-1] != FILESEP) {
 			LSTR(rxf->filename)[i] = FILESEP;
@@ -722,7 +750,11 @@ R_random( )
 	} else
 	if (sewed==0) {
 		sewed = 1 ;
+#ifndef WCE
 		seed=(time((time_t *)0)%(3600*24));
+#else
+		seed = GetTickCount();
+#endif
 		srand((unsigned)seed);
 	}
 
@@ -744,7 +776,7 @@ void R_storage( )
 {
 	void	*ptr;
 	long	adr;
-#if defined(__BORLANDC__) && !defined(__WIN32__)
+#if defined(__BORLANDC__) && !defined(__WIN32__) && !defined(WCE)
 	unsigned	seg,ofs;
 #endif
 	size_t	length = 1;
@@ -752,10 +784,16 @@ void R_storage( )
 	if (ARGN>3)
 		Lerror(ERR_INCORRECT_CALL,0);
 	if (ARGN==0) {
+#ifndef WCE
 #if defined(__BORLANDC__) && !defined(__WIN32__)
 		Licpy(ARGR,farcoreleft()); /* return the free memory left */
 #else
 		Licpy(ARGR,0);
+#endif
+#else
+		STORE_INFORMATION si;
+		GetStoreInformation(&si);
+		Licpy(ARGR,si.dwFreeSize);
 #endif
 		return;
 	}
@@ -763,7 +801,7 @@ void R_storage( )
 		adr = Lrdint(ARG1);
 		if (adr < 0)
 			Lerror(ERR_INCORRECT_CALL,0);
-#if defined(__BORLANDC__) && !defined(__WIN32__)
+#if defined(__BORLANDC__) && !defined(__WIN32__) && !defined(WCE)
 		seg = (unsigned)((adr >> 4) & 0xFFFF);
 		ofs = (unsigned)(adr & 0x000F);
 		ptr = MK_FP(seg,ofs);
