@@ -1,48 +1,31 @@
 /*
- * $Id: rxconv.c,v 1.7 2008/07/15 07:40:25 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/rxconv.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
  * $Log: rxconv.c,v $
- * Revision 1.7  2008/07/15 07:40:25  bnv
- * #include changed from <> to ""
- *
- * Revision 1.6  2008/07/14 13:08:42  bnv
- * MVS,CMS support
- *
- * Revision 1.5  2002/06/11 12:37:38  bnv
- * Added: CDECL
- *
- * Revision 1.4  2001/06/25 18:51:48  bnv
- * Header -> Id
- *
- * Revision 1.3  1999/11/26 13:13:47  bnv
- * Changed: Something in the formatting of code.
- *
- * Revision 1.2  1999/03/15 15:22:23  bnv
- * Changed the type cast in Lxrange
- *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
  */
 
+#include <bnv.h>
 #include <math.h>
 
-#include "lerror.h"
-#include "lstring.h"
+#include <lerror.h>
+#include <lstring.h>
 
-#include "rexx.h"
-#include "rxdefs.h"
+#include <rexx.h>
+#include <rxdefs.h>
 
-/* --------------------------------------------------------------- */
-/*  BITAND(string1[,[string2][,pad]])                              */
-/* --------------------------------------------------------------- */
-/*  BITOR(string1[,[string2][,pad]])                               */
-/* --------------------------------------------------------------- */
-/*  BITXOR(string1[,[string2][,pad]])                              */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/* BITAND(string1[,[string2][,pad]])                              */
+/* -------------------------------------------------------------- */
+/* BITOR(string1[,[string2][,pad]])                               */
+/* -------------------------------------------------------------- */
+/* BITXOR(string1[,[string2][,pad]])                              */
+/* -------------------------------------------------------------- */
+void
 R_SoSoC( const int func )
 {
-	char	pad=' ';
+	char	pad;
 	bool	usepad;
 	PLstr	a2;
 	Lstr	nullstr;
@@ -82,12 +65,12 @@ R_SoSoC( const int func )
 	} /* switch */
 } /* R_SoSoC */
 
-/* --------------------------------------------------------------- */
-/*  C2D(string[,n])                                                */
-/* --------------------------------------------------------------- */
-/*  X2D(hex-string[,n])                                            */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/* C2D(string[,n])                                                */
+/* -------------------------------------------------------------- */
+/* X2D(hex-string[,n])                                            */
+/* -------------------------------------------------------------- */
+void
 R_SoI ( const int func )
 {
 	long	n;
@@ -109,12 +92,12 @@ R_SoI ( const int func )
 	} /* switch */
 } /* R_SoI */
 
-/* --------------------------------------------------------------- */
-/*  D2C(wholenumber[,n])                                           */
-/* --------------------------------------------------------------- */
-/*  D2X(wholenumber[,n])                                           */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/* D2C(wholenumber[,n])                                           */
+/* -------------------------------------------------------------- */
+/* D2X(wholenumber[,n])                                           */
+/* -------------------------------------------------------------- */
+void
 R_IoI ( const int func )
 {
 	long	n;
@@ -137,11 +120,11 @@ R_IoI ( const int func )
 	} /* switch */
 } /* R_IoI */
 
-/* --------------------------------------------------------------- */
-/*  FORMAT(number(,(before)(,(after)(,(expp)(,expt)))))            */
-/* --------------------------------------------------------------- */
-void __CDECL
-R_format( const int func )
+/* -------------------------------------------------------------- */
+/* FORMAT(number(,(before)(,(after)(,(expp)(,expt)))))            */
+/* -------------------------------------------------------------- */
+void
+R_format( )
 {
 	long	before, after, expp, expt;
 
@@ -156,13 +139,13 @@ R_format( const int func )
 	Lformat(ARGR,ARG1,before,after,expp,expt);
 } /* R_format */
 
-/* --------------------------------------------------------------- */
-/*  TRUNC(number(,n))                                              */
-/* --------------------------------------------------------------- */
-void __CDECL
-R_trunc( const int func )
-{
-	long   n;
+/* -------------------------------------------------------------- */
+/* TRUNC(number(,n))                                              */
+/* -------------------------------------------------------------- */
+void
+R_trunc( )       
+{                              
+	long   n;                  
 
 	if (!IN_RANGE(1,ARGN,2)) Lerror(ERR_INCORRECT_CALL,0);
 	must_exist(1);
@@ -171,11 +154,11 @@ R_trunc( const int func )
 	Ltrunc(ARGR,ARG1,n);
 } /* R_trunc */
 
-/* --------------------------------------------------------------- */
-/*  XRANGE([start][,end])                                          */
-/* --------------------------------------------------------------- */
-void __CDECL
-R_xrange( const int func )
+/* -------------------------------------------------------------- */
+/* XRANGE([start][,end])                                          */
+/* -------------------------------------------------------------- */
+void
+R_xrange( )
 {
 	unsigned int	start, stop;
 
@@ -194,5 +177,5 @@ R_xrange( const int func )
 	} else
 		stop = 255;
 
-	Lxrange(ARGR,(byte)start,(byte)stop);
+	Lxrange(ARGR,start,stop);
 } /* R_xrange */

@@ -1,30 +1,6 @@
 /*
- * $Id: bintree.c,v 1.9 2008/07/15 07:40:25 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/bintree.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
  * $Log: bintree.c,v $
- * Revision 1.9  2008/07/15 07:40:25  bnv
- * #include changed from <> to ""
- *
- * Revision 1.8  2008/07/14 13:08:42  bnv
- * MVS,CMS support
- *
- * Revision 1.7  2004/04/30 15:24:38  bnv
- * Added: include file os.h
- *
- * Revision 1.6  2003/10/30 13:15:12  bnv
- * default removed
- *
- * Revision 1.5  2002/06/11 12:37:38  bnv
- * Added: CDECL
- *
- * Revision 1.4  2001/06/25 18:51:48  bnv
- * Header -> Id
- *
- * Revision 1.3  1999/11/26 13:13:47  bnv
- * Changed: To use the new macros.
- *
- * Revision 1.2  1999/03/10 16:53:32  bnv
- * *** empty log message ***
- *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
@@ -36,7 +12,7 @@
  * Very general purpose routines for binary tree implemetation.
  * Each leaf contains a (PLstr)key with the name of the leaf
  * and a (void*)value which contains the value of the leaf.
- *
+ * 
  * The searching is done with the key's checked with _Lstrcmp
  * that means that an INTEGER or a REAL is stored according
  * to its binary representation in memory.
@@ -45,42 +21,38 @@
  * and the value.
  */
 
-#include "os.h"
-#include "bmem.h"
-#ifndef WCE
-#	include <stdio.h>
-#endif
+#include <bmem.h>
+#include <stdio.h>
 #include <string.h>
-#include "bintree.h"
+#include <bintree.h>
 
 #ifdef __DEBUG__
 static int scandepth( BinLeaf *leaf, int depth );
 #endif
 
 /* ------------------ BinAdd ------------------ */
-BinLeaf* __CDECL
+BinLeaf *
 BinAdd( BinTree *tree, PLstr name, void *dat )
 {
-	BinLeaf	*thisEntry;
-	BinLeaf	*lastEntry;
+	BinLeaf	*ThisEntry;
+	BinLeaf	*LastEntry;
 	BinLeaf	*leaf;
-	bool	leftTaken=FALSE;
+	bool	LeftTaken;
 	int	cmp, dep=0;
 
-	/* If tree is NULL then it will produce an error */
-	thisEntry = tree->parent;
-	while (thisEntry != NULL) {
-		lastEntry = thisEntry;
-		cmp = _Lstrcmp(name,&(thisEntry->key));
+	ThisEntry = tree->parent;
+	while (ThisEntry != NULL) {
+		LastEntry = ThisEntry;
+		cmp = _Lstrcmp(name,&(ThisEntry->key));
 		if (cmp < 0) {
-			thisEntry = thisEntry->left;
-			leftTaken = TRUE;
+			ThisEntry = ThisEntry->left;
+			LeftTaken = TRUE;
 		} else
 		if (cmp > 0) {
-			thisEntry = thisEntry->right;
-			leftTaken = FALSE;
+			ThisEntry = ThisEntry->right;
+			LeftTaken = FALSE;
 		} else
-			return thisEntry;
+			return ThisEntry;
 		dep++;
 	}
 
@@ -98,10 +70,10 @@ BinAdd( BinTree *tree, PLstr name, void *dat )
 	if (tree->parent==NULL)
 		tree->parent = leaf;
 	else {
-		if (leftTaken)
-			lastEntry->left = leaf;
+		if (LeftTaken)
+			LastEntry->left = leaf;
 		else
-			lastEntry->right = leaf;
+			LastEntry->right = leaf;
 	}
 	tree->items++;
 	if (dep>tree->maxdepth) {
@@ -113,7 +85,7 @@ BinAdd( BinTree *tree, PLstr name, void *dat )
 } /* BinAdd */
 
 /* ------------------ BinFind ----------------- */
-BinLeaf* __CDECL
+BinLeaf *
 BinFind( BinTree *tree, PLstr name )
 {
 	BinLeaf	*leaf;
@@ -134,9 +106,8 @@ BinFind( BinTree *tree, PLstr name )
 } /* BinFind */
 
 /* ----------------- BinDisposeLeaf -------------------- */
-void __CDECL
-BinDisposeLeaf( BinTree *tree, BinLeaf *leaf,
-		void (__CDECL *BinFreeData)(void *) )
+void
+BinDisposeLeaf( BinTree *tree, BinLeaf *leaf, void (BinFreeData)(void *) )
 {
 	if (!leaf) return;
 	if (leaf->left)
@@ -155,8 +126,8 @@ BinDisposeLeaf( BinTree *tree, BinLeaf *leaf,
 } /* BinDisposeLeaf */
 
 /* ----------------- BinDisposeTree -------------------- */
-void __CDECL
-BinDisposeTree( BinTree *tree, void (__CDECL *BinFreeData)(void *) )
+void
+BinDisposeTree( BinTree *tree, void (BinFreeData)(void *) )
 {
 	if (tree != NULL) {
 		BinDisposeLeaf(tree,tree->parent,BinFreeData);
@@ -194,11 +165,11 @@ BinDisposeTree( BinTree *tree, void (__CDECL *BinFreeData)(void *) )
 /*                    ....                                        */
 /*                                                                */
 /* -------------------------------------------------------------- */
-void __CDECL
-BinDel( BinTree *tree, PLstr name, void (__CDECL *BinFreeData)(void *) )
+void
+BinDel( BinTree *tree, PLstr name, void (BinFreeData)(void *dat) )
 {
-	BinLeaf	*thisid, *previous=NULL, *par_newid, *newid;
-	bool	lefttaken=FALSE;
+	BinLeaf	*thisid, *previous, *par_newid, *newid;
+	bool	lefttaken;
 	int	cmp;
 
 	thisid = tree->parent;
@@ -257,9 +228,8 @@ BinDel( BinTree *tree, PLstr name, void (__CDECL *BinFreeData)(void *) )
 	BinDisposeLeaf(tree,thisid,BinFreeData);
 } /* BinDel */
 
-#ifdef __DEBUG__
 /* -------------------- BinPrint ---------------------- */
-void __CDECL
+void
 BinPrint(BinLeaf *leaf)
 {
 	long i;
@@ -269,30 +239,30 @@ BinPrint(BinLeaf *leaf)
 	depth += 3;
 
 	BinPrint(leaf->left);
-	for (i=0; i<depth-3; i++) PUTCHAR(' ');
-	PUTCHAR('\"');
-	Lprint(STDOUT,&(leaf->key));
+
+	for (i=0; i<depth-3; i++) putchar(' ');
+	putchar('\"');
+	Lprint(stdout,&(leaf->key));
 	switch (LTYPE(leaf->key)) {
 		case LINTEGER_TY:
-			PUTS("\"d = ");
+			printf("\"d = ");
 			break;
 		case LREAL_TY:
-			PUTS("\"r = ");
+			printf("\"r = ");
 			break;
 		case LSTRING_TY:
-			PUTS("\"s = ");
+			printf("\"s = ");
 			break;
 	}
-	//Lprint(STDOUT,leaf->value);
+	/* Lprint(stdout,leaf->value); */
 	if (leaf->value)
 		printf("%p\n",leaf->value);
 	else
-		PUTS("NULL\n");
+		printf("NULL\n");
 	BinPrint(leaf->right);
 
-	depth -= 3;
+        depth -= 3;
 } /* BinPrint */
-#endif
 
 /* -------------------- LeafBalance --------------------- */
 static void
@@ -309,7 +279,7 @@ LeafBalance( BinLeaf *leaf, BinLeaf **head, BinLeaf **tail )
 
 	LeafBalance(leaf->left,  &Lhead, &Ltail);
 	LeafBalance(leaf->right, &Rhead, &Rtail);
-
+                
 	/* connect nodes */
 	/*  head - left - middle - right - tail */
 
@@ -376,7 +346,7 @@ LeafConstruct( BinLeaf *head, BinLeaf *tail, int n, int *maxdepth )
 } /* LeafConstruct */
 
 /* -------------------- BinBalance ---------------------- */
-void __CDECL
+void
 BinBalance( BinTree *tree )
 {
 	BinLeaf *head, *tail;

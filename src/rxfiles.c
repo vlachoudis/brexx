@@ -1,60 +1,22 @@
 /*
- * $Id: rxfiles.c,v 1.14 2013/09/03 20:03:40 bnv Exp bnv $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/rxfiles.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
  * $Log: rxfiles.c,v $
- * Revision 1.14  2013/09/03 20:03:40  bnv
- * Condition not ready for file
- *
- * Revision 1.13  2008/07/15 07:40:25  bnv
- * #include changed from <> to ""
- *
- * Revision 1.12  2006/01/26 10:27:13  bnv
- * Corrected: When a file has a name as ddd.dd floating point number
- *
- * Revision 1.11  2004/08/16 15:29:21  bnv
- * Spaces
- *
- * Revision 1.10  2004/04/30 15:29:14  bnv
- * Spaces...
- *
- * Revision 1.9  2003/10/30 13:16:28  bnv
- * Variable name change
- *
- * Revision 1.8  2002/06/11 12:37:38  bnv
- * Added: CDECL
- *
- * Revision 1.7  2001/06/25 18:51:48  bnv
- * Header -> Id
- *
- * Revision 1.6  1999/11/26 13:13:47  bnv
- * Added: Windows CE support.
- * Changed: To use the new macros.
- *
- * Revision 1.5  1999/03/10 16:55:02  bnv
- * Added MSC support
- *
- * Revision 1.4  1999/02/10 15:43:36  bnv
- * Long file name support for Win95/98/NT
- *
- * Revision 1.3  1999/01/22 17:29:17  bnv
- * Added the xxxBINARY options in the STREAM function
- *
- * Revision 1.2  1998/11/06 08:58:10  bnv
- * Corrected: real numbers with mantissa zero (integer)
- *            are treated as integers
- *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
  */
 
+#include <bnv.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "lerror.h"
-#include "lstring.h"
+#include <bmem.h>
+#include <lerror.h>
+#include <lstring.h>
 
-#include "rexx.h"
-#include "rxdefs.h"
+#include <rexx.h>
+#include <rxdefs.h>
 
 #define	FSTDIN	0
 #define	FSTDOUT	1
@@ -72,12 +34,12 @@ int	file_size;	/* file size in filelist structure	*/
 static
 struct files_st {
 	PLstr	name;	/* IN STRUCTURE */
-	FILEP	f;
+	FILE	*f;
 	long	line;
 } *file;
 
-/* ------------------------* RxInitFiles *------------------------ */
-void __CDECL
+/* -------------------* RxInitFiles *------------------------ */
+void
 RxInitFiles(void)
 {
 	int	i;
@@ -93,20 +55,20 @@ RxInitFiles(void)
 
 	i = 0;
 	LPMALLOC(file[i].name);
-	Lscpy(file[i].name,"<STDIN>");    file[i].f = STDIN;
+	Lscpy(file[i].name,"<STDIN>");    file[i].f = stdin;
 	file[i].line = 1;
 
 	i++;
 	LPMALLOC(file[i].name);
-	Lscpy(file[i].name,"<STDOUT>");   file[i].f = STDOUT;
+	Lscpy(file[i].name,"<STDOUT>");   file[i].f = stdout;
 	file[i].line = 1;
 
 	i++;
 	LPMALLOC(file[i].name);
-	Lscpy(file[i].name,"<STDERR>");   file[i].f = STDERR;
+	Lscpy(file[i].name,"<STDERR>");   file[i].f = stderr;
 	file[i].line = 1;
 
-#if defined(MSDOS) && !defined(__WIN32__) && !defined(_MSC_VER)
+#ifdef MSDOS
 	i++;
 	LPMALLOC(file[i].name);
 	Lscpy(file[i].name,"<STDAUX>");   file[i].f = stdaux;
@@ -119,8 +81,8 @@ RxInitFiles(void)
 #endif
 } /* RxInitFiles*/
 
-/* ------------------------* RxDoneFiles *------------------------ */
-void __CDECL
+/* ---------------------* RxDoneFiles *----------------------- */
+void
 RxDoneFiles(void)
 {
 	int i;
@@ -128,51 +90,36 @@ RxDoneFiles(void)
 		/* is it system file? */
 		if (file[i].name != NULL) {
 			if (LSTR(*(file[i].name))[0]!='<')	/* system file */
-				FCLOSE(file[i].f);
+				fclose(file[i].f);
 			LPFREE(file[i].name)
 		}
 	}
 	FREE(file);
 } /* RxDoneFiles */
 
-/* -------------------------* find_file *------------------------- */
+/* ----------------------* find_file *------------------------ */
 static int
 find_file( const PLstr fn )
 {
 	int	i, j=-1;
-	int	isnum=0;
-#if defined(MSDOS) || defined(WCE)
 	Lstr	str;
-#endif
 
 	/* search to see if it is a number */
-	if ((LTYPE(*fn)==LSTRING_TY) && (_Lisnum(fn) == LINTEGER_TY)) {
+	if ((LTYPE(*fn)==LSTRING_TY) && (_Lisnum(fn) == LINTEGER_TY)) 
 		j = (int)Lrdint(fn);
-		isnum = 1;
-	} else
-	if (LTYPE(*fn) == LINTEGER_TY) {
+	else
+	if (LTYPE(*fn) == LINTEGER_TY)
 		j = (int)LINT(*fn);
-		isnum = 1;
-	} else
-	if (LTYPE(*fn) == LREAL_TY) {
-		j = Lrdint(fn);
-		isnum = 1;
-	}
 
 	if (IN_RANGE(0,j,file_size-1))
-		if (file[j].name != NULL) return j;
-
-	if (isnum)
-		Lerror(ERR_FILE_NOT_OPENED,0 );
+	if (file[j].name != NULL) return j;
 
 	L2STR(fn);
-
-#if defined(MSDOS) || defined(WCE)
 	LINITSTR(str); Lfx(&str,LLEN(*fn));
 	Lstrcpy(&str,fn);
-
-	/* Make case insensity search */
+#ifdef MSDOS
 	Lupper(&str);
+#endif
 
 	for (i=0; i<file_size; i++)
 		if (file[i].name != NULL)
@@ -180,17 +127,12 @@ find_file( const PLstr fn )
 				LFREESTR(str);
 				return i;
 			}
+
 	LFREESTR(str);
-#else
-	for (i=0; i<file_size; i++)
-		if (file[i].name != NULL)
-			if (!Lstrcmp(fn, file[i].name))
-				return i;
-#endif
 	return -1;
 } /* find_file */
 
-/* ------------------------* find_empty *------------------------- */
+/* ----------------------* find_empty *---------------------- */
 static int
 find_empty( void )
 {
@@ -211,7 +153,7 @@ find_empty( void )
 	return i;
 } /* find_empty */
 
-/* -------------------------* open_file *------------------------- */
+/* ----------------------* open_file *----------------------- */
 static int
 open_file( const PLstr fn, const char *mode )
 {
@@ -222,30 +164,29 @@ open_file( const PLstr fn, const char *mode )
 
 	LINITSTR(str); Lfx(&str,LLEN(*fn));
 	Lstrcpy(&str,fn);
+#ifdef MSDOS
+	Lupper(&str);
+#endif
 
 	LASCIIZ(str);
 
-	if ((file[i].f=FOPEN(LSTR(str),mode))==NULL) {
+	if ((file[i].f=fopen(LSTR(str),mode))==NULL) {
 		LFREESTR(str);
 		return -1;
 	}
 	LPMALLOC(file[i].name);
-#if defined(MSDOS) || defined(WCE)
-	/* For MSDOS or 32bit DOS store the name in uppercase */
-	Lupper(&str);
-#endif
 	Lstrcpy(file[i].name,&str);
 	file[i].line = 1;
 	LFREESTR(str);
 	return i;
 } /* open_file */
 
-/* -------------------------* close_file *------------------------ */
+/* ----------------------* close_file *---------------------- */
 static int
 close_file( const int f )
 {
 	int	r;
-	r = FCLOSE(file[f].f);
+	r = fclose(file[f].f);
 	file[f].f = NULL;
 	LPFREE(file[f].name);
 	file[f].name = NULL;
@@ -255,7 +196,7 @@ close_file( const int f )
 /* --------------------------------------------------------------- */
 /*  OPEN( file, mode )                                             */
 /* --------------------------------------------------------------- */
-void __CDECL
+void
 R_open( )
 {
 	if (ARGN != 2) Lerror(ERR_INCORRECT_CALL, 0 );
@@ -268,7 +209,7 @@ R_open( )
 /* --------------------------------------------------------------- */
 /*  CLOSE( file )                                                  */
 /* --------------------------------------------------------------- */
-void __CDECL
+void
 R_close( )
 {
 	int	i;
@@ -284,7 +225,7 @@ R_close( )
 /* --------------------------------------------------------------- */
 /*  EOF( file )                                                    */
 /* --------------------------------------------------------------- */
-void __CDECL
+void
 R_eof( )
 {
 	int	i;
@@ -294,13 +235,13 @@ R_eof( )
 	if (i==-1)
 		Licpy(ARGR,-1);
 	else
-		Licpy(ARGR,((FEOF(file[i].f))?1:0));
+		Licpy(ARGR,((feof(file[i].f))?1:0));
 } /* R_eof */
 
 /* --------------------------------------------------------------- */
 /*  FLUSH( file )                                                  */
 /* --------------------------------------------------------------- */
-void __CDECL
+void
 R_flush( )
 {
 	int	i;
@@ -310,13 +251,13 @@ R_flush( )
 	if (i==-1)
 		Licpy(ARGR,-1);
 	else
-		Licpy(ARGR,(FFLUSH(file[i].f)));
+		Licpy(ARGR,(fflush(file[i].f)));
 } /* R_flush */
 
 /* --------------------------------------------------------------- */
 /*  STREAM(file[,[option][,command]])                              */
 /* --------------------------------------------------------------- */
-void __CDECL
+void
 R_stream( )
 {
 	char	option;
@@ -344,7 +285,7 @@ R_stream( )
 			if (!exist(3))
 				Lerror(ERR_INCORRECT_CALL, 0);
 			LINITSTR(cmd); Lfx(&cmd,LLEN(*ARG3));
-			Lstrip(&cmd,ARG3,LBOTH,' ');
+			Lstrcpy(&cmd,ARG3);
 			Lupper(&cmd);
 
 			if (!Lcmp(&cmd,"READ")) {
@@ -352,19 +293,9 @@ R_stream( )
 				i = open_file(ARG1,"r");
 				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
 			} else
-			if (!Lcmp(&cmd,"READBINARY")) {
-				if (i>=0) close_file(i);
-				i = open_file(ARG1,"rb");
-				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
-			} else
 			if (!Lcmp(&cmd,"WRITE")) {
 				if (i>=0) close_file(i);
 				i = open_file(ARG1,"w");
-				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
-			} else
-			if (!Lcmp(&cmd,"WRITEBINARY")) {
-				if (i>=0) close_file(i);
-				i = open_file(ARG1,"wb");
 				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
 			} else
 			if (!Lcmp(&cmd,"APPEND")) {
@@ -372,19 +303,9 @@ R_stream( )
 				i = open_file(ARG1,"a+");
 				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
 			} else
-			if (!Lcmp(&cmd,"APPENDBINARY")) {
-				if (i>=0) close_file(i);
-				i = open_file(ARG1,"ab+");
-				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
-			} else
 			if (!Lcmp(&cmd,"UPDATE")) {
 				if (i>=0) close_file(i);
 				i = open_file(ARG1,"r+");
-				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
-			} else
-			if (!Lcmp(&cmd,"UPDATEBINARY")) {
-				if (i>=0) close_file(i);
-				i = open_file(ARG1,"rb+");
 				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
 			} else
 			if (!Lcmp(&cmd,"CREATE")) {
@@ -392,23 +313,17 @@ R_stream( )
 				i = open_file(ARG1,"w+");
 				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
 			} else
-			if (!Lcmp(&cmd,"CREATEBINARY")) {
-				if (i>=0) close_file(i);
-				i = open_file(ARG1,"wb+");
-				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
-			} else
 			if (!Lcmp(&cmd,"CLOSE")) {
 				if (i>=0) close_file(i);
 			} else
 			if (!Lcmp(&cmd,"FLUSH")) {
-				if (i>=0) FFLUSH(file[i].f);
+				if (i>=0) fflush(file[i].f);
 			} else
 			if (!Lcmp(&cmd,"RESET")) {
-				if (i>=0) FSEEK( file[i].f, 0L, SEEK_SET );
+				if (i>=0) fseek( file[i].f, 0L, SEEK_SET );
 			} else
 				Lerror(ERR_INCORRECT_CALL, 0);
 
-			Lscpy(ARGR,"READY");
 			LFREESTR(cmd);
 			break;
 		case 'D':		/* get a description */
@@ -416,7 +331,7 @@ R_stream( )
 			if (i==-1)
 				Lscpy(ARGR,"UNKNOWN");
 			else {
-				if (FEOF(file[i].f))
+				if (feof(file[i].f))
 					Lscpy(ARGR,"NOTREADY");
 				else
 					Lscpy(ARGR,"READY");
@@ -433,7 +348,7 @@ R_stream( )
 /* --------------------------------------------------------------- */
 /*  LINES((file))                                                  */
 /* --------------------------------------------------------------- */
-void __CDECL
+void
 R_charslines( const int func )
 {
 	int    i;
@@ -459,7 +374,7 @@ R_charslines( const int func )
 /* --------------------------------------------------------------- */
 /*  LINEIN((file)(,(line)(,count)))                                */
 /* --------------------------------------------------------------- */
-void __CDECL
+void
 R_charlinein( const int func )
 {
 	int	i;
@@ -476,9 +391,6 @@ R_charlinein( const int func )
 	get_oiv(2,start,LSTARTPOS);
 	get_oiv(3,length,1);
 
-	if (LLEN(*ARGR)==0 && FEOF(file[i].f))
-		RxSignalCondition(SC_NOTREADY);
-
 	if (func == f_charin)
 		Lcharin(file[i].f,ARGR,start,length);
 	else
@@ -491,7 +403,7 @@ R_charlinein( const int func )
 /* --------------------------------------------------------------- */
 /*  LINEOUT((file)(,(string)(,start)))                             */
 /* --------------------------------------------------------------- */
-void __CDECL
+void
 R_charlineout( const int func )
 {
 	int	i;
@@ -514,7 +426,7 @@ R_charlineout( const int func )
 		L2STR(ARG2);
 		str = ARG2;
 	} else
-		str = &(nullStr->key);
+		str = &(NullStr->key);
 
 	get_oiv(3,start,LSTARTPOS);
 
@@ -524,13 +436,13 @@ R_charlineout( const int func )
 	} else
 	if (func == f_lineout)
 		Licpy(ARGR,Llineout(file[i].f,str,&(file[i].line),start));
-	FFLUSH(file[i].f);
+	fflush(file[i].f);
 } /* R_charlineout */
 
 /* --------------------------------------------------------------- */
 /*  WRITE( (file)(, string(,)))                                    */
 /* --------------------------------------------------------------- */
-void __CDECL
+void
 R_write( )
 {
 	int	i;
@@ -547,11 +459,11 @@ R_write( )
 		Lwrite(file[i].f,ARG2,FALSE);
 		Licpy(ARGR, LLEN(*ARG2));
 	} else {
-		FPUTC('\n',file[i].f);
+		fputc('\n',file[i].f);
 		Licpy(ARGR,1);
 	}
 	if (ARGN==3) {
-		FPUTC('\n',file[i].f);
+		fputc('\n',file[i].f);
 		LINT(*ARGR)++;
 	}
 }  /* R_write */
@@ -561,7 +473,7 @@ R_write( )
 /*  length can be a number declaring number of bytes to read       */
 /*  or an option 'file', 'line' or 'char'                          */
 /* --------------------------------------------------------------- */
-void __CDECL
+void
 R_read( )
 {
 	int	i;
@@ -575,7 +487,7 @@ R_read( )
 	if (i==-1) i = open_file(ARG1,"r");
 	if (i==-1)
 		Lerror(ERR_CANT_OPEN_FILE,0);
-
+	
 	if (exist(2)) {
 		/* search to see if it is a number */
 		if ((LTYPE(*ARG2)==LSTRING_TY) && (_Lisnum(ARG2) == LINTEGER_TY))
@@ -583,10 +495,7 @@ R_read( )
 		else
 		if (LTYPE(*ARG2) == LINTEGER_TY)
 			l = (int)LINT(*ARG2);
-		else
-		if (LTYPE(*ARG2) == LREAL_TY)
-			l = Lrdint(ARG2);
-		else
+		else 
 		if (LTYPE(*ARG2) == LSTRING_TY) {
 			switch (l2u[(byte)LSTR(*ARG2)[0]]) {
 				case 'F':
@@ -612,7 +521,7 @@ R_read( )
 /* --------------------------------------------------------------- */
 /*  SEEK( file (,offset (,"TOF","CUR","EOF")))                     */
 /* --------------------------------------------------------------- */
-void __CDECL
+void
 R_seek( )
 {
 	int	i;
@@ -643,7 +552,7 @@ R_seek( )
 					Lerror(ERR_INCORRECT_CALL, 0 );
 			}
 		}
-		FSEEK( file[i].f, l, SEEK );
+		fseek( file[i].f, l, SEEK );
 	}
-	Licpy(ARGR, FTELL(file[i].f));
+	Licpy(ARGR, ftell(file[i].f));
 } /* R_seek */

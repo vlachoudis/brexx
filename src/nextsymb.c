@@ -1,27 +1,6 @@
 /*
- * $Id: nextsymb.c,v 1.8 2008/07/15 07:40:25 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/nextsymb.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
  * $Log: nextsymb.c,v $
- * Revision 1.8  2008/07/15 07:40:25  bnv
- * #include changed from <> to ""
- *
- * Revision 1.7  2004/04/30 15:25:41  bnv
- * Spaces...
- *
- * Revision 1.6  2004/03/27 08:34:21  bnv
- * Corrected: Line number was not restored after the comma at the end of the line
- *
- * Revision 1.5  2003/01/30 08:22:37  bnv
- * Corrected: comment after the comma_sy search
- *
- * Revision 1.4  2002/06/11 12:37:38  bnv
- * Added: CDECL
- *
- * Revision 1.3  2001/06/25 18:51:48  bnv
- * Header -> Id
- *
- * Revision 1.2  1999/11/26 13:13:47  bnv
- * Changed: Some spaces to tabs.
- *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
@@ -29,25 +8,29 @@
 
 #define  __NEXTSYMB_C__
 
-#include "lerror.h"
-#include "lstring.h"
-#include "nextsymb.h"
+#include <bnv.h>
+#include <bmem.h>
+#include <stdio.h>
+
+#include <lerror.h>
+#include <lstring.h>
+#include <nextsymb.h>
 
 static PLstr	ProgStr;	/* pointer that holds the program string*/
-static int	InitNextch;	/* NextChar initialised?		*/
+static int	InitNextch;	/* NextChar initialised?  		*/
 static bool	NextBlank;	/* Next char is blank			*/
 static bool	commentfound;	/* if comment found in nextchar		*/
 
 bool	_in_nextsymbol;		/* Used only to track error inside nextsymb*/
 
-/* ------------------- function prototypes ----------------------- */
+/* ------------- function prototypes ------------------- */
 static void literal(void);
 static void identifier(int isnumber);
 
-/* --------------------------------------------------------------- */
-/*  return the next character and advance the input stream by one  */
-/*  also it searches for comments                                  */
-/* --------------------------------------------------------------- */
+/* ----------------------------------------------------------- */
+/*return the next character and advance the input stream by one*/
+/*also it searches for comments                                */
+/* ----------------------------------------------------------- */
 static void
 nextchar(int instring)
 {
@@ -89,7 +72,7 @@ getnextchar:
 } /* nextchar */
 
 /* --------------- InitNextsymbol -------------------- */
-void __CDECL
+void
 InitNextsymbol( PLstr str )
 {
 	Lcat(str,"\n");	/* We must have a least one new line at the end */
@@ -111,11 +94,11 @@ InitNextsymbol( PLstr str )
 	symbolstat = normal_st;
 } /* InitNextsymbol */
 
-/* --------------------------------------------------------------- */
-/*            P A R S E   next  B A S I C   S Y M B O L            */
-/*  Return the next basic symbol and advance the input stream      */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/*           P A R S E   next  B A S I C   S Y M B O L            */
+/* Return the next basic symbol and advance the input stream      */
+/* -------------------------------------------------------------- */
+void
 nextsymbol(void)
 {
 #define NEXTCHAR	{*(ns++)=*symbolptr; LLEN(symbolstr)++; nextchar(FALSE);}
@@ -280,11 +263,9 @@ _NEXTSYMBOL:
 			if (symbol==semicolon_sy &&
 				_lineno!=symboline) goto _NEXTSYMBOL;
 			symbolptr = Psymbolptr;
-			symboline = _lineno;
 			symbol = comma_sy;
 			NextBlank = FALSE;
 			symbolPrevBlank = TRUE;
-			commentfound = FALSE;
 			break;
 
 		case '.':
@@ -444,9 +425,9 @@ _NEXTSYMBOL:
 	_in_nextsymbol = FALSE;
 } /* nextsymbol */
 
-/* --------------------------------------------------------------- */
-/*      find the identifier                                        */
-/* --------------------------------------------------------------- */
+/* -------------------------------------------------------------- */
+/*     find the identifier                                        */
+/* -------------------------------------------------------------- */
 static void
 identifier(int isnumber)
 {
@@ -468,9 +449,9 @@ identifier(int isnumber)
 			commentfound = FALSE;
 			*s='\0';
 			LLEN(symbolstr) = l;
-			goto Nleave;
+			goto leave;
 		}
-
+			
 		switch (l2u[(byte)*symbolptr]) {
 			case '0':   case '1':    case '2':
 			case '3':   case '4':    case '5':
@@ -519,12 +500,12 @@ identifier(int isnumber)
 					} else {
 						*s='\0';
 						LLEN(symbolstr) = l;
-						goto Nleave;
+						goto leave;
 					}
 				} else {
 					*s='\0';
 					LLEN(symbolstr) = l;
-					goto Nleave;
+					goto leave;
 				}
 				break;
 
@@ -565,7 +546,7 @@ identifier(int isnumber)
 
 				/* literal finished and it is not a label? */
 				if (*symbolptr!=':')
-					goto Nleave;
+					goto leave;
 
 				/* literal is label */
 				symbol = label_sy;
@@ -575,10 +556,10 @@ identifier(int isnumber)
 			default:
 				*s='\0';
 				LLEN(symbolstr) = l;
-				goto Nleave;
+				goto leave;
 		}  /* end of switch */
 	} /* end of for */
-Nleave:
+leave:
 	if (symbol!=ident_sy) return ;
 
 	if (symbolhasdot == LLEN(symbolstr))
@@ -599,16 +580,16 @@ Nleave:
 	}
 } /* identifier */
 
-/* --------------------------------------------------------------- */
-/*  extract a literal symbol                                       */
-/* --------------------------------------------------------------- */
+/* -------------------------------------------------------------- */
+/* extract a literal symbol                                       */
+/* -------------------------------------------------------------- */
 static void
 literal(void)
 {
 	char	quote;
 	char	*s;
 	int	l;      /* length of symbolstr */
-	Lstr	A;
+	Lstr	A;  
 
 	symbolhasdot = 0;
 	symbol = literal_sy;
@@ -617,7 +598,7 @@ literal(void)
 	l = 0;
 	symbolisstr = TRUE;
 
-	for (;;)  {			/* -+-  l > maxlen ? */
+	for (;;)  {                   /* -+-  l > maxlen ? */
 		nextchar(TRUE);
 		if (l>=LMAXLEN(symbolstr))
 			Lerror(ERR_TOO_LONG_STRING,0);
@@ -675,7 +656,7 @@ literal(void)
 				nextchar(FALSE);
 				LFREESTR(A);
 				return;
-			} else
+			} else 
 			if (*symbolptr==quote) {
 				*s++ = *symbolptr; l++;
 			}  else  {

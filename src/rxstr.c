@@ -1,63 +1,39 @@
 /*
- * $Id: rxstr.c,v 1.9 2008/07/15 07:40:25 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/rxstr.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
  * $Log: rxstr.c,v $
- * Revision 1.9  2008/07/15 07:40:25  bnv
- * #include changed from <> to ""
- *
- * Revision 1.8  2006/01/26 10:27:57  bnv
- * Changed RxVar...Old() -> RxVar...Name()
- *
- * Revision 1.7  2003/10/30 13:16:28  bnv
- * Variable name change
- *
- * Revision 1.6  2003/01/30 08:22:37  bnv
- * HASHVALUE added
- *
- * Revision 1.5  2002/06/11 12:37:38  bnv
- * Added: CDECL
- *
- * Revision 1.4  2001/06/25 18:51:48  bnv
- * Header -> Id
- *
- * Revision 1.3  1999/11/26 13:13:47  bnv
- * Added: Windows CE support.
- * Changed: To use the new macros.
- *
- * Revision 1.2  1998/11/26 09:47:11  bnv
- * Changed: var 'match' in verify must be boolean
- *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
  */
 
+#include <bnv.h>
 #ifdef __BORLANDC__
 #	include <dos.h>
 #endif
 #include <stdlib.h>
 #include <string.h>
 
-#include "lerror.h"
-#include "lstring.h"
+#include <lerror.h>
+#include <lstring.h>
 
-#include "rexx.h"
-#include "rxdefs.h"
-#include "interpre.h"
+#include <rexx.h>
+#include <rxdefs.h>
+#include <interpre.h>
 
-/* --------------------------------------------------------------- */
-/*  ABBREV(information,info[,length])                              */
-/* --------------------------------------------------------------- */
-/*  INDEX(haystack,needle[,start])                                 */
-/* --------------------------------------------------------------- */
-/*  FIND(string,phrase[,start])                                    */
-/* --------------------------------------------------------------- */
-/*  LASTPOS(needle,haystack[,start])                               */
-/* --------------------------------------------------------------- */
-/*  POS(needle,haystack[,start])                                   */
-/* --------------------------------------------------------------- */
-/*  WORDPOS(phrase,string[,start])                                 */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/*  ABBREV(information,info[,length])                             */
+/* -------------------------------------------------------------- */
+/*  INDEX(haystack,needle[,start])                                */
+/* -------------------------------------------------------------- */
+/*  FIND(string,phrase[,start])                                   */
+/* -------------------------------------------------------------- */
+/*  LASTPOS(needle,haystack[,start])                              */
+/* -------------------------------------------------------------- */
+/*  POS(needle,haystack[,start])                                  */
+/* -------------------------------------------------------------- */
+/*  WORDPOS(phrase,string[,start])                                */
+/* -------------------------------------------------------------- */
+void
 R_SSoI( const int func )
 {
 	long	l;
@@ -98,17 +74,17 @@ R_SSoI( const int func )
 	} /* switch */
 } /* R_SSoI */
 
-/* --------------------------------------------------------------- */
-/*  CENTRE(string,length[,pad])                                    */
-/*  CENTER(string,length[,pad])                                    */
-/* --------------------------------------------------------------- */
-/*  JUSTIFY(string,length[,pad])                                   */
-/* --------------------------------------------------------------- */
-/*  LEFT(string,length[,pad])                                      */
-/* --------------------------------------------------------------- */
-/*  RIGHT(string,length[,pad])                                     */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/*  CENTRE(string,length[,pad])                                   */
+/*  CENTER(string,length[,pad])                                   */
+/* -------------------------------------------------------------- */
+/*  JUSTIFY(string,length[,pad])                                  */
+/* -------------------------------------------------------------- */
+/*  LEFT(string,length[,pad])                                     */
+/* -------------------------------------------------------------- */
+/*  RIGHT(string,length[,pad])                                    */
+/* -------------------------------------------------------------- */
+void
 R_SIoC( const int func )
 {
 	long	l;
@@ -143,41 +119,26 @@ R_SIoC( const int func )
 	} /* of switch */
 } /* R_SIoC */
 
-/* --------------------------------------------------------------- */
-/*  B2X(string)                                                    */
-/* --------------------------------------------------------------- */
-/*  C2X(string)                                                    */
-/* --------------------------------------------------------------- */
-/*  GETENV(string)                                                 */
-/* --------------------------------------------------------------- */
-/*  LENGTH(string)                                                 */
-/* --------------------------------------------------------------- */
-/*  WORDS(string)                                                  */
-/* --------------------------------------------------------------- */
-/*  REVERSE(string)                                                */
-/* --------------------------------------------------------------- */
-/*  SYMBOL(name)                                                   */
-/* --------------------------------------------------------------- */
-/*  X2B(string)                                                    */
-/* --------------------------------------------------------------- */
-/*  X2C(string)                                                    */
-/* --------------------------------------------------------------- */
-/*  IMPORT( filename )                                             */
-/*      loads a shared library or a rexx library                   */
-/* --------------------------------------------------------------- */
-/*  LOAD( filename )                                               */
-/*      load a rexx file so it can be used as a library            */
-/*      returns a return code from loadfile                        */
-/*        "-1" when file is already loaded                         */
-/*         "0" on success                                          */
-/*         "1" on error opening the file                           */
-/* ------------------------------------------------------ -------- */
-/* -- WIN32_WCE -------------------------------------------------- */
-/*  A2U(string)                                                    */
-/* --------------------------------------------------------------- */
-/*  U2A(string)                                                    */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/*  B2X(string)                                                   */
+/* -------------------------------------------------------------- */
+/*  C2X(string)                                                   */
+/* -------------------------------------------------------------- */
+/*  GETENV(string)                                                */
+/* -------------------------------------------------------------- */
+/*  LENGTH(string)                                                */
+/* -------------------------------------------------------------- */
+/*  WORDS(string)                                                 */
+/* -------------------------------------------------------------- */
+/*  REVERSE(string)                                               */
+/* -------------------------------------------------------------- */
+/*  SYMBOL(name)                                                  */
+/* -------------------------------------------------------------- */
+/*  X2B(string)                                                   */
+/* -------------------------------------------------------------- */
+/*  X2C(string)                                                   */
+/* -------------------------------------------------------------- */
+void
 R_S( const int func )
 {
 	Lstr	str;
@@ -195,7 +156,6 @@ R_S( const int func )
 			Lc2x(ARGR,ARG1);
 			break;
 
-#ifndef WCE
 		case f_getenv:
 			{
 				char	*env;
@@ -207,7 +167,6 @@ R_S( const int func )
 					LZEROSTR(*ARGR);
 			}
 			break;
-#endif
 
 		case f_length:
 			Licpy(ARGR, LLEN(*ARG1));
@@ -234,7 +193,7 @@ R_S( const int func )
 			LINITSTR(str); Lfx(&str,LLEN(*ARG1));
 			Lstrcpy(&str,ARG1);
 			Lupper(&str); LASCIIZ(str);
-			RxVarFindName(_proc[_rx_proc].scope,&str,&found);
+			RxVarFindOld(_Proc[_rx_proc].scope,&str,&found);
 			LFREESTR(str);
 			if (found)
 				Lscpy(ARGR,"VAR");
@@ -250,49 +209,18 @@ R_S( const int func )
 			Lx2c(ARGR,ARG1);
 			break;
 
-#ifdef WCE
-		case f_a2u:
-			{
-				size_t	len = LLEN(*ARG1);
-				Lfx(ARGR,2*len+2);
-				LASCIIZ(*ARG1);
-				mbstowcs((TCHAR*)(LSTR(*ARGR)), LSTR(*ARG1), len+1);
-				LLEN(*ARGR) = 2*len;
-				LTYPE(*ARGR) = LSTRING_TY;
-			}
-			break;
-
-		case f_u2a:
-			{
-				size_t	len = LLEN(*ARG1)/2;
-				Lfx(ARGR,len);
-				wcstombs(LSTR(*ARGR), (TCHAR*)(LSTR(*ARG1)), len);
-				LLEN(*ARGR) = len;
-				LTYPE(*ARGR) = LSTRING_TY;
-			}
-			break;
-#endif
-		case f_hashvalue:
-			Licpy(ARGR,Lhashvalue(ARG1));
-			break;
-
-		case f_load:
-		case f_import:
-			Licpy(ARGR,RxLoadLibrary(ARG1,func==f_import));
-			break;
-
 		default:
 			Lerror(ERR_INTERPRETER_FAILURE,0);
 	} /* switch */
 } /* R_S */
-/* --------------------------------------------------------------- */
-/*  DELSTR(string,n[,length])                                      */
-/* --------------------------------------------------------------- */
-/*  DELWORD(string,n[,length])                                     */
-/* --------------------------------------------------------------- */
-/*  SUBWORD(string,n[,length])                                     */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/*  DELSTR(string,n[,length])                                     */
+/* -------------------------------------------------------------- */
+/*  DELWORD(string,n[,length])                                    */
+/* -------------------------------------------------------------- */
+/*  SUBWORD(string,n[,length])                                    */
+/* -------------------------------------------------------------- */
+void
 R_SIoI( const int func )
 {
 	long	n,l;
@@ -321,12 +249,12 @@ R_SIoI( const int func )
 	} /* switch */
 } /* R_SIoI */
 
-/* --------------------------------------------------------------- */
-/*  INSERT(new,target[,[n][,[length][,pad]]])                      */
-/* --------------------------------------------------------------- */
-/*  OVERLAY(new,target[,[n][,[length][,pad]]])                     */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/* INSERT(new,target[,[n][,[length][,pad]]])                      */
+/* -------------------------------------------------------------- */
+/* OVERLAY(new,target[,[n][,[length][,pad]]])                     */
+/* -------------------------------------------------------------- */
+void
 R_SSoIoIoC( const int func )
 {
 	long	n,l;
@@ -354,10 +282,10 @@ R_SSoIoIoC( const int func )
 	} /* switch */
 } /* R_SSoIoIoC */
 
-/* --------------------------------------------------------------- */
-/*  CHANGESTR(searchstr,string,replacestr)                         */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/* CHANGESTR(searchstr,string,replacestr)                         */
+/* -------------------------------------------------------------- */
+void
 R_changestr( )
 {
 	if (ARGN != 3)
@@ -368,10 +296,10 @@ R_changestr( )
 	Lchangestr(ARGR,ARG1,ARG2,ARG3);
 } /* R_changestr */
 
-/* --------------------------------------------------------------- */
-/*  COMPARE(string1,string2[,pad])                                 */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/* COMPARE(string1,string2[,pad])                                 */
+/* -------------------------------------------------------------- */
+void
 R_compare( )
 {
 	char	pad;
@@ -385,10 +313,10 @@ R_compare( )
 	Licpy(ARGR, Lcompare(ARG1,ARG2,pad));
 } /* R_compare */
 
-/* --------------------------------------------------------------- */
-/*  COPIES(string,n)                                               */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/*  COPIES(string,n)                                              */
+/* -------------------------------------------------------------- */
+void
 R_copies( )
 {
 	long	n;
@@ -402,10 +330,10 @@ R_copies( )
 	Lcopies(ARGR,ARG1,n);
 } /* R_copies */
 
-/* --------------------------------------------------------------- */
-/*  SUBSTR(string,n[,[length][,pad]])                              */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/*  SUBSTR(string,n[,[length][,pad]])                             */
+/* -------------------------------------------------------------- */
+void
 R_substr( )
 {
 	long	n,l;
@@ -421,10 +349,10 @@ R_substr( )
 	Lsubstr(ARGR,ARG1,n,l,pad);
 } /* R_substr */
 
-/* --------------------------------------------------------------- */
-/*  STRIP(string[,[<"L"|"T"|"B">][,char]])                         */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/*  STRIP(string[,[<"L"|"T"|"B">][,char]])                        */
+/* -------------------------------------------------------------- */
+void
 R_strip( )
 {
 	char	action='B';
@@ -439,10 +367,10 @@ R_strip( )
 	Lstrip(ARGR,ARG1,action,pad);
 } /* R_strip */
 
-/* --------------------------------------------------------------- */
-/*  TRANSLATE(string(,(tableo)(,(tablei)(,pad))))                  */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/* TRANSLATE(string(,(tableo)(,(tablei)(,pad))))                  */
+/* -------------------------------------------------------------- */
+void
 R_translate( )
 {
 	char	pad;
@@ -474,13 +402,13 @@ R_translate( )
 	Ltranslate(ARGR,ARG1,tableo,tablei,pad);
 } /* R_translate */
 
-/* --------------------------------------------------------------- */
-/*  VERIFY(string,reference[,[option][,start]])                    */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/* VERIFY(string,reference[,[option][,start]])                    */
+/* -------------------------------------------------------------- */
+void
 R_verify( )
 {
-	bool	match=FALSE;
+	char	match='N';
 	long	start;
 
 	if (!IN_RANGE(2,ARGN,4))
@@ -496,12 +424,12 @@ R_verify( )
 	Licpy(ARGR,Lverify(ARG1,ARG2,match,start));
 } /* R_verify */
 
-/* --------------------------------------------------------------- */
-/*  COUNTSTR(target,string)                                        */
-/* --------------------------------------------------------------- */
-/*  PUTENV(var,value)                                              */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/*  COUNTSTR(target,string)                                       */
+/* -------------------------------------------------------------- */
+/*  PUTENV(var,value)                                             */
+/* -------------------------------------------------------------- */
+void
 R_SS( int type )
 {
 	if (ARGN!=2)
@@ -509,17 +437,14 @@ R_SS( int type )
 
 	must_exist(1);
 	must_exist(2);
-#ifndef WCE
 	if (type==f_countstr)
-#endif
 		Licpy(ARGR,Lcountstr(ARG1,ARG2));
-#ifndef WCE
 	else {
 		LASCIIZ(*ARG1);
 		LASCIIZ(*ARG2);
-#	ifdef HAVE_SETENV
+#ifdef HAS_SETENV
 		Licpy(ARGR,setenv(LSTR(*ARG1),LSTR(*ARG2),TRUE));
-#	else
+#else
 		{
 		Lstr	str;
 		LINITSTR(str);
@@ -530,7 +455,6 @@ R_SS( int type )
 		Licpy(ARGR,putenv(LSTR(str)));
 		LFREESTR(str);
 		}
-#	endif
-	}
 #endif
+	}
 } /* R_SS */

@@ -1,28 +1,16 @@
 /*
- * $Id: dqueue.c,v 1.5 2008/07/15 07:40:25 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/dqueue.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
  * $Log: dqueue.c,v $
- * Revision 1.5  2008/07/15 07:40:25  bnv
- * #include changed from <> to ""
- *
- * Revision 1.4  2008/07/14 13:08:42  bnv
- * MVS,CMS support
- *
- * Revision 1.3  2002/06/11 12:37:38  bnv
- * Added: CDECL
- *
- * Revision 1.2  2001/06/25 18:51:48  bnv
- * Header -> Id
- *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
  */
 
-#include "bmem.h"
-#include "dqueue.h"
+#include <bmem.h>
+#include <dqueue.h>
 
 /* ------------- DQAdd2Head --------------- */
-void __CDECL
+void
 DQAdd2Head( DQueue *queue, void *dat)
 {
 	DQueueElem *elem;
@@ -40,7 +28,7 @@ DQAdd2Head( DQueue *queue, void *dat)
 } /* DQAdd2Head */
 
 /* ------------- DQAdd2Tail --------------- */
-void __CDECL
+void
 DQAdd2Tail( DQueue *queue, void *dat)
 {
 	DQueueElem *elem;
@@ -58,7 +46,7 @@ DQAdd2Tail( DQueue *queue, void *dat)
 } /* DQAdd2Tail */
 
 /* ---------------- DQDel ------------------ */
-void __CDECL
+void
 DQDel( DQueue *queue, DQueueElem *elem )
 {
 	if (elem==NULL) return;
@@ -89,14 +77,14 @@ DQPop( DQueue *queue )
 
 	dat = (queue->tail)->dat;
 	(queue->tail)->dat = NULL;
-
+	
 	DQDel(queue,queue->tail);
 	return dat;
 } /* DQPop */
 
 /* --------------- DQFlush ----------------- */
-void __CDECL
-DQFlush( DQueue *queue, void (__CDECL *freefunc)(void *) )
+void
+DQFlush( DQueue *queue, void (freefunc)(void *dat) )
 {
 	DQueueElem *elem,*tofree;
 

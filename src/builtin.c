@@ -1,53 +1,19 @@
 /*
- * $Id: builtin.c,v 1.12 2009/06/02 09:41:27 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/builtin.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
  * $Log: builtin.c,v $
- * Revision 1.12  2009/06/02 09:41:27  bnv
- * MVS/CMS corrections
- *
- * Revision 1.11  2008/07/15 07:40:25  bnv
- * #include changed from <> to ""
- *
- * Revision 1.10  2008/07/14 13:08:42  bnv
- * MVS,CMS support
- *
- * Revision 1.9  2006/01/26 10:24:40  bnv
- * Changed: RxVar...Old() -> RxVar...Name()
- *
- * Revision 1.8  2004/03/27 08:32:37  bnv
- * Corrected: sourceline was reporting wrong lines after an interpret statement
- *
- * Revision 1.7  2003/10/30 13:15:51  bnv
- * Cosmetics
- *
- * Revision 1.6  2003/02/12 16:41:40  bnv
- * *** empty log message ***
- *
- * Revision 1.5  2002/06/11 12:37:38  bnv
- * Added: CDECL
- *
- * Revision 1.4  2002/01/14 10:22:48  bnv
- * Changed: Scan all the dirs in the RXLIB path
- *
- * Revision 1.3  2001/06/25 18:51:48  bnv
- * Header -> Id
- *
- * Revision 1.2  1999/11/26 13:13:47  bnv
- * Added: WIN-32 & Windows CE support
- *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
  */
 
-#ifndef WCE
-#	include <time.h>
-#endif
+#include <bnv.h>
+#include <time.h>
 #include <stdlib.h>
 #include <string.h>
 
 #ifdef __BORLANDC__
-#	include <dos.h>
-//#	include <alloc.h>
+#include <dos.h>
+#include <alloc.h>
 #else
 #	ifndef GCC
 	struct timeval_st {
@@ -57,21 +23,21 @@
 #	endif
 #endif
 
-#include "lerror.h"
-#include "lstring.h"
+#include <lerror.h>
+#include <lstring.h>
 
-#include "rexx.h"
-#include "stack.h"
-#include "trace.h"
-#include "rxdefs.h"
-#include "dqueue.h"
-#include "compile.h"
-#include "interpre.h"
+#include <rexx.h>
+#include <stack.h>
+#include <trace.h>
+#include <rxdefs.h>
+#include <dqueue.h>
+#include <compile.h>
+#include <interpre.h>
 
-#ifdef WIN
-#	include <winfunc.h>
-#endif
-
+/* ------------- Function prototypes ----------- */
+int     RxLoadFile( RxFile *rxf );
+int	PoolGet(PLstr,PLstr,PLstr);
+int	PoolSet(PLstr,PLstr,PLstr);
 /* ------------- External variables ------------ */
 extern Lstr     stemvaluenotfound;      /* from variable.c */
 
@@ -88,11 +54,7 @@ extern Lstr     stemvaluenotfound;      /* from variable.c */
 /* -------------------------------------------------------------- */
 /*  QUEUED()                                                      */
 /* -------------------------------------------------------------- */
-
-/* -- WIN32_WCE ------------------------------------------------- */
-/*  LASTERROR()                                                   */
-/* -------------------------------------------------------------- */
-void __CDECL
+void
 R_O( const int func )
 {
 	long	items;
@@ -102,20 +64,20 @@ R_O( const int func )
 
 	switch (func) {
 		case f_address:
-			if (_proc[_rx_proc].env == NULL)
-				Lstrcpy(ARGR,&(systemStr->key));
+			if (_Proc[_rx_proc].env == NULL)
+				Lstrcpy(ARGR,&(SystemStr->key));
 			else
-				Lstrcpy(ARGR,_proc[_rx_proc].env);
+				Lstrcpy(ARGR,_Proc[_rx_proc].env);
 			break;
 
 		case f_desbuf:
 			items = 0;
 			while (1) {
 				items += StackQueued();
-				if (rxStackList.items>1)
+				if (StackList.items>1)
 					DeleteStack();
 				else {
-					DQFlush(DQPEEK(&rxStackList),_Lfree);
+					DQFlush(DQPEEK(&StackList),_Lfree);
 					break;
 				}
 			}
@@ -123,29 +85,24 @@ R_O( const int func )
 			break;
 
 		case f_digits:
-			Licpy(ARGR,_proc[_rx_proc].digits);
+			Licpy(ARGR,_Proc[_rx_proc].digits);
 			break;
 
 		case f_form:
-			if (_proc[_rx_proc].form==SCIENTIFIC)
+			if (_Proc[_rx_proc].form==SCIENTIFIC)
 				Lscpy(ARGR,"SCIENTIFIC");
 			else
 				Lscpy(ARGR,"ENGINEERING");
 			break;
 
 		case f_fuzz:
-			Licpy(ARGR,_proc[_rx_proc].fuzz);
+			Licpy(ARGR,_Proc[_rx_proc].fuzz);
 			break;
 
-		case f_makebuf:
+		case f_makebuf:  
 			CreateStack();
-			Licpy(ARGR,rxStackList.items);
+			Licpy(ARGR,StackList.items);
 			break;
-#ifdef WIN
-		case f_lasterror:
-			Licpy(ARGR,GetLastError());
-			break;
-#endif
 
 		default:
 			Lerror(ERR_INTERPRETER_FAILURE,0);
@@ -162,7 +119,7 @@ R_O( const int func )
 /*  QUEUED((option))                                              */
 /*  Options A=All (default), B=buffers, T=Topmost buffer          */
 /* -------------------------------------------------------------- */
-void __CDECL
+void
 R_C( const int func )
 {
 	int	i;
@@ -188,9 +145,9 @@ R_C( const int func )
 
 		case f_trace:
 			i = 0;
-			if (_proc[_rx_proc].interactive_trace)
+			if (_Proc[_rx_proc].interactive_trace)
 				LSTR(*ARGR)[i++] = '?';
-			switch (_proc[_rx_proc].trace) {
+			switch (_Proc[_rx_proc].trace) {
 				case all_trace:		LSTR(*ARGR)[i++] = 'A'; break;
 				case commands_trace:	LSTR(*ARGR)[i++] = 'C'; break;
 				case error_trace:	LSTR(*ARGR)[i++] = 'E'; break;
@@ -207,17 +164,13 @@ R_C( const int func )
 			break;
 
 		case f_queued:
-#if defined(__CMS__) || defined(__MVS)  /* dw start */
-					Licpy(ARGR,StackQueued());
-					break;
-#else
 			if (exist(1)) {
 				if (option=='T') {
 					Licpy(ARGR,StackQueued());
 					break;
 				} else
 				if (option=='B') {
-					Licpy(ARGR,rxStackList.items);
+					Licpy(ARGR,StackList.items);
 					break;
 				} else
 				if (option=='A') /* nothing */;
@@ -227,11 +180,10 @@ R_C( const int func )
 
 			/* count all buffers */
 			items = 0;
-			for (qe=rxStackList.head; qe; qe=qe->next)
+			for (qe=StackList.head; qe; qe=qe->next)
 				items += ((DQueue*)(qe->dat))->items;
 			Licpy(ARGR,items);
 			break;
-#endif
 
 		default:
 			Lerror(ERR_INTERPRETER_FAILURE,0 );
@@ -246,11 +198,11 @@ R_C( const int func )
 /*      returns the result in the format.                         */
 /*      depth var = "value"  <cr>                                 */
 /* -------------------------------------------------------------- */
-void __CDECL
+void
 R_oSoS( )
 {
 	int		option = FALSE;
-	int		found;
+	int 		found;
 	PBinLeaf	leaf;
 	Variable	*var;
 	Lstr		str;
@@ -276,13 +228,13 @@ R_oSoS( )
 
 	LZEROSTR(*ARGR);
 	if (ARG1==NULL)
-		RxReadVarTree(ARGR,_proc[_rx_proc].scope,NULL,option);
+		RxReadVarTree(ARGR,_Proc[_rx_proc].scope,NULL,option);
 	else {
 		if (Ldatatype(ARG1,'S')==0) return;
 		LINITSTR(str);
 		Lstrcpy(&str,ARG1);
 		Lupper(&str); LASCIIZ(str);
-		leaf = RxVarFindName(_proc[_rx_proc].scope,&str,&found);
+		leaf = RxVarFindOld(_Proc[_rx_proc].scope,&str,&found);
 		if (found == 0) return;
 		var = (Variable*)(leaf->value);
 		if (var->stem == NULL)
@@ -299,17 +251,17 @@ R_oSoS( )
 /*  in the pool 'pool' (if exist)                                 */
 /*  Option can be:                                                */
 /*	'Data'	(default) the address of variables data           */
-/*	'Lstring'	the lstring structure                     */
-/*	'Variable'	the address of variable structure         */
+/* 	'Lstring'	the lstring structure                     */
+/* 	'Variable'	the address of variable structure         */
 /*  (valid only for rexx pools)                                   */
 /* -------------------------------------------------------------- */
 /*  VALUE(name[,[newvalue][,[pool]]])                             */
 /*  Return the value of variable 'name'                           */
 /*  if 'newvalue' exists then it sets this value to the var 'name */
-/*  if 'pool' exist then the function is performed on this        */
-/*  external pool                                                 */
+/*  if 'pool' exist then the then the function is performed on    */
+/*  this external pool                                            */
 /* -------------------------------------------------------------- */
-void __CDECL
+void
 R_SoSoS( int func )
 {
 	char	response;
@@ -317,11 +269,11 @@ R_SoSoS( int func )
 	if (!IN_RANGE(1,ARGN,3)) Lerror(ERR_INCORRECT_CALL,0);
 	get_s(1);
 	if (func == f_addr) {		/* ADDR(...) */
-		int		found,poolnum;
+		int 		found,poolnum;
 		char	opt='D';
 		PBinLeaf leaf;
 		Lstr	str;
-		void	*ptr=NULL;
+		void	*ptr;
 		long	addr;
 
 		/* translate to uppercase */
@@ -341,7 +293,7 @@ R_SoSoS( int func )
 		} else
 			poolnum = _rx_proc;
 
-		leaf = RxVarFindName(_proc[poolnum].scope,&str,&found);
+		leaf = RxVarFindOld(_Proc[poolnum].scope,&str,&found);
 		LFREESTR(str);
 		if (!found) {
 			Licpy(ARGR,-1);
@@ -360,10 +312,10 @@ R_SoSoS( int func )
 			default:
 				Lerror(ERR_INCORRECT_CALL,0);
 		}
-#if defined(__BORLANDC__) && !defined(__WIN32__) && !defined(WCE)
+#if defined(__BORLANDC__) && !defined(__WIN32__)
 		addr = (((long)FP_SEG(ptr))<<4) + (long)FP_OFF(ptr);
 #else
-		addr = (dword)ptr;
+		addr = (long)ptr;
 #endif
 		Licpy(ARGR,addr);
 	} else
@@ -372,7 +324,7 @@ R_SoSoS( int func )
 			/* let external pool to handle the value */
 			L2STR(ARG3);
 			LZEROSTR(*ARGR);
-			response = RxPoolGet(ARG3,ARG1,ARGR);
+			response = PoolGet(ARG3,ARG1,ARGR);
 			if (response == 'F' && !exist(2))
 				Lerror(ERR_INCORRECT_CALL,36,ARG1);
 			else
@@ -381,20 +333,20 @@ R_SoSoS( int func )
 
 			if (!exist(2)) return;
 			/* Set the new value */
-			response = RxPoolSet(ARG3,ARG1,ARG2);
+			response = PoolSet(ARG3,ARG1,ARG2);
 			if (response == 'P')
 				Lerror(ERR_INCORRECT_CALL,37,ARG3);
 			else
 			if (response == 'F')
 				Lerror(ERR_INCORRECT_CALL,36,ARG1);
 		} else {
-			Lstr	str;
+			Lstr            str;
 
-			LINITSTR(str); Lfx(&str,sizeof(dword));
+			LINITSTR(str); Lfx(&str,4);
 			Licpy(&str,_rx_proc);
-			response = RxPoolGet(&str,ARG1,ARGR);
+			response = PoolGet(&str,ARG1,ARGR);
 			if (exist(2))
-				response = RxPoolSet(&str,ARG1,ARG2);
+				response = PoolSet(&str,ARG1,ARG2);
 			LFREESTR(str);
 		}
 	}
@@ -403,12 +355,12 @@ R_SoSoS( int func )
 /* -------------------------------------------------------------- */
 /*  ARG([n[,option]])                                             */
 /* -------------------------------------------------------------- */
-void __CDECL
+void
 R_arg( )
 {
 	int	a;
 
-	RxProc	*pr = &(_proc[_rx_proc]);
+	RxProc	*pr = &(_Proc[_rx_proc]);
 
 	switch (ARGN) {
 		case  0:
@@ -451,7 +403,7 @@ R_arg( )
 /* -------------------------------------------------------------- */
 /* DATATYPE(string(,type))                                        */
 /* -------------------------------------------------------------- */
-void __CDECL
+void
 R_datatype( )
 {
 	char	type=' ';
@@ -465,7 +417,7 @@ R_datatype( )
 			Lerror(ERR_INCORRECT_CALL,0);
 		type = l2u[(byte)LSTR(*ARG2)[0]];
 	}  else {
-		Lscpy( ARGR,
+		Lscpy( ARGR, 
 			((LTYPE(*ARG1)==LSTRING_TY &&
 			_Lisnum(ARG1)==LSTRING_TY)? "CHAR": "NUM")
 		);
@@ -488,7 +440,7 @@ R_datatype( )
 /* -------------------------------------------------------------- */
 /*  DROPBUF((num))                                                */
 /* -------------------------------------------------------------- */
-void __CDECL
+void
 R_dropbuf( )
 {
 	long	n=1;
@@ -503,10 +455,10 @@ R_dropbuf( )
 	else {
 		for (;n>0;n--) {
 			items += StackQueued();
-			if (rxStackList.items>1)
+			if (StackList.items>1)
 				DeleteStack();
 			else {
-				DQFlush(DQPEEK(&rxStackList),_Lfree);
+				DQFlush(DQPEEK(&StackList),_Lfree);
 				break;
 			}
 		}
@@ -517,7 +469,7 @@ R_dropbuf( )
 /* -------------------------------------------------------------- */
 /*  ERRORTEXT(n)                                                  */
 /* -------------------------------------------------------------- */
-void __CDECL
+void
 R_errortext( )
 {
 	if (ARGN!=1) Lerror(ERR_INCORRECT_CALL,0);
@@ -532,8 +484,8 @@ R_errortext( )
 /*      in the format "ax=hex-num bx=hex-num ...."                */
 /*      returns in the same format the registers and flags        */
 /* -------------------------------------------------------------- */
-#if defined(__BORLANDC__) && !defined(__WIN32__) && !defined(WCE)
-void __CDECL
+#if defined(__BORLANDC__) && !defined(__WIN32__)
+void
 R_intr( )
 {
 	static char  *s_reg[] = {
@@ -597,7 +549,7 @@ R_intr( )
 /*      and returns it in integer format (IN)                     */
 /*      if value exists then OUTs that value to the port.         */
 /* -------------------------------------------------------------- */
-void __CDECL
+void
 R_port( )
 {
 	long port;
@@ -617,9 +569,77 @@ R_port( )
 #endif
 
 /* -------------------------------------------------------------- */
+/*  LOAD( filename )                                              */
+/*      load a rexx file so it can be used as a library           */
+/*      returns a return code from loadfile                       */
+/*        "-1" when file is already loaded                        */
+/*         "0" on success                                         */
+/*         "1" on error opening the file                          */
+/* -------------------------------------------------------------- */
+static jmp_buf	old_trap;
+void
+R_load( )
+{
+        RxFile  *rxf,*rxf2;
+        int     i;
+        char	*rxlib;
+        size_t	ip;
+
+	if (ARGN!=1)
+		Lerror(ERR_INCORRECT_CALL,0);
+	L2STR(ARG1);
+	LASCIIZ(*ARG1);
+
+	/* ====== try first to load the file ====== */
+	/* find the last in the queue */
+	rxf2 = rxfile;
+	while (rxf2->next != NULL)
+		rxf2 = rxf2->next;
+
+	rxf = (RxFile*)MALLOC(sizeof(RxFile),"RxFile");
+	MEMSET(rxf,0,sizeof(RxFile));
+	rxf2->next = rxf;
+
+	Lstrcpy(&(rxf->filename), ARG1);	LASCIIZ(rxf->filename);
+
+	if (RxLoadFile( rxf )) goto fileloaded;
+
+	/* let's try at the directory of rxlib */
+	if ((rxlib=getenv("RXLIB"))!=NULL) {
+		Lscpy(&(rxf->filename),rxlib);
+		i = LLEN(rxf->filename);
+		if (LSTR(rxf->filename)[i-1] != FILESEP) {
+			LSTR(rxf->filename)[i] = FILESEP;
+			LLEN(rxf->filename)++;
+		}
+		Lstrcat(&(rxf->filename),ARG1);
+		LASCIIZ(rxf->filename);
+		if (RxLoadFile( rxf )) goto fileloaded;
+	}
+	rxf2->next = NULL;
+	LFREESTR(rxf->filename);
+	FREE(rxf);
+	Licpy(ARGR,1);		/* Error */
+	return;
+
+fileloaded:
+	ip = (size_t)((byte huge *)Rxcip - (byte huge *)Rxcodestart);
+	MEMCPY(old_trap,_error_trap,sizeof(_error_trap));
+	RxInitCompile(rxf,NULL);
+	RxCompile();
+
+	/* restore state */
+	MEMCPY(_error_trap,old_trap,sizeof(_error_trap));
+	Rxcodestart = (CIPTYPE*)LSTR(*_code);
+	Rxcip = (CIPTYPE*)((byte huge *)Rxcodestart + ip);
+	if (RxReturnCode) RxSignalCondition(SC_SYNTAX);
+	Licpy(ARGR,0);
+} /* R_load */
+
+/* -------------------------------------------------------------- */
 /*   MAX(number[,number]..])                                      */
 /* -------------------------------------------------------------- */
-void __CDECL
+void
 R_max( )
 {
 	int	i;
@@ -629,15 +649,15 @@ R_max( )
 		Lerror(ERR_INCORRECT_CALL,0);
 
 	i = 0;
-	while ((i<ARGN) && (rxArg.a[i]==NULL)) i++;
+	while ((i<ARGN) && (Rxarg.a[i]==NULL)) i++;
 	if (i==MAXARGS) Lerror(ERR_INCORRECT_CALL,0);
 
-	L2REAL((rxArg.a[i]));
-	r = LREAL(*(rxArg.a[i]));
+	L2REAL((Rxarg.a[i]));
+	r = LREAL(*(Rxarg.a[i]));
 	for (i++; i<ARGN; i++)
-		if (rxArg.a[i] != NULL)  {
-			L2REAL((rxArg.a[i]));
-			r = MAX(r,LREAL(*(rxArg.a[i])));
+		if (Rxarg.a[i] != NULL)  {
+			L2REAL((Rxarg.a[i]));
+			r = MAX(r,LREAL(*(Rxarg.a[i])));
 		}
 	Lrcpy(ARGR,r);
 } /* R_max */
@@ -645,7 +665,7 @@ R_max( )
 /* -------------------------------------------------------------- */
 /*   MIN(number[,number]..])                                      */
 /* -------------------------------------------------------------- */
-void __CDECL
+void
 R_min( )
 {
 	int	i;
@@ -655,15 +675,15 @@ R_min( )
 		Lerror(ERR_INCORRECT_CALL,0);
 
 	i = 0;
-	while ((i<ARGN) && (rxArg.a[i]==NULL)) i++;
+	while ((i<ARGN) && (Rxarg.a[i]==NULL)) i++;
 	if (i==MAXARGS) Lerror(ERR_INCORRECT_CALL,0);
 
-	L2REAL((rxArg.a[i]));
-	r = LREAL(*(rxArg.a[i]));
+	L2REAL((Rxarg.a[i]));
+	r = LREAL(*(Rxarg.a[i]));
 	for (i++; i<ARGN; i++)
-		if (rxArg.a[i] != NULL)  {
-			L2REAL((rxArg.a[i]));
-			r = MIN(r,LREAL(*(rxArg.a[i])));
+		if (Rxarg.a[i] != NULL)  {
+			L2REAL((Rxarg.a[i]));
+			r = MIN(r,LREAL(*(Rxarg.a[i])));
 		}
 	Lrcpy(ARGR,r);
 } /* R_min */
@@ -671,7 +691,7 @@ R_min( )
 /* -------------------------------------------------------------- */
 /* RANDOM((min)(,(max)(,seed)))                                   */
 /* -------------------------------------------------------------- */
-void __CDECL
+void
 R_random( )
 {
 	long	min, max;
@@ -702,11 +722,7 @@ R_random( )
 	} else
 	if (sewed==0) {
 		sewed = 1 ;
-#ifndef WCE
 		seed=(time((time_t *)0)%(3600*24));
-#else
-		seed = GetTickCount();
-#endif
 		srand((unsigned)seed);
 	}
 
@@ -724,12 +740,11 @@ R_random( )
 /*      retrieved, storage starting at address is overwritten     */
 /*      with data (the length argument has no effect on this).    */
 /* -------------------------------------------------------------- */
-void __CDECL
-R_storage( )
+void R_storage( )
 {
-	void	*ptr=NULL;
+	void	*ptr;
 	long	adr;
-#if defined(__BORLANDC__) && !defined(__WIN32__) && !defined(WCE)
+#if defined(__BORLANDC__) && !defined(__WIN32__)
 	unsigned	seg,ofs;
 #endif
 	size_t	length = 1;
@@ -737,20 +752,10 @@ R_storage( )
 	if (ARGN>3)
 		Lerror(ERR_INCORRECT_CALL,0);
 	if (ARGN==0) {
-#ifndef WCE
-#	if defined(__BORLANDC__) && !defined(__WIN32__)
+#if defined(__BORLANDC__) && !defined(__WIN32__)
 		Licpy(ARGR,farcoreleft()); /* return the free memory left */
-#	else
-#		if __CMS__
-		CMSSTORE(ARGR);
-#		else
-		Licpy(ARGR,0);
-#		endif
-#	endif
 #else
-		STORE_INFORMATION si;
-		GetStoreInformation(&si);
-		Licpy(ARGR,si.dwFreeSize);
+		Licpy(ARGR,0);
 #endif
 		return;
 	}
@@ -758,7 +763,7 @@ R_storage( )
 		adr = Lrdint(ARG1);
 		if (adr < 0)
 			Lerror(ERR_INCORRECT_CALL,0);
-#if defined(__BORLANDC__) && !defined(__WIN32__) && !defined(WCE)
+#if defined(__BORLANDC__) && !defined(__WIN32__)
 		seg = (unsigned)((adr >> 4) & 0xFFFF);
 		ofs = (unsigned)(adr & 0x000F);
 		ptr = MK_FP(seg,ofs);
@@ -791,7 +796,7 @@ R_storage( )
 /*      return the number of lines in the program, or the nth     */
 /*      line.                                                     */
 /* -------------------------------------------------------------- */
-void __CDECL
+void
 R_sourceline( )
 {
 	long	l,sl;
@@ -806,11 +811,8 @@ R_sourceline( )
 	if (l==0) {	/* count the lines of the program */
 		i = 0;
 		rxf = CompileClause[0].fptr;
-		while (rxf==CompileClause[i].fptr
-				&& CompileClause[i+1].line>=CompileClause[i].line) {
+		while (rxf == CompileClause[i].fptr)
 			i++;
-			l = CompileClause[i].line;
-		}
 		i--;
 		l = CompileClause[i].line;
 		c = CompileClause[i].ptr;
@@ -821,8 +823,7 @@ R_sourceline( )
 	} else {
 		if (l>1) {
 			rxf = CompileClause[0].fptr;
-			for (i=0; rxf==CompileClause[i].fptr
-					&& CompileClause[i+1].line>=CompileClause[i].line; i++) {
+			for (i=0; rxf==CompileClause[i].fptr; i++) {
 				if (CompileClause[i].line==l) {
 					c = CompileClause[i].ptr;
 					while (*c!='\n')
@@ -869,26 +870,3 @@ linefound:
 		MEMCPY(LSTR(*ARGR),c,(size_t)l);
 	}
 } /* R_sourceline */
-
-#ifdef __CMS__
-void __CDECL
-VM_O(int func)
-{
-	switch (func){
-		case f_cmsflag:
-			if (ARGN!=1) Lerror(ERR_INCORRECT_CALL,0);
-			L2STR(ARG1);
-			CMSFLAG(ARGR,ARG1);
-			break;
-		case f_cmsline:
-			CMSLINE(ARGR);
-			break;
-		case f_cmsuser:
-			CMSUSER(ARGR);
-			break;
-		default:
-			fprintf(stderr, "unknown function %d in VM_O" , func);
-	}
-} /* VM_O */
-#endif
-

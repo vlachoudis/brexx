@@ -1,35 +1,24 @@
 /*
- * $Id: rxword.c,v 1.5 2008/07/15 07:40:25 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/rxword.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
  * $Log: rxword.c,v $
- * Revision 1.5  2008/07/15 07:40:25  bnv
- * #include changed from <> to ""
- *
- * Revision 1.4  2002/06/11 12:37:38  bnv
- * Added: CDECL
- *
- * Revision 1.3  2001/06/25 18:51:48  bnv
- * Header -> Id
- *
- * Revision 1.2  1999/11/26 13:13:47  bnv
- * Changed: The formatting of the code.
- *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
  */
 
+#include <bnv.h>
 #include <string.h>
 
-#include "lerror.h"
-#include "lstring.h"
+#include <lerror.h>
+#include <lstring.h>
 
-#include "rexx.h"
-#include "rxdefs.h"
+#include <rexx.h>
+#include <rxdefs.h>
 
-/* --------------------------------------------------------------- */
-/* SPACE(string(,(n)(,pad)))                                       */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/* SPACE(string(,(n)(,pad)))                                      */
+/* -------------------------------------------------------------- */
+void
 R_space( )
 {
 	long	n;
@@ -47,14 +36,14 @@ R_space( )
 	Lspace(ARGR, ARG1, n, pad);
 } /* R_space */
 
-/* --------------------------------------------------------------- */
-/*  WORD(string,n)                                                 */
-/* --------------------------------------------------------------- */
-/*  WORDINDEX(string,n)                                            */
-/* --------------------------------------------------------------- */
-/*  WORDLENGTH(string,i)                                           */
-/* --------------------------------------------------------------- */
-void __CDECL
+/* -------------------------------------------------------------- */
+/*  WORD(string,n)                                                */
+/* -------------------------------------------------------------- */
+/*  WORDINDEX(string,n)                                           */
+/* -------------------------------------------------------------- */
+/*  WORDLENGTH(string,i)                                          */
+/* -------------------------------------------------------------- */
+void
 R_SI( const int func )
 {
 	long     n;
