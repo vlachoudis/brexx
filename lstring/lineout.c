@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/lineout.c,v 1.2 1999/03/15 15:25:53 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/lineout.c,v 1.3 1999/11/26 12:52:25 bnv Exp $
  * $Log: lineout.c,v $
+ * Revision 1.3  1999/11/26 12:52:25  bnv
+ * Changed: To use the new macros.
+ *
  * Revision 1.2  1999/03/15 15:25:53  bnv
  * Corrected: initial value to prev
  *
@@ -9,12 +12,11 @@
  *
  */
 
-#include <stdio.h>
 #include <lstring.h>
 
 /* ---------------- Llineout ------------------- */
 int
-Llineout( FILE *f, const PLstr line, long *curline, long start )
+Llineout( FILEP f, const PLstr line, long *curline, long start )
 {
 	int	ch,prev='\n';
 
@@ -22,10 +24,10 @@ Llineout( FILE *f, const PLstr line, long *curline, long start )
 	if (start>=0) {
 		if (*curline>start) {
 			*curline = 1;
-			fseek(f,0,SEEK_SET);
+			FSEEK(f,0,SEEK_SET);
 		}
 		while (start>*curline) {
-			ch = fgetc(f);
+			ch = FGETC(f);
 			if (ch==-1) {
 				if (prev!='\n') (*curline)++;
 				break;
@@ -34,7 +36,7 @@ Llineout( FILE *f, const PLstr line, long *curline, long start )
 			prev = ch;
 		}
 		while (start > *curline) {
-			fputc('\n',f);
+			FPUTC('\n',f);
 			(*curline)++;
 		}
 	}
