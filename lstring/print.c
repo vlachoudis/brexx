@@ -1,6 +1,9 @@
 /*
- * $Id: print.c,v 1.7 2002/06/11 12:37:15 bnv Exp $
+ * $Id: print.c,v 1.8 2004/03/26 22:52:08 bnv Exp $
  * $Log: print.c,v $
+ * Revision 1.8  2004/03/26 22:52:08  bnv
+ * Increased conversion accurary of floats
+ *
  * Revision 1.7  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -43,9 +46,7 @@ Lprint( FILEP f, const PLstr str )
 {
 	size_t	l;
 	char	*c;
-#ifdef WIN
-	char	s[20];
-#endif
+	char	s[64];
 
 #ifndef WIN
 	if (str==NULL) {
@@ -75,11 +76,13 @@ Lprint( FILEP f, const PLstr str )
 			break;
 
 		case LREAL_TY:
-#ifdef WIN
-			FPUTS(GCVT(LREAL(*str),lNumericDigits,s), f);
-#else
-			ANSI_FPRINTF(f, lFormatStringToReal, LREAL(*str));
-#endif
+			GCVT(LREAL(*str),lNumericDigits,s);
+			ANSI_FPUTS(f, s);
+//#ifdef WIN
+//			FPUTS(GCVT(LREAL(*str),lNumericDigits,s), f);
+//#else
+//			ANSI_FPRINTF(f, lFormatStringToReal, LREAL(*str));
+//#endif
 			break;
 	}
 } /* Lprint */
