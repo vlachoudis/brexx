@@ -1,6 +1,9 @@
 /*
- * $Id: bmem.c,v 1.5 2002/06/11 12:37:38 bnv Exp $
+ * $Id: bmem.c,v 1.6 2003/10/30 13:15:29 bnv Exp $
  * $Log: bmem.c,v $
+ * Revision 1.6  2003/10/30 13:15:29  bnv
+ * Create a coredump in case of error
+ *
  * Revision 1.5  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -29,6 +32,7 @@
 #include <os.h>
 #include <bmem.h>
 #include <ldefs.h>
+#include <signal.h>
 
 #define MAGIC	0xDECAFFEE
 
@@ -104,13 +108,13 @@ mem_realloc(void *ptr, size_t size)
 	if (mem->magic != MAGIC) {
 		fprintf(STDERR,"mem_realloc: PREFIX Magic number doesn't match of object %p!\n",ptr);
 		mem_list();
-		exit(99);
+		raise(SIGSEGV);
 	}
 
 	if (*(dword *)(mem->data+mem->size) != MAGIC) {
 		fprintf(STDERR,"mem_realloc: SUFFIX Magic number doesn't match of object %p!\n",ptr);
 		mem_list();
-		exit(99);
+		raise(SIGSEGV);
 	}
 
 	total_mem -= mem->size;
@@ -156,12 +160,12 @@ mem_free(void *ptr)
 	if (mem->magic != MAGIC) {
 		fprintf(STDERR,"mem_free: PREFIX Magic number doesn't match of object %p!\n",ptr);
 		mem_list();
-		exit(99);
+		raise(SIGSEGV);
 	}
 	if (*(dword *)(mem->data+mem->size) != MAGIC) {
 		fprintf(STDERR,"mem_free: SUFFIX Magic number doesn't match!\n");
 		mem_list();
-		exit(99);
+		raise(SIGSEGV);
 	}
 
 	/* Remove the MAGIC number, just to catch invalid entries */
