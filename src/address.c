@@ -1,6 +1,9 @@
 /*
- * $Id: address.c,v 1.9 2003/11/04 09:48:00 bnv Exp $
+ * $Id: address.c,v 1.10 2004/04/30 15:24:07 bnv Exp $
  * $Log: address.c,v $
+ * Revision 1.10  2004/04/30 15:24:07  bnv
+ * Corrected: arguments length for the windows version
+ *
  * Revision 1.9  2003/11/04 09:48:00  bnv
  * Corrected for the mkstemp
  *
@@ -282,7 +285,7 @@ RxExecuteCmd( PLstr cmd, PLstr env )
 	PROCESS_INFORMATION p;
 
 	LINITSTR(file);
-	LINITSTR(args);
+	LINITSTR(args); Lfx(&args,1);
 
 	ch = LSTR(*cmd);
 	if ((*ch=='\'') || (*ch=='\"')) {
