@@ -1,6 +1,9 @@
 /*
- * $Id: rxdefs.h,v 1.5 2003/02/12 16:39:33 bnv Exp $
+ * $Id: rxdefs.h,v 1.6 2003/10/30 13:17:23 bnv Exp $
  * $Log: rxdefs.h,v $
+ * Revision 1.6  2003/10/30 13:17:23  bnv
+ * Variable change
+ *
  * Revision 1.5  2003/02/12 16:39:33  bnv
  * Added: Lhashvalue
  *
@@ -21,18 +24,18 @@
 #ifndef __RXDEFS_H__
 #define __RXDEFS_H__
 
-#define ARGN   (Rxarg.n)
-#define ARGR   (Rxarg.r)
-#define ARG1   (Rxarg.a[0])
-#define ARG2   (Rxarg.a[1])
-#define ARG3   (Rxarg.a[2])
-#define ARG4   (Rxarg.a[3])
-#define ARG5   (Rxarg.a[4])
-#define ARG6   (Rxarg.a[5])
-#define ARG7   (Rxarg.a[6])
-#define ARG8   (Rxarg.a[7])
-#define ARG9   (Rxarg.a[8])
-#define ARG10  (Rxarg.a[9])
+#define ARGN   (rxArg.n)
+#define ARGR   (rxArg.r)
+#define ARG1   (rxArg.a[0])
+#define ARG2   (rxArg.a[1])
+#define ARG3   (rxArg.a[2])
+#define ARG4   (rxArg.a[3])
+#define ARG5   (rxArg.a[4])
+#define ARG6   (rxArg.a[5])
+#define ARG7   (rxArg.a[6])
+#define ARG8   (rxArg.a[7])
+#define ARG9   (rxArg.a[8])
+#define ARG10  (rxArg.a[9])
 
 #define must_exist(I) if (ARG##I == NULL) \
 		Lerror(ERR_INCORRECT_CALL,0)
@@ -85,7 +88,7 @@ enum functions {
  f_verify,        f_word,          f_wordindex,     f_wordlength,
  f_wordpos,       f_words,         f_write,         f_x2c,
  f_x2d,           f_xrange,        f_desbuf,        f_soundex,
- f_dropbuf,       f_hashvalue, 
+ f_dropbuf,       f_hashvalue,     f_import,
 
  f_changestr,     f_countstr,
  f_b2x,           f_x2b,
