@@ -1,6 +1,9 @@
 /*
- * $Id: nextsymb.c,v 1.6 2004/03/27 08:34:21 bnv Exp $
+ * $Id: nextsymb.c,v 1.7 2004/04/30 15:25:41 bnv Exp $
  * $Log: nextsymb.c,v $
+ * Revision 1.7  2004/04/30 15:25:41  bnv
+ * Spaces...
+ *
  * Revision 1.6  2004/03/27 08:34:21  bnv
  * Corrected: Line number was not restored after the comma at the end of the line
  *
@@ -22,8 +25,6 @@
  */
 
 #define  __NEXTSYMB_C__
-
-#include <bmem.h>
 
 #include <lerror.h>
 #include <lstring.h>
@@ -466,7 +467,7 @@ identifier(int isnumber)
 			LLEN(symbolstr) = l;
 			goto Nleave;
 		}
-			
+
 		switch (l2u[(byte)*symbolptr]) {
 			case '0':   case '1':    case '2':
 			case '3':   case '4':    case '5':
@@ -604,7 +605,7 @@ literal(void)
 	char	quote;
 	char	*s;
 	int	l;      /* length of symbolstr */
-	Lstr	A;  
+	Lstr	A;
 
 	symbolhasdot = 0;
 	symbol = literal_sy;
@@ -671,7 +672,7 @@ literal(void)
 				nextchar(FALSE);
 				LFREESTR(A);
 				return;
-			} else 
+			} else
 			if (*symbolptr==quote) {
 				*s++ = *symbolptr; l++;
 			}  else  {
