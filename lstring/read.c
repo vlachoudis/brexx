@@ -1,6 +1,12 @@
 /*
- * $Id: read.c,v 1.4 2001/06/25 18:49:48 bnv Exp $
+ * $Id: read.c,v 1.5 2001/07/20 14:28:37 bnv Exp $
  * $Log: read.c,v $
+ * Revision 1.5  2001/07/20 14:28:37  bnv
+ * Corrected: When pipeing the readline was echoing the line
+ *
+ * Revision 1.5  2001/07/19 16:33:43  bnv
+ * Corrected the readline when a file was redirected
+ *
  * Revision 1.4  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -17,6 +23,12 @@
  */
 
 #include <lstring.h>
+
+#ifdef READLINE
+#	include <sys/stat.h>
+#	include <readline/readline.h>
+#	include <readline/history.h>
+#endif
 
 /* ---------------- Lread ------------------- */
 void
@@ -38,6 +50,20 @@ Lread( FILEP f, const PLstr line, long size )
 		}
 	} else
 	if (size==0) {			/* Read a single line */
+#ifdef READLINE
+		if (f==STDIN) {
+			struct stat buf;
+			fstat(0,&buf);
+			if (S_ISCHR(buf.st_mode)) {
+				char *str = readline(NULL);
+				if (str && *str)
+					add_history(str);
+				Lscpy(line,str);
+				free(str);
+				return;
+			}
+		}
+#endif
 		Lfx(line,LREADINCSIZE);
 		l = 0;
 		while ((ci=FGETC(f))!='\n') {
