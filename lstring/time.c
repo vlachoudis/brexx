@@ -1,15 +1,25 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/time.c,v 1.1 1998/07/02 17:18:00 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/time.c,v 1.2 1998/11/06 08:57:08 bnv Exp $
  * $Log: time.c,v $
+ * Revision 1.2  1998/11/06 08:57:08  bnv
+ * Added: in the includes the time.h and sys/time.h
+ *
  * Revision 1.1  1998/07/02 17:18:00  bnv
  * Initial Version
  *
  */
 
-#include <time.h>
 #include <stdio.h>
 #if defined(MSDOS) || defined(__WIN32__)
 #	include <dos.h>
+#	include <time.h>
+#else
+/* Load both of them time.h and sys/time.h, you never now where the 
+ * struct timeval is
+ */
+#	include <time.h>
+#	include <sys/time.h>
+#	include <unistd.h>
 #endif
 #include <lerror.h>
 #include <lstring.h>
