@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/rexx.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/rexx.c,v 1.2 1999/11/26 13:13:47 bnv Exp $
  * $Log: rexx.c,v $
+ * Revision 1.2  1999/11/26 13:13:47  bnv
+ * Changed: To use the new macros.
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
@@ -8,8 +11,6 @@
 
 #define __REXX_C__
 
-#include <bnv.h>
-#include <stdio.h>
 #include <string.h>
 #include <setjmp.h>
 
@@ -26,7 +27,7 @@
 #include <nextsymb.h>
 
 /* ----------- Function prototypes ------------ */
-void Rerror(int,int,...);
+void	Rerror(int,int,...);
 void    RxInitFiles(void);
 void    RxDoneFiles(void);
 void	RxRegFunctionDone(void);
@@ -51,6 +52,9 @@ RxInitialize( char *prorgram_name )
 	Lstr	str;
 
 	_prgname = prorgram_name;
+#if defined(WIN32) || defined(WCE)
+	_szRxAppKey = REGAPPKEY;
+#endif
 
 	LINITSTR(str);
 
@@ -123,12 +127,12 @@ RxFinalize( void )
 int
 RxLoadFile( RxFile *rxf )
 {
-	FILE *f;
+	FILEP f;
 
-	if ((f=fopen(LSTR(rxf->filename),"r"))==NULL)
+	if ((f=FOPEN(LSTR(rxf->filename),"r"))==NULL)
 		return FALSE;
 	Lread(f,&(rxf->file), LREADFILE);
-	fclose(f);
+	FCLOSE(f);
 	return TRUE;
 } /* RxLoadFile */
 
@@ -167,8 +171,12 @@ RxRun( char *filename, PLstr programstr,
 
 		/* --- Load file --- */
 		if (!RxLoadFile( rxfile )) {
-			fprintf(stderr,"Error %d running \"%s\": File not found\n",
+#ifndef WCE
+			fprintf(STDERR,"Error %d running \"%s\": File not found\n",
 					ERR_FILE_NOT_FOUND, LSTR(rxfile->filename));
+#else
+			PUTS("Error: File not found.");
+#endif
 			LFREESTR(rxfile->filename);
 			FREE(rxfile);
 			return 1;
@@ -218,7 +226,7 @@ RxRun( char *filename, PLstr programstr,
 		Lscpy(pr->env,environment);
 	else
 		Lstrcpy(pr->env,&(SystemStr->key));
-	pr->digits = 9;
+	pr->digits = LMAXNUMERICDIGITS;
 	pr->fuzz = 0;
 	pr->form = SCIENTIFIC;
 	pr->condition = 0;
