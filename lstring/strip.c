@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/strip.c,v 1.1 1998/07/02 17:18:00 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/strip.c,v 1.2 1998/11/06 08:54:58 bnv Exp $
  * $Log: strip.c,v $
+ * Revision 1.2  1998/11/06 08:54:58  bnv
+ * Corrected: When length=0
+ *
  * Revision 1.1  1998/07/02 17:18:00  bnv
  * Initial Version
  *
@@ -22,7 +25,10 @@ Lstrip( const PLstr to, const PLstr str, const char action, const char pad)
 	}
 
 	l = LLEN(*str);
-	if (!l) return;
+	if (!l) {
+		LZEROSTR(*to);
+		return;
+	}
 
 	cf = LSTR(*str);
 	if (action==LBOTH || action==LLEADING) {
