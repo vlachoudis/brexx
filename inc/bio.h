@@ -1,6 +1,9 @@
 /*
- * $Id: bio.h,v 1.3 2001/06/25 18:52:04 bnv Exp $
+ * $Id: bio.h,v 1.4 2002/06/06 08:22:34 bnv Exp $
  * $Log: bio.h,v $
+ * Revision 1.4  2002/06/06 08:22:34  bnv
+ * Corrected: Bfseek
+ *
  * Revision 1.3  2001/06/25 18:52:04  bnv
  * Header -> Id
  *
@@ -56,9 +59,8 @@ BFILE	*Bfopen(const char *filename, const char *mode);
 int	Bfclose(BFILE *stream);
 #ifdef __BORLANDC__
 #	define Bfseek(s,o,w)	_llseek(s->handle,o,w)
-#else
-#	define Bfseek(s,o,w)	SetFilePointer(s->handle,o,0,w)
 #endif
+int	Bfseek(BFILE *stream, int distance, int method);
 #define	Bftell(s)	Bfseek(s,0L,SEEK_CUR)
 int	Bfeof(BFILE *stream);
 int	Bfflush(BFILE *stream);
