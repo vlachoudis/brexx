@@ -1,6 +1,9 @@
 /*
- * $Id: trace.h,v 1.4 2002/06/11 12:37:56 bnv Exp $
+ * $Id: trace.h,v 1.5 2004/08/16 15:33:11 bnv Exp $
  * $Log: trace.h,v $
+ * Revision 1.5  2004/08/16 15:33:11  bnv
+ * Spaces
+ *
  * Revision 1.4  2002/06/11 12:37:56  bnv
  * Added: CDECL
  *
@@ -19,6 +22,7 @@
 #define __TRACE_H__
 
 #include <lstring.h>
+#include <interpre.h>
 
 #ifdef __TRACE_C__
 #	define EXTERN
@@ -41,9 +45,9 @@ enum tracetype	{	all_trace		= BIT0,
 
 #define AIR_TRACE  ( all_trace | intermediates_trace | results_trace )
 
-/* =============== TRACE BYTE IN CODE ==================== * 
+/* =============== TRACE BYTE IN CODE ==================== *
  *	Bit	Description
- *	 7 	Marks start of a clause	
+ *	 7	Marks start of a clause
  *	 6	End of Clause
  *	 5	Result trace display
  *	 4	- Not used -
@@ -73,7 +77,7 @@ int	__CDECL TraceCurline( RxFile **rxf, int print );
 void	__CDECL TraceSet( PLstr );
 void	__CDECL TraceByte( int middlechar );
 void	__CDECL TraceClause( void );
-void	__CDECL TraceInstruction( byte inst );
+void	__CDECL TraceInstruction( CIPTYPE inst );
 int	__CDECL TraceInteractive( int );
 
 #undef EXTERN
