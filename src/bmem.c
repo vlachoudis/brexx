@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/bmem.c,v 1.2 1999/11/26 13:13:47 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/bmem.c,v 1.3 1999/11/26 14:30:27 bnv Exp $
  * $Log: bmem.c,v $
+ * Revision 1.3  1999/11/26 14:30:27  bnv
+ * Added: A dummy int, at Memory structure for 8-byte alignment on 32-bit machines
+ *
  * Revision 1.2  1999/11/26 13:13:47  bnv
  * Changed: Added MAGIC number also to the end.
  * Chanted: Modified to work with 64-bit computers.
@@ -31,6 +34,10 @@ typedef struct tmemory_st {
 	size_t	size;
 	struct	tmemory_st *next;
 	struct	tmemory_st *prev;
+#if defined(ALIGN) && !defined(__ALPHA)
+	/* Some machines have problems ithe address is not at 8-bytes aligned */
+	int	dummy;
+#endif
 	byte	data[sizeof(void*)];
 } Memory;
 
