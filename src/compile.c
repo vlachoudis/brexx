@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/compile.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/compile.c,v 1.2 1999/03/10 16:53:32 bnv Exp $
  * $Log: compile.c,v $
+ * Revision 1.2  1999/03/10 16:53:32  bnv
+ * LoopCtrl changed from word to size_t
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
@@ -49,8 +52,8 @@ static int	str_interpreted;	/* is it a string interpreted */
 static int	checked_semicolon;	/* if instruction has checked the semicolon like IF */
 
 typedef struct loop_st {
-	word	iterate, leave;
-	word	noofvars;
+	size_t	iterate, leave;
+	int	noofvars;
 	PLstr	ctrlvar;
 } LoopCtrl;
 static DQueue  Loop;
@@ -125,7 +128,7 @@ statements_list[] = {
 
 /* ---------------- crloopctrl ------------------- */
 static LoopCtrl *
-crloopctrl( word it, word le, int vars, PLstr cv )
+crloopctrl( size_t it, size_t le, int vars, PLstr cv )
 {
 	LoopCtrl *lc;
 
@@ -997,11 +1000,12 @@ C_iterate(void)
 			if (!elem)
 				Lerror(ERR_INVALID_LEAVE,0);
 			lc = (LoopCtrl *)elem->dat;
-			if (lc->ctrlvar)
+			if (lc->ctrlvar) {
 				if (Lstrcmp(&symbolstr,lc->ctrlvar)) {
 					pop += lc->noofvars;
 				} else
 					break;
+			}
 			elem = elem->prev;
 		}
 		nextsymbol();
@@ -1037,11 +1041,12 @@ C_leave(void)
 			if (!elem)
 				Lerror(ERR_INVALID_LEAVE,0);
 			lc = (LoopCtrl *)elem->dat;
-			if (lc->ctrlvar)
+			if (lc->ctrlvar) {
 				if (Lstrcmp(&symbolstr,lc->ctrlvar)) {
 					pop += lc->noofvars;
 				} else
 					break;
+			}
 			elem = elem->prev;
 		}
 		nextsymbol();
@@ -1727,11 +1732,12 @@ C_instr(bool until_end)
 		C_assign();
 	else
 	if (symbol==ident_sy) {
-		if (!CMP("END"))
+		if (!CMP("END")) {
 			if (until_end)		/* Semicolon is NOT deleted */
 				return TRUE;
 			else
 				Lerror(ERR_UNMATCHED_END,0);
+		}
 
 		/* Binary search for the instruction */
 		first = found = 0;
