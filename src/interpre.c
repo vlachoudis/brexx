@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/interpre.c,v 1.8 1999/11/26 13:13:47 bnv Exp $
+ * $Id: interpre.c,v 1.9 2001/06/25 18:50:56 bnv Exp $
  * $Log: interpre.c,v $
+ * Revision 1.9  2001/06/25 18:50:56  bnv
+ * Added: Memory check in debug version at the end of Interpretation
+ *
  * Revision 1.8  1999/11/26 13:13:47  bnv
  * Added: Windows CE support
  * Changed: To use the new macros.
@@ -715,6 +718,7 @@ RxDoneInterpret( void )
 	int	i;
 #ifdef __DEBUG__
 	FILE	*fout;
+	mem_chk();
 	fout = fopen("instr.cnt","w");
 	fprintf(fout,"Instr\tCount\n");
 	for (i=0; i<pow_mn; i++)	/* pow is the last command */
