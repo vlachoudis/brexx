@@ -1,15 +1,6 @@
 /*
- * $Id: ldefs.h,v 1.4 2008/07/14 13:09:21 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/ldefs.h,v 1.1 1999/11/29 14:58:00 bnv Exp $
  * $Log: ldefs.h,v $
- * Revision 1.4  2008/07/14 13:09:21  bnv
- * MVS,CMS support
- *
- * Revision 1.3  2004/08/16 15:31:09  bnv
- * Changed: From float to double
- *
- * Revision 1.2  2001/06/25 18:52:04  bnv
- * Header -> Id
- *
  * Revision 1.1  1999/11/29 14:58:00  bnv
  * Initial revision
  *
@@ -89,13 +80,9 @@ typedef int		bool;
 /* ------------------ comonly used macros -------------------- */
 #define	ISPRINT(c)	((c)>=' ' && (c)<='~' && (c)!='\'')
 /*#define ISSPACE(c)	((c==0x09) || (c==0x0D) || (c==0x20))*/
-#if defined(__CMS__) || defined(__MVS__) /* compiler bug hack */
-#define HEXVAL(x)	(((x)>='0')?((x)-'0'):(((x)&0x0F) + 9))
-#else
 #define HEXVAL(x)	(((x)>='A')? \
 				((((x)>='a')? ((x)&(0xDF)) : (x)) -'A'+10) :\
 				((x)-'0'))
-#endif
 #define CTL(a)		(('a') & 0x1F)
 
 #define SWAP(a,b)	a ^= b ^= a ^= b;
@@ -121,7 +108,7 @@ typedef int		bool;
 #define ROUND(a)	((a)>=0? (int)((a)+0.5): -(int)(0.5-(a)))
 #define CEILING(a)	((a)==(int)(a)? (int)(a): \
 			(a)>0? (int)(1+(int)(a)): -(int)(1+(int)(-(a))))
-#define FRAC(x)		((x)-(double)((int)(x)))
+#define FRAC(x)		((x)-(float)((int)(x)))
 #define SIGN(x)		((x)>0? 1:(((x)==0)?0:-1))
 #define SQR(x)		((x)*(x))
 
