@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/lstring.c,v 1.1 1998/07/02 17:18:00 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/lstring.c,v 1.2 1999/05/14 13:11:47 bnv Exp $
  * $Log: lstring.c,v $
+ * Revision 1.2  1999/05/14 13:11:47  bnv
+ * Minor changes
+ *
  * Revision 1.1  1998/07/02 17:18:00  bnv
  * Initial Version
  *
@@ -299,20 +302,20 @@ _Lisnum( const PLstr s )
 				///// before all the calls to Lisnum */
 
 	/* skip leading spaces */
-	for (;isspace(*ch); ch++) ;
+	while (isspace(*ch)) ch++;
 
 	/* accept one sign */
 	if (*ch=='-' || *ch=='+') ch++;
 
 	/* skip following spaces after sign */
-	for (;isspace(*ch); ch++) ;
+	while (isspace(*ch)) ch++;
 
 	/* accept many digits */
 	R = FALSE;
 	if (IN_RANGE('0',*ch,'9')) {
 		ch++;
 		F = TRUE;
-		for( ; IN_RANGE('0',*ch,'9'); ch++ );
+		while (IN_RANGE('0',*ch,'9')) ch++;
 		if (!*ch) goto isnumber;
 	} else
 		F = FALSE;
@@ -325,7 +328,7 @@ _Lisnum( const PLstr s )
 		/* accept many digits */
 		if (IN_RANGE('0',*ch,'9')) {
 			ch++;
-			for( ; IN_RANGE('0',*ch,'9'); ch++ );
+			while (IN_RANGE('0',*ch,'9')) ch++;
 		} else
 			if (!F) return LSTRING_TY;
 
@@ -343,13 +346,13 @@ _Lisnum( const PLstr s )
 		/* accept many digits */
 		if (IN_RANGE('0',*ch,'9')) {
 			ch++;
-			for( ; IN_RANGE('0',*ch,'9'); ch++ );
+			while (IN_RANGE('0',*ch,'9')) ch++;
 		} else
 			return LSTRING_TY;
 	}
 
 	/* accept many blanks */
-	for (;isspace(*ch); ch++) ;
+	while (isspace(*ch)) ch++;
 
 	/* is it end of string */
 	if (*ch) return LSTRING_TY;
