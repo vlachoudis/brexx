@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/date.c,v 1.2 1999/11/26 09:53:28 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/date.c,v 1.3 2000/10/09 07:17:19 bnv Exp $
  * $Log: date.c,v $
+ * Revision 1.3  2000/10/09 07:17:19  bnv
+ * Corrected the year format
+ *
  * Revision 1.2  1999/11/26 09:53:28  bnv
  * Added Windows CE support
  *
@@ -85,7 +88,7 @@ Ldate( const PLstr datestr, char option )
 			sprintf(LSTR(*datestr),"%ld",length) ;
 #else
 			length = day_of_year(&time) +
-			(long)(((float)time.wYear-1)*365.25) + 365;
+			(long)(((float)time.wYear%100-1)*365.25) + 365;
 			swprintf(buf,TEXT("%ld"),length) ;
 #endif
 			break;
@@ -101,17 +104,17 @@ Ldate( const PLstr datestr, char option )
 		case 'E':
 #ifndef WCE
 			sprintf(LSTR(*datestr), fmt, tmdata->tm_mday,
-				tmdata->tm_mon+1, tmdata->tm_year) ;
+				tmdata->tm_mon+1, tmdata->tm_year%100) ;
 #else
 			swprintf(buf, fmt, time.wDay,
-				time.wMonth, time.wYear) ;
+				time.wMonth, time.wYear%100) ;
 #endif
 			break;
 
 		case 'J':
 #ifndef WCE
 			sprintf(LSTR(*datestr),"%02d%03d",
-				tmdata->tm_year, tmdata->tm_yday+1);
+				tmdata->tm_year%100, tmdata->tm_yday+1);
 #else
 			swprintf(buf,TEXT("%02d%03d"),
 				time.wYear%100, day_of_year(&time));
@@ -142,7 +145,7 @@ Ldate( const PLstr datestr, char option )
 
 		case 'O':
 #ifndef WCE
-			sprintf(LSTR(*datestr), fmt, tmdata->tm_year,
+			sprintf(LSTR(*datestr), fmt, tmdata->tm_year%100,
 				tmdata->tm_mon+1, tmdata->tm_mday);
 #else
 			swprintf(buf, fmt, time.wYear%100,
@@ -163,7 +166,7 @@ Ldate( const PLstr datestr, char option )
 		case 'U':
 #ifndef WCE
 			sprintf(LSTR(*datestr), fmt, tmdata->tm_mon+1,
-				tmdata->tm_mday, tmdata->tm_year ) ;
+				tmdata->tm_mday, tmdata->tm_year%100 ) ;
 #else
 			swprintf(buf, fmt, time.wMonth,
 				time.wDay, time.wYear%100 ) ;
