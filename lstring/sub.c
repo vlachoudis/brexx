@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/sub.c,v 1.1 1998/07/02 17:18:00 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/sub.c,v 1.2 1999/11/26 12:52:25 bnv Exp $
  * $Log: sub.c,v $
+ * Revision 1.2  1999/11/26 12:52:25  bnv
+ * Changed: To use lLastScannedNumber.
+ *
  * Revision 1.1  1998/07/02 17:18:00  bnv
  * Initial Version
  *
@@ -19,7 +22,8 @@ Lsub( const PLstr to, const PLstr A, const PLstr B)
 	if (LTYPE(*A) == LSTRING_TY) {
 		ta = _Lisnum(A);
 		if (ta==LSTRING_TY) Lerror(ERR_BAD_ARITHMETIC,0);
-		r = strtod(LSTR(*A),NULL);
+		/*//r = strtod(LSTR(*A),NULL); */
+		r = lLastScannedNumber;
 	} else {
 		ta = LTYPE(*A);
 		r = TOREAL(*A);
@@ -28,7 +32,8 @@ Lsub( const PLstr to, const PLstr A, const PLstr B)
 	if (LTYPE(*B) == LSTRING_TY) {
 		tb = _Lisnum(B);
 		if (tb==LSTRING_TY) Lerror(ERR_BAD_ARITHMETIC,0);
-		r -= strtod(LSTR(*B),NULL);
+		/*//r -= strtod(LSTR(*B),NULL); */
+		r -= lLastScannedNumber;
 	} else {
 		tb = LTYPE(*B);
 		r -= TOREAL(*B);
