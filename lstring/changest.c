@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/changest.c,v 1.2 2000/02/07 11:21:35 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/changest.c,v 1.3 2000/09/28 15:52:19 bnv Exp $
  * $Log: changest.c,v $
+ * Revision 1.3  2000/09/28 15:52:19  bnv
+ * Corrected a bug if the input string had repeated targets.
+ *
  * Revision 1.2  2000/02/07 11:21:35  bnv
  * Corrected: The case where the old string has length equal to ZERO.
  *
@@ -33,7 +36,7 @@ Lchangestr( const PLstr to, const PLstr oldstr,
 	for (;;) {
 		foundpos = Lindex(str,oldstr,pos);
 		if (foundpos==0) break;
-		if (foundpos!=1) {
+		if (foundpos!=pos) {
 			_Lsubstr(&tmp,str,pos,foundpos-pos);
 			Lstrcat(to,&tmp);
 		}
