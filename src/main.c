@@ -1,6 +1,9 @@
 /*
- * $Id: main.c,v 1.5 2001/06/25 18:51:48 bnv Exp $
+ * $Id: main.c,v 1.6 2002/06/06 08:24:02 bnv Exp $
  * $Log: main.c,v $
+ * Revision 1.6  2002/06/06 08:24:02  bnv
+ * Corrected: READLINE support when using redirected input
+ *
  * Revision 1.5  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -23,10 +26,15 @@
 
 #include <rexx.h>
 #include <rxdefs.h>
+#include <sys/stat.h>
 
 /* ------- Includes for any other external library ------- */
 #ifdef RXCONIO
 extern RxConIOInitialize();
+#endif
+#ifdef RXMYSQL
+extern RxMySQLInitialize();
+extern RxMySQLFinalize();
 #endif
 
 /* --------------------- main ---------------------- */
@@ -36,6 +44,10 @@ main(int ac, char *av[])
 	Lstr	args, tracestr, file;
 	int	ia,ir;
 	bool	input, loop_over_stdin;
+#if defined(USE_READLINE)
+	Lstr	line;
+	LINITSTR(line);
+#endif
 
 	input = loop_over_stdin = FALSE;
 	LINITSTR(args);
@@ -60,6 +72,10 @@ main(int ac, char *av[])
 #ifdef RXCONIO
 	RxConIOInitialize();
 #endif
+#ifdef RXMYSQL
+	RxMySQLInitialize();
+#endif
+
 
 	/* --- scan arguments --- */
 	ia = 1;
@@ -87,9 +103,25 @@ main(int ac, char *av[])
 		}
 		RxRun(av[ia],NULL,&args,&tracestr,NULL);
 	} else {
-		if (ia>=ac)
+		if (ia>=ac) {
+#if !defined(USE_READLINE)
 			Lread(STDIN,&file,LREADFILE);
-		else {
+#else
+			struct stat buf;
+			fstat(0,&buf);
+			if (S_ISCHR(buf.st_mode)) {
+				printf("End with \";\" on a line by itself.\n");
+				while (1) {
+					Lread(STDIN,&line,LREADLINE);
+					if (!Lcmp(&line,";"))
+						break;
+					Lstrcat(&file,&line);
+					Lcat(&file,"\n");
+				}
+			} else
+				Lread(STDIN,&file,LREADFILE);
+#endif
+		} else {
 			/* Copy a small header */
 			if (loop_over_stdin)
 				Lcat(&file,"do forever;"
@@ -111,6 +143,12 @@ main(int ac, char *av[])
 	LFREESTR(args);
 	LFREESTR(tracestr);
 	LFREESTR(file);
+#if defined(USE_READLINE)
+	LFREESTR(line);
+#endif
+#ifdef RXMYSQL
+	RxMySQLFinalize();
+#endif
 
 #ifdef __DEBUG__
 	if (mem_allocated()!=0) {
