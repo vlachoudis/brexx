@@ -1,6 +1,9 @@
 /*
- * $Id: variable.c,v 1.9 2003/10/30 13:16:28 bnv Exp $
+ * $Id: variable.c,v 1.10 2004/04/30 15:26:09 bnv Exp $
  * $Log: variable.c,v $
+ * Revision 1.10  2004/04/30 15:26:09  bnv
+ * Deleted: bmem.h
+ *
  * Revision 1.9  2003/10/30 13:16:28  bnv
  * Variable name change
  *
@@ -33,7 +36,6 @@
 #define __VARIABLE_C__
 
 #include <ldefs.h>
-#include <bmem.h>
 #include <string.h>
 #include <stdlib.h>
 
