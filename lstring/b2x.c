@@ -1,43 +1,29 @@
 /*
- * $Id: b2x.c,v 1.6 2011/06/29 08:33:09 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/b2x.c,v 1.1 1998/07/02 17:16:35 bnv Exp $
  * $Log: b2x.c,v $
- * Revision 1.6  2011/06/29 08:33:09  bnv
- * char to unsigned
- *
- * Revision 1.5  2008/07/15 07:40:54  bnv
- * #include changed from <> to ""
- *
- * Revision 1.4  2002/06/11 12:37:15  bnv
- * Added: CDECL
- *
- * Revision 1.3  2001/06/25 18:49:48  bnv
- * Header changed to Id
- *
- * Revision 1.2  1999/11/26 09:51:19  bnv
- * Changed: To use the new macros.
- *
  * Revision 1.1  1998/07/02 17:16:35  bnv
  * Initial revision
  *
  */
 
-#include "lerror.h"
-#include "lstring.h"
+#include <ctype.h>
+#include <lerror.h>
+#include <lstring.h>
 
 /* ------------------- Lb2x ------------------- */
-void __CDECL
+void
 Lb2x( const PLstr to, const PLstr from )
 {
 	long	i;
 	int	j,k;
-	unsigned char	*c;
+	char	*c;
 
 	Lstrcpy(to,from);
 	Lreverse(to);
 	c = LSTR(*to);
 
 	for (i=j=k=0; i<LLEN(*to); i++) {
-		if (ISSPACE(LSTR(*to)[i])) continue;
+		if (isspace(LSTR(*to)[i])) continue;
 		if (LSTR(*to)[i]<'0' || LSTR(*to)[i]>'1')
 			Lerror(ERR_INVALID_HEX_CONST,0);
 
