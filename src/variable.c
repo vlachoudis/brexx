@@ -1,6 +1,9 @@
 /*
- * $Id: variable.c,v 1.4 2001/06/25 18:51:48 bnv Exp $
+ * $Id: variable.c,v 1.5 2002/06/06 08:25:40 bnv Exp $
  * $Log: variable.c,v $
+ * Revision 1.5  2002/06/06 08:25:40  bnv
+ * Corrected: A bug when PoolSet was called with variable length 0
+ *
  * Revision 1.4  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -1024,8 +1027,10 @@ PoolSet( PLstr pool, PLstr name, PLstr value )
 	int	found;
 
 	/* check to see if it is internal pool */
+	if (LLEN(*name)==0)
+		Lerror(ERR_INCORRECT_CALL,0);
 	if ( LTYPE(*pool)==LINTEGER_TY ||
-		(LTYPE(*pool)==LSTRING_TY && _Lisnum(pool)==LINTEGER_TY)) {
+	    (LTYPE(*pool)==LSTRING_TY && _Lisnum(pool)==LINTEGER_TY)) {
 		Lstr	str;
 		poolnum = (int)Lrdint(pool);
 		if (poolnum<0 || poolnum>_rx_proc)
