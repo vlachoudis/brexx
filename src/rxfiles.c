@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/rxfiles.c,v 1.2 1998/11/06 08:58:10 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/rxfiles.c,v 1.3 1999/01/22 17:29:17 bnv Exp $
  * $Log: rxfiles.c,v $
+ * Revision 1.3  1999/01/22 17:29:17  bnv
+ * Added the xxxBINARY options in the STREAM function
+ *
  * Revision 1.2  1998/11/06 08:58:10  bnv
  * Corrected: real numbers with mantissa zero (integer)
  *            are treated as integers
@@ -292,7 +295,7 @@ R_stream( )
 			if (!exist(3))
 				Lerror(ERR_INCORRECT_CALL, 0);
 			LINITSTR(cmd); Lfx(&cmd,LLEN(*ARG3));
-			Lstrcpy(&cmd,ARG3);
+			Lstrip(&cmd,ARG3,LBOTH,' ');
 			Lupper(&cmd);
 
 			if (!Lcmp(&cmd,"READ")) {
@@ -300,9 +303,19 @@ R_stream( )
 				i = open_file(ARG1,"r");
 				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
 			} else
+			if (!Lcmp(&cmd,"READBINARY")) {
+				if (i>=0) close_file(i);
+				i = open_file(ARG1,"rb");
+				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
+			} else
 			if (!Lcmp(&cmd,"WRITE")) {
 				if (i>=0) close_file(i);
 				i = open_file(ARG1,"w");
+				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
+			} else
+			if (!Lcmp(&cmd,"WRITEBINARY")) {
+				if (i>=0) close_file(i);
+				i = open_file(ARG1,"wb");
 				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
 			} else
 			if (!Lcmp(&cmd,"APPEND")) {
@@ -310,14 +323,29 @@ R_stream( )
 				i = open_file(ARG1,"a+");
 				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
 			} else
+			if (!Lcmp(&cmd,"APPENDBINARY")) {
+				if (i>=0) close_file(i);
+				i = open_file(ARG1,"ab+");
+				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
+			} else
 			if (!Lcmp(&cmd,"UPDATE")) {
 				if (i>=0) close_file(i);
 				i = open_file(ARG1,"r+");
 				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
 			} else
+			if (!Lcmp(&cmd,"UPDATEBINARY")) {
+				if (i>=0) close_file(i);
+				i = open_file(ARG1,"rb+");
+				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
+			} else
 			if (!Lcmp(&cmd,"CREATE")) {
 				if (i>=0) close_file(i);
 				i = open_file(ARG1,"w+");
+				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
+			} else
+			if (!Lcmp(&cmd,"CREATEBINARY")) {
+				if (i>=0) close_file(i);
+				i = open_file(ARG1,"wb+");
 				if (i==-1) Lerror(ERR_CANT_OPEN_FILE,0);
 			} else
 			if (!Lcmp(&cmd,"CLOSE")) {
