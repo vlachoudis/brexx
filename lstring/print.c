@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/print.c,v 1.3 1999/03/10 16:55:55 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/print.c,v 1.4 1999/05/26 16:47:42 bnv Exp $
  * $Log: print.c,v $
+ * Revision 1.4  1999/05/26 16:47:42  bnv
+ * Gene corrections in RXCONIO
+ *
  * Revision 1.3  1999/03/10 16:55:55  bnv
  * Correction for RXCONIO
  *
@@ -15,14 +18,10 @@
 #include <stdio.h>
 #include <lstring.h>
 
-#ifdef RSXWIN
-#define ANSI_FPRINTF(fd,fs,ff)		if (fd==stdout) printf(fs,ff); else fprintf(fd,fs,ff)
-#else
 #ifdef RXCONIO
 #define ANSI_FPRINTF(fd,fs,ff)		if (fd==stdout) cprintf(fs,ff); else fprintf(fd,fs,ff)
 #else
 #define ANSI_FPRINTF(fd,fs,ff)		fprintf(fd,fs,ff)
-#endif
 #endif
 
 /* ---------------- Lprint ------------------- */
@@ -40,14 +39,8 @@ Lprint( FILE *f, const PLstr str )
 	switch (LTYPE(*str)) {
 		case LSTRING_TY:
 			c = LSTR(*str);
-#if defined(RSXWIN) && defined(RXCONIO)
-			if (f==stdout) {
-				c[LLEN(*str)]='\0';
-				printf(c);
-			} else
-#endif
 			for (l=0; l<LLEN(*str); l++)
-#if defined(RXCONIO) && !defined(RSXWIN)
+#if defined(RXCONIO)
 				if (f==stdout) {
 					putch(*c++);
 				} else
