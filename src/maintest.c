@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/maintest.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/maintest.c,v 1.2 1999/05/14 12:31:22 bnv Exp $
  * $Log: maintest.c,v $
+ * Revision 1.2  1999/05/14 12:31:22  bnv
+ * Fork test routine
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
@@ -22,6 +25,13 @@ MyFunc( int test )
 	else
 		Lscpy(ARGR,"Bingo");
 } /* MyFunc */
+
+/* ----------- RxFork -------- */
+void
+RxFork( )
+{
+	Licpy(ARGR,fork());
+} /* RxFork */
 
 /* --------------------- main ---------------------- */
 int
@@ -51,8 +61,9 @@ main(int ac, char *av[])
 	RxInitialize(av[0]);
 
 	/* --- User registered functions --- */
-	RxRegFunction("BINGO",MyFunc,0);
-	RxRegFunction("BANANA",MyFunc,1);
+	RxRegFunction("BINGO",	MyFunc,	0);
+	RxRegFunction("BANANA",	MyFunc,	1);
+	RxRegFunction("FORK",	RxFork,	0);
 
 	/* --- scan arguments --- */
 	ia = 1;
