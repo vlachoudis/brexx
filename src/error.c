@@ -1,6 +1,9 @@
 /*
- * $Id: error.c,v 1.7 2004/04/30 15:29:44 bnv Exp $
+ * $Id: error.c,v 1.8 2004/08/16 15:28:44 bnv Exp $
  * $Log: error.c,v $
+ * Revision 1.8  2004/08/16 15:28:44  bnv
+ * Spaces
+ *
  * Revision 1.7  2004/04/30 15:29:44  bnv
  * const removed
  *
@@ -124,7 +127,7 @@ Rerror( const int errno, const int subno, ... )
 						LSTR(rxf->name),
 						line,
 						LSTR(errmsg));
-			else 
+			else
 				fprintf(STDERR,
 					"Error %d.%d running %s, line %d: %s\n",
 						errno,
