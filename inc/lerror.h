@@ -1,21 +1,6 @@
 /*
- * $Id: lerror.h,v 1.6 2008/07/15 07:40:07 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/lerror.h,v 1.1 1998/07/02 17:35:50 bnv Exp $
  * $Log: lerror.h,v $
- * Revision 1.6  2008/07/15 07:40:07  bnv
- * MVS, CMS support
- *
- * Revision 1.5  2003/02/26 16:30:56  bnv
- * Minor changes
- *
- * Revision 1.4  2002/07/03 13:14:17  bnv
- * Added: MYSQL Database error
- *
- * Revision 1.3  2001/06/25 18:52:04  bnv
- * Header -> Id
- *
- * Revision 1.2  1999/11/29 14:58:00  bnv
- * Changed: Some defines
- *
  * Revision 1.1  1998/07/02 17:35:50  bnv
  * Initial revision
  *
@@ -24,7 +9,7 @@
 #ifndef	__ERROR_H__
 #define	__ERROR_H__
 
-#include "ldefs.h"
+#include <bnv.h>
 
 #define	ERR_MESSAGE		0
 #define	ERR_FINALIZATION	2
@@ -81,9 +66,6 @@
 #define	ERR_INVALID_OPTION	53
 #define	ERR_INVALID_STEM	54
 
-#define	ERR_DATABASE		55
-#define	ERR_LIBRARY		56
-
 #define	ERR_CANT_OPEN_FILE	57
 #define	ERR_FILE_NOT_FOUND	58
 #define	ERR_FILE_NOT_OPENED	59
@@ -97,8 +79,8 @@
 /* ------------- error text  structure ------------------ */
 #define ERRNUM(a,b)	(((a)<<8) | (b))
 typedef struct terror_st {
-	word	errorno;
-	char	*errormsg;
+	word	errno;
+	char	*errmsg;
 } ErrorMsg;
 
 #endif

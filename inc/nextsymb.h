@@ -1,18 +1,6 @@
 /*
- * $Id: nextsymb.h,v 1.5 2008/07/15 14:57:11 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/nextsymb.h,v 1.1 1998/07/02 17:35:50 bnv Exp $
  * $Log: nextsymb.h,v $
- * Revision 1.5  2008/07/15 14:57:11  bnv
- * mvs corretions
- *
- * Revision 1.4  2002/06/11 12:37:56  bnv
- * Added: CDECL
- *
- * Revision 1.3  2001/06/25 18:52:04  bnv
- * Header -> Id
- *
- * Revision 1.2  1999/11/29 14:58:00  bnv
- * Changed: Some defines
- *
  * Revision 1.1  1998/07/02 17:35:50  bnv
  * Initial revision
  *
@@ -21,7 +9,8 @@
 #ifndef __NEXTSYMBOL_H__
 #define __NEXTSYMBOL_H__
 
-#include "lstring.h"
+#include <bnv.h>
+#include <lstring.h>
 
 #ifdef __NEXTSYMB_C__
 #	define EXTERN
@@ -114,8 +103,8 @@ EXTERN int	symboline;		/* current line number		*/
 EXTERN enum	stat_type  symbolstat;	/* statement type		*/
 
 /* -------- function prototypes ----------- */
-void	__CDECL InitNextsymbol( PLstr str );
-void	__CDECL nextsymbol(void);
+void	InitNextsymbol( PLstr str );
+void	nextsymbol(void);
 
 #undef EXTERN
 #endif

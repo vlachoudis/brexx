@@ -1,31 +1,16 @@
 /*
- * $Id: trace.h,v 1.6 2008/07/15 07:40:07 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/trace.h,v 1.1 1998/07/02 17:35:50 bnv Exp $
  * $Log: trace.h,v $
- * Revision 1.6  2008/07/15 07:40:07  bnv
- * MVS, CMS support
- *
- * Revision 1.5  2004/08/16 15:33:11  bnv
- * Spaces
- *
- * Revision 1.4  2002/06/11 12:37:56  bnv
- * Added: CDECL
- *
- * Revision 1.3  2001/06/25 18:52:04  bnv
- * Header -> Id
- *
- * Revision 1.2  1999/11/29 14:58:00  bnv
- * Changed: Some defines
- *
  * Revision 1.1  1998/07/02 17:35:50  bnv
  * Initial revision
  *
  */
 
-#ifndef __TRACE_H__
-#define __TRACE_H__
+#ifndef __TRACE_H_
+#define __TRACE_H_
 
-#include "lstring.h"
-#include "interpre.h"
+#include <bnv.h>
+#include <lstring.h>
 
 #ifdef __TRACE_C__
 #	define EXTERN
@@ -48,9 +33,9 @@ enum tracetype	{	all_trace		= BIT0,
 
 #define AIR_TRACE  ( all_trace | intermediates_trace | results_trace )
 
-/* =============== TRACE BYTE IN CODE ==================== *
+/* =============== TRACE BYTE IN CODE ==================== * 
  *	Bit	Description
- *	 7	Marks start of a clause
+ *	 7 	Marks start of a clause	
  *	 6	End of Clause
  *	 5	Result trace display
  *	 4	- Not used -
@@ -76,12 +61,12 @@ enum MiddleCharType {	nothing_middle	= 0,
 #define TB_MIDDLECHAR	MASK3
 
 /* ------------------- Function Prototypes ------------------ */
-int	__CDECL TraceCurline( RxFile **rxf, int print );
-void	__CDECL TraceSet( PLstr );
-void	__CDECL TraceByte( int middlechar );
-void	__CDECL TraceClause( void );
-void	__CDECL TraceInstruction( CIPTYPE inst );
-int	__CDECL TraceInteractive( int );
+int	TraceCurline( RxFile **rxf, int print );
+void	TraceSet( PLstr );
+void	TraceByte( int middlechar );
+void	TraceClause( void );
+void	TraceInstruction( byte inst );
+int	TraceInteractive( int );
 
 #undef EXTERN
 #endif

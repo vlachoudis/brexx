@@ -1,48 +1,6 @@
 /*
- * $Id: rexx.h,v 2.4 2011/06/29 08:32:12 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/rexx.h,v 1.1 1998/07/02 17:35:50 bnv Exp $
  * $Log: rexx.h,v $
- * Revision 2.4  2011/06/29 08:32:12  bnv
- * Added android
- *
- * Revision 2.3  2008/07/15 07:40:07  bnv
- * MVS, CMS support
- *
- * Revision 2.2  2004/08/16 15:33:00  bnv
- * Changed: name of mnemonic operands from xxx_mn to O_XXX
- *
- * Revision 2.1  2003/02/26 16:33:09  bnv
- * Version 2.1
- *
- * Revision 1.11  2003/02/12 16:39:17  bnv
- * 2.0.8
- *
- * Revision 1.10  2002/08/19 15:39:09  bnv
- * Corrected: Version string
- *
- * Revision 1.9  2002/07/03 13:14:17  bnv
- * Changed: Version string
- *
- * Revision 1.8  2002/06/11 12:37:56  bnv
- * Added: CDECL
- *
- * Revision 1.7  2002/06/06 08:23:11  bnv
- * New Version
- *
- * Revision 1.6  2001/06/25 18:52:04  bnv
- * Header -> Id
- *
- * Revision 1.5  2000/04/07 07:17:10  bnv
- * Release 2.0.3
- *
- * Revision 1.4  1999/11/29 14:58:00  bnv
- * Changed: Some defines
- *
- * Revision 1.3  1999/05/14 13:08:00  bnv
- * Release 2.0.1
- *
- * Revision 1.2  1999/03/10 16:58:05  bnv
- * New release 2.0
- *
  * Revision 1.1  1998/07/02 17:35:50  bnv
  * Initial revision
  *
@@ -61,12 +19,12 @@
 
 #include <setjmp.h>
 
-#include "lerror.h"
-#include "lstring.h"
+#include <lerror.h>
+#include <lstring.h>
 
-#include "dqueue.h"
-#include "bintree.h"
-#include "variable.h"
+#include <dqueue.h>
+#include <bintree.h>
+#include <variable.h>
 
 #ifdef  __REXX_C__
 #	define EXTERN
@@ -77,23 +35,27 @@
 #	define EXTERN extern
 #endif
 
-#define ALIGN  1
-//#define GREEK  1
-//#define RMLAST 1
-//#define STATIC 0
+#ifdef MSDOS
+#	define OS	"MSDOS"
+#	define SHELL	"COMSPEC"
+#	define FILESEP	'\\'
+#	define PATHSEP	';'
+#else
+#	define OS	"UNIX"
+#	define SHELL	"SHELL"
+#	define FILESEP	'/'
+#	define PATHSEP	':'
+#endif
 
 /* ------------ some defines ------------------ */
-#define PACKAGE         "brexx"
-#define VERSION         "2.1.9"
-#define	VERSIONSTR	PACKAGE" "VERSION" "__DATE__
-#define	AUTHOR		"Vasilis.Vlachoudis@cern.ch"
-#define REGAPPKEY	TEXT("Software\\Marmita\\BRexx")
+#define	VERSION		"REXX_BNV R2.0b " ## __DATE__
+#define	AUTHOR		"Vassilis N. Vlachoudis <V.Vlachoudis@cern.ch>"
 #define	SCIENTIFIC	0
 #define ENGINEERING	1
 
 #define MAXARGS		15
 #define PROC_INC	10
-#define CLAUSE_INC	100
+#define CLAUSE_INC	50
 #define CODE_INC	256
 #define STCK_SIZE	255
 
@@ -120,7 +82,7 @@
 #define	RCVAR		0
 #define	SIGLVAR		1
 
-#ifdef ALIGN
+#if defined(ALIGN)
 #	define CTYPE	dword
 #else
 #	define CTYPE	word
@@ -129,12 +91,10 @@
 /* ----------------- file structure --------------- */
 typedef
 struct trxfile {
-	Lstr	name;		/* complete file path	*/
-	char	*filename;	/* filename in name	*/
-	char	*filetype;	/* filetype in name	*/
-	void	*libHandle;	/* Shared library handle*/
+	Lstr	filename;	/* filename		*/
+	char	*filetype;	/* filetype in filename	*/
 	Lstr	file;		/* actual file		*/
-	struct trxfile *next;	/* next in list		*/
+	struct trxfile *next;	/* prev in list		*/
 } RxFile;
 
 /* ------------- clause structure ----------------- */
@@ -143,7 +103,7 @@ struct tclause {
 	size_t	code;		/* code start position	*/
 	size_t	line;		/* line number in file	*/
 	int	nesting;	/* nesting level	*/
-	char	*ptr;		/* pointer in file	*/
+	char 	*ptr;		/* pointer in file	*/
 	RxFile	*fptr;		/* RxFile pointer	*/
 } Clause;
 
@@ -169,7 +129,7 @@ struct targs {
 typedef
 struct tbltfunc {
 	char	*name;
-	void	(__CDECL *func)(int);
+	void	(*func)(int);
 	int	opt;
 } TBltFunc;
 
@@ -193,9 +153,8 @@ struct trxproc {
 	PLstr	lbl_novalue;	/*			*/
 	PLstr	lbl_notready;	/*			*/
 	PLstr	lbl_syntax;	/*			*/
-	int	codelen;	/* used in OP_INTERPRET	*/
-	int	codelenafter;	/* used in OP_INTERPRET	*/
-	int	clauselen;	/* used in OP_INTERPRET	*/
+	int	codelen;	/* used in interpret_mn	*/
+	int	clauselen;	/* used in interpret_mn	*/
 	int	trace;		/* trace type		*/
 	bool	interactive_trace;
 } RxProc;
@@ -204,69 +163,53 @@ struct trxproc {
 #ifdef __DEBUG__
 EXTERN int	__debug__;
 #endif
-#if defined(WIN32) || defined(WCE)
-EXTERN TCHAR	*_szRxAppKey;
-#endif
 EXTERN char	*_prgname;	/* point to argv[0]		*/
 EXTERN jmp_buf	_error_trap;	/* error trap for compile	*/
 EXTERN jmp_buf	_exit_trap;	/* exit from prg		*/
 
-EXTERN DQueue	rxStackList;	/* dble queue of dble queues	*/
+EXTERN DQueue	StackList;	/* dble queue of dble queues	*/
 
-EXTERN RxFile	*rxFileList;	/* rexx file list		*/
-EXTERN int	rxReturnCode;	/* Global return code		*/
+EXTERN RxFile	*rxfile;	/* rexx file list		*/
+EXTERN int	RxReturnCode;	/* Global return code		*/
 
 EXTERN int	_procidcnt;	/* procedure id counter		*/
-EXTERN RxProc	*_proc;		/* procedure & function array	*/
+EXTERN RxProc	*_Proc;		/* procedure & function array	*/
 EXTERN int	_nesting;	/* cur nesting set by TraceCurline */
 EXTERN int	_rx_proc;	/* current procedure id		*/
-EXTERN int	_proc_size;	/* number of items in proc list	*/
+EXTERN int	_Proc_size;	/* number of items in proc list	*/
 
 EXTERN PLstr	_code;		/* code of program		*/
 EXTERN BinTree	_labels;	/* Labels			*/
 
-EXTERN Args	rxArg;		/* global arguments for internal routines */
+EXTERN Args	Rxarg;		/* global arguments for internal routines */
 
-EXTERN BinTree	rxLitterals;	/* Litterals			*/
-EXTERN BinLeaf	*nullStr,	/* basic leaf Lstrings		*/
-		*zeroStr,
-		*oneStr,
-		*resultStr,
-		*siglStr,
+EXTERN BinTree	Litterals;	/* Litterals			*/
+EXTERN BinLeaf	*NullStr,	/* basic leaf Lstrings		*/
+		*ZeroStr,
+		*OneStr,
+		*ResultStr,
+		*SiglStr,
 		*RCStr,
-		*errorStr,
-		*haltStr,
-		*syntaxStr,
-		*systemStr,
-		*noValueStr,
-		*notReadyStr;
+		*ErrorStr,
+		*HaltStr,
+		*SyntaxStr,
+		*SystemStr,
+		*NoValueStr,
+		*NotReadyStr;
 
 /* ============= function prototypes ============== */
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void	__CDECL RxInitialize( char *program_name );
-void	__CDECL RxFinalize( void );
-RxFile*	__CDECL RxFileAlloc( char *fname );
-void	__CDECL RxFileFree( RxFile *rxf );
-void	__CDECL RxFileType( RxFile *rxf );
-int	__CDECL RxFileLoad( RxFile *rxf );
-int	__CDECL RxLoadLibrary( PLstr libname, bool shared );
-int	__CDECL RxRun( char *filename, PLstr programstr,
+void	RxInitialize( char *program_name );
+void	RxFinalize( void );
+int	RxRun( char *filename, PLstr programstr,
 		PLstr arguments, PLstr tracestr, char *environment );
 
-int	__CDECL RxRegFunction( char *name, void (__CDECL *func)(int), int opt );
+int	RxRegFunction( char *name, void (*func)(int), int opt );
 
-void	__CDECL RxHaltTrap( int );
-void	__CDECL RxSignalCondition( int );
+void	RxHaltTrap( int );
+void	RxSignalCondition( int );
 
-int	__CDECL RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr);
-int	__CDECL RxExecuteCmd( PLstr cmd, PLstr env );
-
-#ifdef __cplusplus
-}
-#endif
+int	RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr);
+int	RxExecuteCmd( PLstr cmd, PLstr env );
 
 #undef EXTERN
 #endif
