@@ -1,22 +1,13 @@
 /*
- * $Id: lmath.c,v 1.4 2008/07/15 07:40:54 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/lmath.c,v 1.1 1998/07/02 17:18:00 bnv Exp $
  * $Log: lmath.c,v $
- * Revision 1.4  2008/07/15 07:40:54  bnv
- * #include changed from <> to ""
- *
- * Revision 1.3  2002/06/11 12:37:15  bnv
- * Added: CDECL
- *
- * Revision 1.2  2001/06/25 18:49:48  bnv
- * Header changed to Id
- *
  * Revision 1.1  1998/07/02 17:18:00  bnv
  * Initial Version
  *
  */
 
 #include <math.h>
-#include "lstring.h"
+#include <lstring.h>
 
 /* ------------------ pow10 ------------------- */
 static double
@@ -26,7 +17,7 @@ pow10d( double num )
 } /* pow10d */
 
 #define MATH(func) \
-	void __CDECL L##func(const PLstr to, const PLstr num) \
+	void L##func(const PLstr to, const PLstr num) \
 	{Lrcpy(to, func(Lrdreal(num)));}
 
 MATH( acos )

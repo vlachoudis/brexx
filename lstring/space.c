@@ -1,36 +1,21 @@
 /*
- * $Id: space.c,v 1.5 2008/07/15 07:40:54 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/space.c,v 1.1 1998/07/02 17:18:00 bnv Exp $
  * $Log: space.c,v $
- * Revision 1.5  2008/07/15 07:40:54  bnv
- * #include changed from <> to ""
- *
- * Revision 1.4  2002/06/11 12:37:15  bnv
- * Added: CDECL
- *
- * Revision 1.3  2001/06/25 18:49:48  bnv
- * Header changed to Id
- *
- * Revision 1.2  1998/11/06 08:55:18  bnv
- * Corrected: When type != string
- *
  * Revision 1.1  1998/07/02 17:18:00  bnv
  * Initial Version
  *
  */
 
-#include "lstring.h"
+#include <lstring.h>
 
 /* ------------------ Lspace --------------- */
-void __CDECL
+void
 Lspace( const PLstr to, const PLstr from, long n, const char pad )
 {
 	size_t	p,lp;
 	Lstr	space, sub;
 
-	if (LTYPE(*from) != LSTRING_TY) {
-		Lstrcpy(to,from);
-		return;
-	}
+	if (LTYPE(*from) != LSTRING_TY) return;
 
 	LINITSTR(space);
 	LINITSTR(sub);

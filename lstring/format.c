@@ -1,33 +1,16 @@
 /*
- * $Id: format.c,v 1.7 2008/07/15 07:40:54 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/format.c,v 1.1 1998/07/02 17:18:00 bnv Exp $
  * $Log: format.c,v $
- * Revision 1.7  2008/07/15 07:40:54  bnv
- * #include changed from <> to ""
- *
- * Revision 1.6  2008/07/14 13:08:16  bnv
- * MVS,CMS support
- *
- * Revision 1.5  2002/06/11 12:37:15  bnv
- * Added: CDECL
- *
- * Revision 1.4  2001/06/25 18:49:18  bnv
- * Corrected: The calculation of the final size of the Lstring
- *
- * Revision 1.3  1999/11/26 09:56:55  bnv
- * Changed: Use of swprintf in CE version.
- *
- * Revision 1.2  1999/06/10 14:09:24  bnv
- * Added the possibility to use the E,F or G format of C printf
- *
  * Revision 1.1  1998/07/02 17:18:00  bnv
  * Initial Version
  *
  */
 
-#include "lstring.h"
+#include <stdio.h>
+#include <lstring.h>
 
 /* ---------------- Lformat ------------------ */
-void __CDECL
+void
 Lformat( const PLstr to, const PLstr from,
 	long before, long after, long expp, long expt )
 {
@@ -148,29 +131,18 @@ Lfo20:
 	LFREESTR(exponent);
 *********************/
 	double	r;
-	TCHAR	str[50];
-	/* need to mess with this and use GCVT to work out digits */
+
 	r = Lrdreal(from);
+
+	Lfx(to,(size_t)(before+after+10));
+	LZEROSTR(*to);
 	if (before<0) before = 0;
 	if (after<0)  after  = 0;
-	if (after)    before += (after+1);
-#ifdef __CMS__
-	gcvt(r,before,str);
+	if (after) before += (after+1);
+#ifdef __BORLANDC__
+	sprintf(LSTR(*to),"%*.*lf",(int)before,(int)after,r);
 #else
-#	ifndef WCE
-	sprintf(
-#	else
-	swprintf(
-#	endif
-		str,
-		(expp<=0)? TEXT("%#*.*lf") :
-		(expp==1)? TEXT("%#*.*lG") : TEXT("%#*.*lE"),
-		(int)before, (int)after, r);
+	sprintf(LSTR(*to),"%*.*f",(int)before,(int)after,r);
 #endif
-
-#ifndef WCE
-	Lscpy(to,str);
-#else
-	Lwscpy(to,str);
-#endif
+	LLEN(*to) = STRLEN(LSTR(*to));
 } /* Lformat */

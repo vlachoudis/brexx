@@ -1,32 +1,20 @@
 /*
- * $Id: justify.c,v 1.5 2008/07/15 07:40:54 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/justify.c,v 1.1 1998/07/02 17:18:00 bnv Exp $
  * $Log: justify.c,v $
- * Revision 1.5  2008/07/15 07:40:54  bnv
- * #include changed from <> to ""
- *
- * Revision 1.4  2004/08/16 15:25:37  bnv
- * float to double
- *
- * Revision 1.3  2002/06/11 12:37:15  bnv
- * Added: CDECL
- *
- * Revision 1.2  2001/06/25 18:49:48  bnv
- * Header changed to Id
- *
  * Revision 1.1  1998/07/02 17:18:00  bnv
  * Initial Version
  *
  */
 
-#include "lstring.h"
+#include <lstring.h>
 
 /* ----------------- Ljustify ------------------ */
-void __CDECL
+void
 Ljustify( const PLstr to, const PLstr from, long length, char pad )
 {
 	int	spaces, ins, extra;
 	int	p,lp,i;
-	double	r,rstep;
+	float	r,rstep;
 	char	padstr[2];
 	Lstr	tmp,sub,space;
 
@@ -61,7 +49,7 @@ Ljustify( const PLstr to, const PLstr from, long length, char pad )
 		}
 ******/
 	}
-
+   
 	for (p=spaces=0; p<LLEN(tmp); p++)	/* count spaces */
 		if (LSTR(tmp)[p] == ' ') spaces++;
 
@@ -74,7 +62,7 @@ Ljustify( const PLstr to, const PLstr from, long length, char pad )
 
 	ins = length - (LLEN(tmp) - spaces);
 	extra = ins%spaces;
-	rstep = (double)(spaces+1)/(double)(extra+1);
+	rstep = (float)(spaces+1)/(float)(extra+1);
 	ins /= spaces;
 
 	Lstrset(&space,ins,pad);
