@@ -1,6 +1,9 @@
 /*
- * $Id: read.c,v 1.9 2004/03/26 22:52:26 bnv Exp $
+ * $Id: read.c,v 1.10 2004/07/22 13:00:17 bnv Exp $
  * $Log: read.c,v $
+ * Revision 1.10  2004/07/22 13:00:17  bnv
+ * Corrected: Reading from STDIN with readline when operating on a device
+ *
  * Revision 1.9  2004/03/26 22:52:26  bnv
  * Added FIFO support
  *
@@ -86,7 +89,7 @@ Lread( FILEP f, const PLstr line, long size )
 		if (f==STDIN) {
 			struct stat buf;
 			fstat(0,&buf);
-			if (S_ISCHR(buf.st_mode) || S_ISFIFO(buf.st_mode)) {
+			if (S_ISCHR(buf.st_mode) || S_ISBLK(buf.st_mode)) {
 				char *str = readline(NULL);
 #ifdef HAVE_READLINE_HISTORY
 				if (str && *str)
@@ -122,7 +125,7 @@ Lread( FILEP f, const PLstr line, long size )
 #else
 		size = GetFileSize(f->handle,NULL) - FTELL(f) + 1;
 #endif
-		if (size>0) { 
+		if (size>0) {
 			Lfx(line,(size_t)size);
 			c = LSTR(*line);
 			l = 0;
