@@ -1,6 +1,9 @@
 /*
- * $Id: stack.c,v 1.5 2003/10/30 13:16:28 bnv Exp $
+ * $Id: stack.c,v 1.6 2004/04/30 15:27:50 bnv Exp $
  * $Log: stack.c,v $
+ * Revision 1.6  2004/04/30 15:27:50  bnv
+ * Removed bmem.h
+ *
  * Revision 1.5  2003/10/30 13:16:28  bnv
  * Variable name change
  *
@@ -19,8 +22,6 @@
  */
 
 #define __STACK_C__
-
-#include <bmem.h>
 
 #include <lerror.h>
 #include <lstring.h>
