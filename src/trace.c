@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/trace.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/trace.c,v 1.2 1999/03/10 16:55:35 bnv Exp $
  * $Log: trace.c,v $
+ * Revision 1.2  1999/03/10 16:55:35  bnv
+ * A bracket addition to keep compiler happy.
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
@@ -74,11 +77,12 @@ TraceCurline( RxFile **rxf, int print )
 			cl = CompileCurClause-1;
 
 		_nesting   = CompileClause[ cl ].nesting;
-		if (rxf)
+		if (rxf) {
 			if (CompileCurClause==0)
 				*rxf = CompileRxFile;
 			else
 				*rxf = CompileClause[ cl ].fptr;
+		}
 		if (_in_nextsymbol) {
 			line = symboline;
 			ch = symbolptr;
