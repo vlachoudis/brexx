@@ -1,136 +1,29 @@
 /*
- * $Id: winfunc.c,v 1.6 2005/05/20 16:02:21 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/win/RCS/winfunc.c,v 1.1 1999/09/13 15:06:41 bnv Exp $
  * $Log: winfunc.c,v $
- * Revision 1.6  2005/05/20 16:02:21  bnv
- * Added: SETBREAK & SETPALETTE
- *
- * Revision 1.5  2004/08/16 15:34:53  bnv
- * Added: Color and Scrollbar functions
- *
- * Revision 1.4  2002/06/11 12:38:06  bnv
- * Added: CDECL
- *
- * Revision 1.3  2001/06/25 18:52:24  bnv
- * Header -> Id
- *
- * Revision 1.2  1999/11/26 13:22:36  bnv
- * Added: The routine Win_GetRegData
- *
  * Revision 1.1  1999/09/13 15:06:41  bnv
  * Initial revision
  *
  */
 
-#include "rexx.h"
-#include "rxdefs.h"
-#include "lstring.h"
-#include "compile.h"
-#include "winio.h"
+#include <rexx.h>
+#include <rxdefs.h>
+#include <lstring.h>
+#include <compile.h>
+#include <winio.h>
 
-#ifndef WCE
-#	include <direct.h>
-#endif
+#include <cefunc.h>
 
-#include "winfunc.h"
-
-enum	win_msgs {
-		f_bgcolor,
-		f_clreol,
-		f_clrscr,
-		f_copyfile,
-		f_createdirectory,
-		f_deletefile,
-		f_fgcolor,
-		f_getch,
-		f_kbhit,
-		f_movefile,
-		f_removedirectory,
-		f_setbreak,
-		f_setcolor,
-		f_setfontsize,
-		f_setpalette,
-		f_scrollbars,
-		f_wherex,
-		f_wherey,
-		f_windowtitle,
-		f_winexit
-};
-
-extern	HWND		_crtWindow;
-extern	HWND		_mainWindow;
+extern	HWND		_CrtWindow;
 extern	HINSTANCE	_CrtInstance;
-
-#ifdef WCE
-#	define GETPATH(p,t,a)	{ LASCIIZ(p); \
-			  mbstowcs(t,LSTR(p),LLEN(p)); \
-			  t[LLEN(p)] = 0; \
-			  Brel2absdir(a,MAX_PATH,t);}
-#else
-#	define GETPATH(p,t,a)	{ LASCIIZ(p); strcpy(a,LSTR(p));}
-#endif
-
-/* --------------------------------------------------------------- */
-BOOL __CDECL
-Win_RegGetData(HKEY key, TCHAR *keyPath, TCHAR *varName,
-		DWORD type, LPVOID pvData, LPDWORD cbData )
-{
-	HKEY	hKey;
-	BOOL	fSuccess;
-
-	if ( RegOpenKeyEx(	key,
-				keyPath,
-				0,
-				KEY_ALL_ACCESS,
-				&hKey ) != ERROR_SUCCESS )
-		return FALSE;
-	fSuccess = RegQueryValueEx( hKey,
-			varName,
-			0,
-			&type,
-			pvData,
-			cbData );
-	RegCloseKey( hKey );
-	return (fSuccess==ERROR_SUCCESS);
-} /* Win_RegGetData */
-
-/* --------------------------------------------------------------- */
-BOOL __CDECL
-Win_RegSetData(HKEY key, TCHAR *keyPath, TCHAR *varName,
-		DWORD type, LPVOID pvData, DWORD cbData )
-{
-	HKEY	hKey;
-	BOOL	fSuccess;
-	DWORD	disp;
-
-	if ( RegCreateKeyEx(	key,
-				keyPath,
-				0,
-				NULL,
-				0,
-				KEY_ALL_ACCESS,
-				NULL,
-				&hKey,
-				&disp ) != ERROR_SUCCESS )
-		return FALSE;
-	fSuccess = RegSetValueEx( hKey,
-			varName,
-			0,
-			type,
-			pvData,
-			cbData );
-	RegCloseKey( hKey );
-	return (fSuccess==ERROR_SUCCESS);
-} /* Win_RegSetData */
 
 /* --------------------------------------------------------------- */
 /*  MSGBOX(text, title, [option])                                  */
 /* --------------------------------------------------------------- */
-void __CDECL
-Win_MsgBox(const int func)
+void
+CE_MsgBox()
 {
-#ifdef UNICODE
 	TCHAR	*msgText, *msgTitle;
-#endif
 	long	opt;
 
 	if (!IN_RANGE(2,ARGN,3))
@@ -141,21 +34,17 @@ Win_MsgBox(const int func)
 
 	LASCIIZ(*ARG1);
 	LASCIIZ(*ARG2);
-#ifdef UNICODE
-	msgText  = (TCHAR *)MALLOC(sizeof(TCHAR)*LLEN(*ARG1)+2,NULL);
-	msgTitle = (TCHAR *)MALLOC(sizeof(TCHAR)*LLEN(*ARG1)+2,NULL);
+	msgText = (TCHAR *)MALLOC(sizeof(TCHAR)*LLEN(*ARG1)+2,NULL);
+	msgTitle = (TCHAR *)MALLOC(sizeof(TCHAR*)LLEN(*ARG1)+2,NULL);
 	mbstowcs(msgText,LSTR(*ARG1),LLEN(*ARG1));	msgText[LLEN(*ARG1)] = 0;
 	mbstowcs(msgTitle,LSTR(*ARG2),LLEN(*ARG2));	msgTitle[LLEN(*ARG2)] = 0;
-	Licpy(ARGR, MessageBox(_crtWindow, msgText, msgTitle, opt));
+
+	Licpy(ARGR, MessageBox(_CrtWindow, msgText, msgTitle, opt));
+	InvalidateRect(_CrtWindow,NULL,TRUE);
 	FREE(msgText);
 	FREE(msgTitle);
-#else
-	Licpy(ARGR, MessageBox(_crtWindow, LSTR(*ARG1), LSTR(*ARG2), opt));
-#endif
-
-	InvalidateRect(_crtWindow,NULL,TRUE);
 	return;
-} /* Win_MsgBox */
+} /* CE_MsgBox */
 
 /* -------------------------------------------------------------- */
 /*  CLRSCR()                                                      */
@@ -170,14 +59,8 @@ Win_MsgBox(const int func)
 /* -------------------------------------------------------------- */
 /*  WHEREY()                                                      */
 /* -------------------------------------------------------------- */
-/*  FGCOLOR()                                                     */
-/* -------------------------------------------------------------- */
-/*  BGCOLOR()                                                     */
-/* -------------------------------------------------------------- */
-/*  WINEXIT()                                                     */
-/* -------------------------------------------------------------- */
-void __CDECL
-Win_O(const int func)
+void
+CE_O(const int func)
 {
 	if (ARGN) Lerror(ERR_INCORRECT_CALL,0);
 	LZEROSTR(*ARGR);
@@ -203,44 +86,16 @@ Win_O(const int func)
 		case f_kbhit:
 			Licpy(ARGR,WKeyPressed());
 			break;
-		case f_winexit:
-			WMessage(WM_DESTROY,0,0);
-			break;
-		case f_fgcolor:
-			Licpy(ARGR,WGetColor()&0xf);
-			break;
-		case f_bgcolor:
-			Licpy(ARGR,(WGetColor()>>4)&0xf);
-			break;
 		default:
 			Lerror(ERR_INTERPRETER_FAILURE,0);
 	}
-} /* Win_O */
-
-/* -------------------------------------------------------------- */
-/*  olddir = CHDIR([newdir])                                      */
-/* -------------------------------------------------------------- */
-void __CDECL
-Win_chdir(const int func)
-{
-	char	path[MAX_PATH];
-
-	if (ARGN>1)
-		Lerror(ERR_INCORRECT_CALL,0);
-
-	Lscpy(ARGR,GETCWD(path,MAX_PATH));
-
-	if (ARGN==1) {
-		get_s(1); LASCIIZ(*ARG1);
-		CHDIR(LSTR(*ARG1));
-	}
-} /* Win_chdir */
+} /* CE_O */
 
 /* -------------------------------------------------------------- */
 /*  GOTOXY(x,y)                                                   */
 /* -------------------------------------------------------------- */
-void __CDECL
-Win_gotoxy(const int func)
+void
+CE_gotoxy()
 {
 	int	x, y;
 	if (ARGN!=2)
@@ -249,79 +104,26 @@ Win_gotoxy(const int func)
 	get_i(2,y);
 	WGotoXY(x,y);
 	LZEROSTR(*ARGR);
-} /* Win_gotoxy */
-
-/* -------------------------------------------------------------- */
-/*  SETCOLOR(fg[,bg])                                             */
-/* -------------------------------------------------------------- */
-void __CDECL
-Win_setcolor(const int func)
-{
-	int	fg, bg;
-
-	if (ARGN>2)
-		Lerror(ERR_INCORRECT_CALL,0);
-
-	get_i0(1,fg);
-
-	if (ARGN==2) {
-		get_i0(2,bg);
-	} else
-		bg = ((WGetColor()>>4)&0x0f);
-
-	Licpy(ARGR,WGetColor());
-	WSetColor((BYTE)(((bg&0x0f)<<4)|(fg&0x0f)));
-} /* Win_setcolor */
-
-/* -------------------------------------------------------------- */
-/*  SETPALETTE(col[,r,g,b])                                       */
-/* -------------------------------------------------------------- */
-void __CDECL
-Win_setpalette(const int func)
-{
-	int	col, r, g, b;
-
-	if (ARGN!=1 && ARGN!=4)
-		Lerror(ERR_INCORRECT_CALL,0);
-
-	get_i(1,col);
-	if (col>16) Lerror(ERR_INCORRECT_CALL,0);
-	col--;
-
-	Licpy(ARGR,WGetPalette(col));
-
-	if (ARGN==4) {
-		get_i0(2,r);
-		get_i0(3,g);
-		get_i0(4,b);
-		if (r>255 || g>255 || b>255)
-			Lerror(ERR_INCORRECT_CALL,0);
-		WSetPalette(col,r,g,b);
-	}
-} /* Win_setpalette */
+} /* CE_gotoxy */
 
 /* -------------------------------------------------------------- */
 /*  COPYFILE(src,dst)                                             */
 /* -------------------------------------------------------------- */
 /*  MOVEFILE(src,dst)                                             */
 /* -------------------------------------------------------------- */
-void __CDECL
-Win_SS(const int func)
+void
+CE_SS(const int func)
 {
 	TCHAR	src[MAX_PATH];
 	TCHAR	dst[MAX_PATH];
-#ifdef UNICODE
-	TCHAR	tmppath[MAX_PATH];
-#endif
 
 	if (ARGN!=2)
 		Lerror(ERR_INCORRECT_CALL,0);
 
 	get_s(1);
 	get_s(2);
-
-	GETPATH(*ARG1,tmppath,src);
-	GETPATH(*ARG2,tmppath,dst);
+	mbstowcs(src,LSTR(*ARG1),LLEN(*ARG1));	src[LLEN(*ARG1)] = 0;
+	mbstowcs(dst,LSTR(*ARG2),LLEN(*ARG2));	dst[LLEN(*ARG2)] = 0;
 
 	switch (func) {
 		case f_copyfile:
@@ -333,100 +135,46 @@ Win_SS(const int func)
 		default:
 			break;
 	}
-} /* Win_SS */
+} /* CE_SS */
 
 /* -------------------------------------------------------------- */
 /*  WINDOWTITLE(title)                                            */
 /* -------------------------------------------------------------- */
-void __CDECL
-Win_oS(const int func)
+void
+CE_oS()
 {
 	TCHAR	path[MAX_PATH];
 
 	if (ARGN>1)
 		Lerror(ERR_INCORRECT_CALL,0);
 
-	GetWindowText(_crtWindow, path, sizeof(path)/sizeof(TCHAR));
-	LWSCPY(ARGR, path);
+	GetWindowText(_CrtWindow, path, sizeof(path)/sizeof(TCHAR));
+	Lwscpy(ARGR, path);
 	if (ARGN==1) {
 		L2STR(ARG1);
 		LASCIIZ(*ARG1);
 		WSetTitle(LSTR(*ARG1));
 	}
-} /* Win_oS */
-
-/* -------------------------------------------------------------- */
-/*  SETFONTSIZE(n)                                                */
-/* -------------------------------------------------------------- */
-void __CDECL
-Win_I(const int func)
-{
-	int	size;
-
-	if (ARGN!=1)
-		Lerror(ERR_INCORRECT_CALL,0);
-
-	get_i(1,size);
-
-	if (size<6)
-		size=6;
-	else
-	if (size>50)
-		size=50;
-
-	Licpy(ARGR,WGetFontSize());
-	WSetFontSize(size);
-} /* Win_I */
-
-/* -------------------------------------------------------------- */
-/*  SCROLLBARS([0|1])                                             */
-/* -------------------------------------------------------------- */
-/*  SETBREAK([0|1])                                               */
-/* -------------------------------------------------------------- */
-void __CDECL
-Win_B(const int func)
-{
-	int	b;
-
-	if (ARGN>1)
-		Lerror(ERR_INCORRECT_CALL,0);
-
-	get_oiv(1,b,-1);
-	if (b<-1 || b>1)
-		Lerror(ERR_INCORRECT_CALL,0);
-
-	switch (func) {
-		case f_scrollbars:
-			Licpy(ARGR,WGetScrollBars());
-			if (b>=0)
-				WSetScrollBars(b);
-			break;
-		case f_setbreak:
-			Licpy(ARGR,WSetBreak(b));
-			break;
-	}
-} /* Win_scrollbars */
+} /* CE_oS */
 
 /* -------------------------------------------------------------- */
 /*  MKDIR(directory)                                              */
 /* -------------------------------------------------------------- */
 /*  RMDIR(directory)                                              */
 /* -------------------------------------------------------------- */
-/*  DELFILE(file)                                                 */
+/*  DELFILE(file)                                                  */
 /* -------------------------------------------------------------- */
-void __CDECL
-Win_S(const int func)
+void
+CE_S(const int func)
 {
 	TCHAR	path[MAX_PATH];
-#ifdef UNICODE
-	TCHAR	tmppath[MAX_PATH];
-#endif
 
 	if (ARGN!=1)
 		Lerror(ERR_INCORRECT_CALL,0);
 
 	get_s(1);
-	GETPATH(*ARG1,tmppath,path);
+	mbstowcs(path,LSTR(*ARG1),LLEN(*ARG1));
+	path[LLEN(*ARG1)] = 0;
 
 	switch (func) {
 		case f_createdirectory:
@@ -441,13 +189,13 @@ Win_S(const int func)
 		default:
 			break;
 	}
-} /* Win_S */
+} /* CE_S */
 
 /* -------------------------------------------------------------- */
 /*  FILEDIALOG([LOAD|SAVE,TITLE,FILTER,INITIALPATH)               */
 /* -------------------------------------------------------------- */
 /****
-Win_FileDialog()
+CE_FileDialog()
 {
 	char	cmd;
 	OPENFILENAME	ofn;
@@ -463,19 +211,19 @@ Win_FileDialog()
 
 	memset(ofn,0,sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = _crtWindow;
+	ofn.hwndOwner = _CrtWindow;
 	ofn.hInstance = _CrtInstance;
 
 
-} * Win_FileDialog *
+} * CE_FileDialog *
 ***/
 
 /* -------------------------------------------------------------- */
 /*  CLIPBOARD([type|cmd [,data]])                                 */
 /*  cmd = 'List' | 'Clear'                                        */
 /* -------------------------------------------------------------- */
-void __CDECL
-Win_Clipboard(const int func)
+void
+CE_Clipboard()
 {
 	char	cmd;
 
@@ -490,7 +238,7 @@ Win_Clipboard(const int func)
 	} else
 		cmd = 'L';
 
-	OpenClipboard(_crtWindow);
+	OpenClipboard(_CrtWindow);
 	LZEROSTR(*ARGR);
 	switch (cmd) {
 		case 'C':
@@ -531,36 +279,28 @@ Win_Clipboard(const int func)
 			Lerror(ERR_INCORRECT_CALL,0);
 	}
 	CloseClipboard();
-} /* Win_Clipboard */
+} /* CE_Clipboard */
 
 /* -------------------------------------------------------------- */
 /*  DIR(path)                                                     */
 /*  Return a string containing the complet directory, entries     */
 /*  are separated with "\n"                                       */
 /* -------------------------------------------------------------- */
-void __CDECL
-Win_Dir(const int func)
+void
+CE_Dir()
 {
 	HANDLE		findHandle;
 	WIN32_FIND_DATA	findData;
 	TCHAR		path[MAX_PATH+50];
-#ifdef UNICODE
-	TCHAR		tmppath[MAX_PATH];
-#endif
 	Lstr		tmp;
 
-	if (ARGN>1)
+	if (ARGN!=1)
 		Lerror(ERR_INCORRECT_CALL,0);
 
-	if (ARGN==1) {
-		get_s(1);
-		GETPATH(*ARG1,tmppath,path);
-	} else
-#ifdef WCE
-		Brel2absdir(path,MAX_PATH, TEXT(".\\*.*"));
-#else
-		STRCPY(path,"*.*");
-#endif
+	get_s(1);
+
+	LASCIIZ(*ARG1);
+	mbstowcs(path,LSTR(*ARG1),LLEN(*ARG1)+1);
 
 	LZEROSTR(*ARGR);
 
@@ -606,7 +346,7 @@ Win_Dir(const int func)
 
 		FileTimeToSystemTime(&(findData.ftLastWriteTime), &fileTime);
 
-		SPRINTF(path,TEXT("%s %8d %02d-%02d-%4d %02d:%02d:%02d %s\n"),
+		swprintf(path,TEXT("%s %8d %02d-%02d-%4d %02d:%02d:%02d %s\n"),
 				attr,
 				findData.nFileSizeLow,
 				fileTime.wDay,
@@ -616,41 +356,11 @@ Win_Dir(const int func)
 				fileTime.wMinute,
 				fileTime.wSecond,
 				findData.cFileName);
-		LWSCPY(&tmp,path);
+		Lwscpy(&tmp,path);
 		Lstrcat(ARGR,&tmp);
 	} while (FindNextFile(findHandle,&findData));
 
 	LFREESTR(tmp);
 
 	FindClose(findHandle);
-} /* Win_Dir */
-
-/* --- RxWinInitialize --- */
-void RxWinInitialize()
-{
-	RxRegFunction( "BGCOLOR",	Win_O		,f_bgcolor	);
-	RxRegFunction( "CHDIR",		Win_chdir	,0		);
-	RxRegFunction( "CLIPBOARD",	Win_Clipboard	,0		);
-	RxRegFunction( "CLREOL",	Win_O		,f_clreol	);
-	RxRegFunction( "CLRSCR",	Win_O		,f_clrscr	);
-	RxRegFunction( "COPYFILE",	Win_SS		,f_copyfile	);
-	RxRegFunction( "DELFILE",	Win_S		,f_deletefile	);
-	RxRegFunction( "DIR",		Win_Dir		,0		);
-	RxRegFunction( "FGCOLOR",	Win_O		,f_fgcolor	);
-	RxRegFunction( "GETCH",		Win_O		,f_getch	);
-	RxRegFunction( "GOTOXY",	Win_gotoxy	,0		);
-	RxRegFunction( "KBHIT",		Win_O		,f_kbhit	);
-	RxRegFunction( "MKDIR",		Win_S		,f_createdirectory);
-	RxRegFunction( "MOVEFILE",	Win_SS		,f_movefile	);
-	RxRegFunction( "MSGBOX",	Win_MsgBox	,0		);
-	RxRegFunction( "RMDIR",		Win_S		,f_removedirectory);
-	RxRegFunction( "SCROLLBARS",	Win_B		,f_scrollbars	);
-	RxRegFunction( "SETBREAK",	Win_B		,f_setbreak	);
-	RxRegFunction( "SETCOLOR",	Win_setcolor	,f_setcolor	);
-	RxRegFunction( "SETFONTSIZE",	Win_I		,f_setfontsize	);
-	RxRegFunction( "SETPALETTE",	Win_setpalette	,f_setpalette	);
-	RxRegFunction( "WHEREX",	Win_O		,f_wherex	);
-	RxRegFunction( "WHEREY",	Win_O		,f_wherey	);
-	RxRegFunction( "WINDOWEXIT",	Win_O		,f_winexit	);
-	RxRegFunction( "WINDOWTITLE",	Win_oS		,f_windowtitle	);
-} /* RxWinInitialize */
+} /* CE_Dir */
