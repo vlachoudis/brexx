@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/bmem.c,v 1.3 1999/11/26 14:30:27 bnv Exp $
+ * $Id: bmem.c,v 1.4 2001/06/25 18:50:28 bnv Exp $
  * $Log: bmem.c,v $
+ * Revision 1.4  2001/06/25 18:50:28  bnv
+ * Changed: Some minor changes at mem_chk and mem_list, mem_print
+ *
  * Revision 1.3  1999/11/26 14:30:27  bnv
  * Added: A dummy int, at Memory structure for 8-byte alignment on 32-bit machines
  *
@@ -15,14 +18,16 @@
 
 #define __BMEM_C__
 
+#include <ctype.h>
 #include <stdio.h>
 #include <malloc.h>
 #include <stdlib.h>
 
+#include <os.h>
 #include <bmem.h>
-#include <lstring.h>
+#include <ldefs.h>
 
-#define MAGIC	0x12346789L
+#define MAGIC	0xDECAFFEE
 
 /*
  * This file provides some debugging functions for memory allocation
@@ -75,8 +80,11 @@ mem_malloc(size_t size, char *desc)
 		*(dword *)((byte*)mem->data+mem->size) = MAGIC;
 
 		return (void *)(mem->data);
-	} else
+	} else {
+		fprintf(STDERR,"Not enough memory to allocate object %s size=%d\n",
+				desc,size);
 		return NULL;
+	}
 } /* mem_malloc */
 
 /* -------------- mem_realloc ---------------- */
@@ -91,13 +99,13 @@ mem_realloc(void *ptr, size_t size)
 
 	/* check if the memory is valid */
 	if (mem->magic != MAGIC) {
-		fprintf(STDERR,"mem_realloc: object is not allocated size=%d!\n",size);
+		fprintf(STDERR,"mem_realloc: PREFIX Magic number doesn't match of object %p!\n",ptr);
 		mem_list();
 		exit(99);
 	}
 
 	if (*(dword *)(mem->data+mem->size) != MAGIC) {
-		fprintf(STDERR,"mem_realloc: End magic number doesn't match!\n");
+		fprintf(STDERR,"mem_realloc: SUFFIX Magic number doesn't match of object %p!\n",ptr);
 		mem_list();
 		exit(99);
 	}
@@ -110,6 +118,12 @@ mem_realloc(void *ptr, size_t size)
 #else
 	mem = (Memory *)realloc(mem,size+sizeof(Memory));
 #endif
+
+	if (mem==NULL) {
+		fprintf(STDERR,"Not enough memory to allocate object %s size=%d\n",
+				mem->desc,size);
+		return NULL;
+	}
 
 	if (head) mem_head = mem;
 	mem->size = size;
@@ -137,12 +151,12 @@ mem_free(void *ptr)
 	mem = (Memory *)((char *)ptr - (sizeof(Memory)-sizeof(void*)));
 
 	if (mem->magic != MAGIC) {
-		fprintf(STDERR,"mem_free: object is not allocated!\n");
+		fprintf(STDERR,"mem_free: PREFIX Magic number doesn't match of object %p!\n",ptr);
 		mem_list();
 		exit(99);
 	}
 	if (*(dword *)(mem->data+mem->size) != MAGIC) {
-		fprintf(STDERR,"mem_realloc: End magic number doesn't match!\n");
+		fprintf(STDERR,"mem_free: SUFFIX Magic number doesn't match!\n");
 		mem_list();
 		exit(99);
 	}
@@ -167,28 +181,38 @@ mem_free(void *ptr)
 
 } /* mem_free */
 
+/* -------------- mem_print --------------- */
+static void
+mem_print(int count, Memory *mem)
+{
+	int	i;
+
+	fputs((mem->magic==MAGIC)?"  ":"??",STDERR);
+
+	fprintf(STDERR,"%3d %5d %p %s\t\"",
+		count, mem->size, mem->data, mem->desc);
+	for (i=0; i<10; i++)
+		fprintf(STDERR,"%c",
+			isprint(mem->data[i])? mem->data[i]: '.');
+	fprintf(STDERR,"\" ");
+	for (i=0; i<10; i++)
+		fprintf(STDERR,"%02X ",mem->data[i]);
+	fprintf(STDERR,"\n");
+} /* mem_print */
+
 /* -------------- mem_list ---------------- */
 void
 mem_list(void)
 {
 	Memory	*mem;
-	int	count,i,y;
+	int	y, count;
 
 	mem = mem_head;
 	count = 0;
 	fprintf(STDERR,"\nMemory list:\n");
 	y = 0;
 	while (mem) {
-		fputs((mem->magic==MAGIC)?"  ":"??",STDERR);
-
-		fprintf(STDERR,"%3d %6d  %s\t\"",
-			++count, mem->size, mem->desc);
-		for (i=0; i<10; i++)
-			fprintf(STDERR,"%c",mem->data[i]);
-		fprintf(STDERR,"\"  ");
-		for (i=0; i<10; i++)
-			fprintf(STDERR,"%02X ",mem->data[i]);
-		fprintf(STDERR,"\n");
+		mem_print(count++,mem);
 		mem = mem->prev;
 		if (++y==15) {
 			if (getchar()=='q') exit(0);
@@ -198,25 +222,27 @@ mem_list(void)
 	fprintf(STDERR,"\n");
 } /* mem_list */
 
-/* --------------- memchk_list ------------------- */
+/* --------------- mem_chk ------------------- */
 int
-memchk_list( void )
+mem_chk( void )
 {
 	Memory	*mem;
 	int	i=0;
 
 	for (mem=mem_head; mem; mem = mem->prev,i++) {
 		if (mem->magic != MAGIC) {
-			fprintf(STDERR,"Magic number destroyed! ID=%d\n",i);
+			fprintf(STDERR,"PREFIX Magic number doesn't match! ID=%d\n",i);
+			mem_print(i,mem);
 			mem_list();
 		}
 		if (*(dword *)(mem->data+mem->size) != MAGIC) {
-			fprintf(STDERR,"mem_realloc: End magic number doesn't match! ID=%d\n",i);
+			fprintf(STDERR,"SUFFIX Magic number doesn't match! ID=%d\n",i);
+			mem_print(i,mem);
 			mem_list();
 		}
 	}
 	return 0;
-} /* memchk_list */
+} /* mem_chk */
 
 /* -------------- mem_allocated ----------------- */
 long
