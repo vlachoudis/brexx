@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/compile.c,v 1.5 1999/05/28 07:20:58 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/compile.c,v 1.6 1999/11/26 13:13:47 bnv Exp $
  * $Log: compile.c,v $
+ * Revision 1.6  1999/11/26 13:13:47  bnv
+ * Changed: To use the new macros
+ *
  * Revision 1.5  1999/05/28 07:20:58  bnv
  * ITERATE was jumping to the wrong position inside a "DO UNTIL" loop
  *
@@ -23,8 +26,6 @@
 
 #define __COMPILE_C__
 
-#include <bnv.h>
-#include <stdarg.h>
 #include <setjmp.h>
 
 #include <lerror.h>
@@ -46,7 +47,7 @@
 */
 
 /* ------------ local defines ------------ */
-#if !defined(ALIGN)
+#ifndef ALIGN
 #define CODEFIXUPB(p,v) *(byte *)(LSTR(*CompileCode) + (p)) = (v)
 #define CODEFIXUP(p,v) *(word *)(LSTR(*CompileCode) + (p)) = (v)
 #define CLAUSESTEP	sizeof(byte)
@@ -66,7 +67,8 @@ static int	str_interpreted;	/* is it a string interpreted */
 static int	checked_semicolon;	/* if instruction has checked the semicolon like IF */
 
 typedef struct loop_st {
-	size_t	iterate, leave;
+	size_t	Citerate;
+	size_t	Cleave;
 	int	noofvars;
 	PLstr	ctrlvar;
 } LoopCtrl;
@@ -110,34 +112,34 @@ struct sort_list_st {
 }
 /*  WARNING THE LIST MUST BE SORTED!!!!!!!!!!!! */
 statements_list[] = {
-	{"ADDRESS",   C_address   },
-	{"ARG",       C_arg       },
-	{"CALL",      C_call      },
-	{"DO",        C_do        },
-	{"DROP",      C_drop      },
-	{"ELSE",      C_error     },
-	{"EXIT",      C_exit      },
-	{"IF",        C_if        },
-	{"INTERPRET", C_interpret },
-	{"ITERATE",   C_iterate   },
-	{"LEAVE",     C_leave     },
-	{"LOWER",     C_lower     },
-	{"NOP",       C_nop       },
-	{"NUMERIC",   C_numeric   },
-	{"OTHERWISE", C_error     },
-	{"PARSE",     C_parse     },
-	{"PROCEDURE", C_error     },
-	{"PULL",      C_pull      },
-	{"PUSH",      C_push      },
-	{"QUEUE",     C_queue     },
-	{"RETURN",    C_return    },
-	{"SAY",       C_say       },
-	{"SELECT",    C_select    },
-	{"SIGNAL",    C_signal    },
-	{"THEN",      C_error     },
-	{"TRACE",     C_trace     },
-	{"UPPER",     C_upper     },
-	{"WHEN",      C_error     }
+	{"ADDRESS",	C_address	},
+	{"ARG",		C_arg		},
+	{"CALL",	C_call		},
+	{"DO",		C_do		},
+	{"DROP",	C_drop		},
+	{"ELSE",	C_error		},
+	{"EXIT",	C_exit		},
+	{"IF",		C_if		},
+	{"INTERPRET",	C_interpret	},
+	{"ITERATE",	C_iterate	},
+	{"LEAVE",	C_leave		},
+	{"LOWER",	C_lower		},
+	{"NOP",		C_nop		},
+	{"NUMERIC",	C_numeric	},
+	{"OTHERWISE",	C_error		},
+	{"PARSE",	C_parse		},
+	{"PROCEDURE",	C_error		},
+	{"PULL",	C_pull		},
+	{"PUSH",	C_push		},
+	{"QUEUE",	C_queue		},
+	{"RETURN",	C_return	},
+	{"SAY",		C_say		},
+	{"SELECT",	C_select	},
+	{"SIGNAL",	C_signal	},
+	{"THEN",	C_error		},
+	{"TRACE",	C_trace		},
+	{"UPPER",	C_upper		},
+	{"WHEN",	C_error		}
 };
 
 /* ---------------- crloopctrl ------------------- */
@@ -147,8 +149,8 @@ crloopctrl( size_t it, size_t le, int vars, PLstr cv )
 	LoopCtrl *lc;
 
 	lc = (LoopCtrl *) MALLOC(sizeof(LoopCtrl),"LoopCtrl");
-	lc->iterate = it;
-	lc->leave = le;
+	lc->Citerate = it;
+	lc->Cleave = le;
 	lc->noofvars = vars;
 	lc->ctrlvar = cv;
 
@@ -196,7 +198,7 @@ _mustbe( enum symboltype sym, int errno, int subno )
 */
 } /* _mustbe */
 
-#if !defined(ALIGN)
+#ifndef ALIGN
 /* ### If not defined ALIGN ### */
 
 /* --------------- _CodeInsByte --------------- */
@@ -256,7 +258,7 @@ _CodeInsByte( dword pos, dword d )
 		CompileCodePtr = (byte*)LSTR(*CompileCode) + CompileCodeLen;
 	}
 	/* shift entire code by one dword */
-	MEMMOVE(LSTR(*CompileCode)+pos+4,
+	MEMMOVE(LSTR(*CompileCode)+pos+sizeof(dword),
 		LSTR(*CompileCode)+pos,
 		CompileCodeLen-pos);
 	*(dword *)(LSTR(*CompileCode)+pos) = d;
@@ -285,7 +287,7 @@ _CodeAddDWord( dword d )
 #endif
 
 /* --------------- _CodeAddPtr ---------------- */
-#if !defined(ALIGN)
+#ifndef ALIGN
 word
 #else
 dword
@@ -346,12 +348,14 @@ _Add2Lits( PLstr lit, int hasdot )
 		LINITSTR(newstr); Lfx(&newstr,1);
 		Lstrcpy(&newstr,tosearch);
 
+#ifdef USEOPTION
 		/* set the option for faster recognition */
 		if (LTYPE(newstr) == LINTEGER_TY)
 			LSETOPT(newstr,LOPTINT);
 		else
 		if (LTYPE(newstr) == LREAL_TY)
 			LSETOPT(newstr,LOPTREAL);
+#endif
 
 		if ((LTYPE(newstr)==LSTRING_TY) &&
 			!LISNULL(newstr) && Ldatatype(&newstr,'S'))
@@ -752,7 +756,7 @@ C_do(void)
 	if (identCMP("WHILE")) /* do nothing */;
 	else
 	if (identCMP("UNTIL")) /* do nothing */;
-	else {                  /* ----- REPETITION LOOP ----- */
+	else {		/* ----- REPETITION LOOP ----- */
 		if (idxFOR)
 			Lerror(ERR_INVALID_DO_SYNTAX,0);
 		idxFOR = ++idx;
@@ -799,7 +803,7 @@ C_do(void)
 
 		/* modify to the correct iterate address */
 		/* to check the UNTIL expr after the iteration */
-		lc->iterate = CompileCodeLen;
+		lc->Citerate = CompileCodeLen;
 
 		C_expr(exp_normal);
 		_CodeAddByte(jt_mn);	_CodeAddWord(leave_p);
@@ -1039,7 +1043,7 @@ C_iterate(void)
 		lc = DQPEEK(&Loop);
 	else
 		Lerror(ERR_SYMBOL_EXPECTED,2,&symbolstr);
-	_CodeAddByte(jmp_mn); _CodeAddWord(lc->iterate);
+	_CodeAddByte(jmp_mn); _CodeAddWord(lc->Citerate);
 } /* C_iterate */
 
 /* -------------------------------------------------------------- */
@@ -1080,7 +1084,7 @@ C_leave(void)
 		lc = DQPEEK(&Loop);
 	else
 		Lerror(ERR_SYMBOL_EXPECTED,2,&symbolstr);
-	_CodeAddByte(jmp_mn); _CodeAddWord(lc->leave);
+	_CodeAddByte(jmp_mn); _CodeAddWord(lc->Cleave);
 } /* C_leave */
 
 /* -------------------------------------------------------------- */

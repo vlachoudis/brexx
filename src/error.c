@@ -1,12 +1,14 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/error.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/error.c,v 1.2 1999/11/26 13:13:47 bnv Exp $
  * $Log: error.c,v $
+ * Revision 1.2  1999/11/26 13:13:47  bnv
+ * Changed: To use the new macros
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
  */
 
-#include <bnv.h>
 #include <stdarg.h>
 #include <lstring.h>
 
@@ -89,23 +91,24 @@ Rerror( int errno, int subno, ... )
 		if (symbolptr==NULL)	/* we are in intepret */
 			RxSetSpecialVar(SIGLVAR,line);
 
+#ifndef WIN
 		va_start(ap,subno);
-		Lerrortext(&errmsg,errno,subno,ap);
+		Lerrortext(&errmsg,errno,subno,&ap);
 		va_end(ap);
 
 		if (LLEN(errmsg)==0)
-			fprintf(stderr," +++ Ooops unknown error %d.%d +++\n",errno,subno);
+			fprintf(STDERR," +++ Ooops unknown error %d.%d +++\n",errno,subno);
 		else {
 			LASCIIZ(errmsg);
 			if (subno==0)
-				fprintf(stderr,
+				fprintf(STDERR,
 					"Error %d running %s, line %d: %s\n",
 						errno,
 						LSTR(rxf->filename),
 						line,
 						LSTR(errmsg));
 			else 
-				fprintf(stderr,
+				fprintf(STDERR,
 					"Error %d.%d running %s, line %d: %s\n",
 						errno,
 						subno,
@@ -113,6 +116,20 @@ Rerror( int errno, int subno, ... )
 						line,
 						LSTR(errmsg));
 		}
+#else
+		{
+			PUTS("Error ");
+			PUTINT(errno,0,10);
+			PUTS(" running ");
+			PUTS(LSTR(rxf->filename));
+			PUTS(" line ");
+			PUTINT(line,0,10);
+			PUTS(": ");
+			Lerrortext(&errmsg,errno,subno,NULL);
+			Lprint(NULL,&errmsg);
+			PUTCHAR('\n');
+		}
+#endif
 		RxReturnCode = errno;
 		longjmp(_exit_trap,JMP_EXIT);
 	}
