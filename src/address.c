@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/address.c,v 1.2 1999/03/10 16:53:32 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/address.c,v 1.3 1999/11/26 13:13:02 bnv Exp $
  * $Log: address.c,v $
+ * Revision 1.3  1999/11/26 13:13:02  bnv
+ * Added: Windows CE support.
+ *
  * Revision 1.2  1999/03/10 16:53:32  bnv
  * Added MSC support
  *
@@ -9,7 +12,6 @@
  *
  */
 
-#include <bnv.h>
 #include <string.h>
 #include <stdlib.h>
 #include <lstring.h>
@@ -20,10 +22,12 @@
 #include <compile.h>
 #include <interpre.h>
 
+#ifndef WIN
+
 #if defined(MSDOS) || defined(__WIN32__)
 #	include <io.h>
-#if !defined(_MSC_VER)
-#		include <dir.h>
+#ifndef _MSC_VER
+#	include <dir.h>
 #endif
 #	include <process.h>
 #	if defined(__BORLANDC__) && !defined(__WIN32__)
@@ -32,12 +36,12 @@
 #elif defined(__MPW__)
 #elif defined(_MSC_VER)
 #else
+#	include <fcntl.h>
 #	include <unistd.h>
 #endif
 
-#include <fcntl.h>
-#include <string.h>
 #include <sys/stat.h>
+#include <string.h>
 
 #ifndef S_IREAD
 #	define S_IREAD 0
@@ -49,8 +53,8 @@
 #define LIFO		2
 #define STACK		3
 
-#define STDIN		0
-#define STDOUT		1
+#define LOW_STDIN	0
+#define LOW_STDOUT	1
 
 /* ---------------------- chkcmd4stack ---------------------- */
 static void
@@ -125,9 +129,9 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr)
 			}
 			fclose(f);
 
-			old_stdin = dup(STDIN);
+			old_stdin = dup(LOW_STDIN);
 			filein = open(fnin,S_IREAD);
-			dup2(filein,STDIN);
+			dup2(filein,LOW_STDIN);
 			close(filein);
 		} else
 			in = FALSE;
@@ -145,9 +149,9 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr)
 			}
 		STRCAT(fnout,"OXXXXXX");
 		mktemp(fnout);
-		old_stdout = dup(STDOUT);
+		old_stdout = dup(LOW_STDOUT);
 		fileout = creat(fnout,S_IWRITE);
-		dup2(fileout,STDOUT);
+		dup2(fileout,LOW_STDOUT);
 		close(fileout);
 	}
 
@@ -161,16 +165,16 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr)
 
 	/* --- restore input --- */
 	if (in) {
-		close(STDIN);
-		dup2(old_stdin,STDIN);
+		close(LOW_STDIN);
+		dup2(old_stdin,LOW_STDIN);
 		close(old_stdin);
 		remove(fnin);
 	}
 
 	/* --- restore output --- */
 	if (out) {
-		close(STDOUT);
-		dup2(old_stdout,STDOUT);  /* restore stdout */
+		close(LOW_STDOUT);
+		dup2(old_stdout,LOW_STDOUT);  /* restore stdout */
 		close(old_stdout);
 #ifndef MSDOS
 		chmod(fnout,0666);
@@ -178,7 +182,7 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr)
 		if ((f=fopen(fnout,"r"))!=NULL) {
 			if (resultstr) {
 				Lread(f,resultstr,LREADFILE);
-#if defined(RMLAST)
+#ifdef RMLAST
 				if (LSTR(*resultstr)[LLEN(*resultstr)-1]=='\n')
 					LLEN(*resultstr)--;
 #endif
@@ -203,11 +207,13 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr)
 
 	return RxReturnCode;
 } /* RxRedirectCmd */
+#endif
 
 /* ------------------ RxExecuteCmd ----------------- */
 int
 RxExecuteCmd( PLstr cmd, PLstr env )
 {
+#ifndef WIN
 	int	in,out;
 	Lstr	cmdN;
 
@@ -244,12 +250,50 @@ RxExecuteCmd( PLstr cmd, PLstr env )
 	if (RxReturnCode) {
 		if (_Proc[_rx_proc].trace & (error_trace | normal_trace)) {
 			TraceCurline(NULL,TRUE);
-			fprintf(stderr,"       +++ RC(%d) +++\n",RxReturnCode);
+			fprintf(STDERR,"       +++ RC(%d) +++\n",RxReturnCode);
 			if (_Proc[_rx_proc].interactive_trace)
 				TraceInteractive(FALSE);
 		}
 		if (_Proc[_rx_proc].condition & SC_ERROR)
 			RxSignalCondition(SC_ERROR);
 	}
+#else
+	size_t	len;
+	char	*ch;
+	Lstr	file, args;
+	TCHAR	*uFile, *uArgs;
+	PROCESS_INFORMATION p;
+
+	LINITSTR(file);
+	LINITSTR(args);
+
+	ch = LSTR(*cmd);
+	if ((*ch=='\'') || (*ch=='\"')) {
+		ch = STRCHR(ch+1,*ch);
+		if (ch)
+			len = (DWORD)ch - (DWORD)LSTR(*cmd);
+		else
+			len = LLEN(*cmd);
+		Lsubstr(&file, cmd, 2, len-1, ' ');
+		Lsubstr(&args, cmd, len+3, LREST, ' ');
+	} else {
+		Lword(&file, cmd, 1);
+ 		Lsubword(&args, cmd, 2, LREST);
+	}
+
+	uFile = (TCHAR*)MALLOC(sizeof(TCHAR)*LLEN(file)+2,NULL);
+	uArgs = (TCHAR*)MALLOC(sizeof(TCHAR)*LLEN(args)+2,NULL);
+	mbstowcs(uFile,LSTR(file),LLEN(file));	uFile[LLEN(file)] = (TCHAR)0;
+	mbstowcs(uArgs,LSTR(args),LLEN(args));	uArgs[LLEN(args)] = (TCHAR)0;
+
+	CreateProcess(uFile, uArgs, NULL, NULL, FALSE, 0, NULL, NULL, NULL, &p);
+	CloseHandle(p.hProcess);
+	CloseHandle(p.hThread);
+
+	FREE(uFile);
+	FREE(uArgs);
+	LFREESTR(file);
+	LFREESTR(args);
+#endif
 	return RxReturnCode;
 } /* RxExecuteCmd */
