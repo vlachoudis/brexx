@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/datatype.c,v 1.1 1998/07/02 17:17:00 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/datatype.c,v 1.2 1999/11/26 09:53:28 bnv Exp $
  * $Log: datatype.c,v $
+ * Revision 1.2  1999/11/26 09:53:28  bnv
+ * Changed: To use the new macros.
+ *
  * Revision 1.1  1998/07/02 17:17:00  bnv
  * Initial revision
  *
@@ -36,12 +39,12 @@ Ldatatype( const PLstr str, char type )
 			break;
 		case 'B':
 			/* check blanks in allowed places */
-			if (isspace(LSTR(*str)[0])) return 0;
+			if (ISSPACE(LSTR(*str)[0])) return 0;
 			c = LSTR(*str) + (LLEN(*str)-1);
-			if (isspace(*c)) return 0;
+			if (ISSPACE(*c)) return 0;
 			digits = 0;
 			for (j=LLEN(*str); j>0; j--, c--) {
-				if (isspace(*c)) {
+				if (ISSPACE(*c)) {
 					/* Blanks need four Binary
 						Digits to the right of them */
 					if (digits%4!=0) return 0;
@@ -79,12 +82,12 @@ Ldatatype( const PLstr str, char type )
 			break;
 		case 'X':
 			/* check blanks in allowed places */
-			if (isspace(LSTR(*str)[0])) return 0;
+			if (ISSPACE(LSTR(*str)[0])) return 0;
 			c = LSTR(*str) + (LLEN(*str)-1);
-			if (isspace(*c)) return 0;
+			if (ISSPACE(*c)) return 0;
 			digits = 0;
 			for (j=LLEN(*str); j>0; j--, c--) {
-				if (isspace(*c)) {
+				if (ISSPACE(*c)) {
 					/* Blanks need a pair of Hex
 						Digits to the right of them */
 					if (digits%2!=0) return 0;
@@ -94,7 +97,6 @@ Ldatatype( const PLstr str, char type )
 				}
 			}
 			return 1;
-			break;
 		default:
 			return -1;
 	}
