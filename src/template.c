@@ -1,6 +1,9 @@
 /*
- * $Id: template.c,v 1.4 2002/06/11 12:37:38 bnv Exp $
+ * $Id: template.c,v 1.5 2003/08/04 01:29:58 bnv Exp $
  * $Log: template.c,v $
+ * Revision 1.5  2003/08/04 01:29:58  bnv
+ * Insert TMP before the NEG!
+ *
  * Revision 1.4  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -85,6 +88,7 @@ C_template(void)
 	bool	trigger, dot=FALSE;
 	bool	sign;
 	int	type;
+	CTYPE	pos;
 
 	_CodeAddByte(parse_mn);
 	while ((symbol!=semicolon_sy) && (symbol!=comma_sy)) {
@@ -111,8 +115,10 @@ C_template(void)
 				trigger = TRUE;
 				sign = (symbol==minus_sy);
 				nextsymbol();
+				pos = CompileCodeLen;
 				position();
 				if (sign) {
+					_CodeInsByte(pos,pushtmp_mn);
 					_CodeAddByte(neg_mn);
 					TraceByte( nothing_middle );
 				}
