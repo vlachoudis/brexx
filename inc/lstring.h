@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.h,v 1.9 2003/02/12 16:38:39 bnv Exp $
+ * $Id: lstring.h,v 1.10 2003/02/26 16:31:22 bnv Exp $
  * $Log: lstring.h,v $
+ * Revision 1.10  2003/02/26 16:31:22  bnv
+ * Added: LMKCONST
+ *
  * Revision 1.9  2003/02/12 16:38:39  bnv
  * Added: Lhashvalue
  *
@@ -35,6 +38,7 @@
 
 #include <bmem.h>
 #include <ldefs.h>
+#include <config.h>
 #ifdef WIN
 #	include <windows.h>
 #	include <winio.h>
@@ -83,6 +87,9 @@ typedef Lstr	*PLstr;
 #define LTYPE(L)	((L).type)
 #define LMAXLEN(L)	((L).maxlen)
 #define LOPT(L)		((L).options)
+#define	LMKCONST(L,s)	{LSTR(L)=(s); \
+			 LMAXLEN(L)=LLEN(L)=STRLEN(s); \
+			 LTYPE(L)=LSTRING_TY;}
 
 /* --- options --- */
 #define LOPTION(L,O)	((L).options & (O))
@@ -176,6 +183,10 @@ typedef Lstr	*PLstr;
 #define LNORMALISE(size)	((size) | 0x000F)
 #define LEXTRA	1
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* --------------- Lstr function prototypes --------------- */
 void  __CDECL Linit(LerrorFunc);	/* must be called at initialisation */
 
@@ -239,7 +250,7 @@ void  __CDECL Ldate   ( const PLstr datestr, char option );
 void  __CDECL Ldelstr ( const PLstr to, const PLstr str,
 			long start, long length );
 void  __CDECL Ldelword( const PLstr to, const PLstr str, long start, long length );
-void  __CDECL Lerrortext( const PLstr to, const int errno, const int subno, va_list *ap);
+void  __CDECL Lerrortext( const PLstr to, const int errn, const int subn, va_list *ap);
 void  __CDECL Lformat ( const PLstr to, const PLstr num, long before,
 			long after, long expp, long expt );
 dword __CDECL Lhashvalue( const PLstr s );
@@ -381,4 +392,9 @@ DECLMATH( tanh );
 	extern byte l2u[], u2l[];
 	extern LerrorFunc Lerror;
 #endif
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
