@@ -8,30 +8,6 @@
 ||
 */
 
-#ifdef RSXWIN
-
-#define BLACK   0
-#define RED     1
-#define GREEN   2
-#define YELLOW  3
-#define BLUE    4
-#define MAGENTA 5
-#define CYAN    6
-#define WHITE   7
-
-#define ANSI_GOTOXY(z,s)		printf("\033[%d;%dH", (s), (z))
-#define ANSI_CLEAR_SCREEN()		printf("\033[2J")
-#define ANSI_COLOR(f,b)			printf("\033[%d;%dm", (f) + 30, (b) + 40)
-#define ANSI_FG_LCOLOR(f)		printf("\033[0;%dm", (f) + 30)
-#define ANSI_FG_HCOLOR(f)		printf("\033[1;%dm", (f) + 30)
-#define ANSI_ERASE_EOL()		printf("\033[K")
-#define ANSI_MODE(m)			printf("\033[=%dh", (m))
-#define ANSI_PRINTF			printf
-
-enum text_modes { LASTMODE=-1, BW40=0, C40, BW80, C80, MONO=7, C4350=64 };
-
-#else
-
 #define ANSI_GOTOXY(z,s)		gotoxy(z,s)
 #define ANSI_CLEAR_SCREEN()		clrscr()
 #define ANSI_COLOR(f,b)			textcolor(f) ; textbackground(b)
@@ -39,8 +15,6 @@ enum text_modes { LASTMODE=-1, BW40=0, C40, BW80, C80, MONO=7, C4350=64 };
 #define ANSI_ERASE_EOL()		clreol()
 #define ANSI_MODE(m)			textmode(m)
 #define ANSI_PRINTF			cprintf
-
-#endif
 
 #define ANSI_DEFAULT()			ANSI_PRINTF("\033[0m")
 #define ANSI_CURSOR_UP(n)		ANSI_PRINTF("\033[%dA", (n))
