@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/bintree.c,v 1.2 1999/03/10 16:53:32 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/bintree.c,v 1.3 1999/11/26 13:13:47 bnv Exp $
  * $Log: bintree.c,v $
+ * Revision 1.3  1999/11/26 13:13:47  bnv
+ * Changed: To use the new macros.
+ *
  * Revision 1.2  1999/03/10 16:53:32  bnv
  * *** empty log message ***
  *
@@ -25,7 +28,9 @@
  */
 
 #include <bmem.h>
-#include <stdio.h>
+#ifndef WCE
+#	include <stdio.h>
+#endif
 #include <string.h>
 #include <bintree.h>
 
@@ -233,6 +238,7 @@ BinDel( BinTree *tree, PLstr name, void (BinFreeData)(void *dat) )
 	BinDisposeLeaf(tree,thisid,BinFreeData);
 } /* BinDel */
 
+#ifdef __DEBUG__
 /* -------------------- BinPrint ---------------------- */
 void
 BinPrint(BinLeaf *leaf)
@@ -245,9 +251,9 @@ BinPrint(BinLeaf *leaf)
 
 	BinPrint(leaf->left);
 
-	for (i=0; i<depth-3; i++) putchar(' ');
-	putchar('\"');
-	Lprint(stdout,&(leaf->key));
+	for (i=0; i<depth-3; i++) PUTCHAR(' ');
+	PUTCHAR('\"');
+	Lprint(STDOUT,&(leaf->key));
 	switch (LTYPE(leaf->key)) {
 		case LINTEGER_TY:
 			printf("\"d = ");
@@ -259,15 +265,16 @@ BinPrint(BinLeaf *leaf)
 			printf("\"s = ");
 			break;
 	}
-	/* Lprint(stdout,leaf->value); */
+	/* Lprint(STDOUT,leaf->value); */
 	if (leaf->value)
 		printf("%p\n",leaf->value);
 	else
 		printf("NULL\n");
 	BinPrint(leaf->right);
 
-        depth -= 3;
+	depth -= 3;
 } /* BinPrint */
+#endif
 
 /* -------------------- LeafBalance --------------------- */
 static void
@@ -284,7 +291,7 @@ LeafBalance( BinLeaf *leaf, BinLeaf **head, BinLeaf **tail )
 
 	LeafBalance(leaf->left,  &Lhead, &Ltail);
 	LeafBalance(leaf->right, &Rhead, &Rtail);
-                
+
 	/* connect nodes */
 	/*  head - left - middle - right - tail */
 
