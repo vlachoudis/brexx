@@ -1,6 +1,9 @@
 /*
- * $Id: compile.c,v 1.10 2003/10/30 13:16:10 bnv Exp $
+ * $Id: compile.c,v 1.11 2004/03/27 08:33:34 bnv Exp $
  * $Log: compile.c,v $
+ * Revision 1.11  2004/03/27 08:33:34  bnv
+ * Corrected: If procedure was following on the next line after the label
+ *
  * Revision 1.10  2003/10/30 13:16:10  bnv
  * Variable name change
  *
@@ -458,7 +461,7 @@ _AddLabel( int type, size_t offset )
 		/* we want to add a function */
 		if (symbolisstr)
 			func->type = FT_SYSTEM;
-		else				
+		else
 		if (type==FT_FUNCTION) {
 			isbuiltin = C_isBuiltin(&symbolstr);
 			if (isbuiltin==NULL) {
@@ -1576,7 +1579,7 @@ C_signal( void)
 
 			_CodeAddByte(storeopt_mn);
 				_CodeAddByte(cnd);
-			
+
 			if (cnd==set_signal_name_opt) {
 				_CodeAddByte(pop_mn);
 					_CodeAddByte(1);
@@ -1729,8 +1732,8 @@ C_assign(void)
 	var = SYMBOLADD2LITS;
 	stem = !symbolhasdot && (LSTR(symbolstr)[LLEN(symbolstr)-1]=='.');
 	nextsymbol();
-	_CodeAddByte(create_mn);		/* CREATE		*/
-		_CodeAddPtr(var);	/* 	the variable	*/
+	_CodeAddByte(create_mn);	/* CREATE		*/
+		_CodeAddPtr(var);	/*	the variable	*/
 	_mustbe(eq_sy,ERR_INVALID_EXPRESSION,0);
 	if (C_expr(exp_assign)) {
 		_CodeAddByte(pop_mn);
@@ -1765,7 +1768,7 @@ C_instr(bool until_end)
 	}
 
 	CreateClause();
-	
+
 	if (symbol==label_sy)
 		Lerror(ERR_UNEXPECTED_LABEL,0);
 
@@ -1893,6 +1896,7 @@ RxCompile( void )
 				_AddLabel(FT_LABEL, CompileCodeLen);
 			CreateClause();
 			nextsymbol();
+			SKIP_SEMICOLONS;
 			if (identCMP("PROCEDURE")) {
 				nextsymbol();
 				C_procedure();
