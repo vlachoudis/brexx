@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/rxfiles.c,v 1.4 1999/02/10 15:43:36 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/rxfiles.c,v 1.5 1999/03/10 16:55:02 bnv Exp $
  * $Log: rxfiles.c,v $
+ * Revision 1.5  1999/03/10 16:55:02  bnv
+ * Added MSC support
+ *
  * Revision 1.4  1999/02/10 15:43:36  bnv
  * Long file name support for Win95/98/NT
  *
@@ -78,7 +81,7 @@ RxInitFiles(void)
 	Lscpy(file[i].name,"<STDERR>");   file[i].f = stderr;
 	file[i].line = 1;
 
-#ifdef MSDOS
+#if defined(MSDOS) && !defined(__WIN32__) && !defined(_MSC_VER)
 	i++;
 	LPMALLOC(file[i].name);
 	Lscpy(file[i].name,"<STDAUX>");   file[i].f = stdaux;
@@ -131,7 +134,7 @@ find_file( const PLstr fn )
 	LINITSTR(str); Lfx(&str,LLEN(*fn));
 	Lstrcpy(&str,fn);
 
-#if defined(MSDOS) || defined(DOS32)
+#if defined(MSDOS)
 	/* Make case insensity search */
 	Lupper(&str);
 #endif
@@ -187,7 +190,7 @@ open_file( const PLstr fn, const char *mode )
 		return -1;
 	}
 	LPMALLOC(file[i].name);
-#if defined(MSDOS) || defined(DOS32)
+#if defined(MSDOS)
 	/* For MSDOS or 32bit DOS store the name in uppercase */
 	Lupper(&str);
 #endif
