@@ -1,6 +1,9 @@
 /*
- * $Id: address.c,v 1.7 2002/06/11 12:37:38 bnv Exp $
+ * $Id: address.c,v 1.8 2003/10/30 13:14:55 bnv Exp $
  * $Log: address.c,v $
+ * Revision 1.8  2003/10/30 13:14:55  bnv
+ * Some corrections
+ *
  * Revision 1.7  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -107,31 +110,38 @@ chkcmd4stack(PLstr cmd, int *in, int *out )
 		*out = FIFO;
 } /* chkcmd4stack */
 
+/* -------------------- mkfntemp -------------------- */
+static void
+mkfntemp(char *fn, size_t length)
+{
+	int	l;
+	char	*c;
+
+	fn[0] = '\0'; c = getenv("TEMP");
+	if (c) STRCPY(fn,c);
+	l = STRLEN(fn);
+	if (l)
+		if (fn[l-1] != FILESEP) {
+			fn[l] = FILESEP;
+			fn[l+1] = '\0';
+		}
+	STRCAT(fn,"OXXXXXX");
+	MKTEMP(fn);
+} /* mkfntemp */
+
 /* ------------------ RxRedirectCmd ----------------- */
 int __CDECL
-RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr)
+RxRedirectCmd(PLstr cmd, int in, int out, PLstr outputstr)
 {
 	char	fnin[250], fnout[250];
 	int	old_stdin, old_stdout;
 	int	filein, fileout;
 	FILE	*f;
-	int	l;
-	char	*c;
 	PLstr	str;
 
 	/* --- redirect input --- */
 	if (in) {
-		fnin[0] = '\0'; c = getenv("TEMP");
-		if (c) STRCPY(fnin,c);
-		l = STRLEN(fnin);
-		if (l)
-			if (fnin[l-1] != FILESEP) {
-				fnin[l] = FILESEP;
-				fnin[l+1] = '\0';
-			}
-		STRCAT(fnin,"OXXXXXX");
-		MKTEMP(fnin);
-
+		mkfntemp(fnin,sizeof(fnin));
 		if ((f=fopen(fnin,"w"))!=NULL) {
 			while (StackQueued()>0) {
 				str = PullFromStack();
@@ -151,28 +161,20 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr)
 
 	/* --- redirect output --- */
 	if (out) {
-		fnout[0] = '\0'; c = getenv("TEMP");
-		if (c) STRCPY(fnout,c);
-		l = STRLEN(fnout);
-		if (l)
-			if (fnout[l-1] != FILESEP) {
-				fnout[l] = FILESEP;
-				fnout[l+1] = '\0';
-			}
-		STRCAT(fnout,"OXXXXXX");
-		MKTEMP(fnout);
+		mkfntemp(fnout,sizeof(fnout));
 		old_stdout = dup(LOW_STDOUT);
-		fileout = creat(fnout,S_IWRITE);
+		fileout = open(fnout,O_WRONLY|O_CREAT,0600);
 		dup2(fileout,LOW_STDOUT);
+//fprintf(stderr,"name=%s fileout=%d old_stdout=%d\n",fnout,fileout,old_stdout);
 		close(fileout);
 	}
 
 	/* --- Execute the command --- */
 	LASCIIZ(*cmd);
 #if defined(__BORLANDC__) && !defined(__WIN32__)
-	RxReturnCode = systemx(LSTR(*cmd));
+	rxReturnCode = systemx(LSTR(*cmd));
 #else
-	RxReturnCode = system(LSTR(*cmd));
+	rxReturnCode = system(LSTR(*cmd));
 #endif
 
 	/* --- restore input --- */
@@ -192,11 +194,11 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr)
 		chmod(fnout,0666);
 #endif
 		if ((f=fopen(fnout,"r"))!=NULL) {
-			if (resultstr) {
-				Lread(f,resultstr,LREADFILE);
+			if (outputstr) {
+				Lread(f,outputstr,LREADFILE);
 #ifdef RMLAST
-				if (LSTR(*resultstr)[LLEN(*resultstr)-1]=='\n')
-					LLEN(*resultstr)--;
+				if (LSTR(*outputstr)[LLEN(*outputstr)-1]=='\n')
+					LLEN(*outputstr)--;
 #endif
 			} else	/* push it to stack */
 				while (!feof(f)) {
@@ -213,11 +215,11 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr)
 				}
 
 			fclose(f);
-			remove(fnout); 
+			remove(fnout);
 		}
 	}
 
-	return RxReturnCode;
+	return rxReturnCode;
 } /* RxRedirectCmd */
 #endif
 
@@ -236,14 +238,14 @@ RxExecuteCmd( PLstr cmd, PLstr env )
 	LASCIIZ(cmdN);
 	if (env==NULL) {
 		chkcmd4stack(&cmdN,&in,&out);
-		RxReturnCode = RxRedirectCmd(&cmdN,in,out,FALSE);
+		rxReturnCode = RxRedirectCmd(&cmdN,in,out,FALSE);
 	} else
 	if (	!Lcmp(env,"COMMAND") ||
 		!Lcmp(env,"DOS")     ||
 		!Lcmp(env,"CMS")     ||
-		!Lstrcmp(env,&(SystemStr->key))) {
+		!Lstrcmp(env,&(systemStr->key))) {
 			chkcmd4stack(&cmdN,&in,&out);
-			RxReturnCode = RxRedirectCmd(&cmdN,in,out,FALSE);
+			rxReturnCode = RxRedirectCmd(&cmdN,in,out,FALSE);
 	}
 #if defined(__BORLANDC__) && !defined(__WIN32__)
 	else
@@ -253,20 +255,20 @@ RxExecuteCmd( PLstr cmd, PLstr env )
 	else
 		if (!Lcmp(env,"EXEC"))  ; /*execl(...); */
 	else
-		RxReturnCode = -3;
+		rxReturnCode = -3;
 
 	/* free string */
 	LFREESTR(cmdN);
 
-	RxSetSpecialVar(RCVAR,RxReturnCode);
-	if (RxReturnCode && !(_Proc[_rx_proc].trace & off_trace)) {
-		if (_Proc[_rx_proc].trace & (error_trace | normal_trace)) {
+	RxSetSpecialVar(RCVAR,rxReturnCode);
+	if (rxReturnCode && !(_proc[_rx_proc].trace & off_trace)) {
+		if (_proc[_rx_proc].trace & (error_trace | normal_trace)) {
 			TraceCurline(NULL,TRUE);
-			fprintf(STDERR,"       +++ RC(%d) +++\n",RxReturnCode);
-			if (_Proc[_rx_proc].interactive_trace)
+			fprintf(STDERR,"       +++ RC(%d) +++\n",rxReturnCode);
+			if (_proc[_rx_proc].interactive_trace)
 				TraceInteractive(FALSE);
 		}
-		if (_Proc[_rx_proc].condition & SC_ERROR)
+		if (_proc[_rx_proc].condition & SC_ERROR)
 			RxSignalCondition(SC_ERROR);
 	}
 #else
@@ -290,7 +292,7 @@ RxExecuteCmd( PLstr cmd, PLstr env )
 		Lsubstr(&args, cmd, len+3, LREST, ' ');
 	} else {
 		Lword(&file, cmd, 1);
- 		Lsubword(&args, cmd, 2, LREST);
+		Lsubword(&args, cmd, 2, LREST);
 	}
 
 	uFile = (TCHAR*)MALLOC(sizeof(TCHAR)*LLEN(file)+2,NULL);
@@ -307,5 +309,5 @@ RxExecuteCmd( PLstr cmd, PLstr env )
 	LFREESTR(file);
 	LFREESTR(args);
 #endif
-	return RxReturnCode;
+	return rxReturnCode;
 } /* RxExecuteCmd */
