@@ -16,17 +16,10 @@
 #define ID_EDIT_COPYALL                 412
 #define ID_EDIT_MARK                    414
 #define ID_EDIT_TRACKCURSOR             415
-#ifndef ID_EDIT_PASTE
-#define ID_EDIT_PASTE                   416
-#endif
-#ifndef ID_EDIT_CLEAR
-#define ID_EDIT_CLEAR                   417
-#endif
 #define ID_VIEW                         420
 #define IDS_CAP_VIEW                    413
 #define ID_VIEW_REFRESH                 440
 #define ID_VIEW_SCROLLBARS              458
-#define ID_VIEW_MENU                    459
 #define IDD_ABOUTBOX			500
 
 #define ID_FONT_6                       506
@@ -40,9 +33,6 @@
 #define ID_FONT_16                      516
 #define ID_FONT_18                      518
 #define ID_FONT_20                      520
-
-#define ID_FONTINC                      550
-#define ID_FONTDEC                      551
 
 // Next default values for new objects
 //
