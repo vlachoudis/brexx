@@ -1,6 +1,9 @@
 /*
- * $Id: bintree.c,v 1.5 2002/06/11 12:37:38 bnv Exp $
+ * $Id: bintree.c,v 1.6 2003/10/30 13:15:12 bnv Exp $
  * $Log: bintree.c,v $
+ * Revision 1.6  2003/10/30 13:15:12  bnv
+ * default removed
+ *
  * Revision 1.5  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -269,7 +272,6 @@ BinPrint(BinLeaf *leaf)
 		case LSTRING_TY:
 			PUTS("\"s = ");
 			break;
-		default:
 	}
 	//Lprint(STDOUT,leaf->value);
 	if (leaf->value)
