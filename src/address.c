@@ -1,8 +1,8 @@
 /*
- * $Id: address.c,v 1.10 2004/04/30 15:24:07 bnv Exp $
+ * $Id: address.c,v 1.11 2004/08/16 15:27:37 bnv Exp $
  * $Log: address.c,v $
- * Revision 1.10  2004/04/30 15:24:07  bnv
- * Corrected: arguments length for the windows version
+ * Revision 1.11  2004/08/16 15:27:37  bnv
+ * Include fcntl added
  *
  * Revision 1.9  2003/11/04 09:48:00  bnv
  * Corrected for the mkstemp
@@ -47,6 +47,7 @@
 
 #if defined(MSDOS) || defined(__WIN32__)
 #	include <io.h>
+#	include <fcntl.h>
 #ifndef _MSC_VER
 #	include <dir.h>
 #endif
