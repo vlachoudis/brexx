@@ -1,6 +1,9 @@
 /*
- * $Id: bio.c,v 1.5 2002/08/22 12:28:17 bnv Exp $
+ * $Id: bio.c,v 1.6 2003/02/26 16:30:00 bnv Exp $
  * $Log: bio.c,v $
+ * Revision 1.6  2003/02/26 16:30:00  bnv
+ * Export of the CrtWindow
+ *
  * Revision 1.5  2002/08/22 12:28:17  bnv
  * Added: port programming support in the open() function
  *
@@ -29,8 +32,6 @@
 static	char	buffer[128];
 static	int	bufferpos=0;
 static	BOOL	newline=FALSE;
-
-extern HWND _CrtWindow;
 
 /* ----- Bfopen ----- */
 BFILE*
