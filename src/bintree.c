@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/bintree.c,v 1.3 1999/11/26 13:13:47 bnv Exp $
+ * $Id: bintree.c,v 1.4 2001/06/25 18:51:48 bnv Exp $
  * $Log: bintree.c,v $
+ * Revision 1.4  2001/06/25 18:51:48  bnv
+ * Header -> Id
+ *
  * Revision 1.3  1999/11/26 13:13:47  bnv
  * Changed: To use the new macros.
  *
@@ -49,7 +52,6 @@ BinAdd( BinTree *tree, PLstr name, void *dat )
 	int	cmp, dep=0;
 
 	/* If tree is NULL then it will produce an error */
-
 	ThisEntry = tree->parent;
 	while (ThisEntry != NULL) {
 		LastEntry = ThisEntry;
@@ -250,26 +252,26 @@ BinPrint(BinLeaf *leaf)
 	depth += 3;
 
 	BinPrint(leaf->left);
-
 	for (i=0; i<depth-3; i++) PUTCHAR(' ');
 	PUTCHAR('\"');
 	Lprint(STDOUT,&(leaf->key));
 	switch (LTYPE(leaf->key)) {
 		case LINTEGER_TY:
-			printf("\"d = ");
+			PUTS("\"d = ");
 			break;
 		case LREAL_TY:
-			printf("\"r = ");
+			PUTS("\"r = ");
 			break;
 		case LSTRING_TY:
-			printf("\"s = ");
+			PUTS("\"s = ");
 			break;
+		default:
 	}
-	/* Lprint(STDOUT,leaf->value); */
+	//Lprint(STDOUT,leaf->value);
 	if (leaf->value)
 		printf("%p\n",leaf->value);
 	else
-		printf("NULL\n");
+		PUTS("NULL\n");
 	BinPrint(leaf->right);
 
 	depth -= 3;

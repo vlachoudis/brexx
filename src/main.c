@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/main.c,v 1.4 1999/11/26 13:13:47 bnv Exp $
+ * $Id: main.c,v 1.5 2001/06/25 18:51:48 bnv Exp $
  * $Log: main.c,v $
+ * Revision 1.5  2001/06/25 18:51:48  bnv
+ * Header -> Id
+ *
  * Revision 1.4  1999/11/26 13:13:47  bnv
  * Added: A filter option.
  *

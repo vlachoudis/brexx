@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/winmain.c,v 1.1 1999/11/26 13:13:47 bnv Exp $
+ * $Id: winmain.c,v 1.2 2001/06/25 18:51:48 bnv Exp $
  * $Log: winmain.c,v $
+ * Revision 1.2  2001/06/25 18:51:48  bnv
+ * Header -> Id
+ *
  * Revision 1.1  1999/11/26 13:13:47  bnv
  * Initial revision
  *
@@ -40,13 +43,15 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		(LPARAM)LoadImage(hInstance,MAKEINTRESOURCE(REXXICON),
 				IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR));
 
+/***
 	GetLocalTime(&time);
-	if (time.wYear>=2000 && time.wMonth>=3) {
+	if (time.wYear>=2000 && time.wMonth>=4) {
 		MessageBox(_CrtWindow,TEXT("This version is old.\n")
 			TEXT("Please download the new version from\n")
 			TEXT("ftp://ftp.gwdg.de/pub/languages/pub/rexx/brexx\n"),
 			TEXT("BRexx"),MB_OK|MB_ICONINFORMATION);
 	}
+***/
 
 	if (lpCmdLine[0]==0) {
 		WSetTitle("BRexx");
@@ -85,7 +90,6 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	Lstrip(&args,&tmp,LBOTH,' '); /* Strip arguments from spaces */
 	LASCIIZ(file);
 	LFREESTR(tmp);
-
 
 #ifdef __DEBUG__
 	__debug__ = FALSE;

@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/rexxfunc.c,v 1.2 1999/11/26 13:13:47 bnv Exp $
+ * $Id: rexxfunc.c,v 1.3 2001/06/25 18:51:48 bnv Exp $
  * $Log: rexxfunc.c,v $
+ * Revision 1.3  2001/06/25 18:51:48  bnv
+ * Header -> Id
+ *
  * Revision 1.2  1999/11/26 13:13:47  bnv
  * Added: Windows CE routines.
  *

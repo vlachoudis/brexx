@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/nextsymb.c,v 1.2 1999/11/26 13:13:47 bnv Exp $
+ * $Id: nextsymb.c,v 1.3 2001/06/25 18:51:48 bnv Exp $
  * $Log: nextsymb.c,v $
+ * Revision 1.3  2001/06/25 18:51:48  bnv
+ * Header -> Id
+ *
  * Revision 1.2  1999/11/26 13:13:47  bnv
  * Changed: Some spaces to tabs.
  *

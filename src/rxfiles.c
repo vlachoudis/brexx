@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/rxfiles.c,v 1.6 1999/11/26 13:13:47 bnv Exp $
+ * $Id: rxfiles.c,v 1.7 2001/06/25 18:51:48 bnv Exp $
  * $Log: rxfiles.c,v $
+ * Revision 1.7  2001/06/25 18:51:48  bnv
+ * Header -> Id
+ *
  * Revision 1.6  1999/11/26 13:13:47  bnv
  * Added: Windows CE support.
  * Changed: To use the new macros.

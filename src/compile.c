@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/compile.c,v 1.6 1999/11/26 13:13:47 bnv Exp $
+ * $Id: compile.c,v 1.7 2001/06/25 18:51:48 bnv Exp $
  * $Log: compile.c,v $
+ * Revision 1.7  2001/06/25 18:51:48  bnv
+ * Header -> Id
+ *
  * Revision 1.6  1999/11/26 13:13:47  bnv
  * Changed: To use the new macros
  *
@@ -1447,6 +1450,7 @@ C_select(void)
 	/* add a jump to the end of the structure */
 	jmp2end = _CodeAddByte(jmp_mn); end=_CodeAddWord(0);
 
+	CompileNesting++;
 	for (;;) {
 		SKIP_SEMICOLONS;
 		if (symbol==ident_sy) {
@@ -1495,6 +1499,7 @@ C_select(void)
 		} else
 			Lerror(ERR_WHEN_EXCEPTED,1,&symbolstr);
 	}
+	CompileNesting--;
 	nextsymbol();
 	if (symbol == ident_sy)
 		Lerror(ERR_UNMATCHED_END,4,&symbolstr);
@@ -1758,6 +1763,7 @@ C_instr(bool until_end)
 	else
 	if (symbol==ident_sy) {
 		if (!CMP("END")) {
+			CompileNesting--;
 			if (until_end)		/* Semicolon is NOT deleted */
 				return TRUE;
 			else

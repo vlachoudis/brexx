@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/variable.c,v 1.3 2000/12/15 14:06:11 bnv Exp $
+ * $Id: variable.c,v 1.4 2001/06/25 18:51:48 bnv Exp $
  * $Log: variable.c,v $
+ * Revision 1.4  2001/06/25 18:51:48  bnv
+ * Header -> Id
+ *
  * Revision 1.3  2000/12/15 14:06:11  bnv
  * Corrected: The RxScanVarTree(), variable aux wasn't fixed before using it.
  *

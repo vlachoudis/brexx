@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/rxmath.c,v 1.3 1999/11/26 13:13:47 bnv Exp $
+ * $Id: rxmath.c,v 1.4 2001/06/25 18:51:48 bnv Exp $
  * $Log: rxmath.c,v $
+ * Revision 1.4  2001/06/25 18:51:48  bnv
+ * Header -> Id
+ *
  * Revision 1.3  1999/11/26 13:13:47  bnv
  * Changed: The formatting of the code.
  *

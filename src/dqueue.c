@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/dqueue.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Id: dqueue.c,v 1.2 2001/06/25 18:51:48 bnv Exp $
  * $Log: dqueue.c,v $
+ * Revision 1.2  2001/06/25 18:51:48  bnv
+ * Header -> Id
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *

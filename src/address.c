@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/address.c,v 1.3 1999/11/26 13:13:02 bnv Exp $
+ * $Id: address.c,v 1.4 2001/06/25 18:51:48 bnv Exp $
  * $Log: address.c,v $
+ * Revision 1.4  2001/06/25 18:51:48  bnv
+ * Header -> Id
+ *
  * Revision 1.3  1999/11/26 13:13:02  bnv
  * Added: Windows CE support.
  *
@@ -118,7 +121,7 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr)
 				fnin[l+1] = '\0';
 			}
 		STRCAT(fnin,"OXXXXXX");
-		mktemp(fnin);
+		mkstemp(fnin);
 
 		if ((f=fopen(fnin,"w"))!=NULL) {
 			while (StackQueued()>0) {
@@ -148,7 +151,7 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr)
 				fnout[l+1] = '\0';
 			}
 		STRCAT(fnout,"OXXXXXX");
-		mktemp(fnout);
+		mkstemp(fnout);
 		old_stdout = dup(LOW_STDOUT);
 		fileout = creat(fnout,S_IWRITE);
 		dup2(fileout,LOW_STDOUT);
