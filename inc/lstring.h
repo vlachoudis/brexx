@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/lstring.h,v 1.3 1999/03/10 16:57:31 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/lstring.h,v 1.4 1999/05/14 13:06:01 bnv Exp $
  * $Log: lstring.h,v $
+ * Revision 1.4  1999/05/14 13:06:01  bnv
+ * Minor corrections
+ *
  * Revision 1.3  1999/03/10 16:57:31  bnv
  * Changed: from __GREEK__ to GREEK
  *
@@ -93,8 +96,8 @@ typedef Lstr	*PLstr;
 /* --- number --- */
 #define IS_NUMBER(A)	(_Lisnum(A) != LSTRING_TY)
 #define IS_INT(A)	(LREAL(A) == (double)(long)LREAL(A))
-#define TOREAL(A)	((LTYPE(A)==LINTEGER_TY)? (double) LINT(A):  LREAL(A) )
-#define TOINT(A)	((LTYPE(A)==LINTEGER_TY)? LINT(A):  (long)LREAL(A) )
+#define TOREAL(A)	((LTYPE(A)==LINTEGER_TY)? (double) LINT(A): LREAL(A))
+#define TOINT(A)	((LTYPE(A)==LINTEGER_TY)? LINT(A): (long)LREAL(A))
 #define ODD(n)		(n&0x1)
 
 /* --- allocate strings --- */
