@@ -1,6 +1,9 @@
 /*
- * $Id: lerror.h,v 1.4 2002/07/03 13:14:17 bnv Exp $
+ * $Id: lerror.h,v 1.5 2003/02/26 16:30:56 bnv Exp $
  * $Log: lerror.h,v $
+ * Revision 1.5  2003/02/26 16:30:56  bnv
+ * Minor changes
+ *
  * Revision 1.4  2002/07/03 13:14:17  bnv
  * Added: MYSQL Database error
  *
@@ -76,6 +79,7 @@
 #define	ERR_INVALID_STEM	54
 
 #define	ERR_DATABASE		55
+#define	ERR_LIBRARY		56
 
 #define	ERR_CANT_OPEN_FILE	57
 #define	ERR_FILE_NOT_FOUND	58
@@ -90,8 +94,8 @@
 /* ------------- error text  structure ------------------ */
 #define ERRNUM(a,b)	(((a)<<8) | (b))
 typedef struct terror_st {
-	word	errno;
-	char	*errmsg;
+	word	errorno;
+	char	*errormsg;
 } ErrorMsg;
 
 #endif
