@@ -1,6 +1,9 @@
 /*
- * $Id: nextsymb.c,v 1.5 2003/01/30 08:22:37 bnv Exp $
+ * $Id: nextsymb.c,v 1.6 2004/03/27 08:34:21 bnv Exp $
  * $Log: nextsymb.c,v $
+ * Revision 1.6  2004/03/27 08:34:21  bnv
+ * Corrected: Line number was not restored after the comma at the end of the line
+ *
  * Revision 1.5  2003/01/30 08:22:37  bnv
  * Corrected: comment after the comma_sy search
  *
@@ -27,7 +30,7 @@
 #include <nextsymb.h>
 
 static PLstr	ProgStr;	/* pointer that holds the program string*/
-static int	InitNextch;	/* NextChar initialised?  		*/
+static int	InitNextch;	/* NextChar initialised?		*/
 static bool	NextBlank;	/* Next char is blank			*/
 static bool	commentfound;	/* if comment found in nextchar		*/
 
@@ -273,6 +276,7 @@ _NEXTSYMBOL:
 			if (symbol==semicolon_sy &&
 				_lineno!=symboline) goto _NEXTSYMBOL;
 			symbolptr = Psymbolptr;
+			symboline = _lineno;
 			symbol = comma_sy;
 			NextBlank = FALSE;
 			symbolPrevBlank = TRUE;
