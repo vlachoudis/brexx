@@ -1,12 +1,13 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/expr.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/expr.c,v 1.2 1999/11/26 13:13:47 bnv Exp $
  * $Log: expr.c,v $
+ * Revision 1.2  1999/11/26 13:13:47  bnv
+ * Some spaces changed to tabs.
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
  */
-
-#include <bnv.h>
 
 #include <lerror.h>
 #include <lstring.h>
@@ -114,7 +115,7 @@ Exp1( void )
 
 	pos = CompileCodeLen;
 	Exp2();
-	while (symbol == and_sy) {         /* Logical AND  */
+	while (symbol == and_sy) {	/* Logical AND  */
 		if (CompileCodeLen==pos) Lerror(ERR_INVALID_EXPRESSION,0);
 		nextsymbol();
 		Exp2();
