@@ -1,18 +1,6 @@
 /*
- * $Id: bstr.h,v 1.5 2006/01/26 10:29:11 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/bstr.h,v 1.1 1999/11/29 14:58:00 bnv Exp $
  * $Log: bstr.h,v $
- * Revision 1.5  2006/01/26 10:29:11  bnv
- * Added: Bprintf support
- *
- * Revision 1.4  2004/08/16 15:30:30  bnv
- * Changed: Bstrchr
- *
- * Revision 1.3  2002/06/11 12:37:56  bnv
- * Added: CDECL
- *
- * Revision 1.2  2001/06/25 18:52:04  bnv
- * Header -> Id
- *
  * Revision 1.1  1999/11/29 14:58:00  bnv
  * Initial revision
  *
@@ -55,13 +43,12 @@ extern  char	_Bctype[];    /* Character type array */
 #define Btolower(c) ((c) + 'a' - 'A')
 
 /* ------------- Replacement for string.h --------------- */
-char*		__CDECL Bstrcpy(char *dest, const char *src);
-int		__CDECL Bstrcmp(const char *s1, const char *s2);
-char*		__CDECL Bstrcat(char *dest, const char *src);
-char*		__CDECL Bstrchr(const char *s, int c);
-unsigned	__CDECL Bstrlen(const char *s);
-char*		__CDECL Bl2a(	char *s, const long num,
+char*		Bstrcpy(char *dest, const char *src);
+int		Bstrcmp(const char *s1, const char *s2);
+char*		Bstrcat(char *dest, const char *src);
+const char*	Bstrchr(const char *s, int c);
+unsigned	Bstrlen(const char *s);
+char*		Bl2a(	char *s, const long num,
 			int length, const int radix);
-int		__CDECL	Bprintf(const char *format, ...);
 /* char*		Bltoa(long num, char *s); */
 #endif
