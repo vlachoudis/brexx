@@ -1,6 +1,10 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/trace.c,v 1.2 1999/03/10 16:55:35 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/trace.c,v 1.3 1999/11/26 13:13:47 bnv Exp $
  * $Log: trace.c,v $
+ * Revision 1.3  1999/11/26 13:13:47  bnv
+ * Changed: To use the new macros.
+ * Changed: To support 64-bit cpus.
+ *
  * Revision 1.2  1999/03/10 16:55:35  bnv
  * A bracket addition to keep compiler happy.
  *
@@ -11,8 +15,6 @@
 
 #define __TRACE_C__
 
-#include <bnv.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <lstring.h>
 
@@ -24,20 +26,19 @@
 #include <nextsymb.h>
 
 /* ---------- function prototypes ------------- */
-void    RxInitInterStr( PLstr str );
+void    RxInitInterStr();
 
 /* ---------- Extern variables ---------------- */
 extern	Clause	*CompileClause;		/* compile clauses	*/
 extern	int	CompileCurClause;	/* current clause	*/
-extern	ErrorMsg errortext[];	/* from lstring/errortxt.c */
+extern	ErrorMsg errortext[];		/* from lstring/errortxt.c */
 extern	bool	_in_nextsymbol;		/* from nextsymb.c	*/
 extern	int	_trace;			/* from interpret.c	*/
-extern	PLstr	RxStck[];		/*     -// -		*/
-extern	int	RxStckTop;		/*     -// -		*/
+extern	PLstr	RxStck[];		/*     -//-		*/
+extern	int	RxStckTop;		/*     -//-		*/
+extern	Lstr    _tmpstr[];		/*     -//-		*/
 
 static	char	TraceChar[] = {' ','>','L','V','C','O','F','.'};
-
-PLstr	InteractiveStr;
 
 /* ----------------- TraceCurline ----------------- */
 int
@@ -101,19 +102,36 @@ TraceCurline( RxFile **rxf, int print )
 		for (chend=ch; *chend!=';' && *chend!='\n'; chend++) /*do nothing*/;;
 	}
 
-	if (print) fprintf(stderr,"%6d *-* ",line);
-
+#ifndef WIN
 	if (print) {
 		int	i;
-		for (i=1; i<_nesting; i++) fputc(' ',stderr);
+
+		fprintf(STDERR,"%6d *-* ",line);
+		for (i=1; i<_nesting; i++) fputc(' ',STDERR);
 
 		while (*ch && ch<chend) {
 			if (*ch!='\n')
-				fputc(*ch,stderr);
+				fputc(*ch,STDERR);
 			ch++;
 		}
-		fputc('\n',stderr);
+		fputc('\n',STDERR);
 	}
+#else
+	if (print) {
+		int	i;
+
+		PUTINT(line,6,10);
+		PUTS(" *-* ");
+		for (i=1; i<_nesting; i++) PUTCHAR(' ');
+
+		while (*ch && ch<chend) {
+			if (*ch!='\n')
+				PUTCHAR(*ch);
+			ch++;
+		}
+		PUTCHAR('\n');
+	}
+#endif
 	return line;
 } /* TraceCurline */
 
@@ -134,7 +152,13 @@ TraceSet( PLstr trstr )
 		_Proc[_rx_proc].interactive_trace
 			= 1 - _Proc[_rx_proc].interactive_trace;
 		if (_Proc[_rx_proc].interactive_trace)
-			fprintf(stderr,"       +++ %s +++\n",errortext[2].errmsg);
+#ifndef WIN
+			fprintf(STDERR,"       +++ %s +++\n",errortext[2].errmsg);
+#else
+			PUTS("       +++ ");
+			PUTS(errortext[0].errmsg);
+			PUTS(" +++\n");
+#endif
 		ch++;
 	}
 
@@ -217,33 +241,46 @@ TraceInstruction( byte inst )
 	if ((inst & TB_MIDDLECHAR) != nothing_middle)
 		if (_Proc[_rx_proc].trace == intermediates_trace) {
 			int	i;
-			fprintf(stderr,"       >%c>  ",TraceChar[ inst & TB_MIDDLECHAR ]);
-			for (i=0; i<_nesting; i++) fputc(' ',stderr);
-			fputc('\"',stderr);
-			Lprint(stderr,RxStck[RxStckTop]);
-			fprintf(stderr,"\"\n");
+#ifndef WIN
+			fprintf(STDERR,"       >%c>  ",TraceChar[ inst & TB_MIDDLECHAR ]);
+			for (i=0; i<_nesting; i++) fputc(' ',STDERR);
+			fputc('\"',STDERR);
+			Lprint(STDERR,RxStck[RxStckTop]);
+			fprintf(STDERR,"\"\n");
+#else
+			PUTS("       >");
+			PUTCHAR(TraceChar[ inst & TB_MIDDLECHAR ]);
+			PUTS(">  ");
+			for (i=0; i<_nesting; i++) PUTCHAR(' ');
+			PUTCHAR('\"');
+			Lprint(NULL,RxStck[RxStckTop]);
+			PUTS("\"\n");
+#endif
 		}
 } /* TraceInstruction */
 /* ---------------- TraceInteractive ------------------- */
 int
 TraceInteractive( int frominterpret )
 {
-	LPMALLOC(InteractiveStr); Lfx(InteractiveStr,1);
-	Lread(stdin,InteractiveStr,LREADLINE);
-	if (!LLEN(*InteractiveStr)) {
-		LPFREE(InteractiveStr);
+	/* Read the interactive string into a tmp var */
+	RxStckTop++;
+	RxStck[RxStckTop] = &(_tmpstr[RxStckTop]);
+
+	Lread(STDIN,RxStck[RxStckTop],LREADLINE);
+	if (!LLEN(*RxStck[RxStckTop])) {
+		RxStckTop--;
 		return FALSE;
 	}
 
 	_trace = FALSE;
 
-	RxInitInterStr(InteractiveStr);
+	RxInitInterStr();
 	_Proc[_rx_proc].calltype = CT_INTERACTIVE;
 	if (frominterpret) {
 		_Proc[_rx_proc].calltype = CT_INTERACTIVE;
 		/* lets go again to NEWCLAUSE */
 #ifdef ALIGN
-		_Proc[_rx_proc].ip-=4;
+		_Proc[_rx_proc].ip-=sizeof(dword);
 #else
 		_Proc[_rx_proc].ip--;
 #endif
