@@ -1,6 +1,9 @@
 /*
- * $Id: interpre.c,v 1.15 2004/03/27 08:34:21 bnv Exp $
+ * $Id: interpre.c,v 1.16 2004/04/30 15:27:19 bnv Exp $
  * $Log: interpre.c,v $
+ * Revision 1.16  2004/04/30 15:27:19  bnv
+ * Type changes
+ *
  * Revision 1.15  2004/03/27 08:34:21  bnv
  * Corrected: SIGNAL VALUE was cleaning the stack before the call
  *
@@ -56,8 +59,6 @@
 #	include <stdio.h>
 #	include <signal.h>
 #endif
-
-#include <bmem.h>
 
 #include <lerror.h>
 #include <lstring.h>
@@ -415,7 +416,7 @@ I_StoreOption( const PLstr value, const int opt )
 inline
 #endif
 static int
-I_MakeIntArgs( const int na, const int realarg, const word existarg )
+I_MakeIntArgs( const int na, const int realarg, const CTYPE existarg )
 {
 	int	i,st;
 	word	bp;	/* bit position */
@@ -449,10 +450,10 @@ I_MakeIntArgs( const int na, const int realarg, const word existarg )
 inline
 #endif
 static void
-I_MakeArgs( const int calltype, const int na, const word existarg )
+I_MakeArgs( const int calltype, const int na, const CTYPE existarg )
 {
 	int	i,st;
-	word	bp;	/* bit position */
+	CTYPE	bp;	/* bit position */
 	RxProc	*pr;
 	Args	*arg;
 
@@ -502,10 +503,10 @@ I_CallFunction( void )
 	RxFunc	*func;
 	int	ct,nargs,realarg;
 	CTYPE	existarg, line;
-#ifndef WCE
-	PLstr	res;
-	int	st;
 	Lstr	cmd;
+	PLstr	res = NULL;
+#ifndef WCE
+	int	st;
 #endif
 #ifdef __DEBUG__
 	size_t	inst_ip;
@@ -821,9 +822,8 @@ RxInterpret( void )
 {
 	PLstr	a;
 	IdentInfo	*inf;
-	byte	na,nf;
 	CTYPE	w;
-	int	jc, errno, subno, found;
+	int	na, nf, jc, errno, subno, found;
 	PBinLeaf	litleaf,leaf;
 	RxFunc	*func;
 #ifdef __DEBUG__
@@ -1000,7 +1000,7 @@ outofcmd:
 				/* push an ARGument to stck	*/
 		case loadarg_mn:
 			INCSTACK;
-			na = *(Rxcip++);	/* argument to push */
+			na = (unsigned)*(Rxcip++);	/* argument to push */
 			if (_proc[_rx_proc].arg.a[na])
 				RxStck[RxStckTop] = _proc[_rx_proc].arg.a[na];
 			else {
@@ -1015,7 +1015,7 @@ outofcmd:
 				/* load an option	*/
 		case loadopt_mn:
 			INCSTACK;
-			nf = *(Rxcip++);	/* option to load */
+			nf = (unsigned)*(Rxcip++);	/* option to load */
 /**
 /// Maybe only pointer to Option!!!
 **/
@@ -1028,7 +1028,7 @@ outofcmd:
 				/* store an option	*/
 		case storeopt_mn:
 			DEBUGDISPLAY("STOREOPT");
-			nf = *(Rxcip++);	/* option to store */
+			nf = (unsigned)*(Rxcip++);	/* option to store */
 			I_StoreOption(RxStck[RxStckTop],nf);
 			RxStckTop--;
 			goto main_loop;
