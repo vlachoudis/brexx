@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.c,v 1.4 2001/06/25 18:49:48 bnv Exp $
+ * $Id: lstring.c,v 1.5 2002/06/06 08:21:29 bnv Exp $
  * $Log: lstring.c,v $
+ * Revision 1.5  2002/06/06 08:21:29  bnv
+ * Added: Readline support
+ *
  * Revision 1.4  2001/06/25 18:49:48  bnv
  * Header changed to Id
  *
@@ -27,6 +30,13 @@
 #ifndef WIN
 #	include <values.h>
 #endif
+
+#ifdef USE_READLINE
+#	include <sys/stat.h>
+#	include <readline/readline.h>
+#	include <readline/history.h>
+#endif
+
 /* ================= Lstring routines ================== */
 
 /* -------------------- Linit ---------------- */
@@ -51,6 +61,10 @@ Linit( LerrorFunc Lerr)
 		l2u[ (byte)clower[i] & 0xFF ] = cUPPER [i];
 		u2l[ (byte)cUPPER[i] & 0xFF ] = clower [i];
 	}
+
+#ifdef USE_READLINE
+	using_history();
+#endif
 
 	/* setup time */
 	_Ltimeinit();
