@@ -1,6 +1,9 @@
 /*
- * $Id: trace.c,v 1.6 2003/10/30 13:16:28 bnv Exp $
+ * $Id: trace.c,v 1.7 2004/04/30 15:27:34 bnv Exp $
  * $Log: trace.c,v $
+ * Revision 1.7  2004/04/30 15:27:34  bnv
+ * Type changes
+ *
  * Revision 1.6  2003/10/30 13:16:28  bnv
  * Variable name change
  *
@@ -248,7 +251,7 @@ TraceClause( void )
 
 /* ------------------ TraceInstruction ----------------- */
 void __CDECL
-TraceInstruction( byte inst )
+TraceInstruction( CIPTYPE inst )
 {
 	if ((inst & TB_MIDDLECHAR) != nothing_middle)
 		if (_proc[_rx_proc].trace == intermediates_trace) {
