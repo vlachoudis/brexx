@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/address.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/address.c,v 1.2 1999/03/10 16:53:32 bnv Exp $
  * $Log: address.c,v $
+ * Revision 1.2  1999/03/10 16:53:32  bnv
+ * Added MSC support
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
@@ -19,12 +22,15 @@
 
 #if defined(MSDOS) || defined(__WIN32__)
 #	include <io.h>
-#	include <dir.h>
+#if !defined(_MSC_VER)
+#		include <dir.h>
+#endif
 #	include <process.h>
 #	if defined(__BORLANDC__) && !defined(__WIN32__)
 #		include <systemx.h>
 #	endif
 #elif defined(__MPW__)
+#elif defined(_MSC_VER)
 #else
 #	include <unistd.h>
 #endif
