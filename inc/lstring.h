@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/lstring.h,v 1.1 1998/07/02 17:35:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/lstring.h,v 1.2 1998/09/09 08:44:59 bnv Exp $
  * $Log: lstring.h,v $
+ * Revision 1.2  1998/09/09 08:44:59  bnv
+ * Removed somed "const" in function calls
+ *
  * Revision 1.1  1998/07/02 17:35:50  bnv
  * Initial revision
  *
@@ -243,17 +246,17 @@ void  Ltranslate(const PLstr to, const PLstr from, const PLstr tableout,
 		const PLstr tablein, const char pad);
 void  Ltrunc  ( const PLstr to, const PLstr from, long n );
 long  Lverify ( const PLstr str, const PLstr ref, const bool match,
-		const long start);
+		long start);
 void  Lupper  ( const PLstr s );
-void  Lword   ( const PLstr to, const PLstr from, const long n );
-long  Lwordindex( const PLstr str, const long n );
-long  Lwordlength( const PLstr str, const long n);
-long  Lwordpos( const PLstr phrase, const PLstr s, const long n );
+void  Lword   ( const PLstr to, const PLstr from, long n );
+long  Lwordindex( const PLstr str, long n );
+long  Lwordlength( const PLstr str, long n);
+long  Lwordpos( const PLstr phrase, const PLstr s, long n );
 long  Lwords  ( const PLstr from );
 void  Lwrite  ( FILE *f, const PLstr line, const bool newline );
 void  Lx2b    ( const PLstr to, const PLstr from );
 void  Lx2c    ( const PLstr to, const PLstr from );
-void  Lx2d    ( const PLstr to, const PLstr from, const long n);
+void  Lx2d    ( const PLstr to, const PLstr from, long n);
 void  Lxrange ( const PLstr to, byte start, byte stop);
 
 #define Leq(A,B)	(Lequal(A,B)==0)
