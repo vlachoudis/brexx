@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/expose.c,v 1.1 1998/07/02 17:18:00 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/expose.c,v 1.2 1999/11/26 09:56:55 bnv Exp $
  * $Log: expose.c,v $
+ * Revision 1.2  1999/11/26 09:56:55  bnv
+ * Changed: Formatting
+ *
  * Revision 1.1  1998/07/02 17:18:00  bnv
  * Initial Version
  *
@@ -21,8 +24,10 @@ Lexpose( const PLstr to, const PLstr A, const PLstr B )
 	bi = Lrdint(B);
 
 	if (ar < 0 ) {
-		if (ODD(bi)) minusA = TRUE;
-		else         minusA = FALSE;
+		if (ODD(bi))
+			minusA = TRUE;
+		else
+			minusA = FALSE;
 		ar = - ar;
 	} else
 		minusA = FALSE;
