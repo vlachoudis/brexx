@@ -1,6 +1,9 @@
 /*
- * $Id: read.c,v 1.5 2001/07/20 14:28:37 bnv Exp $
+ * $Id: read.c,v 1.6 2002/06/06 08:21:55 bnv Exp $
  * $Log: read.c,v $
+ * Revision 1.6  2002/06/06 08:21:55  bnv
+ * Changed: Directive for READLINE
+ *
  * Revision 1.5  2001/07/20 14:28:37  bnv
  * Corrected: When pipeing the readline was echoing the line
  *
@@ -24,7 +27,7 @@
 
 #include <lstring.h>
 
-#ifdef READLINE
+#ifdef USE_READLINE
 #	include <sys/stat.h>
 #	include <readline/readline.h>
 #	include <readline/history.h>
@@ -50,7 +53,7 @@ Lread( FILEP f, const PLstr line, long size )
 		}
 	} else
 	if (size==0) {			/* Read a single line */
-#ifdef READLINE
+#ifdef USE_READLINE
 		if (f==STDIN) {
 			struct stat buf;
 			fstat(0,&buf);
