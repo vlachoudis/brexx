@@ -1,6 +1,10 @@
 /*
- * $Id: os.h,v 1.6 2003/02/12 16:38:39 bnv Exp $
+ * $Id: os.h,v 1.7 2003/11/04 09:48:17 bnv Exp $
  * $Log: os.h,v $
+ * Revision 1.7  2003/11/04 09:48:17  bnv
+ * REMOVED: the mkstemp
+ * mkstemp was openning the file and returing the file handle
+ *
  * Revision 1.6  2003/02/12 16:38:39  bnv
  * Added: pragma to disable the signed/unsigned comparison warning
  *
@@ -33,7 +37,7 @@
  * General
  *	ALIGN	- Align the code in 4-bytes (used for RISC machines)
  *	RMLAST	- If the last newline should be remove from the
- * 		  Redirected commands
+ *		  Redirected commands
  *	INLINE	- Use inline in some routines to speed up the code.
  *	GREEK	- Support for the GREEK character set.
  *
@@ -206,7 +210,7 @@
 #	define	STRCAT		strcat
 #	define	STRCHR		strchr
 #	define	STRLEN		strlen
-#	define	MKTEMP		mkstemp
+#	define	MKTEMP		mktemp
 #else
 #	define	STRCPY		Bstrcpy
 #	define	STRCMP		Bstrcmp
