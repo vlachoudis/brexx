@@ -1,6 +1,9 @@
 /*
- * $Id: hashvalu.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
+ * $Id: hashvalu.c,v 1.5 2003/01/30 08:22:20 bnv Exp $
  * $Log: hashvalu.c,v $
+ * Revision 1.5  2003/01/30 08:22:20  bnv
+ * Java algorithm used
+ *
  * Revision 1.4  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -13,18 +16,21 @@
  * Revision 1.1  1998/07/02 17:18:00  bnv
  * Initial Version
  *
+ * Similar hash code like in Java
+ *    hash = s[0]*31^(n-1) + s[1]*31^(n-2) + ... + s[n-1]
+ * The hash string of an empty string is zero
  */
 
 #include <lstring.h>
 
 /* --------------- Lhashvalue ------------------ */
-word __CDECL
+dword __CDECL
 Lhashvalue( const PLstr str )
 {
 #ifdef WCE
 #	error "Lhashvalue is not used!"
 #endif
-	word	value = 0;
+	dword	value = 0;
 	size_t	i,l;
 
 	if (LISNULL(*str)) return 0;
@@ -34,13 +40,13 @@ Lhashvalue( const PLstr str )
 		case LREAL_TY:    l = sizeof(double); break;
 		case LSTRING_TY:  l = MIN(255,LLEN(*str)); break;
 	}
-	for (i=0; i<l; i++) {
-		value ^= LSTR(*str)[i];
-#ifdef __BORLANDC__
-		value = _rotl(value,1);
-#else
-		value = ((value>>1) | (value<<7)) & 0xFF;
-#endif
+	for (i=0; i<l; i++)
+		value = 31*value + LSTR(*str)[i];
+/*	for (i=0; i<l; i+=4) {
+		for (j=0; j<4 && i+j<l; j++)
+			value ^= LSTR(*str)[i+j] << (8*j);
+		value = (value>>3) | (value<<29);
 	}
+*/
 	return value;
 } /* Lhashvalue */
