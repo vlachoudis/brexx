@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/rxstr.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/rxstr.c,v 1.2 1998/11/26 09:47:11 bnv Exp $
  * $Log: rxstr.c,v $
+ * Revision 1.2  1998/11/26 09:47:11  bnv
+ * Changed: var 'match' in verify must be boolean
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
@@ -408,7 +411,7 @@ R_translate( )
 void
 R_verify( )
 {
-	char	match='N';
+	bool	match=FALSE;
 	long	start;
 
 	if (!IN_RANGE(2,ARGN,4))
