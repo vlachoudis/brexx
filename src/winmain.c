@@ -1,6 +1,9 @@
 /*
- * $Id: winmain.c,v 1.4 2002/07/03 13:15:08 bnv Exp $
+ * $Id: winmain.c,v 1.5 2002/08/22 12:27:47 bnv Exp $
  * $Log: winmain.c,v $
+ * Revision 1.5  2002/08/22 12:27:47  bnv
+ * Deleted: time checking
+ *
  * Revision 1.4  2002/07/03 13:15:08  bnv
  * Changed: Version define
  *
@@ -36,7 +39,6 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	Lstr	args, file, tmp;
 	char	*prgname;
 	DWORD	len;
-	SYSTEMTIME	time;
 
 #if defined(WIN32) || defined(WCE)
 	_szRxAppKey = REGAPPKEY;
@@ -51,16 +53,6 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	SendMessage(_CrtWindow,WM_SETICON,FALSE,
 		(LPARAM)LoadImage(hInstance,MAKEINTRESOURCE(REXXICON),
 				IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR));
-
-/***
-	GetLocalTime(&time);
-	if (time.wYear>=2000 && time.wMonth>=4) {
-		MessageBox(_CrtWindow,TEXT("This version is old.\n")
-			TEXT("Please download the new version from\n")
-			TEXT("ftp://ftp.gwdg.de/pub/languages/pub/rexx/brexx\n"),
-			TEXT("BRexx"),MB_OK|MB_ICONINFORMATION);
-	}
-***/
 
 	if (lpCmdLine[0]==0) {
 		WSetTitle("BRexx");
