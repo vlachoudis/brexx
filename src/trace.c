@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/trace.c,v 1.3 1999/11/26 13:13:47 bnv Exp $
+ * $Id: trace.c,v 1.4 2001/06/25 18:51:23 bnv Exp $
  * $Log: trace.c,v $
+ * Revision 1.4  2001/06/25 18:51:23  bnv
+ * Added: Memory check in debug version when the trace is enabled.
+ *
  * Revision 1.3  1999/11/26 13:13:47  bnv
  * Changed: To use the new macros.
  * Changed: To support 64-bit cpus.
@@ -232,6 +235,9 @@ TraceClause( void )
 			return;
 	}
 	TraceCurline(NULL,TRUE);
+#ifdef __DEBUG__
+	mem_chk();
+#endif
 } /* TraceClause */
 
 /* ------------------ TraceInstruction ----------------- */
@@ -258,6 +264,7 @@ TraceInstruction( byte inst )
 #endif
 		}
 } /* TraceInstruction */
+
 /* ---------------- TraceInteractive ------------------- */
 int
 TraceInteractive( int frominterpret )
