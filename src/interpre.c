@@ -1,6 +1,9 @@
 /*
- * $Id: interpre.c,v 1.12 2002/07/03 13:15:08 bnv Exp $
+ * $Id: interpre.c,v 1.13 2002/08/22 12:31:28 bnv Exp $
  * $Log: interpre.c,v $
+ * Revision 1.13  2002/08/22 12:31:28  bnv
+ * Removed CR's
+ *
  * Revision 1.12  2002/07/03 13:15:08  bnv
  * Changed: Version define
  *

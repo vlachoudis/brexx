@@ -1,6 +1,9 @@
 /*
- * $Id: error.c,v 1.4 2002/06/11 12:37:38 bnv Exp $
+ * $Id: error.c,v 1.5 2002/08/22 12:31:28 bnv Exp $
  * $Log: error.c,v $
+ * Revision 1.5  2002/08/22 12:31:28  bnv
+ * Removed CR's
+ *
  * Revision 1.4  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
