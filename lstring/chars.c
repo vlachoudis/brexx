@@ -1,6 +1,9 @@
 /*
- * $Id: chars.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
+ * $Id: chars.c,v 1.5 2004/03/26 22:50:22 bnv Exp $
  * $Log: chars.c,v $
+ * Revision 1.5  2004/03/26 22:50:22  bnv
+ * Modified to handle FIFO, Devices and files
+ *
  * Revision 1.4  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -15,6 +18,11 @@
  *
  */
 
+#ifndef WIN
+#	include <sys/stat.h>
+#	include <unistd.h>
+#endif
+
 #include <lstring.h>
 
 /* ---------------- Lchars ------------------- */
@@ -25,6 +33,13 @@ Lchars( FILEP f )
 	return GetFileSize(f->handle,NULL) - FTELL(f);
 #else
 	long	l,chs;
+
+#ifndef WIN
+	struct stat buf;
+	fstat(fileno(f),&buf);
+	if (S_ISCHR(buf.st_mode) || S_ISFIFO(buf.st_mode))
+		return !FEOF(f);
+#endif
 
 	l = FTELL(f);		/* read current position */
 	FSEEK(f,0L,SEEK_END);	/* seek at the end */
