@@ -1,28 +1,16 @@
 /*
- * $Id: wordpos.c,v 1.5 2008/07/15 07:40:54 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/wordpos.c,v 1.1 1998/07/02 17:20:58 bnv Exp $
  * $Log: wordpos.c,v $
- * Revision 1.5  2008/07/15 07:40:54  bnv
- * #include changed from <> to ""
- *
- * Revision 1.4  2002/06/11 12:37:15  bnv
- * Added: CDECL
- *
- * Revision 1.3  2001/06/25 18:49:48  bnv
- * Header changed to Id
- *
- * Revision 1.2  1999/11/26 12:52:25  bnv
- * Changed: To use the new macros
- *
  * Revision 1.1  1998/07/02 17:20:58  bnv
  * Initial Version
  *
  */
 
 #include <ctype.h>
-#include "lstring.h"
+#include <lstring.h>
 
 /* ----------------- Lwordpos ----------------- */
-long __CDECL
+long
 Lwordpos( const PLstr phrase, const PLstr s, long n )
 {
 	long	idx;
@@ -55,15 +43,15 @@ Lwordpos( const PLstr phrase, const PLstr s, long n )
 		}
 		if (k >= LLEN(*phrase)) {
 			if (p>=LLEN(*s)) return n;
-			if (ISSPACE(LSTR(*s)[p])) return n;
+			if (isspace(LSTR(*s)[p])) return n;
 			k = lk;
 			LSKIPWORD(*s,lp);
 			LSKIPBLANKS(*s,lp);
 			if (lp>=LLEN(*s)) return 0;
 			p = lp;  n++;
 		} else
-			if (ISSPACE(LSTR(*phrase)[k])) {
-				if (ISSPACE(LSTR(*s)[p])) {
+			if (isspace(LSTR(*phrase)[k])) {
+				if (isspace(LSTR(*s)[p])) {
 					LSKIPBLANKS(*phrase,k);
 					if (k>=LLEN(*phrase)) return n;
 					LSKIPBLANKS(*s,p);
