@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/bintree.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/bintree.c,v 1.2 1999/03/10 16:53:32 bnv Exp $
  * $Log: bintree.c,v $
+ * Revision 1.2  1999/03/10 16:53:32  bnv
+ * *** empty log message ***
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
@@ -39,6 +42,8 @@ BinAdd( BinTree *tree, PLstr name, void *dat )
 	BinLeaf	*leaf;
 	bool	LeftTaken;
 	int	cmp, dep=0;
+
+	/* If tree is NULL then it will produce an error */
 
 	ThisEntry = tree->parent;
 	while (ThisEntry != NULL) {
