@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/interpre.c,v 1.4 1999/03/15 09:01:57 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/interpre.c,v 1.5 1999/03/15 15:21:36 bnv Exp $
  * $Log: interpre.c,v $
+ * Revision 1.5  1999/03/15 15:21:36  bnv
+ * Corrected to handle the error_trace
+ *
  * Revision 1.4  1999/03/15 09:01:57  bnv
  * Corrected: error_trace
  *
@@ -676,8 +679,10 @@ RxInitInterpret( void )
 	MEMSET(RxStck,0,(STCK_SIZE)*sizeof(PLstr));
 	RxStckTop = -1;
 	MEMSET(tmpstr,0,(STCK_SIZE)*sizeof(Lstr));
-	for (i=0; i<STCK_SIZE;i++)
+	for (i=0; i<STCK_SIZE;i++) {
 		Lfx(&(tmpstr[i]),0);
+		if (!LSTR(tmpstr[i])) Lerror(ERR_STORAGE_EXHAUSTED,0);
+	}
 } /* RxInitInterpret */
 
 /* ---------------- RxDoneInterpret --------------- */
@@ -1737,8 +1742,7 @@ outofcmd:
 			Lerror(ERR_INTERPRETER_FAILURE,0);
 	}
 chk4trace:
-	if (_trace)
-			TraceInstruction(*Rxcip);
+	if (_trace)	TraceInstruction(*Rxcip);
 	Rxcip++;	/* skip trace byte */
 	}
 interpreter_fin:
