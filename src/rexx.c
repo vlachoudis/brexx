@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.c,v 1.6 2003/10/30 13:16:28 bnv Exp $
+ * $Id: rexx.c,v 1.7 2004/08/16 15:28:54 bnv Exp $
  * $Log: rexx.c,v $
+ * Revision 1.7  2004/08/16 15:28:54  bnv
+ * Changed: name of mnemonic operands from xxx_mn to O_XXX
+ *
  * Revision 1.6  2003/10/30 13:16:28  bnv
  * Variable name change
  *
@@ -26,7 +29,6 @@
 #include <string.h>
 #include <setjmp.h>
 
-#include <bmem.h>
 #include <lerror.h>
 #include <lstring.h>
 
@@ -38,12 +40,14 @@
 #include <interpre.h>
 #include <nextsymb.h>
 
-#ifdef UNIX
+#if defined(UNIX)
 #	include <dlfcn.h>
+#elif defined(WCE)
+#	include <cefunc.h>
 #endif
 
 /* ----------- Function prototypes ------------ */
-void	__CDECL Rerror(int,int,...);
+void	__CDECL Rerror(const int,const int,...);
 void    __CDECL RxInitFiles(void);
 void    __CDECL RxDoneFiles(void);
 void	__CDECL RxRegFunctionDone(void);
@@ -133,7 +137,7 @@ RxFinalize( void )
 	BinDisposeLeaf(&rxLitterals,rxLitterals.parent,FREE);
 	BinDisposeLeaf(&_labels,_labels.parent,FREE);
 	RxDoneVariables();
-	RxRegFunctionDone();	/* initialise register functions 	*/
+	RxRegFunctionDone();	/* initialise register functions	*/
 } /* RxFinalize */
 
 /* ----------------- RxFileAlloc ------------------- */
@@ -174,7 +178,7 @@ void __CDECL
 RxFileFree(RxFile *rxf)
 {
 	RxFile *f;
-	
+
 	while (rxf) {
 		f = rxf;
 		rxf = rxf->next;
@@ -226,7 +230,7 @@ _LoadRexxLibrary(RxFile *rxf, PLstr libname)
 		Lscpy(&rxlib_path,rxlib);
 #else
 	pathlen = sizeof(pathvalue);
-	if (RXREGGETDATA(TEXT("LIB"),REG_SZ,pathvalue,&pathlen)) {
+	if (RXREGGETDATA(TEXT("LIB"),REG_SZ,(LPBYTE)pathvalue,&pathlen)) {
 		Lwscpy(&rxlib_path,pathvalue);
 #endif
 		LASCIIZ(rxlib_path);
@@ -276,8 +280,10 @@ int __CDECL
 RxLoadLibrary( PLstr libname, bool shared )
 {
 	RxFile  *rxf, *last;
+#ifdef UNIX
 	Lstr	tmpstr;
 	char	*dlerrorstr, *ch;
+#endif
 
 	/* Convert to ASCIIZ */
 	L2STR(libname); LASCIIZ(*libname);
@@ -300,11 +306,14 @@ RxLoadLibrary( PLstr libname, bool shared )
 			RxFileType(rxf);
 			goto LIB_LOADED;
 		}
+
 		/* Unfortunatelly we have to handle errors with strings */
+		/* Skip the errors when trying to load a rexx file instead of a dll-library */
 		if (dlerrorstr != NULL) {
 			ch = STRCHR(dlerrorstr,':')+2;
 			if (MEMCMP(ch,"invalid ELF header",18) &&
-			    MEMCMP(ch,"cannot open shared object file",30)) {
+			    MEMCMP(ch,"cannot open shared object file",30) &&
+			    MEMCMP(ch,"Win32 error ",12)) {
 				LMKCONST(tmpstr,dlerrorstr);
 				Lerror(ERR_LIBRARY,0,&tmpstr);
 			}
@@ -318,7 +327,9 @@ RxLoadLibrary( PLstr libname, bool shared )
 		return 1;
 	}
 
+#ifdef UNIX
 LIB_LOADED:
+#endif
 	/* find the last in the queue */
 	for (last = rxFileList; last->next != NULL; )
 		last = last->next;

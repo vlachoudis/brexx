@@ -1,6 +1,9 @@
 /*
- * $Id: expr.c,v 1.6 2004/03/27 08:34:07 bnv Exp $
+ * $Id: expr.c,v 1.7 2004/08/16 15:28:54 bnv Exp $
  * $Log: expr.c,v $
+ * Revision 1.7  2004/08/16 15:28:54  bnv
+ * Changed: name of mnemonic operands from xxx_mn to O_XXX
+ *
  * Revision 1.6  2004/03/27 08:34:07  bnv
  * Nothing
  *
@@ -45,7 +48,7 @@ static	int	exp_ct;
 static	size_t	exp_pos;
 
 /* ========================= C_expr ========================== */
-/* return if it had exited with another code than copy_mn */
+/* return if it had exited with another code than OP_COPY */
 /* so something is left in stack */
 int __CDECL
 C_expr( int calltype )
@@ -56,17 +59,17 @@ C_expr( int calltype )
 
 	/* If nothing was processed in the expr then push a Null string */
 	if (exp_pos == CompileCodeLen) {
-		_CodeAddByte(push_mn);
+		_CodeAddByte(OP_PUSH);
 			_CodeAddPtr(&(nullStr->key));
 			TraceByte( nothing_middle );
 	}
 	switch (exp_ct) {
 		case exp_assign:
-			_CodeAddByte(copy_mn);
+			_CodeAddByte(OP_COPY);
 			return FALSE;
 
 		case exp_tmp:
-			_CodeAddByte(copy2tmp_mn);
+			_CodeAddByte(OP_COPY2TMP);
 			break;
 
 		case exp_normal:
@@ -91,7 +94,7 @@ InsTmp( size_t pos, int pushtmp)
 			exp_ct = exp_normal;
 	} else {
 		if (pushtmp)
-			_CodeInsByte(pos,pushtmp_mn);
+			_CodeInsByte(pos,OP_PUSHTMP);
 		else
 			return TRUE;
 	}
@@ -107,7 +110,7 @@ Exp0( void )
 
 	pos = CompileCodeLen;
 	Exp1();
-	orxor = (symbol==xor_sy)? xor_mn : or_mn;
+	orxor = (symbol==xor_sy)? OP_XOR : OP_OR;
 	while ((symbol==or_sy) || (symbol==xor_sy)) {  /* Logical OR; XOR */
 		if (CompileCodeLen==pos) Lerror(ERR_INVALID_EXPRESSION,0);
 		nextsymbol(); 
@@ -117,7 +120,7 @@ Exp0( void )
 		InsTmp(pos,TRUE);
 		_CodeAddByte(orxor);
 			TraceByte( operator_middle );
-		orxor = (symbol==xor_sy)? xor_mn : or_mn;
+		orxor = (symbol==xor_sy)? OP_XOR : OP_OR;
 	}
 } /* Exp0 */
 
@@ -136,7 +139,7 @@ Exp1( void )
 		Exp2();
 		if (CompileCodeLen==pos2) Lerror(ERR_INVALID_EXPRESSION,0);
 		InsTmp(pos,TRUE);
-		_CodeAddByte( and_mn );
+		_CodeAddByte( OP_AND );
 			TraceByte( operator_middle );
 	}
 } /* Exp1 */
@@ -164,36 +167,36 @@ Exp2( void )
 *****/
 			InsTmp(pos,TRUE);	/* add the pushtmp byte */
 			switch (_symbol) {
-				case eq_sy  : _CodeAddByte(eq_mn);   break;
-				case ne_sy  : _CodeAddByte(ne_mn);   break;
-				case gt_sy  : _CodeAddByte(gt_mn);   break;
-				case ge_sy  : _CodeAddByte(ge_mn);   break;
-				case lt_sy  : _CodeAddByte(lt_mn);   break;
-				case le_sy  : _CodeAddByte(le_mn);   break;
-				case deq_sy : _CodeAddByte(deq_mn);  break;
-				case dne_sy : _CodeAddByte(dne_mn);  break;
-				case dgt_sy : _CodeAddByte(dgt_mn);  break;
-				case dge_sy : _CodeAddByte(dge_mn);  break;
-				case dlt_sy : _CodeAddByte(dlt_mn);  break;
-				case dle_sy : _CodeAddByte(dle_mn);  break;
+				case eq_sy  : _CodeAddByte(OP_EQ);   break;
+				case ne_sy  : _CodeAddByte(OP_NE);   break;
+				case gt_sy  : _CodeAddByte(OP_GT);   break;
+				case ge_sy  : _CodeAddByte(OP_GE);   break;
+				case lt_sy  : _CodeAddByte(OP_LT);   break;
+				case le_sy  : _CodeAddByte(OP_LE);   break;
+				case deq_sy : _CodeAddByte(OP_DEQ);  break;
+				case dne_sy : _CodeAddByte(OP_DNE);  break;
+				case dgt_sy : _CodeAddByte(OP_DGT);  break;
+				case dge_sy : _CodeAddByte(OP_DGE);  break;
+				case dlt_sy : _CodeAddByte(OP_DLT);  break;
+				case dle_sy : _CodeAddByte(OP_DLE);  break;
 				default:
 					Lerror(ERR_INTERPRETER_FAILURE,0);
 			}
 /*****
 //		} else {
 //			switch (_symbol) {
-//				case eq_sy  : _CodeAddByte(teq_mn);   break;
-//				case ne_sy  : _CodeAddByte(tne_mn);   break;
-//				case gt_sy  : _CodeAddByte(tgt_mn);   break;
-//				case ge_sy  : _CodeAddByte(tge_mn);   break;
-//				case lt_sy  : _CodeAddByte(tlt_mn);   break;
-//				case le_sy  : _CodeAddByte(tle_mn);   break;
-//				case deq_sy : _CodeAddByte(tdeq_mn);  break;
-//				case dne_sy : _CodeAddByte(tdne_mn);  break;
-//				case dgt_sy : _CodeAddByte(tdgt_mn);  break;
-//				case dge_sy : _CodeAddByte(tdge_mn);  break;
-//				case dlt_sy : _CodeAddByte(tdlt_mn);  break;
-//				case dle_sy : _CodeAddByte(tdle_mn);  break;
+//				case eq_sy  : _CodeAddByte(OP_TEQ);   break;
+//				case ne_sy  : _CodeAddByte(OP_TNE);   break;
+//				case gt_sy  : _CodeAddByte(OP_TGT);   break;
+//				case ge_sy  : _CodeAddByte(OP_TGE);   break;
+//				case lt_sy  : _CodeAddByte(OP_TLT);   break;
+//				case le_sy  : _CodeAddByte(OP_TLE);   break;
+//				case deq_sy : _CodeAddByte(OP_TDEQ);  break;
+//				case dne_sy : _CodeAddByte(OP_TDNE);  break;
+//				case dgt_sy : _CodeAddByte(OP_TDGT);  break;
+//				case dge_sy : _CodeAddByte(OP_TDGE);  break;
+//				case dlt_sy : _CodeAddByte(OP_TDLT);  break;
+//				case dle_sy : _CodeAddByte(OP_TDLE);  break;
 //				default:
 //					Lerror(ERR_INTERPRETER_FAILURE,0);
 //			}
@@ -225,9 +228,9 @@ Exp3( void )
 		if (CompileCodeLen==pos2) Lerror(ERR_INVALID_EXPRESSION,0);
 		InsTmp(pos,TRUE);	/* add the pushtmp byte */
 		if (_Concat || !_Pblank)
-			_CodeAddByte(concat_mn);
+			_CodeAddByte(OP_CONCAT);
 		else
-			_CodeAddByte(bconcat_mn);
+			_CodeAddByte(OP_BCONCAT);
 
 		TraceByte( operator_middle );
 
@@ -255,9 +258,9 @@ Exp4( void )
 		if (CompileCodeLen==pos2) Lerror(ERR_INVALID_EXPRESSION,0);
 		InsTmp(pos,TRUE);
 		if (_symbol==plus_sy)
-			_CodeAddByte(add_mn);
+			_CodeAddByte(OP_ADD);
 		else
-			_CodeAddByte(sub_mn);
+			_CodeAddByte(OP_SUB);
 		TraceByte( operator_middle );
 		_symbol = symbol;
 	}
@@ -283,10 +286,10 @@ Exp5( void )
 		if (CompileCodeLen==pos2) Lerror(ERR_INVALID_EXPRESSION,0);
 		InsTmp(pos,TRUE);
 		switch (_symbol) {
-			case times_sy  : _CodeAddByte(mul_mn);   break;
-			case div_sy    : _CodeAddByte(div_mn);   break;
-			case intdiv_sy : _CodeAddByte(idiv_mn);  break;
-			case mod_sy    : _CodeAddByte(mod_mn);   break;
+			case times_sy  : _CodeAddByte(OP_MUL);   break;
+			case div_sy    : _CodeAddByte(OP_DIV);   break;
+			case intdiv_sy : _CodeAddByte(OP_IDIV);  break;
+			case mod_sy    : _CodeAddByte(OP_MOD);   break;
 			default:
 				Lerror(ERR_INTERPRETER_FAILURE,0);
 		}
@@ -310,7 +313,7 @@ Exp6( void )
 		Exp7();
 		if (CompileCodeLen==pos2) Lerror(ERR_INVALID_EXPRESSION,0);
 		InsTmp(pos,TRUE);
-		_CodeAddByte(pow_mn);
+		_CodeAddByte(OP_POW);
 			TraceByte( operator_middle );
 	}
 } /* Exp6 */
@@ -340,9 +343,9 @@ Exp7( void )
 		if (CompileCodeLen==pos) Lerror(ERR_INVALID_EXPRESSION,0);
 		InsTmp(pos,TRUE);
 		if (_symbol==not_sy)
-			_CodeAddByte(not_mn);
+			_CodeAddByte(OP_NOT);
 		else
-			_CodeAddByte(neg_mn);
+			_CodeAddByte(OP_NEG);
 		TraceByte( operator_middle );
 	}
 } /* Exp7 */
@@ -352,13 +355,13 @@ static void __CDECL
 Exp8( void )
 {
 	if (symbol == ident_sy) {
-		_CodeAddByte(load_mn);
+		_CodeAddByte(OP_LOAD);
 			_CodeAddPtr(SYMBOLADD2LITS);
 			TraceByte( variable_middle );
 		nextsymbol();
 	} else
 	if (symbol==literal_sy) {
-		_CodeAddByte(push_mn);
+		_CodeAddByte(OP_PUSH);
 			_CodeAddPtr(SYMBOLADD2LITS_KEY);
 			TraceByte( litteral_middle );
 		nextsymbol();
@@ -392,7 +395,7 @@ C_function( void )
 	if ((exp_ct==exp_assign) && (exp_pos==CompileCodeLen))
 		exp_ct = exp_normal;
 	else
-		_CodeAddByte(pushtmp_mn);
+		_CodeAddByte(OP_PUSHTMP);
 
 	nextsymbol();
 	ia = lastarg = 0;
@@ -422,7 +425,7 @@ C_function( void )
 		}
 	}
 
-	_CodeAddByte(call_mn);
+	_CodeAddByte(OP_CALL);
 		_CodeAddPtr(lbl);	/* call pointer */
 		_CodeAddByte(lastarg);	/* arguments	*/
 		_CodeAddByte(realarg);	/* real args	*/

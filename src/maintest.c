@@ -1,6 +1,9 @@
 /*
- * $Id: maintest.c,v 1.7 2003/10/30 13:16:28 bnv Exp $
+ * $Id: maintest.c,v 1.8 2004/08/16 15:28:54 bnv Exp $
  * $Log: maintest.c,v $
+ * Revision 1.8  2004/08/16 15:28:54  bnv
+ * Changed: name of mnemonic operands from xxx_mn to O_XXX
+ *
  * Revision 1.7  2003/10/30 13:16:28  bnv
  * Variable name change
  *
@@ -113,11 +116,11 @@ printf("Label FOUND\n");
 			RxSetSpecialVar(SIGLVAR,line);
 			I_MakeArgs(ct,nargs,existarg);
 			Rxcip = (CIPTYPE*)((byte huge *)Rxcodestart+func->label);
-			Rxcip++;	/* skip the newclause_mn */
+			Rxcip++;	/* skip the OP_NEWCLAUSE */
 			if (_trace) TraceClause();
 
-			/* handle proc_mn code */
-			if (*Rxcip == proc_mn) {
+			/* handle OP_PROC code */
+			if (*Rxcip == OP_PROC) {
 				int	exposed;
 
 				/* give a unique program id */
