@@ -1,6 +1,9 @@
 /*
- * $Id: interpre.c,v 1.14 2003/10/30 13:16:28 bnv Exp $
+ * $Id: interpre.c,v 1.15 2004/03/27 08:34:21 bnv Exp $
  * $Log: interpre.c,v $
+ * Revision 1.15  2004/03/27 08:34:21  bnv
+ * Corrected: SIGNAL VALUE was cleaning the stack before the call
+ *
  * Revision 1.14  2003/10/30 13:16:28  bnv
  * Variable name change
  *
@@ -473,7 +476,7 @@ I_MakeArgs( const int calltype, const int na, const word existarg )
 
 	/* must doit reverse */
 	MEMSET(arg->a,0,sizeof(arg->a));
-	
+
 	st = RxStckTop;	/* stack position of arguments */
 	for (i=na-1; i>=0; i--) {
 		if (existarg & bp) {
@@ -900,7 +903,7 @@ outofcmd:
 		 *		w = word
 		 *		p = pointer
 		 */
-		 		/* START A NEW COMMAND */
+			/* START A NEW COMMAND */
 		case newclause_mn:
 			DEBUGDISPLAY0("NEWCLAUSE");
 			if (_trace) TraceClause();
@@ -1077,7 +1080,7 @@ outofcmd:
 				RxStck[RxStckTop] = LEAFVAL(leaf);
 			} else {
 				leaf = RxVarFind(VarScope,litleaf,&found);
-			
+
 				if (found)
 					RxStck[RxStckTop] = LEAFVAL(leaf);
 				else {
@@ -1090,7 +1093,7 @@ outofcmd:
 						inf->id = Rx_id;
 						inf->leaf[0] = leaf;
 					}
-				} 
+				}
 
 			}
 			goto main_loop;
@@ -1186,14 +1189,14 @@ outofcmd:
 			L2INT(RxStck[RxStckTop]);
 			goto main_loop;
 
-				/* LOWER 		*/
+				/* LOWER		*/
 				/* upper top stack	*/
 		case lower_mn:
 			DEBUGDISPLAY("LOWER");
 			Llower(RxStck[RxStckTop]);
 			goto main_loop;
 
-				/* UPPER 		*/
+				/* UPPER		*/
 				/* upper top stack	*/
 		case upper_mn:
 			DEBUGDISPLAY("UPPER");
@@ -1220,10 +1223,7 @@ outofcmd:
 				/* SIGNALVAL [address]	*/
 				/* get address from stack */
 		case signalval_mn:
-			DEBUGDISPLAY("SIGNALEVAL");
-
-			/* clear stack */
-			RxStckTop = _proc[_rx_proc].stacktop;
+			DEBUGDISPLAY("SIGNALVAL");
 
 			/* search for label */
 			L2STR(RxStck[RxStckTop]);
@@ -1231,6 +1231,10 @@ outofcmd:
 			if (leaf==NULL || ((RxFunc*)(leaf->value))->label == UNKNOWN_LABEL)
 				Lerror(ERR_UNEXISTENT_LABEL,1,RxStck[RxStckTop+1]);
 			func = (RxFunc*)(leaf->value);
+
+			/* clear stack */
+			RxStckTop = _proc[_rx_proc].stacktop;
+
 			/* jump */
 			Rxcip = (CIPTYPE*)((byte huge *)Rxcodestart + (size_t)(func->label));
 			goto main_loop;
