@@ -1,6 +1,9 @@
 /*
- * $Id: charin.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
+ * $Id: charin.c,v 1.5 2004/03/26 22:50:22 bnv Exp $
  * $Log: charin.c,v $
+ * Revision 1.5  2004/03/26 22:50:22  bnv
+ * *** empty log message ***
+ *
  * Revision 1.4  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -26,6 +29,6 @@ Lcharin( FILEP f, const PLstr line, const long start, const long length )
 	if (length<=0) {
 		LZEROSTR(*line);
 		return;
-	} 
+	}
 	Lread(f,line,length);
 } /* Lcharin */
