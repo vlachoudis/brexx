@@ -1,6 +1,9 @@
 /*
- * $Id: ldefs.h,v 1.2 2001/06/25 18:52:04 bnv Exp $
+ * $Id: ldefs.h,v 1.3 2004/08/16 15:31:09 bnv Exp $
  * $Log: ldefs.h,v $
+ * Revision 1.3  2004/08/16 15:31:09  bnv
+ * Changed: From float to double
+ *
  * Revision 1.2  2001/06/25 18:52:04  bnv
  * Header -> Id
  *
@@ -111,7 +114,7 @@ typedef int		bool;
 #define ROUND(a)	((a)>=0? (int)((a)+0.5): -(int)(0.5-(a)))
 #define CEILING(a)	((a)==(int)(a)? (int)(a): \
 			(a)>0? (int)(1+(int)(a)): -(int)(1+(int)(-(a))))
-#define FRAC(x)		((x)-(float)((int)(x)))
+#define FRAC(x)		((x)-(double)((int)(x)))
 #define SIGN(x)		((x)>0? 1:(((x)==0)?0:-1))
 #define SQR(x)		((x)*(x))
 
