@@ -1,8 +1,11 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/print.c,v 1.2 1999/02/10 15:45:16 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/print.c,v 1.3 1999/03/10 16:55:55 bnv Exp $
  * $Log: print.c,v $
+ * Revision 1.3  1999/03/10 16:55:55  bnv
+ * Correction for RXCONIO
+ *
  * Revision 1.2  1999/02/10 15:45:16  bnv
- * RXANSI support by Generoso Martello
+ * RXCONIO support by Generoso Martello
  *
  * Revision 1.1  1998/07/02 17:18:00  bnv
  * Initial Version
@@ -12,6 +15,16 @@
 #include <stdio.h>
 #include <lstring.h>
 
+#ifdef RSXWIN
+#define ANSI_FPRINTF(fd,fs,ff)		if (fd==stdout) printf(fs,ff); else fprintf(fd,fs,ff)
+#else
+#ifdef RXCONIO
+#define ANSI_FPRINTF(fd,fs,ff)		if (fd==stdout) cprintf(fs,ff); else fprintf(fd,fs,ff)
+#else
+#define ANSI_FPRINTF(fd,fs,ff)		fprintf(fd,fs,ff)
+#endif
+#endif
+
 /* ---------------- Lprint ------------------- */
 void
 Lprint( FILE *f, const PLstr str )
@@ -20,39 +33,34 @@ Lprint( FILE *f, const PLstr str )
 	char	*c;
 
 	if (str==NULL) {
-#ifdef RXANSI
-		if (f==stdout) cprintf("<NULL>");
-		else
-#endif
-		fprintf(f,"<NULL>");
+		ANSI_FPRINTF(f,"<NULL>",NULL);
 		return;
 	}
 
 	switch (LTYPE(*str)) {
 		case LSTRING_TY:
 			c = LSTR(*str);
+#if defined(RSXWIN) && defined(RXCONIO)
+			if (f==stdout) {
+				c[LLEN(*str)]='\0';
+				printf(c);
+			} else
+#endif
 			for (l=0; l<LLEN(*str); l++)
-#ifdef RXANSI
-				if (f==stdout) putch(*c++);
-				else
+#if defined(RXCONIO) && !defined(RSXWIN)
+				if (f==stdout) {
+					putch(*c++);
+				} else
 #endif
 				fputc(*c++,f);
 			break;
 
 		case LINTEGER_TY:
-#ifdef RXANSI
-			if (f==stdout) cprintf("%ld", LINT(*str));
-			else
-#endif
-			fprintf(f,"%ld", LINT(*str));
+			ANSI_FPRINTF(f,"%ld", LINT(*str));
 			break;
 
 		case LREAL_TY:
-#ifdef RXANSI
-			if (f==stdout) cprintf(formatStringToReal, LREAL(*str));
-			else
-#endif
-			fprintf(f, formatStringToReal, LREAL(*str));
+			ANSI_FPRINTF(f, formatStringToReal, LREAL(*str));
 			break;
 	}
 } /* Lprint */
