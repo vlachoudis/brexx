@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/variable.c,v 1.1 1998/07/02 17:34:50 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/variable.c,v 1.2 1999/11/26 13:13:47 bnv Exp $
  * $Log: variable.c,v $
+ * Revision 1.2  1999/11/26 13:13:47  bnv
+ * Changed: To use the new macros.
+ *
  * Revision 1.1  1998/07/02 17:34:50  bnv
  * Initial revision
  *
@@ -8,9 +11,8 @@
 
 #define __VARIABLE_C__
 
-#include <bnv.h>
+#include <ldefs.h>
 #include <bmem.h>
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -264,7 +266,7 @@ RxVarFind(const Scope scope, const PBinLeaf litleaf, bool *found)
 			aux = &(leafidx->key);
 			if (infidx==NULL) {
 				L2STR(aux);
-			        l = LLEN(varidx)+LLEN(*aux);
+				l = LLEN(varidx)+LLEN(*aux);
 				if (LMAXLEN(varidx) <= l) Lfx(&varidx, l);
 				MEMCPY(LSTR(varidx)+LLEN(varidx),LSTR(*aux),LLEN(*aux));
 				LLEN(varidx) = l;
@@ -274,7 +276,7 @@ RxVarFind(const Scope scope, const PBinLeaf litleaf, bool *found)
 				leafidx = infidx->leaf[0];
 				lptr = LEAFVAL(leafidx);
 				L2STR(lptr);
-			        l = LLEN(varidx)+LLEN(*lptr);
+				l = LLEN(varidx)+LLEN(*lptr);
 				if (LMAXLEN(varidx) <= l) Lfx(&varidx, l);
 				MEMCPY(LSTR(varidx)+LLEN(varidx),LSTR(*lptr),LLEN(*lptr));
 				LLEN(varidx) = l;
@@ -302,7 +304,7 @@ RxVarFind(const Scope scope, const PBinLeaf litleaf, bool *found)
 					infidx->leaf[0] = leafidx;
 					lptr = LEAFVAL(leafidx);
 					L2STR(lptr);
-				        l = LLEN(varidx)+LLEN(*lptr);
+					l = LLEN(varidx)+LLEN(*lptr);
 					if (LMAXLEN(varidx) <= l) Lfx(&varidx, l);
 					MEMCPY(LSTR(varidx)+LLEN(varidx),LSTR(*lptr),LLEN(*lptr));
 				LLEN(varidx) = l;
@@ -317,12 +319,12 @@ RxVarFind(const Scope scope, const PBinLeaf litleaf, bool *found)
 		if (_trace)
 			if (_Proc[_rx_proc].trace == intermediates_trace) {
 				int	i;
-				fprintf(stderr,"       >C>  ");
-				for (i=0;i<_nesting; i++) fputc(' ',stderr);
-				fputc('\"',stderr);
-				Lprint(stderr,varname);
-				Lprint(stderr,&varidx);
-				fprintf(stderr,"\"\n");
+				FPUTS("       >C>  ",STDERR);
+				for (i=0;i<_nesting; i++) FPUTC(' ',STDERR);
+				FPUTC('\"',STDERR);
+				Lprint(STDERR,varname);
+				Lprint(STDERR,&varidx);
+				FPUTS("\"\n",STDERR);
 			}
 
 		if (leaf==NULL) {
@@ -912,6 +914,7 @@ SystemPoolGet(PLstr name, PLstr value)
 {
 	char	*env;
 
+#ifndef WCE
 	L2STR(name); LASCIIZ(*name);
 	env = getenv(LSTR(*name));
 	if (env) {
@@ -921,12 +924,16 @@ SystemPoolGet(PLstr name, PLstr value)
 		LZEROSTR(*value);
 		return 1;
 	}
+#else
+        return 0;
+#endif
 } /* SystemPoolGet */
 
 /* ----- SystemPoolSet ----- */
 static int
 SystemPoolSet(PLstr name, PLstr value)
 {
+#ifndef WCE
 	L2STR(name); LASCIIZ(*name);
 	L2STR(value); LASCIIZ(*value);
 #ifdef HAS_SETENV
@@ -945,6 +952,9 @@ SystemPoolSet(PLstr name, PLstr value)
 		LFREESTR(str);
 		return rc;
 	}
+#endif
+#else
+        return 0;
 #endif
 } /* SystemPoolSet */
 
