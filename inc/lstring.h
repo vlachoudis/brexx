@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/inc/RCS/lstring.h,v 1.5 1999/11/29 14:58:00 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/inc/RCS/lstring.h,v 1.6 2000/12/15 16:44:02 bnv Exp $
  * $Log: lstring.h,v $
+ * Revision 1.6  2000/12/15 16:44:02  bnv
+ * Changed: LMAXNUMERICDIGITS from 15 to 14. To avoid overflow
+ *
  * Revision 1.5  1999/11/29 14:58:00  bnv
  * Changed: Some defines
  *
@@ -155,7 +158,7 @@ typedef Lstr	*PLstr;
 #define LREADINCSIZE	32
 #define LREADLINE	0
 #define LREADFILE	-1
-#define	LMAXNUMERICDIGITS	7
+#define	LMAXNUMERICDIGITS	14
 
 /* --- for interal use of lstring --- */
 /* With some extra chars */
