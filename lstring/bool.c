@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/bool.c,v 1.1 1998/07/02 17:16:35 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/bool.c,v 1.2 1999/11/26 09:52:45 bnv Exp $
  * $Log: bool.c,v $
+ * Revision 1.2  1999/11/26 09:52:45  bnv
+ * Changed: To make use of the LastScannedNumber
+ *
  * Revision 1.1  1998/07/02 17:16:35  bnv
  * Initial revision
  *
@@ -13,21 +16,18 @@
 int
 Lbool( const PLstr num )
 {
-	int	t;
 	long	i;
-	double	r;
 
 	switch (LTYPE(*num)) {
 		case LSTRING_TY:
-			t = _Lisnum(num);
-			if (t==LSTRING_TY) Lerror(ERR_UNLOGICAL_VALUE,0);
-			r = strtod(LSTR(*num),NULL);
-			i = (long)r;
-			if ((double)i != r)
+			if (_Lisnum(num)==LSTRING_TY)
+				Lerror(ERR_UNLOGICAL_VALUE,0);
+			i = (long)lLastScannedNumber;
+			if ((double)i != lLastScannedNumber)
 				Lerror(ERR_UNLOGICAL_VALUE,0);
 			break;
 		case LREAL_TY:
-			i = LREAL(*num);
+			i = (long)LREAL(*num);
 			if ((double)i != LREAL(*num))
 				Lerror(ERR_UNLOGICAL_VALUE,0);
 			break;
@@ -37,5 +37,5 @@ Lbool( const PLstr num )
 	}
 	if (i == 0 || i == 1) return i;
 	Lerror(ERR_UNLOGICAL_VALUE,0);
-	return -1;             /* Never gets here but keep compiler happy :-) */
+	return -1;	/* Never gets here but keep compiler happy :-) */
 } /* Lbool */
