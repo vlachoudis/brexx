@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.h,v 1.11 2003/02/12 16:39:17 bnv Exp $
+ * $Id: rexx.h,v 2.1 2003/02/26 16:33:09 bnv Exp $
  * $Log: rexx.h,v $
+ * Revision 2.1  2003/02/26 16:33:09  bnv
+ * Version 2.1
+ *
  * Revision 1.11  2003/02/12 16:39:17  bnv
  * 2.0.8
  *
@@ -66,9 +69,8 @@
 #endif
 
 /* ------------ some defines ------------------ */
-#define	VERSION		"2.0.8 "
-#define	VERSIONSTR	"REXX_BNV R"VERSION __DATE__
-#define	AUTHOR		"Vasilis N. Vlachoudis <Vasilis.Vlachoudis@cern.ch>"
+#define	VERSIONSTR	PACKAGE_STRING" "__DATE__
+#define	AUTHOR		PACKAGE_BUGREPORT
 #define REGAPPKEY	TEXT("Software\\Marmita\\BRexx")
 #define	SCIENTIFIC	0
 #define ENGINEERING	1
@@ -111,8 +113,10 @@
 /* ----------------- file structure --------------- */
 typedef
 struct trxfile {
-	Lstr	filename;	/* filename		*/
-	char	*filetype;	/* filetype in filename	*/
+	Lstr	name;		/* complete file path	*/
+	char	*filename;	/* filename in name	*/
+	char	*filetype;	/* filetype in name	*/
+	void	*libHandle;	/* Shared library handle*/
 	Lstr	file;		/* actual file		*/
 	struct trxfile *next;	/* prev in list		*/
 } RxFile;
@@ -190,40 +194,48 @@ EXTERN char	*_prgname;	/* point to argv[0]		*/
 EXTERN jmp_buf	_error_trap;	/* error trap for compile	*/
 EXTERN jmp_buf	_exit_trap;	/* exit from prg		*/
 
-EXTERN DQueue	StackList;	/* dble queue of dble queues	*/
+EXTERN DQueue	rxStackList;	/* dble queue of dble queues	*/
 
-EXTERN RxFile	*rxfile;	/* rexx file list		*/
-EXTERN int	RxReturnCode;	/* Global return code		*/
+EXTERN RxFile	*rxFileList;	/* rexx file list		*/
+EXTERN int	rxReturnCode;	/* Global return code		*/
 
 EXTERN int	_procidcnt;	/* procedure id counter		*/
-EXTERN RxProc	*_Proc;		/* procedure & function array	*/
+EXTERN RxProc	*_proc;		/* procedure & function array	*/
 EXTERN int	_nesting;	/* cur nesting set by TraceCurline */
 EXTERN int	_rx_proc;	/* current procedure id		*/
-EXTERN int	_Proc_size;	/* number of items in proc list	*/
+EXTERN int	_proc_size;	/* number of items in proc list	*/
 
 EXTERN PLstr	_code;		/* code of program		*/
 EXTERN BinTree	_labels;	/* Labels			*/
 
-EXTERN Args	Rxarg;		/* global arguments for internal routines */
+EXTERN Args	rxArg;		/* global arguments for internal routines */
 
-EXTERN BinTree	Litterals;	/* Litterals			*/
-EXTERN BinLeaf	*NullStr,	/* basic leaf Lstrings		*/
-		*ZeroStr,
-		*OneStr,
-		*ResultStr,
-		*SiglStr,
+EXTERN BinTree	rxLitterals;	/* Litterals			*/
+EXTERN BinLeaf	*nullStr,	/* basic leaf Lstrings		*/
+		*zeroStr,
+		*oneStr,
+		*resultStr,
+		*siglStr,
 		*RCStr,
-		*ErrorStr,
-		*HaltStr,
-		*SyntaxStr,
-		*SystemStr,
-		*NoValueStr,
-		*NotReadyStr;
+		*errorStr,
+		*haltStr,
+		*syntaxStr,
+		*systemStr,
+		*noValueStr,
+		*notReadyStr;
 
 /* ============= function prototypes ============== */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void	__CDECL RxInitialize( char *program_name );
 void	__CDECL RxFinalize( void );
-int	__CDECL RxLoadFile( RxFile *rxf );
+RxFile*	__CDECL RxFileAlloc( char *fname );
+void	__CDECL RxFileFree( RxFile *rxf );
+void	__CDECL RxFileType( RxFile *rxf );
+int	__CDECL RxFileLoad( RxFile *rxf );
+int	__CDECL RxLoadLibrary( PLstr libname, bool shared );
 int	__CDECL RxRun( char *filename, PLstr programstr,
 		PLstr arguments, PLstr tracestr, char *environment );
 
@@ -234,6 +246,10 @@ void	__CDECL RxSignalCondition( int );
 
 int	__CDECL RxRedirectCmd(PLstr cmd, int in, int out, PLstr resultstr);
 int	__CDECL RxExecuteCmd( PLstr cmd, PLstr env );
+
+#ifdef __cplusplus
+}
+#endif
 
 #undef EXTERN
 #endif
