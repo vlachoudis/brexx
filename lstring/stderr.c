@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/lstring/RCS/stderr.c,v 1.1 1998/07/02 17:18:00 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/lstring/RCS/stderr.c,v 1.2 1999/11/26 12:52:25 bnv Exp $
  * $Log: stderr.c,v $
+ * Revision 1.2  1999/11/26 12:52:25  bnv
+ * Changed: To use new macros
+ *
  * Revision 1.1  1998/07/02 17:18:00  bnv
  * Initial Version
  *
@@ -8,6 +11,9 @@
 
 #include <lstring.h>
 
+#ifdef WCE
+#	error "Lstderr: should not be included in the CE version"
+#endif
 /* ------------------ Lstderr ------------------- */
 void
 Lstderr( const int errno, const int subno, ... ) 
@@ -18,17 +24,17 @@ Lstderr( const int errno, const int subno, ... )
 	LINITSTR(errmsg);
 
 	va_start(ap,subno);
-	Lerrortext(&errmsg,errno,subno,ap);
+	Lerrortext(&errmsg,errno,subno,&ap);
 	va_end(ap);
 
 	if (LLEN(errmsg)==0)
-		fprintf(stderr,"Ooops unknown error %d.%d!!!\n",errno,subno);
+		fprintf(STDERR,"Ooops unknown error %d.%d!!!\n",errno,subno);
 	else {
 		LASCIIZ(errmsg);
 		if (subno==0)
-			fprintf(stderr,"Error %d: %s\n",errno,LSTR(errmsg));
+			fprintf(STDERR,"Error %d: %s\n",errno,LSTR(errmsg));
 		else 
-			fprintf(stderr,"Error %d.%d: %s\n",errno,subno,LSTR(errmsg));
+			fprintf(STDERR,"Error %d.%d: %s\n",errno,subno,LSTR(errmsg));
 	}
 
 	LFREESTR(errmsg);
