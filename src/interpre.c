@@ -1,6 +1,10 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/interpre.c,v 1.6 1999/05/14 12:31:22 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/interpre.c,v 1.7 1999/06/10 14:08:35 bnv Exp $
  * $Log: interpre.c,v $
+ * Revision 1.7  1999/06/10 14:08:35  bnv
+ * When a called procedure with local variables returne a variable
+ * the variable contents was freed first before copied to the RESULT.
+ *
  * Revision 1.6  1999/05/14 12:31:22  bnv
  * Minor changes
  *
@@ -1221,8 +1225,21 @@ outofcmd:
 // It is possible to do a DUP in the compile code of returnf
 **/
 				Lstrcpy(_Proc[_rx_proc].arg.r, RxStck[RxStckTop]);
-			else
+			else {
+				/* is the Variable space private? */
+				/* proc: PROCEDURE */
+				if (VarScope!=_Proc[_rx_proc-1].scope)
+					/* not a tmp var */
+					if (RxStck[RxStckTop] != &(tmpstr[RxStckTop]))
+					{
+						Lstrcpy(&(tmpstr[RxStckTop]),
+							RxStck[RxStckTop]);
+						RxStck[RxStckTop] =
+							&(tmpstr[RxStckTop]);
+					}
+				/* point the return data */
 				a = RxStck[RxStckTop];
+			}
 
 			I_ReturnProc();
 

@@ -1,6 +1,12 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/compile.c,v 1.4 1999/05/14 12:31:22 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/compile.c,v 1.5 1999/05/28 07:20:58 bnv Exp $
  * $Log: compile.c,v $
+ * Revision 1.5  1999/05/28 07:20:58  bnv
+ * ITERATE was jumping to the wrong position inside a "DO UNTIL" loop
+ *
+ * Revision 1.5  1999/05/27 10:13:37  bnv
+ * ITERATE was pointing to a wrong place in a "DO xxx UNTIL" loop
+ *
  * Revision 1.4  1999/05/14 12:31:22  bnv
  * Corrected a bug when registering a label_sy
  *
@@ -770,10 +776,13 @@ C_do(void)
 
 	CODEFIXUP(tmp,CompileCodeLen);
 	body_p = CompileCodeLen;
+
+	/* --- Create the main loop control --- */
 	if (dotype & DO_ASSIGN)
-		crloopctrl(iterate_p,leave_p,idx,CtrlVar);	/* create a loop control */
+		lc = crloopctrl(iterate_p,leave_p,idx,CtrlVar);
 	else
-		crloopctrl(body_p,leave_p,idx,CtrlVar);	/* create a loop control */
+		lc = crloopctrl(body_p,leave_p,idx,CtrlVar);
+
 
 	if (symbol==while_sy || identCMP("WHILE")) {
 		dotype |= DO_WHILE;
@@ -787,6 +796,11 @@ C_do(void)
 		_CodeAddByte(jmp_mn);
 			overuntil = _CodeAddWord(0);
 		untilexpr = CompileCodeLen;
+
+		/* modify to the correct iterate address */
+		/* to check the UNTIL expr after the iteration */
+		lc->iterate = CompileCodeLen;
+
 		C_expr(exp_normal);
 		_CodeAddByte(jt_mn);	_CodeAddWord(leave_p);
 		_CodeAddByte(jmp_mn);
