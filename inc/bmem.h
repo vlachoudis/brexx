@@ -1,6 +1,9 @@
 /*
- * $Id: bmem.h,v 1.4 2003/02/26 16:30:16 bnv Exp $
+ * $Id: bmem.h,v 1.5 2004/08/16 15:30:15 bnv Exp $
  * $Log: bmem.h,v $
+ * Revision 1.5  2004/08/16 15:30:15  bnv
+ * Added: Checking for WCE
+ *
  * Revision 1.4  2003/02/26 16:30:16  bnv
  * Added: config.h
  *
@@ -19,11 +22,11 @@
 #define __BMEM_H__
 
 #include <os.h>
-#include <config.h>
 #include <stdlib.h>
 #include <malloc.h>
+#include <config.h>
 
-#ifdef __DEBUG__
+#if defined(__DEBUG__) && !defined(WCE)
 #	define	MALLOC(s,d)	mem_malloc(s,d)
 #	define	REALLOC(p,s)	mem_realloc(p,s)
 #	define	FREE		mem_free
