@@ -1,6 +1,9 @@
 /*
- * $Id: compile.c,v 1.8 2002/06/11 12:37:38 bnv Exp $
+ * $Id: compile.c,v 1.9 2002/08/22 12:25:41 bnv Exp $
  * $Log: compile.c,v $
+ * Revision 1.9  2002/08/22 12:25:41  bnv
+ * Corrected: copy2tmp added before any call to C_template, to avoid errors like parse var a a b, that b is always null
+ *
  * Revision 1.8  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -1217,10 +1220,9 @@ C_parse(void)
 			nextsymbol();
 			_CodeAddByte(loadarg_mn);
 				_CodeAddByte(ai);
-			if (toupper) {
-				_CodeAddByte(copy2tmp_mn);
+			_CodeAddByte(copy2tmp_mn);
+			if (toupper)
 				_CodeAddByte(upper_mn);
-			}
 			C_template();
 			ai++;
 		} while (symbol==comma_sy);
@@ -1257,6 +1259,7 @@ C_parse(void)
 				_CodeAddPtr(SYMBOLADD2LITS);
 				TraceByte( variable_middle );
 			nextsymbol();
+			_CodeAddByte(copy2tmp_mn);
 		} else
 		if (identCMP("SOURCE")) {
 			nextsymbol();
@@ -1292,7 +1295,7 @@ C_parse(void)
 			old_statement = symbolstat;
 			symbolstat = in_parse_value_st;
 			nextsymbol();
-			C_expr(exp_normal);
+			C_expr(exp_tmp);
 			symbolstat = old_statement;
 			_mustbe( with_sy, ERR_INVALID_TEMPLATE,3 );
 			with_chk = TRUE;
@@ -1310,10 +1313,9 @@ C_parse(void)
 			Lerror(ERR_INV_SUBKEYWORD,12+toupper,&symbolstr);
 
 		/* --- Common Code --- */
-		if (toupper) {
-			_CodeAddByte(copy2tmp_mn);
+		if (toupper)
 			_CodeAddByte(upper_mn);
-		}
+
 		/* skip WITH if exist */
 		if (identCMP("WITH") && !with_chk)
 			nextsymbol();
