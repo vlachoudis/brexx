@@ -1,6 +1,9 @@
 /*
- * $Header: /home/bnv/tmp/brexx/src/RCS/compile.c,v 1.3 1999/03/15 10:08:09 bnv Exp $
+ * $Header: /home/bnv/tmp/brexx/src/RCS/compile.c,v 1.4 1999/05/14 12:31:22 bnv Exp $
  * $Log: compile.c,v $
+ * Revision 1.4  1999/05/14 12:31:22  bnv
+ * Corrected a bug when registering a label_sy
+ *
  * Revision 1.3  1999/03/15 10:08:09  bnv
  * Changed: Do not create IdentInfo for non Symbol strings
  *
@@ -40,9 +43,11 @@
 #if !defined(ALIGN)
 #define CODEFIXUPB(p,v) *(byte *)(LSTR(*CompileCode) + (p)) = (v)
 #define CODEFIXUP(p,v) *(word *)(LSTR(*CompileCode) + (p)) = (v)
+#define CLAUSESTEP	sizeof(byte)
 #else
 #define CODEFIXUP(p,v) *(dword *)(LSTR(*CompileCode) + (p)) = (v)
 #define CODEFIXUPB(p,v) CODEFIXUP(p,v)
+#define CLAUSESTEP	sizeof(dword)
 #endif
 
 /* ---- function prototypes ---- */
@@ -149,13 +154,10 @@ crloopctrl( size_t it, size_t le, int vars, PLstr cv )
 static void
 CreateClause( void )
 {
-
-	if (CompileCurClause)
-#if !defined(ALIGN)
-	if (CompileClause[CompileCurClause-1].code == CompileCodeLen-1)
-#else
-	if (CompileClause[CompileCurClause-1].code == CompileCodeLen-4)
-#endif
+	/* --- Check if the previous mnemonic was a NEWCLAUSE also --- */
+	if (CompileCurClause &&
+	    CompileClause[CompileCurClause-1].code ==
+	    CompileCodeLen-CLAUSESTEP)
 		return;
 
 	/* --- create a clause --- */
@@ -1830,7 +1832,13 @@ RxCompile( void )
 /*** WARNING labels can be also with DOT .   test.label ******/
 		if (symbol==label_sy) {
 			CompileNesting++;
-			_AddLabel(FT_LABEL, CompileCodeLen);
+			/* --- if prev was NEWCLAUSE */
+			if (CompileCurClause &&
+			    CompileClause[CompileCurClause-1].code ==
+			    CompileCodeLen-CLAUSESTEP)
+				_AddLabel(FT_LABEL, CompileCodeLen-CLAUSESTEP);
+			else
+				_AddLabel(FT_LABEL, CompileCodeLen);
 			CreateClause();
 			nextsymbol();
 			if (identCMP("PROCEDURE")) {
