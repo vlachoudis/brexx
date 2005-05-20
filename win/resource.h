@@ -20,6 +20,7 @@
 #define IDS_CAP_VIEW                    413
 #define ID_VIEW_REFRESH                 440
 #define ID_VIEW_SCROLLBARS              458
+#define ID_VIEW_MENU                    459
 #define IDD_ABOUTBOX			500
 
 #define ID_FONT_6                       506
