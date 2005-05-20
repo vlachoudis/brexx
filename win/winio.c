@@ -1,6 +1,10 @@
 /*
- * $Id: winio.c,v 1.8 2004/08/16 15:34:53 bnv Exp $
+ * $Id: winio.c,v 1.9 2005/05/20 16:02:21 bnv Exp $
  * $Log: winio.c,v $
+ * Revision 1.9  2005/05/20 16:02:21  bnv
+ * Corrected: Support for CE V2.0
+ * Changed: Coping follows the lines on screen not a square
+ *
  * Revision 1.8  2004/08/16 15:34:53  bnv
  * Corrected: Scrolling behavior
  * Corrected: Menus
@@ -59,6 +63,7 @@
 #else
 #	include <tchar.h>
 #endif
+#include <winio.h>
 
 #define SHGetSubMenu(hWndMB,ID_MENU) (HMENU)SendMessage((hWndMB), \
 			SHCMBM_GETSUBMENU, (WPARAM)0, (LPARAM)ID_MENU);
@@ -79,6 +84,7 @@ HINSTANCE	_crtInstance;		// CRT class instance
 static HWND	hwndCB;			// Menu Command Bar Window
 static BOOL	markTool=TRUE;		// Move or Mark
 static BOOL	showScrollBars=TRUE;	// Show Scrollbars
+static BOOL	showMenu=TRUE;		// Show Menu
 static BOOL	marking=FALSE;		// Marking enabled
 static POINT	markBegin={0,0};	// Beggining of marking
 static POINT	markEnd={0,0};		// End of marking area
@@ -93,6 +99,7 @@ static BOOL	painting = FALSE;	// Handling wm_Paint?
 static LPTSTR	screenBuffer;		// Screen buffer pointer
 static POINT	charSize={8,15};	// Character cell size
 static int	charAscent;		// Character ascent
+static int      marginTop=0;		// Vertical Margin
 static HDC	DC;			// Global device context
 static PAINTSTRUCT	PS;		// Global paint structure
 static BOOL	windowPainted = FALSE;	// Sometimes when scrolling,
@@ -114,23 +121,26 @@ static TCHAR	moduleName[80];
 static BYTE	*colorBuffer;		// Color buffer pointer
 static BYTE	activeColor=0xF0;	// Active Color
 
-static COLORREF colorRef[16] = {	RGB(  0,  0,  0),	//  0. Black
-					RGB(170,  0,  0),	//  1. Red
-					RGB(  0,170,  0),	//  2. Green
-					RGB(170,170,  0),	//  3. Yellow
-					RGB(  0,  0,170),	//  4. Blue
-					RGB(170,  0,170),	//  5. Magenta
-					RGB(  0, 85,170),	//  6. Cyan
-					RGB( 85, 85, 85),	//  7. Gray
+static COLORREF colorRef[16] = {
+			RGB(  0,  0,  0),	// Black/0
+			RGB(191,  0,  0),	// Red/1
+			RGB(  0,191,  0),	// Green/2
+			RGB(255,128,  0),	// Brown(AKA Yellow)/3
+			RGB(  0,  0,191),	// Blue/4
+			RGB(191,  0,191),	// Magenta/5
+			RGB(  0,191,191),	// Cyan/6
+			RGB(192,192,192),	// White/7
+			RGB(128,128,128),	// B.Black/8
+			RGB(255,  0,  0),	// B.Red/9
+			RGB(  0,255,  0),	// B.Green/10
+			RGB(255,255,  0),	//   Yellow/11
+			RGB(  0,  0,255),	// B.Blue/12
+			RGB(255,  0,255),	// B.Magenta/13
+			RGB(  0,255,255),	// B.Cyan/14
+			RGB(255,255,255) };	// B.White/15
 
-					RGB( 85, 85, 85),	//  8. Gray
-					RGB(255, 85, 85),	//  9. Red
-					RGB( 85,255, 85),	// 10. Green
-					RGB(255,255, 85),	// 11. Yellow
-					RGB( 85, 85,255),	// 12. Blue
-					RGB(255, 85,255),	// 13. Magenta
-					RGB( 85,255,255),	// 14. Cyan
-					RGB(255,255,255) };	// 15. White
+/* --- Local Function Prototypes --- */
+static void WindowResize(void);
 
 /* ---- WSignal ---- */
 /* Substitue of the signal(), for trapping the Control-C */
@@ -198,7 +208,8 @@ _ShowCursor(void)
 {
 	if (focused) {
 		SetCaretPos(	(_cursor.x - _origin.x) * charSize.x,
-				(_cursor.y - _origin.y) * charSize.y + charAscent);
+				(_cursor.y - _origin.y) * charSize.y
+				  + charAscent + marginTop);
 		ShowCaret(_crtWindow);
 	}
 } /* _ShowCursor */
@@ -225,10 +236,18 @@ SetScrollBars()
 {
 	if (!showScrollBars)
 		return;
-	SetScrollRange(_crtWindow, SB_HORZ, 0, max(1,range.x), FALSE);
-	SetScrollPos(_crtWindow, SB_HORZ, _origin.x, TRUE);
-	SetScrollRange(_crtWindow, SB_VERT, 0, max(1,range.y), FALSE);
-	SetScrollPos(_crtWindow, SB_VERT, _origin.y, TRUE);
+
+	if (clientSize.x < _screenSize.x) {
+		SetScrollRange(_crtWindow, SB_HORZ, 0, max(1,range.x), FALSE);
+		SetScrollPos(_crtWindow, SB_HORZ, _origin.x, TRUE);
+	} else
+		SetScrollRange(_crtWindow, SB_HORZ, 0, 0, FALSE);
+
+	if (clientSize.y < _screenSize.y) {
+		SetScrollRange(_crtWindow, SB_VERT, 0, max(1,range.y), FALSE);
+		SetScrollPos(_crtWindow, SB_VERT, _origin.y, TRUE);
+	} else
+		SetScrollRange(_crtWindow, SB_VERT, 0, 0, FALSE);
 } /* SetScrollBars */
 
 /* --------- Set cursor position ---------- */
@@ -323,7 +342,7 @@ static void ColorTextOut( int x, int y, int R )
 		SetBkColor(DC, colorRef[ (col>>4)&0xf ]);
 		ExtTextOut(DC,
 			(x+L-_origin.x)*charSize.x,
-			(y-_origin.y)*charSize.y,
+			(y-_origin.y)*charSize.y+marginTop,
 			ETO_OPAQUE, NULL,
 			sb, i - L, NULL);
 		cb = c;
@@ -502,6 +521,25 @@ WGetColor(void)
 	return activeColor;
 } /* WGetColor */
 
+/* --- WGetPalette --- */
+long __CDECL
+WGetPalette(int col)
+{
+	if (IN_RANGE(0,col,15))
+		return colorRef[col];
+	else
+		return 0;
+} /* WGetPalette */
+
+/* --- WSetPalette --- */
+void __CDECL
+WSetPalette(int col, int red, int green, int blue)
+{
+	if (IN_RANGE(0,col,15)) {
+		colorRef[col] = RGB(red,green,blue);
+	}
+} /* WSetPalette */
+
 /* -------- WSetScrollBars ------------------ */
 void __CDECL
 WSetScrollBars(BOOL show)
@@ -523,11 +561,42 @@ WSetScrollBars(BOOL show)
 	}
 } /* WSetScrollBars */
 
+/* -------- WSetMenu ------------------ */
+void __CDECL
+WSetMenu(BOOL show)
+{
+	if (!hwndCB) return;
+#if _WIN32_WCE > 211
+	HMENU hm = SHGetSubMenu(hwndCB,ID_VIEW_MENU);
+	CheckMenuItem(hm, ID_VIEW_MENU,
+			MF_BYCOMMAND |
+			(show?MF_CHECKED:MF_UNCHECKED));
+#endif
+//	if (show) {
+//		RECT rcm;
+//		GetWindowRect(hwndCB, &rcm);
+//		marginTop= rcm.bottom;
+//	} else
+		marginTop = 0;
+	showMenu = show;
+	ShowWindow(hwndCB, show?SW_SHOW:SW_HIDE);
+} /* WSetMenu */
+
 BOOL __CDECL
 WGetScrollBars(void)
 {
 	return showScrollBars;
 } /* WGetScrollBars */
+
+/* --- WSetBreak --- */
+BOOL __CDECL
+WSetBreak(int br)
+{
+	BOOL oldbr = _checkBreak;
+	if (br==0 || br==1)
+		_checkBreak = br;
+	return oldbr;
+} /* WSetBreak */
 
 /* -------- Set cursor position ------------- */
 void __CDECL
@@ -601,9 +670,11 @@ WSetFontSize(int fh)
 {
 	LOGFONT	lf;
 	SIZE	size;
+	TEXTMETRIC Metrics;
+#if _WIN32_WCE > 211
 	HMENU	hm;
 	WPARAM	wid;
-	TEXTMETRIC Metrics;
+#endif
 
 	fontSize = fh;
 
@@ -628,10 +699,35 @@ WSetFontSize(int fh)
 	CheckMenuRadioItem(hm, ID_FONT_6, ID_FONT_18, wid, MF_BYCOMMAND);
 #endif
 	if (_crtWindow != NULL) {
+		WindowResize();
 		InvalidateRect(_crtWindow, NULL, TRUE);
 		UpdateWindow(_crtWindow);
 	}
 } /* WSetFontSize */
+
+/* --------- FindEndColumn ---------- */
+static int
+FindEndColumn(int row)
+{
+	int	col = _screenSize.x-1;
+	TCHAR	*ch = ScreenPtr(col,row);
+	while (col>0 && *ch==_T(' ')) {
+		col--;
+		ch--;
+	}
+	return col;
+} /* FindEndColumn */
+
+/* ---------- MarkLine --------- */
+static void
+MarkLine(int row, int left, int right)
+{
+	int	y=row*charSize.y;
+	Rectangle(DC,	left*charSize.x,
+			y,
+			(right+1)*charSize.x,
+			y+charSize.y);
+} /* MarkLine */
 
 /* ------- DrawMarked area by inversing --------------- */
 static void
@@ -639,7 +735,8 @@ DrawMarkedArea(void)
 {
 	HBRUSH	hOldBrush;
 	int	oldR2;
-	int	top, bottom;
+	int	row;
+	POINT	*start, *stop;
 
 	/* We assume that the previous routine has got a device context */
 	if (markBegin.x==markEnd.x) return;
@@ -647,86 +744,96 @@ DrawMarkedArea(void)
 	hOldBrush = SelectObject(DC, GetStockObject(BLACK_BRUSH));
 	oldR2 = SetROP2(DC,R2_NOT);
 
-	top = (markBegin.y-_origin.y)*charSize.y;
-	bottom = (markEnd.y-_origin.y)*charSize.y;
-
-	if (top>bottom) {
-		int tmp = top;
-		top = bottom;
-		bottom = tmp;
+	if (markBegin.y <= markEnd.y) {
+		start = &markBegin;
+		stop  = &markEnd;
+	} else {
+		start = &markEnd;
+		stop  = &markBegin;
 	}
-	bottom += charSize.y;
 
-	Rectangle(DC,	(markBegin.x-_origin.x)*charSize.x,
-			top,
-			(markEnd.x-_origin.x)*charSize.x,
-			bottom);
+	if (start->y == stop->y)
+		MarkLine(start->y, start->x, stop->x);
+	else {
+		row = start->y;
+		MarkLine(row++, start->x, FindEndColumn(start->y));
+		while (row<stop->y) {
+			MarkLine(row, 0, FindEndColumn(row));
+			row++;
+		}
+		MarkLine(row, 0, stop->x);
+	}
 
 	/* restore everything */
 	SetROP2(DC,oldR2);
 	SelectObject(DC,hOldBrush);
 } /* DrawMarkedArea */
 
+/* ---- CopyLine ---- */
+static LPTSTR
+CopyLine(LPTSTR buffer, int row, int left, int right, BOOL crlf)
+{
+	int	length = right-left+1;
+	memcpy(buffer, ScreenPtr(left,row), length*sizeof(TCHAR));
+	buffer += length;
+	if (crlf) {
+		*buffer++ = (TCHAR)0x0D;
+		*buffer++ = (TCHAR)0x0A;
+	}
+	return buffer;
+} /* CopyLine */
+
 /* ---- Copy2Clipboard ------ */
 static void
 Copy2Clipboard()
 {
 	LPVOID	hMem;
-	LPTSTR	dst;
-	int	y;
+	LPTSTR	buffer;
 	size_t	siz;
+	int	row;
+	POINT	*start, *stop;
 
 	markBegin.x = RANGE(0, markBegin.x, _screenSize.x - 1);
 	markBegin.y = RANGE(0, markBegin.y, _screenSize.y - 1);
 	markEnd.x   = RANGE(0, markEnd.x, _screenSize.x - 1);
 	markEnd.y   = RANGE(0, markEnd.y, _screenSize.y - 1);
 
-	if (markBegin.x > markEnd.x) {
-		int	tmp;
-		tmp = markBegin.x;
-		markBegin.x = markEnd.x;
-		markEnd.x = tmp;
-	}
-	if (markBegin.y > markEnd.y) {
-		int	tmp;
-		tmp = markBegin.y;
-		markBegin.y = markEnd.y;
-		markEnd.y = tmp;
+	if (markBegin.y <= markEnd.y) {
+		start = &markBegin;
+		stop  = &markEnd;
+	} else {
+		start = &markEnd;
+		stop  = &markBegin;
 	}
 
-	siz = (markEnd.x - markBegin.x+1) * (markEnd.y-markBegin.y+1);
-	if (siz==0) return;
+	/* First estimate the size we need */
+	if (start->y == stop->y)
+		siz = stop->x-start->x+1;
+	else {
+		row = start->y;
+		siz = FindEndColumn(row++)-start->x+3;	// Allow space for CR LF
+		while (row<stop->y)
+			siz += FindEndColumn(row++)+3;	// CRLF
+		siz += stop->x+1;
+	}
 
-	hMem = LocalAlloc(LMEM_MOVEABLE,(siz+2*(markEnd.y-markBegin.y)+2)*sizeof(TCHAR));
-	if (hMem==NULL)
-		return;
-	dst = (LPTSTR)hMem;
-	for (y=markBegin.y; y<=markEnd.y; y++) {
-		TCHAR	*ptr;
-		size_t	length = markEnd.x - markBegin.x;
-		/* remove trailing spaces */
-		ptr = ScreenPtr(markEnd.x-1,y);
-		while (length && (*ptr==TEXT(' '))) {
-			ptr--;
-			length--;
+	/* allocate buffer */
+	hMem = LocalAlloc(LMEM_MOVEABLE,(siz+1)*sizeof(TCHAR));	// + ending zero
+	buffer = (LPTSTR)hMem;
+
+	/* copy to clipboard */
+	if (start->y == stop->y)
+		buffer = CopyLine(buffer,start->y,start->x,stop->x, FALSE);
+	else {
+		row = start->y;
+		buffer = CopyLine(buffer,row++,start->x,FindEndColumn(start->y), TRUE);
+		while (row<stop->y) {
+			buffer = CopyLine(buffer,row,0,FindEndColumn(row), TRUE);
+			row++;
 		}
-		if (length) {
-			memcpy(dst, ScreenPtr(markBegin.x,y), sizeof(TCHAR)*length);
-			dst += length;
-		}
-		if (y<markEnd.y) {
-			*dst++ = (TCHAR)0x0D;
-			*dst++ = (TCHAR)0x0A;
-		}
+		buffer = CopyLine(buffer,row,0,stop->x, FALSE);
 	}
-	// -- Search from the bottom to remove all Empty CR-LF --
-	while (dst>(LPTSTR)hMem) {
-		if ((*(dst-1)==(TCHAR)0x0A) && (*(dst-3)==(TCHAR)0x0A))
-			dst -= 2;
-		else
-			break;
-	}
-	*dst = (TCHAR)0;
+	*buffer = 0;
 
 	if (!OpenClipboard(_crtWindow))
 		return;
@@ -775,10 +882,15 @@ WindowCreate(HWND hWnd)
 	AppendMenu(hPopupMenu,MF_ENABLED,ID_EDIT_COPYALL,TEXT("Copy &All"));
 	AppendMenu(hPopupMenu,MF_ENABLED,ID_EDIT_PASTE,TEXT("&Paste"));
 	AppendMenu(hPopupMenu,MF_ENABLED,ID_EDIT_CLEAR,TEXT("&Clear"));
+	AppendMenu(hPopupMenu,MF_ENABLED,ID_VIEW_REFRESH,TEXT("&Refresh"));
 	AppendMenu(hPopupMenu,MF_SEPARATOR,0,NULL);
 #if _WIN32_WCE > 211
 	AppendMenu(hPopupMenu,MF_POPUP,(UINT)hm,TEXT("&View"));
 #endif
+	AppendMenu(hPopupMenu,MF_ENABLED | (showMenu?MF_CHECKED:0),
+				ID_VIEW_MENU,TEXT("&Menu"));
+	AppendMenu(hPopupMenu,MF_ENABLED | (showScrollBars?MF_CHECKED:0),
+				ID_VIEW_SCROLLBARS,TEXT("&Scrollbars"));
 	AppendMenu(hPopupMenu,MF_ENABLED | (markTool?MF_CHECKED:0),
 				ID_EDIT_MARK,TEXT("&Mark or Pan"));
 	AppendMenu(hPopupMenu,MF_ENABLED,ID_EDIT_TRACKCURSOR,TEXT("&Track Cursor"));
@@ -890,12 +1002,14 @@ WindowResize(void)
 {
 	RECT	rc;
 
+	if (!_crtWindow) return;
+
 	DestroyCaret();
 
 	GetClientRect(_crtWindow,&rc);
 
 	clientSize.x = (rc.right-rc.left) / charSize.x;
-	clientSize.y = (rc.bottom-rc.top) / charSize.y;
+	clientSize.y = (rc.bottom-rc.top) / charSize.y - marginTop;
 
 	range.x = max(0,_screenSize.x - clientSize.x);
 	range.y = max(0,_screenSize.y - clientSize.y);
@@ -1167,8 +1281,13 @@ WindowCommand(WPARAM WParam)
 			break;
 
 		case ID_VIEW_SCROLLBARS:
-			showScrollBars = !showScrollBars;
-			WSetScrollBars(showScrollBars);
+			WSetScrollBars(!showScrollBars);
+			break;
+
+		case ID_VIEW_MENU:
+			WSetMenu(!showMenu);
+			InvalidateRect(_crtWindow, NULL, TRUE);
+			UpdateWindow(_crtWindow);
 			break;
 
 		case ID_EDIT_TRACKCURSOR:
@@ -1225,6 +1344,10 @@ _WinIOProc(HWND Window, UINT Message, WPARAM WParam, LONG LParam)
 			break;
 
 		case WM_SIZE:
+#if _WIN32_WCE < 211
+			if (!_crtWindow)
+				_crtWindow = Window;
+#endif
 			WindowResize();
 			break;
 
@@ -1260,12 +1383,12 @@ _WinIOProc(HWND Window, UINT Message, WPARAM WParam, LONG LParam)
 			break;
 
 		case WM_LBUTTONDOWN:
-			WindowButtonDown(LOWORD(LParam),HIWORD(LParam));
+			WindowButtonDown(LOWORD(LParam),HIWORD(LParam)-marginTop);
 			break;
 
 		case WM_MOUSEMOVE:
 			if (marking)
-				WindowButtonMove(LOWORD(LParam),HIWORD(LParam));
+				WindowButtonMove(LOWORD(LParam),HIWORD(LParam)-marginTop);
 			break;
 
 		case WM_LBUTTONUP:
@@ -1400,12 +1523,15 @@ WInitWinIO(HINSTANCE hInst, HINSTANCE hPrev, int cmdShow)
 #endif
 	GetModuleFileName(hInst, moduleName, sizeof(moduleName)/sizeof(TCHAR));
 
-#if 0
+#if _WIN32_WCE < 211
 	if (hwndCB) {
+		RECT rc, rcm;
 		GetWindowRect(_crtWindow, &rc);
 		GetWindowRect(hwndCB, &rcm);
-		rc.top = rcm.bottom;
-		MoveWindow(_crtWindow, rc.left, rc.top, rc.right, rc.bottom, FALSE);
+		WSetMenu(FALSE);
+//		marginTop= rcm.bottom;
+//		rc.top = rcm.bottom;
+		MoveWindow(_crtWindow, rc.left, rc.top, rc.right, rc.bottom, TRUE);
 	}
 #endif
 
