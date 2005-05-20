@@ -1,6 +1,9 @@
 /*
- * $Id: bio.c,v 1.7 2004/08/16 15:33:58 bnv Exp $
+ * $Id: bio.c,v 1.8 2005/05/20 16:02:03 bnv Exp $
  * $Log: bio.c,v $
+ * Revision 1.8  2005/05/20 16:02:03  bnv
+ * *** empty log message ***
+ *
  * Revision 1.7  2004/08/16 15:33:58  bnv
  * Corrected: Append
  *
@@ -181,7 +184,7 @@ Bfopen( const char *filename, const char *mode )
 #endif
 	f = (BFILE*)malloc(sizeof(BFILE));
 	f->handle = hnd;
-	f->mode = bitmode;
+	f->mode   = bitmode;
 
 	if (bitmode & BIO_APPEND)
 		Bfseek(f,0,SEEK_END);
