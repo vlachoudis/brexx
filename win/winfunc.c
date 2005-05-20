@@ -1,6 +1,9 @@
 /*
- * $Id: winfunc.c,v 1.5 2004/08/16 15:34:53 bnv Exp $
+ * $Id: winfunc.c,v 1.6 2005/05/20 16:02:21 bnv Exp $
  * $Log: winfunc.c,v $
+ * Revision 1.6  2005/05/20 16:02:21  bnv
+ * Added: SETBREAK & SETPALETTE
+ *
  * Revision 1.5  2004/08/16 15:34:53  bnv
  * Added: Color and Scrollbar functions
  *
@@ -38,8 +41,10 @@ enum	ce_msgs {
 		f_kbhit,
 		f_movefile,
 		f_removedirectory,
+		f_setbreak,
 		f_setcolor,
 		f_setfontsize,
+		f_setpalette,
 		f_scrollbars,
 		f_wherex,
 		f_wherey,
@@ -201,6 +206,33 @@ CE_setcolor(const int func)
 } /* CE_setcolor */
 
 /* -------------------------------------------------------------- */
+/*  SETPALETTE(col[,r,g,b])                                       */
+/* -------------------------------------------------------------- */
+void __CDECL
+CE_setpalette(const int func)
+{
+	int	col, r, g, b;
+
+	if (ARGN!=1 && ARGN!=4)
+		Lerror(ERR_INCORRECT_CALL,0);
+
+	get_i(1,col);
+	if (col>16) Lerror(ERR_INCORRECT_CALL,0);
+	col--;
+
+	Licpy(ARGR,WGetPalette(col));
+
+	if (ARGN==4) {
+		get_i0(2,r);
+		get_i0(3,g);
+		get_i0(4,b);
+		if (r>255 || g>255 || b>255)
+			Lerror(ERR_INCORRECT_CALL,0);
+		WSetPalette(col,r,g,b);
+	}
+} /* CE_setpalette */
+
+/* -------------------------------------------------------------- */
 /*  COPYFILE(src,dst)                                             */
 /* -------------------------------------------------------------- */
 /*  MOVEFILE(src,dst)                                             */
@@ -277,6 +309,8 @@ CE_I(const int func)
 /* -------------------------------------------------------------- */
 /*  SCROLLBARS([0|1])                                             */
 /* -------------------------------------------------------------- */
+/*  SETBREAK([0|1])                                               */
+/* -------------------------------------------------------------- */
 void __CDECL
 CE_B(const int func)
 {
@@ -289,13 +323,16 @@ CE_B(const int func)
 	if (b<-1 || b>1)
 		Lerror(ERR_INCORRECT_CALL,0);
 
-//	switch (func) {
-//		case f_scrollbars:
+	switch (func) {
+		case f_scrollbars:
 			Licpy(ARGR,WGetScrollBars());
 			if (b>=0)
 				WSetScrollBars(b);
-//			break;
-//	}
+			break;
+		case f_setbreak:
+			Licpy(ARGR,WSetBreak(b));
+			break;
+	}
 } /* CE_scrollbars */
 
 /* -------------------------------------------------------------- */
@@ -525,8 +562,10 @@ void RxCEInitialize()
 	RxRegFunction( "MSGBOX",	CE_MsgBox	,0		);
 	RxRegFunction( "RMDIR",		CE_S		,f_removedirectory);
 	RxRegFunction( "SCROLLBARS",	CE_B		,f_scrollbars	);
+	RxRegFunction( "SETBREAK",	CE_B		,f_setbreak	);
 	RxRegFunction( "SETCOLOR",	CE_setcolor	,f_setcolor	);
 	RxRegFunction( "SETFONTSIZE",	CE_I		,f_setfontsize	);
+	RxRegFunction( "SETPALETTE",	CE_setpalette	,f_setpalette	);
 	RxRegFunction( "WHEREX",	CE_O		,f_wherex	);
 	RxRegFunction( "WHEREY",	CE_O		,f_wherey	);
 	RxRegFunction( "WINDOWEXIT",	CE_O		,f_winexit	);
