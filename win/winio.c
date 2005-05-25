@@ -1,6 +1,11 @@
 /*
- * $Id: winio.c,v 1.9 2005/05/20 16:02:21 bnv Exp $
+ * $Id: winio.c,v 1.10 2005/05/25 16:01:54 bnv Exp $
  * $Log: winio.c,v $
+ * Revision 1.10  2005/05/25 16:01:54  bnv
+ * Corrected for Windows CE HPC
+ * Resize of window, Menu On/Off
+ * Line per line selection (not square any more)
+ *
  * Revision 1.9  2005/05/20 16:02:21  bnv
  * Corrected: Support for CE V2.0
  * Changed: Coping follows the lines on screen not a square
@@ -78,6 +83,7 @@ POINT	_cursor = { 0, 0 };		// Cursor location
 BOOL	_checkBreak = TRUE;		// Allow Ctrl-C for break?
 BOOL	_winTerminated = FALSE;		// Escape exists program
 HFONT	_hFont;				// Current working font
+HWND	_mainWindow = 0;		// Main Window
 HWND	_crtWindow = 0;			// CRT window handle
 HINSTANCE	_crtInstance;		// CRT class instance
 
@@ -170,7 +176,7 @@ WSetTitle(const char *title)
 		SetWindowText(_crtWindow,str);
 } /* WSetTitle */
 
-/* ---- some Helper routines ----- */
+/* ---- some Helper routines ---- */
 static void
 unicodeMemSet(LPTSTR buf, TCHAR ch, int len)
 {
@@ -179,7 +185,7 @@ unicodeMemSet(LPTSTR buf, TCHAR ch, int len)
 		buf[i] = ch;
 } /* unicodeMemSet */
 
-/* ------------ Allocate device context ----------- */
+/* ---- Allocate device context ---- */
 static void
 InitDeviceContext(void)
 {
@@ -191,7 +197,7 @@ InitDeviceContext(void)
 	saveFont = (HFONT)SelectObject (DC, _hFont);
 } /* InitDeviceContext */
 
-/* ------------ Release device context ------------ */
+/* ---- Release device context ---- */
 static void
 DoneDeviceContext(void)
 {
@@ -202,7 +208,7 @@ DoneDeviceContext(void)
 		ReleaseDC(_crtWindow, DC);
 } /* DoneDeviceContext */
 
-/* ---------- Show caret --------- */
+/* ---- Show caret ---- */
 static void
 _ShowCursor(void)
 {
@@ -214,7 +220,7 @@ _ShowCursor(void)
 	}
 } /* _ShowCursor */
 
-/* ----------- Hide caret ------------ */
+/* ---- Hide caret ---- */
 static void
 _HideCursor(void)
 {
@@ -222,7 +228,7 @@ _HideCursor(void)
 		HideCaret(_crtWindow);
 } /* _HideCursor */
 
-/* ---------- Create caret --------- */
+/* ---- Create caret ---- */
 static void
 _CreateCursor(void)
 {
@@ -230,7 +236,7 @@ _CreateCursor(void)
 	_ShowCursor();
 } /* _CreateCursor */
 
-/* ----------- SetScrollBars  ------ */
+/* ---- SetScrollBars  ---- */
 static void
 SetScrollBars()
 {
@@ -250,7 +256,7 @@ SetScrollBars()
 		SetScrollRange(_crtWindow, SB_VERT, 0, 0, FALSE);
 } /* SetScrollBars */
 
-/* --------- Set cursor position ---------- */
+/* ---- Set cursor position ---- */
 static void
 _cursorTo(int X, int Y)
 {
@@ -258,7 +264,7 @@ _cursorTo(int X, int Y)
 	_cursor.y = RANGE(0, Y, _screenSize.y - 1);
 } /* _cursorTo */
 
-/* ------ Scroll window to given origin ------ */
+/* ---- Scroll window to given origin ---- */
 static void
 _ScrollTo(int X, int Y)
 {
@@ -292,7 +298,7 @@ _ScrollTo(int X, int Y)
 	}
 } /* _ScrollTo */
 
-/* ----- Scroll to make cursor visible ------ */
+/* ---- Scroll to make cursor visible ---- */
 void __CDECL
 WTrackCursor(void)
 {
@@ -302,7 +308,7 @@ WTrackCursor(void)
 		min(_origin.y, _cursor.y)));
 } /* WTrackCursor */
 
-/* ------ Return pointer to location in screen buffer ----------- */
+/* ---- Return pointer to location in screen buffer ---- */
 static LPTSTR
 ScreenPtr(int X, int Y)
 {
@@ -312,7 +318,7 @@ ScreenPtr(int X, int Y)
 	return screenBuffer+ (Y * _screenSize.x + X);
 } /* ScreenPtr */
 
-/* --- Return pointer to location in color buffer --- */
+/* ---- Return pointer to location in color buffer ---- */
 static BYTE *ColorPtr(int X, int Y)
 {
 	Y += firstLine;
@@ -321,7 +327,7 @@ static BYTE *ColorPtr(int X, int Y)
 	return (colorBuffer+ (Y * _screenSize.x + X));
 } /* ColorPtr */
 
-/* --- ColorTextOut, displays color characters --- */
+/* ---- ColorTextOut, displays color characters ---- */
 static void ColorTextOut( int x, int y, int R )
 {
 	LPTSTR	 sb;
@@ -351,7 +357,7 @@ static void ColorTextOut( int x, int y, int R )
 	}
 } /* ColorTextOut */
 
-/* ------ Update text on cursor line -------- */
+/* ---- Update text on cursor line ---- */
 static void
 ShowText(int L, int R)
 {
@@ -366,7 +372,7 @@ ShowText(int L, int R)
 	}
 } /* ShowText */
 
-/* ------ Write text buffer to window -------- */
+/* ---- Write text buffer to window ---- */
 static void
 NewLine(int *L, int *R)
 {
@@ -390,7 +396,7 @@ NewLine(int *L, int *R)
 	}
 } /* NewLine */
 
-/* --------- Write the contents of Buffer ----------- */
+/* ---- Write the contents of Buffer ---- */
 void __CDECL
 WWriteBuf(LPTSTR Buffer, int Count)
 {
@@ -456,14 +462,14 @@ WWriteBuf(LPTSTR Buffer, int Count)
 	_ShowCursor();
 } /* WWriteBuf */
 
-/* ------- Write character to window ---------- */
+/* ---- Write character to window ---- */
 void __CDECL
 WWriteChar(TCHAR Ch)
 {
 	WWriteBuf(&Ch, 1);
 } /* WWriteChar */
 
-/* ------ Return keyboard status -------- */
+/* ---- Return keyboard status ---- */
 BOOL __CDECL
 WKeyPressed(void)
 {
@@ -476,7 +482,7 @@ WKeyPressed(void)
 	return (BOOL)((keyCount>0) || (clpKeyCount>0));
 } /* WKeyPressed */
 
-/* ------- Read key from window ---------- */
+/* ---- Read key from window ---- */
 int __CDECL
 WReadKey(void)
 {
@@ -504,7 +510,7 @@ WReadKey(void)
 	return readkey;
 } /* WReadKey */
 
-/* -------- Set new active color ------------ */
+/* ---- Set new active color ---- */
 void __CDECL
 WSetColor(BYTE col)
 {
@@ -521,7 +527,7 @@ WGetColor(void)
 	return activeColor;
 } /* WGetColor */
 
-/* --- WGetPalette --- */
+/* ---- WGetPalette ---- */
 long __CDECL
 WGetPalette(int col)
 {
@@ -531,7 +537,7 @@ WGetPalette(int col)
 		return 0;
 } /* WGetPalette */
 
-/* --- WSetPalette --- */
+/* ---- WSetPalette ---- */
 void __CDECL
 WSetPalette(int col, int red, int green, int blue)
 {
@@ -540,16 +546,19 @@ WSetPalette(int col, int red, int green, int blue)
 	}
 } /* WSetPalette */
 
-/* -------- WSetScrollBars ------------------ */
+/* ---- WSetScrollBars ---- */
 void __CDECL
 WSetScrollBars(BOOL show)
 {
+	HMENU hm;
 #if _WIN32_WCE > 211
-	HMENU hm = SHGetSubMenu(hwndCB,ID_VIEW);
+	hm = SHGetSubMenu(hwndCB,ID_VIEW);
+#else
+	hm = GetSubMenu(CommandBar_GetMenu(hwndCB,0),2);
+#endif
 	CheckMenuItem(hm, ID_VIEW_SCROLLBARS,
 			MF_BYCOMMAND |
 			(show?MF_CHECKED:MF_UNCHECKED));
-#endif
 	showScrollBars = show;
 	if (showScrollBars) {
 		SetScrollBars();
@@ -561,17 +570,20 @@ WSetScrollBars(BOOL show)
 	}
 } /* WSetScrollBars */
 
-/* -------- WSetMenu ------------------ */
+/* ---- WSetMenu ---- */
 void __CDECL
 WSetMenu(BOOL show)
 {
+	HMENU hm;
 	if (!hwndCB) return;
 #if _WIN32_WCE > 211
-	HMENU hm = SHGetSubMenu(hwndCB,ID_VIEW_MENU);
+	hm = SHGetSubMenu(hwndCB,ID_VIEW_MENU);
+#else
+	hm = GetSubMenu(CommandBar_GetMenu(hwndCB,0),2);
+#endif
 	CheckMenuItem(hm, ID_VIEW_MENU,
 			MF_BYCOMMAND |
 			(show?MF_CHECKED:MF_UNCHECKED));
-#endif
 //	if (show) {
 //		RECT rcm;
 //		GetWindowRect(hwndCB, &rcm);
@@ -579,16 +591,32 @@ WSetMenu(BOOL show)
 //	} else
 		marginTop = 0;
 	showMenu = show;
-	ShowWindow(hwndCB, show?SW_SHOW:SW_HIDE);
+	ShowWindow(hwndCB, showMenu?SW_SHOW:SW_HIDE);
 } /* WSetMenu */
 
+/* ---- WSetMarkOrPan ---- */
+void __CDECL
+WSetMarkOrPan(BOOL mark)
+{
+	HMENU hm;
+#if _WIN32_WCE > 211
+	hm = SHGetSubMenu(hwndCB,ID_EDIT);
+#else
+	hm = GetSubMenu(CommandBar_GetMenu(hwndCB,0),1);
+#endif
+	markTool = mark;
+	CheckMenuItem(hm, ID_EDIT_MARK,
+		MF_BYCOMMAND | (markTool?MF_CHECKED:MF_UNCHECKED));
+}
+
+/* ---- WGetScrollBars ---- */
 BOOL __CDECL
 WGetScrollBars(void)
 {
 	return showScrollBars;
 } /* WGetScrollBars */
 
-/* --- WSetBreak --- */
+/* ---- WSetBreak ---- */
 BOOL __CDECL
 WSetBreak(int br)
 {
@@ -598,7 +626,7 @@ WSetBreak(int br)
 	return oldbr;
 } /* WSetBreak */
 
-/* -------- Set cursor position ------------- */
+/* ---- Set cursor position ---- */
 void __CDECL
 WGotoXY(int X, int Y)
 {
@@ -607,21 +635,21 @@ WGotoXY(int X, int Y)
 	_ShowCursor();
 } /* WGotoXY */
 
-/* ------- Return cursor X position --------- */
+/* ---- Return cursor X position ---- */
 int __CDECL
 WWhereX(void)
 {
 	return (_cursor.x + 1);
 } /* WWhereX */
 
-/* ------- Return cursor Y position ------- */
+/* ---- Return cursor Y position ---- */
 int __CDECL
 WWhereY(void)
 {
 	return(_cursor.y + 1);
 } /* WWhereY */
 
-/* ------ Clear screen ------ */
+/* ---- Clear screen ---- */
 void __CDECL
 WClrscr(void)
 {
@@ -636,7 +664,7 @@ WClrscr(void)
 	UpdateWindow(_crtWindow);
 } /* Wclrscr */
 
-/* ------ Clear to end of line --------- */
+/* ---- Clear to end of line ---- */
 void __CDECL
 WClreol(void)
 {
@@ -651,14 +679,14 @@ WClreol(void)
 	_ShowCursor();
 } /* Wclreol */
 
-/* ------ WMessage --------- */
+/* ---- WMessage ---- */
 LONG __CDECL
 WMessage(UINT msg, WPARAM wParam, LONG lParam)
 {
 	return SendMessage(_crtWindow,msg,wParam,lParam);
 } /* WMessage */
 
-/* ---- SetFontSize --- */
+/* ---- SetFontSize ---- */
 int __CDECL
 WGetFontSize()
 {
@@ -671,10 +699,8 @@ WSetFontSize(int fh)
 	LOGFONT	lf;
 	SIZE	size;
 	TEXTMETRIC Metrics;
-#if _WIN32_WCE > 211
 	HMENU	hm;
 	WPARAM	wid;
-#endif
 
 	fontSize = fh;
 
@@ -694,10 +720,13 @@ WSetFontSize(int fh)
 	DoneDeviceContext();
 
 #if _WIN32_WCE > 211
-	hm  = SHGetSubMenu(hwndCB,ID_VIEW);
+	hm = SHGetSubMenu(hwndCB,ID_VIEW);
+#else
+	hm = GetSubMenu(CommandBar_GetMenu(hwndCB,0),2);
+#endif
 	wid = fh-6+ID_FONT_6;
 	CheckMenuRadioItem(hm, ID_FONT_6, ID_FONT_18, wid, MF_BYCOMMAND);
-#endif
+
 	if (_crtWindow != NULL) {
 		WindowResize();
 		InvalidateRect(_crtWindow, NULL, TRUE);
@@ -705,7 +734,7 @@ WSetFontSize(int fh)
 	}
 } /* WSetFontSize */
 
-/* --------- FindEndColumn ---------- */
+/* ---- FindEndColumn ---- */
 static int
 FindEndColumn(int row)
 {
@@ -718,18 +747,18 @@ FindEndColumn(int row)
 	return col;
 } /* FindEndColumn */
 
-/* ---------- MarkLine --------- */
+/* ---- MarkLine ---- */
 static void
 MarkLine(int row, int left, int right)
 {
-	int	y=row*charSize.y;
-	Rectangle(DC,	left*charSize.x,
+	int	y=(row-_origin.y)*charSize.y;
+	Rectangle(DC,	(left-_origin.x)*charSize.x,
 			y,
-			(right+1)*charSize.x,
-			y+charSize.y);
+			(right-_origin.x+1)*charSize.x,
+			y+charSize.y-1);
 } /* MarkLine */
 
-/* ------- DrawMarked area by inversing --------------- */
+/* ---- DrawMarked area by inversing ---- */
 static void
 DrawMarkedArea(void)
 {
@@ -783,7 +812,7 @@ CopyLine(LPTSTR buffer, int row, int left, int right, BOOL crlf)
 	return buffer;
 } /* CopyLine */
 
-/* ---- Copy2Clipboard ------ */
+/* ---- Copy2Clipboard ---- */
 static void
 Copy2Clipboard()
 {
@@ -842,12 +871,26 @@ Copy2Clipboard()
 	CloseClipboard();
 } /* Copy2Clipboard */
 
+/* ---- CopyAll ---- */
+static void
+CopyAll(void)
+{
+	markBegin.x = 0;
+	markBegin.y = 0;
+	markEnd.y = _screenSize.y;
+	do {
+		markEnd.y--;
+		markEnd.x = FindEndColumn(markEnd.y);
+	} while (markEnd.y>0 && markEnd.x==0);
+	Copy2Clipboard();
+} /* CopyAll */
+
 /* ---- WM_CREATE message handler ---- */
 static void
 WindowCreate(HWND hWnd)
 {
 	int	bufferSize;
-	int	fontSize, len;
+	int	var, len;
 #if _WIN32_WCE > 211
 	SHMENUBARINFO mbi;
 	HMENU hm;
@@ -907,13 +950,23 @@ WindowCreate(HWND hWnd)
 
 	unicodeMemSet(screenBuffer, TEXT(' '), bufferSize);
 
-	len = sizeof(fontSize);
-	if (!RXREGGETDATA(TEXT("HT"),REG_DWORD,(LPBYTE)&fontSize,&len))
-		fontSize=11;
-	WSetFontSize(fontSize);
+	// Read registry
+	len = sizeof(var);
+	if (!RXREGGETDATA(TEXT("Font"),REG_DWORD,&var,&len))
+		var=11;
+	WSetFontSize(var);
+	if (!RXREGGETDATA(TEXT("Menu"),REG_DWORD,&var,&len))
+		var=1;
+	WSetMenu(var);
+	if (!RXREGGETDATA(TEXT("Scrollbars"),REG_DWORD,&var,&len))
+		var=1;
+	WSetScrollBars(var);
+	if (!RXREGGETDATA(TEXT("Mark"),REG_DWORD,&var,&len))
+		var=1;
+	markTool = var;
 } /* WindowCreate */
 
-/* ---- WM_PAINT message handler ----- */
+/* ---- WM_PAINT message handler ---- */
 static void
 WindowPaint(void)
 {
@@ -950,7 +1003,7 @@ WindowPaint(void)
 	painting = FALSE;
 } /* WindowPaint */
 
-/* ---- WM_VSCROLL and WM_HSCROLL message handler ----- */
+/* ---- WM_VSCROLL and WM_HSCROLL message handler ---- */
 static int
 GetNewPos(int Pos, int Page, int Range, int Action, int Thumb)
 {
@@ -975,7 +1028,7 @@ GetNewPos(int Pos, int Page, int Range, int Action, int Thumb)
 	}
 } /* GetNewPos */
 
-/* ------ WM_xSCROLL message ------ */
+/* ---- WM_xSCROLL message ---- */
 static void
 WindowScroll(int Which, int Action, int Thumb)
 {
@@ -996,7 +1049,7 @@ WindowScroll(int Which, int Action, int Thumb)
 } /* WindowScroll */
 
 
-/* ------ WM_SIZE message handler, Initialise Screen settings -------- */
+/* ---- WM_SIZE message handler, Initialise Screen settings ---- */
 static void
 WindowResize(void)
 {
@@ -1022,7 +1075,7 @@ WindowResize(void)
 	_CreateCursor();
 } /* WindowResize */
 
-/* ------ AddKey ------ */
+/* ---- AddKey ---- */
 static void
 AddKey(char Ch)
 {
@@ -1032,7 +1085,7 @@ AddKey(char Ch)
 	}
 } /* AddKey */
 
-/* ----- WM_CHAR message handler ----- */
+/* ---- WM_CHAR message handler ---- */
 static void
 WindowChar(char Ch)
 {
@@ -1047,7 +1100,7 @@ WindowChar(char Ch)
 		AddKey(Ch);
 } /* WindowChar */
 
-/* ----- WM_KEYDOWN message handler ----- */
+/* ---- WM_KEYDOWN message handler ---- */
 static void
 WindowKeyDown(WPARAM WParam)
 {
@@ -1089,7 +1142,7 @@ WindowKeyDown(WPARAM WParam)
 	}
 } /* WindowKeyDown */
 
-/* ----- WM_LBUTTONDOWN message handler ----- */
+/* ---- WM_LBUTTONDOWN message handler ---- */
 static void
 WindowButtonDown(int X, int Y)
 {
@@ -1109,6 +1162,11 @@ WindowButtonDown(int X, int Y)
 #endif
 			) {
 
+		/* Modify the popup menu */
+		CheckMenuItem(hPopupMenu, ID_VIEW_MENU,
+				MF_BYCOMMAND | (showMenu?MF_CHECKED:MF_UNCHECKED));
+		CheckMenuItem(hPopupMenu, ID_VIEW_SCROLLBARS,
+				MF_BYCOMMAND | (showScrollBars?MF_CHECKED:MF_UNCHECKED));
 		CheckMenuItem(hPopupMenu, ID_EDIT_MARK,
 				MF_BYCOMMAND | (markTool?MF_CHECKED:MF_UNCHECKED));
 		TrackPopupMenu(hPopupMenu,0, X, Y, 0, _crtWindow,NULL);
@@ -1129,7 +1187,7 @@ WindowButtonDown(int X, int Y)
 	}
 } /* WindowButtonDown */
 
-/* ----- WM_LBUTTONMOVE message handler ----- */
+/* ---- WM_LBUTTONMOVE message handler ---- */
 static void
 WindowButtonMove(int X, int Y)
 {
@@ -1167,7 +1225,7 @@ WindowButtonMove(int X, int Y)
 	}
 } /* WindowButtonMove */
 
-/* ----- WM_LBUTTONUP message handler ----- */
+/* ---- WM_LBUTTONUP message handler ---- */
 static void
 WindowButtonUp()
 {
@@ -1184,7 +1242,7 @@ WindowButtonUp()
 	}
 } /* WindowButtonUp */
 
-/* ------ WM_DESTROY message handler ---- */
+/* ---- WM_DESTROY message handler ---- */
 static void WindowDestroy(void)
 {
 	_winTerminated = TRUE;
@@ -1196,7 +1254,7 @@ static void WindowDestroy(void)
 	PostQuitMessage(0);
 } /* WindowDestroy */
 
-/* --- Mesage handler for the About box. --- */
+/* ---- Mesage handler for the About box. ---- */
 LRESULT CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message) {
@@ -1225,14 +1283,10 @@ LRESULT CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 	return FALSE;
 } /* About */
 
-/* ----- WM_COMMAND message handler ----- */
+/* ---- WM_COMMAND message handler ---- */
 static int
 WindowCommand(WPARAM WParam)
 {
-#if _WIN32_WCE > 211
-	HMENU	hm;
-#endif
-
 	switch (WParam) {
 		case ID_ACTION_RUN:
 			break;
@@ -1250,11 +1304,7 @@ WindowCommand(WPARAM WParam)
 			break;
 
 		case ID_EDIT_COPYALL:
-			markBegin.x = 0;
-			markEnd.x = _screenSize.x-1;
-			markBegin.y = 0;
-			markEnd.y = _screenSize.y-1;
-			Copy2Clipboard();
+			CopyAll();
 			break;
 
 		case ID_EDIT_PASTE:
@@ -1272,12 +1322,7 @@ WindowCommand(WPARAM WParam)
 			break;
 
 		case ID_EDIT_MARK:
-			markTool = !markTool;
-#if _WIN32_WCE > 211
-			hm = SHGetSubMenu(hwndCB,ID_EDIT);
-			CheckMenuItem(hm, ID_EDIT_MARK,
-					MF_BYCOMMAND | (markTool?MF_CHECKED:MF_UNCHECKED));
-#endif
+			WSetMarkOrPan(!markTool);
 			break;
 
 		case ID_VIEW_SCROLLBARS:
@@ -1321,7 +1366,7 @@ WindowCommand(WPARAM WParam)
 	return TRUE;
 } /* WindowCommand */
 
-/* ------ WindowIO window procedure ------ */
+/* ---- WindowIO window procedure ---- */
 LRESULT CALLBACK
 _WinIOProc(HWND Window, UINT Message, WPARAM WParam, LONG LParam)
 {
@@ -1427,6 +1472,11 @@ _WinIOProc(HWND Window, UINT Message, WPARAM WParam, LONG LParam)
 			break;
 
 		case WM_DESTROY:
+			/* Update variables in registry */
+			RXREGSETDATA(TEXT("Font"),REG_DWORD,&fontSize,sizeof(DWORD));
+			RXREGSETDATA(TEXT("Menu"),REG_DWORD,&showMenu,sizeof(DWORD));
+			RXREGSETDATA(TEXT("Scrollbars"),REG_DWORD,&showScrollBars,sizeof(DWORD));
+			RXREGSETDATA(TEXT("Mark"),REG_DWORD,&markTool,sizeof(DWORD));
 			WindowDestroy();
 			break;
 
@@ -1436,13 +1486,10 @@ _WinIOProc(HWND Window, UINT Message, WPARAM WParam, LONG LParam)
 	return FALSE;
 } /* _WinIOProc */
 
-/* ----- Create window if required ----- */
+/* ---- Create window if required ---- */
 int __CDECL
 WInitWinIO(HINSTANCE hInst, HINSTANCE hPrev, int cmdShow)
 {
-#if 0
-	RECT rc, rcm;
-#endif
 #if _WIN32_WCE > 211
 	SIPINFO si = {0};
 	int	iDelta;
@@ -1528,7 +1575,8 @@ WInitWinIO(HINSTANCE hInst, HINSTANCE hPrev, int cmdShow)
 		RECT rc, rcm;
 		GetWindowRect(_crtWindow, &rc);
 		GetWindowRect(hwndCB, &rcm);
-		WSetMenu(FALSE);
+		WSetMenu(showMenu);
+		WSetScrollBars(showScrollBars);
 //		marginTop= rcm.bottom;
 //		rc.top = rcm.bottom;
 		MoveWindow(_crtWindow, rc.left, rc.top, rc.right, rc.bottom, TRUE);
@@ -1549,14 +1597,14 @@ WInitWinIO(HINSTANCE hInst, HINSTANCE hPrev, int cmdShow)
 	return 0;
 } /* WInitWinIO */
 
-/* ------ WinIO unit exit procedure ----- */
+/* ---- WinIO unit exit procedure ---- */
 void __CDECL
 WExitWinIO(void)
 {
 	MSG	Message;
 	TCHAR	Title[128], OldTitle[128];
 
-	if (_crtWindow) {
+	if (_crtWindow) {	/* Wait for windows to exit */
 		GetWindowText(_crtWindow, OldTitle, sizeof(OldTitle)/sizeof(TCHAR));
 		wsprintf(Title, TEXT("[ %s ]"), OldTitle);
 		DestroyCaret();
