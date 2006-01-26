@@ -1,6 +1,9 @@
 /*
- * $Id: builtin.c,v 1.8 2004/03/27 08:32:37 bnv Exp $
+ * $Id: builtin.c,v 1.9 2006/01/26 10:24:40 bnv Exp $
  * $Log: builtin.c,v $
+ * Revision 1.9  2006/01/26 10:24:40  bnv
+ * Changed: RxVar...Old() -> RxVar...Name()
+ *
  * Revision 1.8  2004/03/27 08:32:37  bnv
  * Corrected: sourceline was reporting wrong lines after an interpret statement
  *
@@ -56,8 +59,8 @@
 #include <compile.h>
 #include <interpre.h>
 
-#ifdef WCE
-#	include <cefunc.h>
+#ifdef WIN
+#	include <winfunc.h>
 #endif
 
 /* ------------- External variables ------------ */
@@ -125,11 +128,11 @@ R_O( const int func )
 			Licpy(ARGR,_proc[_rx_proc].fuzz);
 			break;
 
-		case f_makebuf:  
+		case f_makebuf:
 			CreateStack();
 			Licpy(ARGR,rxStackList.items);
 			break;
-#ifdef WCE
+#ifdef WIN
 		case f_lasterror:
 			Licpy(ARGR,GetLastError());
 			break;
@@ -233,7 +236,7 @@ void __CDECL
 R_oSoS( )
 {
 	int		option = FALSE;
-	int 		found;
+	int		found;
 	PBinLeaf	leaf;
 	Variable	*var;
 	Lstr		str;
@@ -265,7 +268,7 @@ R_oSoS( )
 		LINITSTR(str);
 		Lstrcpy(&str,ARG1);
 		Lupper(&str); LASCIIZ(str);
-		leaf = RxVarFindOld(_proc[_rx_proc].scope,&str,&found);
+		leaf = RxVarFindName(_proc[_rx_proc].scope,&str,&found);
 		if (found == 0) return;
 		var = (Variable*)(leaf->value);
 		if (var->stem == NULL)
@@ -282,8 +285,8 @@ R_oSoS( )
 /*  in the pool 'pool' (if exist)                                 */
 /*  Option can be:                                                */
 /*	'Data'	(default) the address of variables data           */
-/* 	'Lstring'	the lstring structure                     */
-/* 	'Variable'	the address of variable structure         */
+/*	'Lstring'	the lstring structure                     */
+/*	'Variable'	the address of variable structure         */
 /*  (valid only for rexx pools)                                   */
 /* -------------------------------------------------------------- */
 /*  VALUE(name[,[newvalue][,[pool]]])                             */
@@ -300,7 +303,7 @@ R_SoSoS( int func )
 	if (!IN_RANGE(1,ARGN,3)) Lerror(ERR_INCORRECT_CALL,0);
 	get_s(1);
 	if (func == f_addr) {		/* ADDR(...) */
-		int 		found,poolnum;
+		int		found,poolnum;
 		char	opt='D';
 		PBinLeaf leaf;
 		Lstr	str;
@@ -324,7 +327,7 @@ R_SoSoS( int func )
 		} else
 			poolnum = _rx_proc;
 
-		leaf = RxVarFindOld(_proc[poolnum].scope,&str,&found);
+		leaf = RxVarFindName(_proc[poolnum].scope,&str,&found);
 		LFREESTR(str);
 		if (!found) {
 			Licpy(ARGR,-1);
@@ -448,7 +451,7 @@ R_datatype( )
 			Lerror(ERR_INCORRECT_CALL,0);
 		type = l2u[(byte)LSTR(*ARG2)[0]];
 	}  else {
-		Lscpy( ARGR, 
+		Lscpy( ARGR,
 			((LTYPE(*ARG1)==LSTRING_TY &&
 			_Lisnum(ARG1)==LSTRING_TY)? "CHAR": "NUM")
 		);
