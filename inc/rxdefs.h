@@ -1,6 +1,9 @@
 /*
- * $Id: rxdefs.h,v 1.6 2003/10/30 13:17:23 bnv Exp $
+ * $Id: rxdefs.h,v 1.7 2006/01/26 10:30:04 bnv Exp $
  * $Log: rxdefs.h,v $
+ * Revision 1.7  2006/01/26 10:30:04  bnv
+ * Corrected for Windows CE
+ *
  * Revision 1.6  2003/10/30 13:17:23  bnv
  * Variable change
  *
@@ -109,11 +112,7 @@ enum functions {
  f_tan  ,    f_tanh ,
 
  f_and  ,    f_or   ,    f_xor  ,    f_not  ,
-
-#ifdef _WIN32_WCE
  f_lasterror,	f_a2u,	f_u2a,
-#endif
-
  f_lastfunc	/* this will be used for the user builtin functions */
 };
 
