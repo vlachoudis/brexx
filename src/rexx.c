@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.c,v 1.7 2004/08/16 15:28:54 bnv Exp $
+ * $Id: rexx.c,v 1.8 2006/01/26 10:25:52 bnv Exp $
  * $Log: rexx.c,v $
+ * Revision 1.8  2006/01/26 10:25:52  bnv
+ * Windows CE
+ *
  * Revision 1.7  2004/08/16 15:28:54  bnv
  * Changed: name of mnemonic operands from xxx_mn to O_XXX
  *
@@ -43,7 +46,7 @@
 #if defined(UNIX)
 #	include <dlfcn.h>
 #elif defined(WCE)
-#	include <cefunc.h>
+#	include <winfunc.h>
 #endif
 
 /* ----------- Function prototypes ------------ */
@@ -184,7 +187,7 @@ RxFileFree(RxFile *rxf)
 		rxf = rxf->next;
 		LFREESTR(f->name);
 		LFREESTR(f->file);
-#ifdef UNIX
+#if defined(__GNUC__) && !defined(MSDOS)
 		if (f->libHandle!=NULL)
 			dlclose(f->libHandle);
 #endif
@@ -282,7 +285,7 @@ RxLoadLibrary( PLstr libname, bool shared )
 	RxFile  *rxf, *last;
 #ifdef UNIX
 	Lstr	tmpstr;
-	char	*dlerrorstr, *ch;
+	char	*dlerrorstr;
 #endif
 
 	/* Convert to ASCIIZ */
@@ -296,7 +299,7 @@ RxLoadLibrary( PLstr libname, bool shared )
 	/* create  a RxFile structure */
 	rxf = RxFileAlloc(LSTR(*libname));
 
-#ifdef UNIX
+#if defined(__GNUC__) && !defined(MSDOS)
 	if (shared) {
 		/* try to load it as a shared library */
 		rxf->libHandle = dlopen(LSTR(rxf->name),RTLD_NOW);
@@ -310,10 +313,9 @@ RxLoadLibrary( PLstr libname, bool shared )
 		/* Unfortunatelly we have to handle errors with strings */
 		/* Skip the errors when trying to load a rexx file instead of a dll-library */
 		if (dlerrorstr != NULL) {
-			ch = STRCHR(dlerrorstr,':')+2;
-			if (MEMCMP(ch,"invalid ELF header",18) &&
-			    MEMCMP(ch,"cannot open shared object file",30) &&
-			    MEMCMP(ch,"Win32 error ",12)) {
+			if (STRSTR(dlerrorstr,"invalid ELF header") &&
+			    STRSTR(dlerrorstr,"cannot open shared object file") &&
+			    STRSTR(dlerrorstr,"Win32 error ")) {
 				LMKCONST(tmpstr,dlerrorstr);
 				Lerror(ERR_LIBRARY,0,&tmpstr);
 			}
