@@ -1,6 +1,9 @@
 /*
- * $Id: address.c,v 1.11 2004/08/16 15:27:37 bnv Exp $
+ * $Id: address.c,v 1.12 2006/01/26 10:24:27 bnv Exp $
  * $Log: address.c,v $
+ * Revision 1.12  2006/01/26 10:24:27  bnv
+ * Spaces...
+ *
  * Revision 1.11  2004/08/16 15:27:37  bnv
  * Include fcntl added
  *
@@ -44,7 +47,6 @@
 #include <interpre.h>
 
 #ifndef WIN
-
 #if defined(MSDOS) || defined(__WIN32__)
 #	include <io.h>
 #	include <fcntl.h>
