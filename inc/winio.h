@@ -1,6 +1,9 @@
 /*
- * $Id: winio.h,v 1.4 2004/08/16 15:33:11 bnv Exp $
+ * $Id: winio.h,v 1.5 2006/01/26 10:31:04 bnv Exp $
  * $Log: winio.h,v $
+ * Revision 1.5  2006/01/26 10:31:04  bnv
+ * Added Colour support for Windows CE
+ *
  * Revision 1.4  2004/08/16 15:33:11  bnv
  * Added: Colors, Scrollbars, new windows functions
  * Corrected: Scrolling behaviour
@@ -41,10 +44,13 @@ int	__CDECL WReadKey(void);
 long	__CDECL WMessage(UINT msg, WPARAM wParam, LONG lParam);
 void	__CDECL WSetColor(BYTE);
 BYTE	__CDECL	WGetColor(void);
+void	__CDECL WSetPalette(int col, int red, int green, int blue);
+long	__CDECL WGetPalette(int col);
 int	__CDECL	WGetFontSize(void);
 void	__CDECL WSetFontSize(int);
 void	__CDECL	WSetScrollBars(BOOL show);
 BOOL	__CDECL	WGetScrollBars(void);
+BOOL	__CDECL WSetBreak(int br);
 
 int	__CDECL WInitWinIO(HINSTANCE,HINSTANCE,int);
 void	__CDECL WExitWinIO(void);
