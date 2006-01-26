@@ -1,6 +1,9 @@
 /*
- * $Id: bio.h,v 1.5 2002/06/11 12:37:56 bnv Exp $
+ * $Id: bio.h,v 1.6 2006/01/26 10:28:56 bnv Exp $
  * $Log: bio.h,v $
+ * Revision 1.6  2006/01/26 10:28:56  bnv
+ * Added: Absolute and relative paths for windows CE
+ *
  * Revision 1.5  2002/06/11 12:37:56  bnv
  * Added: CDECL
  *
@@ -58,7 +61,7 @@ typedef struct {
 	int	mode;
 } BFILE;
 
-BFILE		*Bfopen(const char *filename, const char *mode);
+BFILE*	__CDECL	Bfopen(const char *filename, const char *mode);
 int	__CDECL Bfclose(BFILE *stream);
 #ifdef __BORLANDC__
 #	define Bfseek(s,o,w)	_llseek(s->handle,o,w)
@@ -75,5 +78,10 @@ char	__CDECL Bgetchar(void);
 void	__CDECL Bputs(const char *s);
 void	__CDECL Bputch(char ch);
 void	__CDECL Bputint(long num, int length, int radix);
+
+char*	__CDECL Bgetcwd(char* buffer, int maxlen);
+int	__CDECL Bchdir(char* newdir);
+
+void	__CDECL Brel2absdir(LPTSTR buffer, int maxlen, LPCTSTR reldir);
 
 #endif
