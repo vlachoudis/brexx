@@ -1,6 +1,9 @@
 /*
- * $Id: error.c,v 1.8 2004/08/16 15:28:44 bnv Exp $
+ * $Id: error.c,v 1.9 2006/01/26 10:25:11 bnv Exp $
  * $Log: error.c,v $
+ * Revision 1.9  2006/01/26 10:25:11  bnv
+ * Windows CE support
+ *
  * Revision 1.8  2004/08/16 15:28:44  bnv
  * Spaces
  *
@@ -94,7 +97,7 @@ Rerror( const int errno, const int subno, ... )
 {
 	int	line;
 	RxFile	*rxf;
-#ifndef WCE
+#ifndef WIN
 	va_list	ap;
 #endif
 
