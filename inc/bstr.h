@@ -1,6 +1,9 @@
 /*
- * $Id: bstr.h,v 1.4 2004/08/16 15:30:30 bnv Exp $
+ * $Id: bstr.h,v 1.5 2006/01/26 10:29:11 bnv Exp $
  * $Log: bstr.h,v $
+ * Revision 1.5  2006/01/26 10:29:11  bnv
+ * Added: Bprintf support
+ *
  * Revision 1.4  2004/08/16 15:30:30  bnv
  * Changed: Bstrchr
  *
@@ -59,5 +62,6 @@ char*		__CDECL Bstrchr(const char *s, int c);
 unsigned	__CDECL Bstrlen(const char *s);
 char*		__CDECL Bl2a(	char *s, const long num,
 			int length, const int radix);
+int		__CDECL	Bprintf(const char *format, ...);
 /* char*		Bltoa(long num, char *s); */
 #endif
