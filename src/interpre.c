@@ -1,6 +1,9 @@
 /*
- * $Id: interpre.c,v 1.17 2004/08/16 15:28:54 bnv Exp $
+ * $Id: interpre.c,v 1.18 2006/01/26 10:25:11 bnv Exp $
  * $Log: interpre.c,v $
+ * Revision 1.18  2006/01/26 10:25:11  bnv
+ * Added: Indirect exposure to variables
+ *
  * Revision 1.17  2004/08/16 15:28:54  bnv
  * Changed: name of mnemonic operands from xxx_mn to O_XXX
  *
@@ -572,7 +575,7 @@ I_CallFunction( void )
 			LFREESTR(cmd);
 		}
 		if (func->type == FT_SYSTEM) {
-#ifndef WCE
+#ifndef WIN
 			/* try an external function */
 /***
 /// First check to see if this prg exist with
@@ -632,14 +635,41 @@ I_CallFunction( void )
 					printf("EXPOSE");
 #endif
 				for (;exposed>0;exposed--) {
-					PLEAF(litleaf);		/* Get pointer to variable */
+					/* Get pointer to variable */
+					PLEAF(litleaf);
+					/* test if indirect exposure (var) */
+					if (litleaf==NULL) {
+						int	found;
+						PBinLeaf leaf;
+
+						PLEAF(litleaf);
 #ifdef __DEBUG__
-					if (__debug__) {
-						putchar(' ');
-						Lprint(STDOUT,&(litleaf->key));
-					}
+						if (__debug__) {
+							putchar(' ');
+							putchar('(');
+							Lprint(STDOUT,&(litleaf->key));
+							putchar(')');
+							putchar('=');
+						}
 #endif
-					RxVarExpose(VarScope,litleaf);
+						leaf = RxVarFind(_proc[_rx_proc-1].scope,
+								litleaf,
+								&found);
+#ifdef __DEBUG__
+						if (__debug__)
+							Lprint(STDOUT,LEAFVAL(leaf));
+#endif
+						if (found)
+							RxVarExposeInd(VarScope,LEAFVAL(leaf));
+					} else {
+#ifdef __DEBUG__
+						if (__debug__) {
+							putchar(' ');
+							Lprint(STDOUT,&(litleaf->key));
+						}
+#endif
+						RxVarExpose(VarScope,litleaf);
+					}
 				}
 #ifdef __DEBUG__
 				if (__debug__)
