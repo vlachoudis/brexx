@@ -1,6 +1,9 @@
 /*
- * $Id: rxfiles.c,v 1.11 2004/08/16 15:29:21 bnv Exp $
+ * $Id: rxfiles.c,v 1.12 2006/01/26 10:27:13 bnv Exp $
  * $Log: rxfiles.c,v $
+ * Revision 1.12  2006/01/26 10:27:13  bnv
+ * Corrected: When a file has a name as ddd.dd floating point number
+ *
  * Revision 1.11  2004/08/16 15:29:21  bnv
  * Spaces
  *
@@ -131,22 +134,30 @@ static int
 find_file( const PLstr fn )
 {
 	int	i, j=-1;
+	int	isnum=0;
 #if defined(MSDOS) || defined(WCE)
 	Lstr	str;
 #endif
 
 	/* search to see if it is a number */
-	if ((LTYPE(*fn)==LSTRING_TY) && (_Lisnum(fn) == LINTEGER_TY))
+	if ((LTYPE(*fn)==LSTRING_TY) && (_Lisnum(fn) == LINTEGER_TY)) {
 		j = (int)Lrdint(fn);
-	else
-	if (LTYPE(*fn) == LINTEGER_TY)
+		isnum = 1;
+	} else
+	if (LTYPE(*fn) == LINTEGER_TY) {
 		j = (int)LINT(*fn);
-	else
-	if (LTYPE(*fn) == LREAL_TY)
+		isnum = 1;
+	} else
+	if (LTYPE(*fn) == LREAL_TY) {
 		j = Lrdint(fn);
+		isnum = 1;
+	}
 
 	if (IN_RANGE(0,j,file_size-1))
 		if (file[j].name != NULL) return j;
+
+	if (isnum)
+		Lerror(ERR_FILE_NOT_OPENED,0 );
 
 	L2STR(fn);
 
