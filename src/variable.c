@@ -1,6 +1,10 @@
 /*
- * $Id: variable.c,v 1.10 2004/04/30 15:26:09 bnv Exp $
+ * $Id: variable.c,v 1.11 2006/01/26 10:27:57 bnv Exp $
  * $Log: variable.c,v $
+ * Revision 1.11  2006/01/26 10:27:57  bnv
+ * Added: RxVarExposeInd
+ * Changed RxVar...Old() -> RxVar...Name()
+ *
  * Revision 1.10  2004/04/30 15:26:09  bnv
  * Deleted: bmem.h
  *
@@ -163,7 +167,7 @@ RxVarAdd(Scope scope, PLstr name, int hasdot, PBinLeaf stemleaf )
 
 		if (var->stem==NULL)
 			var->stem = RxScopeMalloc();
-		
+
 		{ /* do a small hashing */
 			register char	*s;
 			char	*se;
@@ -403,7 +407,7 @@ RxVarFind(const Scope scope, const PBinLeaf litleaf, bool *found)
 				else
 				if (a<ae && b<be)
 					cmp = (*a<*b) ? -1 : 1 ;
-				else 
+				else
 					cmp = (a<ae) ? 1 : -1 ;
 			}
 
@@ -412,7 +416,7 @@ RxVarFind(const Scope scope, const PBinLeaf litleaf, bool *found)
 			else
 			if (cmp > 0)
 				leafidx = leafidx->right;
-			else 
+			else
 				break;
 		}
 
@@ -432,9 +436,9 @@ RxVarFind(const Scope scope, const PBinLeaf litleaf, bool *found)
 	}
 } /* RxVarFind */
 
-/* ------------------ RxVarFindOld ------------------ */
+/* ------------------ RxVarFindName ------------------ */
 PBinLeaf __CDECL
-RxVarFindOld(Scope scope, PLstr name, bool *found)
+RxVarFindName(Scope scope, PLstr name, bool *found)
 {
 	Scope	stemscope;
 	BinTree *tree;
@@ -490,7 +494,7 @@ RxVarFindOld(Scope scope, PLstr name, bool *found)
 				Lupper(&aux);
 				Lstrcat(&varidx,&aux);
 			}
-		}	
+		}
 
 		/* free strings */
 		LFREESTR(aux);
@@ -546,7 +550,7 @@ RxVarFindOld(Scope scope, PLstr name, bool *found)
 			return leafidx;
 		}
 	}
-} /* RxVarFindOld */
+} /* RxVarFindName */
 
 /* --------------- RxVarDel ------------------- */
 void __CDECL
@@ -598,9 +602,9 @@ RxVarDel(Scope scope, PBinLeaf litleaf, PBinLeaf varleaf)
 	}
 } /* RxVarDel */
 
-/* --------------- RxVarDelOld ------------------- */
+/* --------------- RxVarDelName ------------------- */
 void __CDECL
-RxVarDelOld(Scope scope, PLstr name, PBinLeaf varleaf)
+RxVarDelName(Scope scope, PLstr name, PBinLeaf varleaf)
 {
 	IdentInfo	*inf;
 	Variable	*var;
@@ -636,7 +640,7 @@ RxVarDelOld(Scope scope, PLstr name, PBinLeaf varleaf)
 			inf->id = NO_CACHE;
 		}
 	}
-} /* RxVarDelOld */
+} /* RxVarDelName */
 
 /* ------------- RxVarDelInd ----------------- */
 void __CDECL
@@ -651,9 +655,10 @@ RxVarDelInd(Scope scope, PLstr vars)
 	w = Lwords(vars);
 	for (i=1; i<=w; i++) {
 		Lword(&name,vars,i);
-		leaf = RxVarFindOld(scope,&name,&found);
+		Lupper(&name);
+		leaf = RxVarFindName(scope,&name,&found);
 		if (found)
-			RxVarDelOld(scope,&name,leaf);
+			RxVarDelName(scope,&name,leaf);
 	}
 	LFREESTR(name);
 } /* RxVarDelInd */
@@ -693,7 +698,7 @@ RxVarExpose(Scope scope, PBinLeaf litleaf)
 	Rx_id = NO_CACHE;		/* something that doesn't exist */
 	leaf = RxVarFind(oldscope,litleaf,&found);
 	Rx_id = oldcurid;
-			
+
 	if (!found) {
 		/* added it to the tree */
 		leaf = RxVarAdd(oldscope,
@@ -708,7 +713,7 @@ RxVarExpose(Scope scope, PBinLeaf litleaf)
 	}
 	var = (Variable*)(leaf->value);
 	if (var->exposed == NO_PROC)
-		var->exposed = _rx_proc-1;	/* to who it belongs */ 
+		var->exposed = _rx_proc-1;	/* to who it belongs */
 
 	/* === now create a node in the new variable scope === */
 
@@ -739,11 +744,31 @@ RxVarExpose(Scope scope, PBinLeaf litleaf)
 
 		if (stemvar->stem==NULL)
 			stemvar->stem = RxScopeMalloc();
-		
+
 		tree = stemvar->stem + hashchar[ (byte)LSTR(varidx)[0] ];
 		return BinAdd(tree,&aux,var);
 	}
-} /* VarExpose */
+} /* RxVarExpose */
+
+/* ------------- RxVarExposeInd ------------- */
+void __CDECL
+RxVarExposeInd(Scope scope, PLstr vars)
+{
+	Lstr	name;
+	long	w,i;
+	PBinLeaf	litleaf;
+
+	LINITSTR(name);
+	w = Lwords(vars);
+	for (i=1; i<=w; i++) {
+		Lword(&name,vars,i);
+		Lupper(&name);
+		litleaf = BinFind(&rxLitterals,&name);
+		if (litleaf)
+			RxVarExpose(scope,litleaf);
+	}
+	LFREESTR(name);
+} /* RxVarExposeInd */
 
 /* -------------- RxVarSet ------------------ */
 void __CDECL
@@ -774,7 +799,7 @@ RxVarSet( Scope scope, PBinLeaf varleaf, PLstr value )
 				inf->leaf[0] = leaf;
 			}
 		}
-	} 
+	}
 } /* RxVarSet */
 
 /* ----------------- RxSetSpecialVar ------------------- */
@@ -965,7 +990,7 @@ SystemPoolSet(PLstr name, PLstr value)
 	{
 		Lstr	str;
 		int	rc;
-	
+
 		LINITSTR(str);
 		Lstrcpy(&str,name);
 		Lcat(&str,"=");
@@ -1008,7 +1033,7 @@ RxPoolGet( PLstr pool, PLstr name, PLstr value )
 		/* search in the appropriate scope */
 		LINITSTR(str);	/* translate to upper case */
 		Lstrcpy(&str,name); Lupper(&str);
-		leaf = RxVarFindOld(_proc[poolnum].scope,&str,&found);
+		leaf = RxVarFindName(_proc[poolnum].scope,&str,&found);
 		if (found) {
 			Lstrcpy(value,LEAFVAL(leaf));
 			LFREESTR(str);
@@ -1056,7 +1081,7 @@ RxPoolSet( PLstr pool, PLstr name, PLstr value )
 		/* search in the appropriate scope */
 		LINITSTR(str);	/* translate to upper case */
 		Lstrcpy(&str,name); Lupper(&str);
-		leaf = RxVarFindOld(_proc[poolnum].scope,&str,&found);
+		leaf = RxVarFindName(_proc[poolnum].scope,&str,&found);
 
 		/* set the new value */
 		if (found) {
