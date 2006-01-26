@@ -1,6 +1,9 @@
 /*
- * $Id: rxstr.c,v 1.7 2003/10/30 13:16:28 bnv Exp $
+ * $Id: rxstr.c,v 1.8 2006/01/26 10:27:57 bnv Exp $
  * $Log: rxstr.c,v $
+ * Revision 1.8  2006/01/26 10:27:57  bnv
+ * Changed RxVar...Old() -> RxVar...Name()
+ *
  * Revision 1.7  2003/10/30 13:16:28  bnv
  * Variable name change
  *
@@ -228,7 +231,7 @@ R_S( const int func )
 			LINITSTR(str); Lfx(&str,LLEN(*ARG1));
 			Lstrcpy(&str,ARG1);
 			Lupper(&str); LASCIIZ(str);
-			RxVarFindOld(_proc[_rx_proc].scope,&str,&found);
+			RxVarFindName(_proc[_rx_proc].scope,&str,&found);
 			LFREESTR(str);
 			if (found)
 				Lscpy(ARGR,"VAR");
