@@ -1,6 +1,9 @@
 /*
- * $Id: os.h,v 1.7 2003/11/04 09:48:17 bnv Exp $
+ * $Id: os.h,v 1.8 2006/01/26 10:29:52 bnv Exp $
  * $Log: os.h,v $
+ * Revision 1.8  2006/01/26 10:29:52  bnv
+ * Corrected for Windows CE
+ *
  * Revision 1.7  2003/11/04 09:48:17  bnv
  * REMOVED: the mkstemp
  * mkstemp was openning the file and returing the file handle
@@ -63,12 +66,8 @@
 #	define	SHELL    "SHELL"
 #	define	FILESEP  '\\'
 #	define	PATHSEP  ';'
-#	if !defined(ALIGN)
-#		error "Please define the ALIGN"
-#	endif
-#	if !defined(WIN)
-#		error "Please define the WIN"
-#	endif
+#	define	ALIGN	1
+#	define	WIN	1
 
 #	pragma warning(disable : 4018)	/* signed unsigned comparison warning */
 
@@ -125,20 +124,23 @@
 #endif
 
 /* --------------- NON UNICODE ----------------- */
-#ifndef UNICODE
-#	ifndef TCHAR
-#		define	TCHAR		char
-#		define	LPTSTR		char*
-#	endif
-#	ifndef TEXT
-#		define	TEXT(x)		(x)
+#ifndef WIN
+#	ifndef UNICODE
+#		ifndef TCHAR
+#			define	TCHAR		char
+#			define	LPTSTR		char*
+#		endif
+#		ifndef TEXT
+#			define	TEXT(x)		(x)
+#		endif
 #	endif
 #endif
 
 /* -------------- Terminal I/O ----------------- */
 #ifdef HAS_TERMINALIO
-#	define	PUTS	puts
-#	define	PUTCHAR	putchar
+#	define	PUTS		puts
+#	define	PUTCHAR		putchar
+//#	define	PUTINT(a,b,c)	;
 #else
 #	define	PUTS		Bputs
 #	define	PUTINT		Bputint
@@ -163,6 +165,15 @@
 #	define	FPUTC		fputc
 #	define	FPUTS		fputs
 #	define	FGETC		fgetc
+#	define	PRINTF		printf
+
+#	ifdef WIN
+#		define	GETCWD		_getcwd
+#		define	CHDIR		_chdir
+#	else
+#		define	GETCWD		getcwd
+#		define	CHDIR		chdir
+#	endif
 #else
 	/* --- Use the home made I/O --- */
 #	define	STDIN		NULL
@@ -179,6 +190,17 @@
 #	define	FPUTC		Bfputc
 #	define	FPUTS		Bfputs
 #	define	FGETC		Bfgetc
+#	define	PRINTF		Bprintf
+
+#	define	GETCWD		Bgetcwd
+#	define	CHDIR		Bchdir
+#endif
+
+/* ---------------- Unicode Ops ------------------ */
+#ifdef UNICODE
+#	define	SPRINTF		swprintf
+#else
+#	define	SPRINTF		sprintf
 #endif
 
 /* ---------------- Memory Ops ------------------- */
@@ -203,6 +225,7 @@
 #	define	STRCAT		_fstrcat
 #	define	STRCHR		_fstrchr
 #	define	STRLEN		_fstrlen
+#	define	STRSTR		_fstrstr
 #	define	MKTEMP		mktemp
 #elif defined(HAS_STRING)
 #	define	STRCPY		strcpy
@@ -210,6 +233,7 @@
 #	define	STRCAT		strcat
 #	define	STRCHR		strchr
 #	define	STRLEN		strlen
+#	define	STRSTR		strstr
 #	define	MKTEMP		mktemp
 #else
 #	define	STRCPY		Bstrcpy
@@ -217,6 +241,7 @@
 #	define	STRCAT		Bstrcat
 #	define	STRCHR		Bstrchr
 #	define	STRLEN		Bstrlen
+#	define	STRSTR		Bstrstr
 #endif
 
 /* ----------------- Ctype ------------------------- */
