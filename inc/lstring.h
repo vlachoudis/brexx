@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.h,v 1.12 2004/08/16 15:32:27 bnv Exp $
+ * $Id: lstring.h,v 1.13 2006/01/26 10:29:39 bnv Exp $
  * $Log: lstring.h,v $
+ * Revision 1.13  2006/01/26 10:29:39  bnv
+ * Corrected windows CE support
+ *
  * Revision 1.12  2004/08/16 15:32:27  bnv
  * PACKAGE
  *
@@ -49,8 +52,10 @@
 #	include <windows.h>
 #	include <winio.h>
 #	include	<bio.h>
-#	define PACKAGE_NAME "brexx"
-#	define PACKAGE_STRING PACKAGE_NAME " V2.1"
+//#	ifndef PACKAGE_STRING
+//#		define PACKAGE_NAME "brexx"
+//#		define PACKAGE_STRING PACKAGE_NAME " V2.1"
+//#	endif
 #else
 #	include <config.h>
 #endif
@@ -157,6 +162,11 @@ typedef Lstr	*PLstr;
 #define LICPY(s,i)	{	LINT(s)  = (i); \
 				LLEN(s)  = sizeof(long); \
 				LTYPE(s) = LINTEGER_TY; }
+#ifdef UNICODE
+#	define LWSCPY	Lwscpy
+#else
+#	define LWSCPY	Lscpy
+#endif
 
 /* --- word --- */
 #define LSKIPBLANKS(S,P) {while (((P)<LLEN(S)) && ISSPACE(LSTR(S)[P])) (P)++;}
@@ -206,6 +216,10 @@ typedef Lstr	*PLstr;
 #	define LNORMALISE(size)	((size) | 0x001F)
 #endif
 #define LEXTRA	1
+
+#ifndef LONG_MAX
+#define LONG_MAX MAXLONG
+#endif
 
 #ifdef __cplusplus
 extern "C" {
