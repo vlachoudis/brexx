@@ -1,6 +1,9 @@
 /*
- * $Id: main.c,v 1.10 2003/10/30 13:16:28 bnv Exp $
+ * $Id: main.c,v 1.11 2006/01/26 10:25:35 bnv Exp $
  * $Log: main.c,v $
+ * Revision 1.11  2006/01/26 10:25:35  bnv
+ * Changed: conio
+ *
  * Revision 1.10  2003/10/30 13:16:28  bnv
  * Variable name change
  *
@@ -41,6 +44,10 @@
 #include <sys/stat.h>
 
 /* ------- Includes for any other external library ------- */
+#ifdef RXCONIO
+extern void __CDECL RxConIOInitialize();
+#endif
+
 #ifdef RXMYSQLSTATIC
 #	include "rxmysql.c"
 #endif
@@ -79,6 +86,9 @@ main(int ac, char *av[])
 	/* --- Register functions of external libraries --- */
 #ifdef RXMYSQLSTATIC
 	RxMySQLInitialize();
+#endif
+#ifdef RXCONIO
+	RxConIOInitialize();
 #endif
 
 	/* --- scan arguments --- */
