@@ -1,6 +1,10 @@
 /*
- * $Id: variable.h,v 1.4 2002/06/11 12:37:56 bnv Exp $
+ * $Id: variable.h,v 1.5 2006/01/26 10:30:14 bnv Exp $
  * $Log: variable.h,v $
+ * Revision 1.5  2006/01/26 10:30:14  bnv
+ * Changed RxVar...Old() -> RxVar...Name()
+ * Added: RxVarExposeInd
+ *
  * Revision 1.4  2002/06/11 12:37:56  bnv
  * Added: CDECL
  *
@@ -49,11 +53,12 @@ PBinLeaf __CDECL RxVarAdd(Scope scope, PLstr name, int hasdot,
 			PBinLeaf stemleaf );
 PBinLeaf __CDECL RxVarFind(const Scope scope, const PBinLeaf litleaf,
 			bool *found);
-PBinLeaf __CDECL RxVarFindOld(Scope scope, PLstr name, bool *found);
+PBinLeaf __CDECL RxVarFindName(Scope scope, PLstr name, bool *found);
 void	__CDECL RxVarDel(Scope scope, PBinLeaf litleaf, PBinLeaf varleaf);
-void	__CDECL RxVarDelOld(Scope scope, PLstr name, PBinLeaf varleaf);
+void	__CDECL RxVarDelName(Scope scope, PLstr name, PBinLeaf varleaf);
 void	__CDECL RxVarDelInd(Scope scope, PLstr vars);
 PBinLeaf __CDECL RxVarExpose(Scope scope, PBinLeaf litleaf);
+void	__CDECL RxVarExposeInd(Scope scope, PLstr vars);
 void	__CDECL RxVarSet(Scope scope, PBinLeaf varleaf, PLstr value);
 void	__CDECL RxSetSpecialVar(int,long);
 Scope	__CDECL RxScopeMalloc( void );
@@ -69,6 +74,5 @@ int	__CDECL RxRegPool(char *poolname, int (*getf)(PLstr,PLstr),
 int	__CDECL RxPoolGet(PLstr,PLstr,PLstr);
 int	__CDECL RxPoolSet(PLstr,PLstr,PLstr);
 
-	
 #undef EXTERN
 #endif
