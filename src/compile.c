@@ -1,6 +1,9 @@
 /*
- * $Id: compile.c,v 1.13 2004/08/16 15:28:15 bnv Exp $
+ * $Id: compile.c,v 1.14 2006/01/26 10:24:40 bnv Exp $
  * $Log: compile.c,v $
+ * Revision 1.14  2006/01/26 10:24:40  bnv
+ * Added: Indirect exposure to variables
+ *
  * Revision 1.13  2004/08/16 15:28:15  bnv
  * Changed: name of mnemonic operands from xxx_mn to O_XXX
  *
@@ -937,7 +940,6 @@ C_drop(void)
 				TraceByte( variable_middle );
 			nextsymbol();
 			_CodeAddByte(OP_COPY2TMP);
-			_CodeAddByte(OP_UPPER);
 			_mustbe(ri_parent,ERR_UNMATCHED_PARAN,0);
 			_CodeAddByte(OP_DROPIND);
 				TraceByte( variable_middle );
@@ -1335,7 +1337,7 @@ C_parse(void)
 } /* C_parse */
 
 /* -------------------------------------------------------------- */
-/*  PROCEDURE [EXPOSE name [name]...] ;                           */
+/*  PROCEDURE [EXPOSE name|(var) [name|(var)]...] ;               */
 /*      start a new generation of variables within an internal    */
 /*      routine. Optionally named variables or groups of          */
 /*      variables from an earlier generation may be exposed       */
@@ -1350,10 +1352,24 @@ C_procedure(void)
 	pos = _CodeAddByte(0);
 	if (identCMP("EXPOSE")) {
 		nextsymbol();
-		while (symbol==ident_sy) {
-			_CodeAddPtr(SYMBOLADD2LITS);
-			exposed++;
-			nextsymbol();
+		while (1) {
+			if (symbol==ident_sy) {
+				_CodeAddPtr(SYMBOLADD2LITS);
+				exposed++;
+				nextsymbol();
+			} else
+			if (symbol==le_parent) {
+				nextsymbol();
+				if (symbol != ident_sy)
+					Lerror(ERR_STRING_EXPECTED,7,&symbolstr);
+				/* mark an indirect call */
+				_CodeAddPtr(NULL);
+				_CodeAddPtr(SYMBOLADD2LITS);
+				exposed++;
+				nextsymbol();
+				_mustbe(ri_parent,ERR_UNMATCHED_PARAN,0);
+			} else
+				break;
 		}
 		CODEFIXUPB(pos,exposed);	/* Patch reference */
 	}
