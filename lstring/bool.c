@@ -1,6 +1,9 @@
 /*
- * $Id: bool.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
+ * $Id: bool.c,v 1.5 2008/07/14 13:08:16 bnv Exp $
  * $Log: bool.c,v $
+ * Revision 1.5  2008/07/14 13:08:16  bnv
+ * Initialize variable
+ *
  * Revision 1.4  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -22,7 +25,7 @@
 int __CDECL
 Lbool( const PLstr num )
 {
-	long	i;
+	long	i=0;
 
 	switch (LTYPE(*num)) {
 		case LSTRING_TY:
