@@ -1,6 +1,9 @@
 /*
- * $Id: rxdefs.h,v 1.7 2006/01/26 10:30:04 bnv Exp $
+ * $Id: rxdefs.h,v 1.8 2008/07/14 13:09:21 bnv Exp $
  * $Log: rxdefs.h,v $
+ * Revision 1.8  2008/07/14 13:09:21  bnv
+ * MVS,CMS support
+ *
  * Revision 1.7  2006/01/26 10:30:04  bnv
  * Corrected for Windows CE
  *
@@ -113,6 +116,13 @@ enum functions {
 
  f_and  ,    f_or   ,    f_xor  ,    f_not  ,
  f_lasterror,	f_a2u,	f_u2a,
+
+#ifdef __CMS__
+ f_cmsflag,
+ f_cmsline,
+ f_cmsuser,
+#endif
+
  f_lastfunc	/* this will be used for the user builtin functions */
 };
 

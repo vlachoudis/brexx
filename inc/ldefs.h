@@ -1,6 +1,9 @@
 /*
- * $Id: ldefs.h,v 1.3 2004/08/16 15:31:09 bnv Exp $
+ * $Id: ldefs.h,v 1.4 2008/07/14 13:09:21 bnv Exp $
  * $Log: ldefs.h,v $
+ * Revision 1.4  2008/07/14 13:09:21  bnv
+ * MVS,CMS support
+ *
  * Revision 1.3  2004/08/16 15:31:09  bnv
  * Changed: From float to double
  *
@@ -86,9 +89,13 @@ typedef int		bool;
 /* ------------------ comonly used macros -------------------- */
 #define	ISPRINT(c)	((c)>=' ' && (c)<='~' && (c)!='\'')
 /*#define ISSPACE(c)	((c==0x09) || (c==0x0D) || (c==0x20))*/
+#if defined(__CMS__) || defined(__MVS__) /* compiler bug hack */
+#define HEXVAL(x)	(((x)>='0')?((x)-'0'):(((x)&0x0F) + 9))
+#else
 #define HEXVAL(x)	(((x)>='A')? \
 				((((x)>='a')? ((x)&(0xDF)) : (x)) -'A'+10) :\
 				((x)-'0'))
+#endif
 #define CTL(a)		(('a') & 0x1F)
 
 #define SWAP(a,b)	a ^= b ^= a ^= b;

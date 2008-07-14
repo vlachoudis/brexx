@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.h,v 1.13 2006/01/26 10:29:39 bnv Exp $
+ * $Id: lstring.h,v 1.14 2008/07/14 13:09:21 bnv Exp $
  * $Log: lstring.h,v $
+ * Revision 1.14  2008/07/14 13:09:21  bnv
+ * MVS,CMS support
+ *
  * Revision 1.13  2006/01/26 10:29:39  bnv
  * Corrected windows CE support
  *
@@ -58,6 +61,7 @@
 //#	endif
 #else
 #	include <config.h>
+#	include <wchar.h>
 #endif
 
 #ifdef WCE

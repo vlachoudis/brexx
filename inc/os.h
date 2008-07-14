@@ -1,6 +1,9 @@
 /*
- * $Id: os.h,v 1.8 2006/01/26 10:29:52 bnv Exp $
+ * $Id: os.h,v 1.9 2008/07/14 13:09:21 bnv Exp $
  * $Log: os.h,v $
+ * Revision 1.9  2008/07/14 13:09:21  bnv
+ * MVS,CMS support
+ *
  * Revision 1.8  2006/01/26 10:29:52  bnv
  * Corrected for Windows CE
  *
@@ -95,6 +98,36 @@
 #	define	HAS_STRING
 #	define	HAS_CTYPE
 #	define	HAS_XTOY
+
+#elif __CMS__
+
+#	define VMCMS 1
+#	define SHELL "SHELL"
+#	define OS "VM//CMS"
+#	define FILESEP "."
+#	define PATHSEP ':'
+
+#	define HAS_TERMINALIO
+#	define HAS_STDIO
+#	define HAS_STRING
+#	define HAS_CTYPE
+#	define HAS_XTOY
+#	define HAS_SIGNAL
+
+#elif __MVS__
+
+#	define VMCMS 1
+#	define SHELL "SHELL"
+#	define OS "MVS"
+#	define FILESEP "."
+#	define PATHSEP ':'
+
+#	define HAS_TERMINALIO
+#	define HAS_STDIO
+#	define HAS_STRING
+#	define HAS_CTYPE
+#	define HAS_XTOY
+#	define HAS_SIGNAL
 
 #else
 
