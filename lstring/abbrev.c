@@ -1,6 +1,9 @@
 /*
- * $Id: abbrev.c,v 1.3 2002/06/11 12:37:15 bnv Exp $
+ * $Id: abbrev.c,v 1.4 2008/07/14 13:07:53 bnv Exp $
  * $Log: abbrev.c,v $
+ * Revision 1.4  2008/07/14 13:07:53  bnv
+ * Bug correction
+ *
  * Revision 1.3  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -18,23 +21,12 @@
 bool __CDECL
 Labbrev(const PLstr information, const PLstr info, long length)
 {
-	long	i;
-	bool	more;
-
-	L2STR(information);
-	L2STR(info);
+        int     cond1, cond2, cond3;
 
 	if (length<=0) length = LLEN(*info);
-	if ((LLEN(*information) < LLEN(*info)) ||
-		(LLEN(*info) < length))
-			return FALSE;
-	if (LLEN(*info)==0)
-		return TRUE;
-	i = 0; more = TRUE;
-	while ( (i<length) && more )
-		if (LSTR(*information)[i] == LSTR(*info)[i])
-			i++;
-		else
-			more = FALSE;
-	return more;
+
+        cond1 = (LLEN(*information) >= LLEN(*info));
+        cond2 = (LLEN(*info) >= length);
+        cond3 = !memcmp(LSTR(*information), LSTR(*info), LLEN(*info));
+        return cond1 && cond2 && cond3;
 } /* Labbrev */
