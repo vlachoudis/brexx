@@ -1,6 +1,9 @@
 /*
- * $Id: time.c,v 1.7 2002/06/11 12:37:15 bnv Exp $
+ * $Id: time.c,v 1.8 2008/07/14 13:08:16 bnv Exp $
  * $Log: time.c,v $
+ * Revision 1.8  2008/07/14 13:08:16  bnv
+ * MVS,CMS support
+ *
  * Revision 1.7  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -33,12 +36,14 @@
 #	include <sys/types.h>
 #	include <sys/timeb.h>
 #else
-/* Load both of them time.h and sys/time.h, you never now where the 
+/* Load both of them time.h and sys/time.h, you never now where the
  * struct timeval is
  */
 #	include <time.h>
-#	include <sys/time.h>
-#	include <unistd.h>
+#	if !defined(JCC) && !defined(__CMS__) && !defined(__MVS__)
+#		include <sys/time.h>
+#		include <unistd.h>
+#	endif
 #endif
 #include <lerror.h>
 #include <lstring.h>
@@ -55,6 +60,10 @@ _Ltimeinit( void )
 	/* nothing to declare */
 #elif defined(_MSC_VER)
 	struct _timeb tb;
+#elif defined(__CMS__) || defined(__MVS__)
+	unsigned int vmnow[2];
+	struct tm * tv;
+	time_t rawtime;
 #else
 	struct timeval	tv;
 	struct timezone	tz;
@@ -69,6 +78,14 @@ _Ltimeinit( void )
 #elif defined(_MSC_VER)
 	_ftime(&tb);
 	elapsed = (double)tb.time + (double)tb.millitm/1000.0;
+#elif defined(__CMS__)
+	rawtime = __rexclk(vmnow);
+	tv=gmtime(&rawtime);
+	elapsed = (double)vmnow[0] + (double)vmnow[1]/1000000.0;
+#elif defined(__MVS__)
+	rawtime = __getclk(vmnow);
+	tv=gmtime(&rawtime);
+	elapsed = (double)(vmnow[0] >> 12) + (double)(vmnow[1] >> 12)/1000000.0;
 #else
 	gettimeofday(&tv,&tz);
 	elapsed = tv.tv_sec + (double)tv.tv_usec/1000000.0;
@@ -93,6 +110,9 @@ Ltime( const PLstr timestr, char option )
 		struct time t;
 #	elif defined(_MSC_VER)
 		struct _timeb tb;
+#	elif defined(__CMS__) || defined(__MVS__)
+		unsigned int vmnow[2];
+		struct tm * tv;
 #	else
 		struct timeval tv;
 		struct timezone tz;
@@ -136,6 +156,12 @@ Ltime( const PLstr timestr, char option )
 #elif defined(_MSC_VER)
 			_ftime(&tb);
 			unow = (double)tb.time + (double)tb.millitm/1000.0;
+#elif defined(__CMS__)
+			__REXCLK(vmnow);
+			unow = (double)vmnow[0]+(double)vmnow[1]/1000000.0;
+#elif defined(__MVS__)
+			__getclk(vmnow);
+			unow = (double)(vmnow[0]>>12)+(double)(vmnow[1]>>12)/1000000.0;
 #else
 			gettimeofday(&tv,&tz);
 			unow = (double)tv.tv_sec + (double)tv.tv_usec/1000000.0;
@@ -205,6 +231,12 @@ Ltime( const PLstr timestr, char option )
 #elif defined(_MSC_VER)
 			_ftime(&tb);
 			unow = (double)tb.time + (double)tb.millitm/1000.0;
+#elif defined(__CMS__)
+			__REXCLK(vmnow);
+			unow=(double)vmnow[0] + (double)vmnow[1]/1000000.0;
+#elif defined(__MVS__)
+			__getclk(vmnow);
+			unow=(double)(vmnow[0] >> 12) + (double)(vmnow[1] >> 12)/1000000.0;
 #else
 			gettimeofday(&tv,&tz);
 			unow = (double)tv.tv_sec + (double)tv.tv_usec/1000000.0;

@@ -1,6 +1,9 @@
 /*
- * $Id: x2b.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
+ * $Id: x2b.c,v 1.5 2008/07/14 13:08:16 bnv Exp $
  * $Log: x2b.c,v $
+ * Revision 1.5  2008/07/14 13:08:16  bnv
+ * MVS,CMS support
+ *
  * Revision 1.4  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -38,7 +41,14 @@ Lx2b( const PLstr to, const PLstr from )
 
 		d = HEXVAL(LSTR(*from)[i]);
 		for (k=8; k; k>>=1)
-			*c++ = (d&k)?'1':'0';
+#ifndef __CMS__
+			*c++ = (d&k)? '1' : '0';
+#else
+			if (d&k)
+				*c++ = '1';
+			else
+				*c++ = '0';
+#endif
 	}
 	*c = 0;
 	LLEN(*to) = STRLEN(LSTR(*to));

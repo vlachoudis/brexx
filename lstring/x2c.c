@@ -1,6 +1,9 @@
 /*
- * $Id: x2c.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
+ * $Id: x2c.c,v 1.5 2008/07/14 13:08:16 bnv Exp $
  * $Log: x2c.c,v $
+ * Revision 1.5  2008/07/14 13:08:16  bnv
+ * MVS,CMS support
+ *
  * Revision 1.4  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -41,7 +44,10 @@ Lx2c( const PLstr to, const PLstr from )
 			return;
 		}
 
-		if ((j-i)&1)  { t[r++] = HEXVAL(f[i]); i++ ;}
+		if ((j-i)&1)  {
+			t[r++] = HEXVAL(f[i]);
+			i++;
+		}
 		for (; i<j; i+=2)
 		t[r++] = (HEXVAL(f[i])<<4) | HEXVAL(f[i+1]);
 	}

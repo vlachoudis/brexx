@@ -1,6 +1,9 @@
 /*
- * $Id: subword.c,v 1.4 2003/10/30 13:16:53 bnv Exp $
+ * $Id: subword.c,v 1.5 2008/07/14 13:08:16 bnv Exp $
  * $Log: subword.c,v $
+ * Revision 1.5  2008/07/14 13:08:16  bnv
+ * MVS,CMS support
+ *
  * Revision 1.4  2003/10/30 13:16:53  bnv
  * Cosmetics
  *
@@ -27,8 +30,6 @@ Lsubword( const PLstr to, const PLstr from, long n, long length )
 	if (n<=0) n = 1;
 	i = Lwordindex(from,n);
 
-	if (length<=0) length = 0;
-
 	if (i==0) {
 		LZEROSTR(*to);
 		return;
@@ -36,8 +37,8 @@ Lsubword( const PLstr to, const PLstr from, long n, long length )
 
 	LINITSTR(tmp);
 
-	if (length==0) {
-		_Lsubstr(&tmp,from,(size_t)i,0);
+	if (length<=0) {
+		if (length<0) _Lsubstr(&tmp,from,(size_t)i,0);
 		goto fin;
 	}
 	n = i--;

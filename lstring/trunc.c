@@ -1,6 +1,9 @@
 /*
- * $Id: trunc.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
+ * $Id: trunc.c,v 1.5 2008/07/14 13:08:16 bnv Exp $
  * $Log: trunc.c,v $
+ * Revision 1.5  2008/07/14 13:08:16  bnv
+ * MVS,CMS support
+ *
  * Revision 1.4  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -37,7 +40,8 @@ Ltrunc( const PLstr to, const PLstr from, long n)
 		L2REAL(from);
 		Lfx(to,n+15);
 #ifndef WCE
-		sprintf(LSTR(*to),"%.*f", (int)n, LREAL(*from));
+		/*sprintf(LSTR(*to),"%.*f", (int)n, LREAL(*from));*/
+		GCVT(LREAL(*from) , (n), LSTR(*to));
 #else
 //////// WARNING NO ROUNDING ON THE NUMBER IS DONE!
 #define NDIG	20
