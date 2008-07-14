@@ -1,6 +1,9 @@
 /*
- * $Id: format.c,v 1.5 2002/06/11 12:37:15 bnv Exp $
+ * $Id: format.c,v 1.6 2008/07/14 13:08:16 bnv Exp $
  * $Log: format.c,v $
+ * Revision 1.6  2008/07/14 13:08:16  bnv
+ * MVS,CMS support
+ *
  * Revision 1.5  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -143,20 +146,24 @@ Lfo20:
 *********************/
 	double	r;
 	TCHAR	str[50];
-
+	/* need to mess with this and use GCVT to work out digits */
 	r = Lrdreal(from);
 	if (before<0) before = 0;
 	if (after<0)  after  = 0;
 	if (after)    before += (after+1);
-#ifndef WCE
-	sprintf(
+#ifdef __CMS__
+	gcvt(r,before,str);
 #else
+#	ifndef WCE
+	sprintf(
+#	else
 	swprintf(
-#endif
+#	endif
 		str,
 		(expp<=0)? TEXT("%#*.*lf") :
 		(expp==1)? TEXT("%#*.*lG") : TEXT("%#*.*lE"),
 		(int)before, (int)after, r);
+#endif
 
 #ifndef WCE
 	Lscpy(to,str);

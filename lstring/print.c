@@ -1,6 +1,9 @@
 /*
- * $Id: print.c,v 1.9 2004/08/16 15:25:53 bnv Exp $
+ * $Id: print.c,v 1.10 2008/07/14 13:08:16 bnv Exp $
  * $Log: print.c,v $
+ * Revision 1.10  2008/07/14 13:08:16  bnv
+ * MVS,CMS support
+ *
  * Revision 1.9  2004/08/16 15:25:53  bnv
  * Changed: to buffered printing for WCE
  *
@@ -93,12 +96,16 @@ Lprint( FILEP f, const PLstr str )
 
 		case LREAL_TY:
 			GCVT(LREAL(*str),lNumericDigits,s);
+#ifdef WIN
+			FPUTS(GCVT(LREAL(*str),lNumericDigits,s), f);
+#else
 			ANSI_FPUTS(f, s);
-//#ifdef WIN
-//			FPUTS(GCVT(LREAL(*str),lNumericDigits,s), f);
-//#else
+#	if defined(__CMS__) || defined(__MVS__)
+			ANSI_FPRINTF(f, "%s", GCVT(LREAL(*str),lNumericDigits,s));
+#	else
 //			ANSI_FPRINTF(f, lFormatStringToReal, LREAL(*str));
-//#endif
+#	endif
+#endif
 			break;
 	}
 } /* Lprint */

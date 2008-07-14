@@ -1,6 +1,9 @@
 /*
- * $Id: hashvalu.c,v 1.6 2003/02/12 16:42:12 bnv Exp $
+ * $Id: hashvalu.c,v 1.7 2008/07/14 13:08:16 bnv Exp $
  * $Log: hashvalu.c,v $
+ * Revision 1.7  2008/07/14 13:08:16  bnv
+ * MVS,CMS support
+ *
  * Revision 1.6  2003/02/12 16:42:12  bnv
  * *** empty log message ***
  *
@@ -31,7 +34,7 @@ dword __CDECL
 Lhashvalue( const PLstr str )
 {
 	dword	value = 0;
-	size_t	i,l;
+	size_t	i,l=0;
 
 	if (LISNULL(*str)) return 0;
 

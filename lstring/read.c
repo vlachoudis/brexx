@@ -1,6 +1,9 @@
 /*
- * $Id: read.c,v 1.10 2004/07/22 13:00:17 bnv Exp $
+ * $Id: read.c,v 1.11 2008/07/14 13:08:16 bnv Exp $
  * $Log: read.c,v $
+ * Revision 1.11  2008/07/14 13:08:16  bnv
+ * MVS,CMS support
+ *
  * Revision 1.10  2004/07/22 13:00:17  bnv
  * Corrected: Reading from STDIN with readline when operating on a device
  *
@@ -112,12 +115,17 @@ Lread( FILEP f, const PLstr line, long size )
 		}
 	} else {			/* Read entire file */
 #ifndef WCE
+#	if defined(JCC) || defined(__CMS__) || defined(__MVS__)
+		size = 0; /* Always do it the slow way: so no-seek (JCL inline) files work. */
+		/*   printf(" JCC Rules invoked \n");   dw*/
+#	else
 		l = FTELL(f);
 		if (l>=0) {
 			FSEEK(f,0L,SEEK_END);
 			size = FTELL(f) - l + 1;
 			FSEEK(f,l,SEEK_SET);
 		}
+#endif
 #elif defined(__BORLANDC__)
 		l = FTELL(f);
                 size = FSEEK(f,0L,SEEK_END) - l + 1;
@@ -152,4 +160,7 @@ Lread( FILEP f, const PLstr line, long size )
 	}
 	LLEN(*line) = l;
 	LTYPE(*line) = LSTRING_TY;
+#if defined(JCC) || defined(__CMS__) || defined(__MVS__)
+	LASCIIZ(*line);
+#endif
 } /* Lread */

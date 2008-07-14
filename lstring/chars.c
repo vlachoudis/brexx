@@ -1,6 +1,9 @@
 /*
- * $Id: chars.c,v 1.5 2004/03/26 22:50:22 bnv Exp $
+ * $Id: chars.c,v 1.6 2008/07/14 13:08:16 bnv Exp $
  * $Log: chars.c,v $
+ * Revision 1.6  2008/07/14 13:08:16  bnv
+ * MVS,CMS support
+ *
  * Revision 1.5  2004/03/26 22:50:22  bnv
  * Modified to handle FIFO, Devices and files
  *
@@ -18,7 +21,7 @@
  *
  */
 
-#ifndef WIN
+#if !defined(WIN) && !defined(__CMS__) && !defined(__MVS__)
 #	include <sys/stat.h>
 #	include <unistd.h>
 #endif
@@ -34,7 +37,7 @@ Lchars( FILEP f )
 #else
 	long	l,chs;
 
-#ifndef WIN
+#if !defined(WIN) && !defined(__CMS__) && !defined(__MVS__)
 	struct stat buf;
 	fstat(fileno(f),&buf);
 	if (S_ISCHR(buf.st_mode) || S_ISFIFO(buf.st_mode))

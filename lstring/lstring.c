@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.c,v 1.8 2004/03/26 22:51:11 bnv Exp $
+ * $Id: lstring.c,v 1.9 2008/07/14 13:08:16 bnv Exp $
  * $Log: lstring.c,v $
+ * Revision 1.9  2008/07/14 13:08:16  bnv
+ * MVS,CMS support
+ *
  * Revision 1.8  2004/03/26 22:51:11  bnv
  * values to limits
  *
@@ -36,8 +39,22 @@
 #include <lerror.h>
 #include <lstring.h>
 
-#ifndef WIN
+#ifndef WIN32
+#	if !defined(JCC) && !defined(__CMS__) && !defined(__MVS__)
+#	ifndef WIN
+#		include <limits.h>
+#	endif
+#	endif
+#endif
+
+#ifdef WIN32
 #	include <limits.h>
+#	define MAXLONG LONG_MAX
+#endif
+
+#if defined(JCC) || defined(__CMS__) || defined(__MVS__)
+#	include <limits.h>
+#	define MAXLONG LONG_MAX
 #endif
 
 #ifdef HAVE_READLINE_HISTORY
@@ -58,7 +75,7 @@ Linit( LerrorFunc Lerr)
 	size_t	i;
 
 	/* setup error function */
-#ifndef WCE
+#ifndef WIN
 	if (Lerr)
 		Lerror = Lerr;
 	else
@@ -151,7 +168,7 @@ Lscpy( const PLstr to, const char *from )
 	LTYPE(*to) = LSTRING_TY;
 } /* Lscpy */
 
-#ifdef WCE
+#if !defined(__CMS__) && !defined(__MVS__)
 /* ---------------- Lwscpy ------------------ */
 void __CDECL
 Lwscpy(const PLstr to, const wchar_t *from )
