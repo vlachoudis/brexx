@@ -1,6 +1,9 @@
 /*
- * $Id: dqueue.c,v 1.3 2002/06/11 12:37:38 bnv Exp $
+ * $Id: dqueue.c,v 1.4 2008/07/14 13:08:42 bnv Exp $
  * $Log: dqueue.c,v $
+ * Revision 1.4  2008/07/14 13:08:42  bnv
+ * MVS,CMS support
+ *
  * Revision 1.3  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -83,7 +86,7 @@ DQPop( DQueue *queue )
 
 	dat = (queue->tail)->dat;
 	(queue->tail)->dat = NULL;
-	
+
 	DQDel(queue,queue->tail);
 	return dat;
 } /* DQPop */

@@ -1,6 +1,9 @@
 /*
- * $Id: rxconv.c,v 1.5 2002/06/11 12:37:38 bnv Exp $
+ * $Id: rxconv.c,v 1.6 2008/07/14 13:08:42 bnv Exp $
  * $Log: rxconv.c,v $
+ * Revision 1.6  2008/07/14 13:08:42  bnv
+ * MVS,CMS support
+ *
  * Revision 1.5  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -36,7 +39,7 @@
 void __CDECL
 R_SoSoC( const int func )
 {
-	char	pad;
+	char	pad=' ';
 	bool	usepad;
 	PLstr	a2;
 	Lstr	nullstr;

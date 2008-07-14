@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.c,v 1.8 2006/01/26 10:25:52 bnv Exp $
+ * $Id: rexx.c,v 1.9 2008/07/14 13:08:42 bnv Exp $
  * $Log: rexx.c,v $
+ * Revision 1.9  2008/07/14 13:08:42  bnv
+ * MVS,CMS support
+ *
  * Revision 1.8  2006/01/26 10:25:52  bnv
  * Windows CE
  *
@@ -187,7 +190,8 @@ RxFileFree(RxFile *rxf)
 		rxf = rxf->next;
 		LFREESTR(f->name);
 		LFREESTR(f->file);
-#if defined(__GNUC__) && !defined(MSDOS)
+#if defined(__GNUC__) && !defined(MSDOS) && !defined(__CMS__) \
+    && !defined(__MVS__)
 		if (f->libHandle!=NULL)
 			dlclose(f->libHandle);
 #endif
@@ -302,8 +306,13 @@ RxLoadLibrary( PLstr libname, bool shared )
 #if defined(__GNUC__) && !defined(MSDOS)
 	if (shared) {
 		/* try to load it as a shared library */
+#	if !defined(__CMS__) && !defined(__MVS__)
 		rxf->libHandle = dlopen(LSTR(rxf->name),RTLD_NOW);
 		dlerrorstr = dlerror();
+#	else
+		rxf->libHandle = NULL;
+		dlerrorstr = NULL;
+#	endif
 		if (rxf->libHandle!=NULL) {
 			/* load the main function and execute it...*/
 			RxFileType(rxf);

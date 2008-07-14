@@ -1,6 +1,9 @@
 /*
- * $Id: bintree.c,v 1.7 2004/04/30 15:24:38 bnv Exp $
+ * $Id: bintree.c,v 1.8 2008/07/14 13:08:42 bnv Exp $
  * $Log: bintree.c,v $
+ * Revision 1.8  2008/07/14 13:08:42  bnv
+ * MVS,CMS support
+ *
  * Revision 1.7  2004/04/30 15:24:38  bnv
  * Added: include file os.h
  *
@@ -55,26 +58,26 @@ static int scandepth( BinLeaf *leaf, int depth );
 BinLeaf* __CDECL
 BinAdd( BinTree *tree, PLstr name, void *dat )
 {
-	BinLeaf	*ThisEntry;
-	BinLeaf	*LastEntry;
+	BinLeaf	*thisEntry;
+	BinLeaf	*lastEntry;
 	BinLeaf	*leaf;
-	bool	LeftTaken;
+	bool	leftTaken=FALSE;
 	int	cmp, dep=0;
 
 	/* If tree is NULL then it will produce an error */
-	ThisEntry = tree->parent;
-	while (ThisEntry != NULL) {
-		LastEntry = ThisEntry;
-		cmp = _Lstrcmp(name,&(ThisEntry->key));
+	thisEntry = tree->parent;
+	while (thisEntry != NULL) {
+		lastEntry = thisEntry;
+		cmp = _Lstrcmp(name,&(thisEntry->key));
 		if (cmp < 0) {
-			ThisEntry = ThisEntry->left;
-			LeftTaken = TRUE;
+			thisEntry = thisEntry->left;
+			leftTaken = TRUE;
 		} else
 		if (cmp > 0) {
-			ThisEntry = ThisEntry->right;
-			LeftTaken = FALSE;
+			thisEntry = thisEntry->right;
+			leftTaken = FALSE;
 		} else
-			return ThisEntry;
+			return thisEntry;
 		dep++;
 	}
 
@@ -92,10 +95,10 @@ BinAdd( BinTree *tree, PLstr name, void *dat )
 	if (tree->parent==NULL)
 		tree->parent = leaf;
 	else {
-		if (LeftTaken)
-			LastEntry->left = leaf;
+		if (leftTaken)
+			lastEntry->left = leaf;
 		else
-			LastEntry->right = leaf;
+			lastEntry->right = leaf;
 	}
 	tree->items++;
 	if (dep>tree->maxdepth) {
@@ -191,8 +194,8 @@ BinDisposeTree( BinTree *tree, void (__CDECL *BinFreeData)(void *) )
 void __CDECL
 BinDel( BinTree *tree, PLstr name, void (__CDECL *BinFreeData)(void *) )
 {
-	BinLeaf	*thisid, *previous, *par_newid, *newid;
-	bool	lefttaken;
+	BinLeaf	*thisid, *previous=NULL, *par_newid, *newid;
+	bool	lefttaken=FALSE;
 	int	cmp;
 
 	thisid = tree->parent;

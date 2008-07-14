@@ -1,6 +1,9 @@
 /*
- * $Id: bmem.c,v 1.7 2004/08/16 15:27:58 bnv Exp $
+ * $Id: bmem.c,v 1.8 2008/07/14 13:08:42 bnv Exp $
  * $Log: bmem.c,v $
+ * Revision 1.8  2008/07/14 13:08:42  bnv
+ * MVS,CMS support
+ *
  * Revision 1.7  2004/08/16 15:27:58  bnv
  * Error message if the WCE version is compiled with bmem
  *
@@ -33,7 +36,11 @@
 
 #include <ctype.h>
 #include <stdio.h>
-#include <malloc.h>
+
+#if !defined(JCC) && !defined(__CMS__) && !defined(__MVS__)
+#	include <malloc.h>
+#endif
+
 #include <stdlib.h>
 
 #include <os.h>

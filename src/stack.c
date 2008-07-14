@@ -1,6 +1,9 @@
 /*
- * $Id: stack.c,v 1.6 2004/04/30 15:27:50 bnv Exp $
+ * $Id: stack.c,v 1.7 2008/07/14 13:08:42 bnv Exp $
  * $Log: stack.c,v $
+ * Revision 1.7  2008/07/14 13:08:42  bnv
+ * MVS,CMS support
+ *
  * Revision 1.6  2004/04/30 15:27:50  bnv
  * Removed bmem.h
  *
@@ -54,18 +57,28 @@ DeleteStack( void )
 void __CDECL
 Queue2Stack( PLstr str )
 {
+#ifdef __CMS__
+	int atln = LLEN(*str);
+	__ATTN__(LSTR(*str) , &atln , "FIFO"); /* dw */
+#else
 	DQueue *stck;
 	stck = DQPEEK(&rxStackList);
 	DQAdd2Head(stck,str);
+#endif
 } /* Queue2Stack */
 
 /* ----------------- Push2Stack ----------------------- */
 void __CDECL
 Push2Stack( PLstr str )
 {
+#ifdef __CMS__
+	int atln = LLEN(*str);
+	__ATTN__(LSTR(*str) , &atln , "LIFO"); /* dw */
+#else
 	DQueue *stck;
 	stck = DQPEEK(&rxStackList);
 	DQAdd2Tail(stck,str);
+#endif
 } /* Push2Stack */
 
 /* ----------------- PullFromStack ----------------------- */
@@ -81,7 +94,16 @@ PullFromStack( )
 long __CDECL
 StackQueued( void )
 {
+#ifdef __CMS__
+	int items;
+	long retval;
+	_STACKN_(&items);
+	retval = items;
+	/* dw printf(" In StackQueued -  Items  = %d \d", items); */
+	return items;
+#else
 	DQueue *stck;
 	stck = DQPEEK(&rxStackList);
 	return stck->items;
+#endif
 } /* StackQueued*/

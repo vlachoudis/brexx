@@ -1,6 +1,9 @@
 /*
- * $Id: rexxfunc.c,v 1.8 2004/08/16 15:28:54 bnv Exp $
+ * $Id: rexxfunc.c,v 1.9 2008/07/14 13:08:42 bnv Exp $
  * $Log: rexxfunc.c,v $
+ * Revision 1.9  2008/07/14 13:08:42  bnv
+ * MVS,CMS support
+ *
  * Revision 1.8  2004/08/16 15:28:54  bnv
  * Added new WCE functions
  *
@@ -38,6 +41,13 @@
 
 #define DECL( A )  void __CDECL R_##A ( const int );
 
+#ifdef __CMS__
+#define VMDCL( A )  void __CDECL VM_##A ( const int );
+
+VMDCL( O )
+
+#endif
+
 DECL( SSoI     )   DECL( SIoC  )  DECL( S   )   DECL( SIoI )
 DECL( SSoIoIoC )   DECL( SoSoC )  DECL( SoI )   DECL( IoI  )
 DECL( O        )   DECL( SI    )  DECL( C   )   DECL( oSoS )
@@ -72,6 +82,7 @@ DECL( not )
 /* ------------- Register Functions Tree ----------- */
 static BinTree	*ExtraFuncs = NULL;
 /* !!!!!!!!!!!! WARNING THE LIST MUST BE SORTED !!!!!!!!!!! */
+/* !!!!!! EBCDIC SORT ORDER IS NOT THE SAME AS ASCII */
 static
 TBltFunc
 rexx_routine[] = {
@@ -87,12 +98,18 @@ rexx_routine[] = {
 	{ "ASIN",	R_math		,f_asin		},
 	{ "ATAN",	R_math		,f_atan		},
 	{ "ATAN2",	R_atanpow	,f_atan2	},
+#ifndef __CMS__
 	{ "B2X",	R_S		,f_b2x		},
+#endif
 	{ "BITAND",	R_SoSoC		,f_bitand	},
 	{ "BITOR",	R_SoSoC		,f_bitor	},
 	{ "BITXOR",	R_SoSoC		,f_bitxor	},
+#ifdef __CMS__
+	{ "B2X",	R_S		,f_b2x		},
+#else
 	{ "C2D",	R_SoI		,f_c2d		},
 	{ "C2X",	R_S		,f_c2x		},
+#endif
 	{ "CENTER",	R_SIoC		,f_center	},
 	{ "CENTRE",	R_SIoC		,f_center	},
 	{ "CHANGESTR",	R_changestr	,f_changestr	},
@@ -100,13 +117,21 @@ rexx_routine[] = {
 	{ "CHAROUT",	R_charlineout	,f_charout	},
 	{ "CHARS",	R_charslines	,f_chars	},
 	{ "CLOSE",	R_close		,f_close	},
+#ifdef __CMS__
+	{ "CMSFLAG",	VM_O		,f_cmsflag	},
+#endif
 	{ "COMPARE",	R_compare	,f_compare	},
 	{ "COPIES",	R_copies	,f_copies	},
 	{ "COS",	R_math		,f_cos		},
 	{ "COSH",	R_math		,f_cosh		},
 	{ "COUNTSTR",	R_SS		,f_countstr	},
+#ifdef __CMS__
+	{ "C2D",	R_SoI		,f_c2d		},
+	{ "C2X",	R_S		,f_c2x		},
+#else
 	{ "D2C",	R_IoI		,f_d2c		},
 	{ "D2X",	R_IoI		,f_d2x		},
+#endif
 	{ "DATATYPE",	R_datatype	,f_datatype	},
 	{ "DATE",	R_C		,f_date		},
 	{ "DELSTR",	R_SIoI		,f_delstr	},
@@ -114,6 +139,10 @@ rexx_routine[] = {
 	{ "DESBUF",	R_O		,f_desbuf	},
 	{ "DIGITS",	R_O		,f_digits	},
 	{ "DROPBUF",	R_dropbuf	,f_dropbuf	},
+#ifdef __CMS__
+	{ "D2C",	R_IoI		,f_d2c		},
+	{ "D2X",	R_IoI		,f_d2x		},
+#endif
 	{ "EOF",	R_eof		,f_eof		},
 	{ "ERRORTEXT",	R_errortext	,f_errortext	},
 	{ "EXP",	R_math		,f_exp		},
@@ -146,6 +175,9 @@ rexx_routine[] = {
 	{ "LINEIN",	R_charlinein	,f_linein	},
 	{ "LINEOUT",	R_charlineout	,f_lineout	},
 	{ "LINES",	R_charslines	,f_lines	},
+#ifdef __CMS__
+	{ "LINESIZE",	VM_O		,f_cmsline	},
+#endif
 	{ "LOAD",	R_S		,f_load		},
 	{ "LOG",	R_math		,f_log		},
 	{ "LOG10",	R_math		,f_log10	},
@@ -188,6 +220,9 @@ rexx_routine[] = {
 	{ "TRACE",	R_C		,f_trace	},
 	{ "TRANSLATE",	R_translate	,f_translate	},
 	{ "TRUNC",	R_trunc		,f_trunc	},
+#ifdef __CMS__
+	{ "USERID",	VM_O		,f_cmsuser	},
+#endif
 #ifdef WCE
 	{ "U2A",	R_S		,f_u2a		},
 #endif
@@ -200,10 +235,17 @@ rexx_routine[] = {
 	{ "WORDPOS",	R_SSoI		,f_wordpos	},
 	{ "WORDS",	R_S		,f_words	},
 	{ "WRITE",	R_write		,f_write	},
+#ifdef __CMS__
+	{ "XRANGE",	R_xrange	,f_xrange	},
+	{ "X2B",	R_S		,f_x2b		},
+	{ "X2C",	R_S		,f_x2c		},
+	{ "X2D",	R_SoI		,f_x2d		}
+#else
 	{ "X2B",	R_S		,f_x2b		},
 	{ "X2C",	R_S		,f_x2c		},
 	{ "X2D",	R_SoI		,f_x2d		},
 	{ "XRANGE",	R_xrange	,f_xrange	}
+#endif
 };
 
 /* ------------- C_isBuiltin --------------- */

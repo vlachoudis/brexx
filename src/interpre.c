@@ -1,6 +1,9 @@
 /*
- * $Id: interpre.c,v 1.18 2006/01/26 10:25:11 bnv Exp $
+ * $Id: interpre.c,v 1.19 2008/07/14 13:08:42 bnv Exp $
  * $Log: interpre.c,v $
+ * Revision 1.19  2008/07/14 13:08:42  bnv
+ * MVS,CMS support
+ *
  * Revision 1.18  2006/01/26 10:25:11  bnv
  * Added: Indirect exposure to variables
  *
@@ -643,6 +646,7 @@ I_CallFunction( void )
 						PBinLeaf leaf;
 
 						PLEAF(litleaf);
+						RxVarExpose(VarScope,litleaf);
 #ifdef __DEBUG__
 						if (__debug__) {
 							putchar(' ');
@@ -1575,6 +1579,8 @@ outofcmd:
 			STACKTOP = &(_tmpstr[RxStckTop]);
 			a = NULL;
 			/* delete empty stacks */
+/* dw - let VM handle the stack */
+#if !defined(__CMS__)
 			while (StackQueued()==0 && rxStackList.items>1)
 				DeleteStack();
 			if (StackQueued()>0) {
@@ -1584,6 +1590,8 @@ outofcmd:
 				while (StackQueued()==0 && rxStackList.items>1)
 					DeleteStack();
 			} else {
+#endif
+/*** dw end of let vm do stack */
 				Lread(STDIN,STACKTOP,LREADLINE);
 			}
 			DEBUGDISPLAY("RX_PULL");

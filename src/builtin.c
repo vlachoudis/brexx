@@ -1,6 +1,9 @@
 /*
- * $Id: builtin.c,v 1.9 2006/01/26 10:24:40 bnv Exp $
+ * $Id: builtin.c,v 1.10 2008/07/14 13:08:42 bnv Exp $
  * $Log: builtin.c,v $
+ * Revision 1.10  2008/07/14 13:08:42  bnv
+ * MVS,CMS support
+ *
  * Revision 1.9  2006/01/26 10:24:40  bnv
  * Changed: RxVar...Old() -> RxVar...Name()
  *
@@ -198,6 +201,10 @@ R_C( const int func )
 			break;
 
 		case f_queued:
+#if defined(__CMS__) || defined(__MVS)  /* dw start */
+					Licpy(ARGR,StackQueued());
+					break;
+#else
 			if (exist(1)) {
 				if (option=='T') {
 					Licpy(ARGR,StackQueued());
@@ -218,6 +225,7 @@ R_C( const int func )
 				items += ((DQueue*)(qe->dat))->items;
 			Licpy(ARGR,items);
 			break;
+#endif
 
 		default:
 			Lerror(ERR_INTERPRETER_FAILURE,0 );
@@ -307,7 +315,7 @@ R_SoSoS( int func )
 		char	opt='D';
 		PBinLeaf leaf;
 		Lstr	str;
-		void	*ptr;
+		void	*ptr=NULL;
 		long	addr;
 
 		/* translate to uppercase */
@@ -713,7 +721,7 @@ R_random( )
 void __CDECL
 R_storage( )
 {
-	void	*ptr;
+	void	*ptr=NULL;
 	long	adr;
 #if defined(__BORLANDC__) && !defined(__WIN32__) && !defined(WCE)
 	unsigned	seg,ofs;
@@ -724,11 +732,15 @@ R_storage( )
 		Lerror(ERR_INCORRECT_CALL,0);
 	if (ARGN==0) {
 #ifndef WCE
-#if defined(__BORLANDC__) && !defined(__WIN32__)
+#	if defined(__BORLANDC__) && !defined(__WIN32__)
 		Licpy(ARGR,farcoreleft()); /* return the free memory left */
-#else
+#	else
+#		if __CMS__
+		CMSSTORE(ARGR);
+#		else
 		Licpy(ARGR,0);
-#endif
+#		endif
+#	endif
 #else
 		STORE_INFORMATION si;
 		GetStoreInformation(&si);
@@ -851,3 +863,26 @@ linefound:
 		MEMCPY(LSTR(*ARGR),c,(size_t)l);
 	}
 } /* R_sourceline */
+
+#ifdef __CMS__
+void __CDECL
+VM_O(int func)
+{
+	switch (func){
+		case f_cmsflag:
+			if (ARGN!=1) Lerror(ERR_INCORRECT_CALL,0);
+			L2STR(ARG1);
+			CMSFLAG(ARGR,ARG1);
+			break;
+		case f_cmsline:
+			CMSLINE(ARGR);
+			break;
+		case f_cmsuser:
+			CMSUSER(ARGR);
+			break;
+		default:
+			fprintf("unknown function %d in VM_O" , func);
+	}
+} /* VM_O */
+#endif
+

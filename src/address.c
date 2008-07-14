@@ -1,6 +1,9 @@
 /*
- * $Id: address.c,v 1.12 2006/01/26 10:24:27 bnv Exp $
+ * $Id: address.c,v 1.13 2008/07/14 13:08:42 bnv Exp $
  * $Log: address.c,v $
+ * Revision 1.13  2008/07/14 13:08:42  bnv
+ * MVS,CMS support
+ *
  * Revision 1.12  2006/01/26 10:24:27  bnv
  * Spaces...
  *
@@ -60,11 +63,19 @@
 #elif defined(__MPW__)
 #elif defined(_MSC_VER)
 #else
-#	include <fcntl.h>
-#	include <unistd.h>
+#	if defined(JCC) || defined(__CMS__) || defined(__MVS__)
+#		if !defined(__CMS__) && !defined(__MVS__)
+#			include <io.h>
+#		endif
+#	else
+#		include <fcntl.h>
+#		include <unistd.h>
+#	endif
 #endif
 
-#include <sys/stat.h>
+#if !defined(__CMS__) && !defined(__MVS__)
+#	include <sys/stat.h>
+#endif
 #include <string.h>
 
 #ifndef S_IREAD
@@ -119,6 +130,7 @@ chkcmd4stack(PLstr cmd, int *in, int *out )
 		*out = FIFO;
 } /* chkcmd4stack */
 
+#if !defined(__CMS__) && !defined(__MVS__)
 /* -------------------- mkfntemp -------------------- */
 static void
 mkfntemp(char *fn, size_t length)
@@ -138,13 +150,18 @@ mkfntemp(char *fn, size_t length)
 	STRCAT(fn,"OXXXXXX");
 	MKTEMP(fn);
 } /* mkfntemp */
+#endif
 
 /* ------------------ RxRedirectCmd ----------------- */
 int __CDECL
 RxRedirectCmd(PLstr cmd, int in, int out, PLstr outputstr)
 {
+#ifdef __CMS__
+/* stuff for VM commands will go here */
+#elif defined(__MVS__)
+#else
 	char	fnin[250], fnout[250];
-	int	old_stdin, old_stdout;
+	int	old_stdin=0, old_stdout=0;
 	int	filein, fileout;
 	FILE	*f;
 	PLstr	str;
@@ -200,7 +217,9 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr outputstr)
 		dup2(old_stdout,LOW_STDOUT);  /* restore stdout */
 		close(old_stdout);
 #ifndef MSDOS
+#	if !defined(JCC) && !defined(__CMS__) && !defined(__MVS__)
 		chmod(fnout,0666);
+#	endif
 #endif
 		if ((f=fopen(fnout,"r"))!=NULL) {
 			if (outputstr) {
@@ -229,8 +248,85 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr outputstr)
 	}
 
 	return rxReturnCode;
+#endif
 } /* RxRedirectCmd */
 #endif
+
+#if defined(__CMS__)
+/* ------------------ RxExecuteCmd ----------------- */
+int __CDECL
+RxExecuteCmd( PLstr cmd, PLstr env )
+{
+	/*dw printf(" In RxExecuteCmd <%s> <%s> \n",LSTR(*cmd),LSTR(*env)); */
+	char svcbuff [120],statbf[40],*parm;
+	int parmcnt,code,parmn,nlcnt;
+
+	/* Set prmcnt = 1 to save first 8 bytes for CP and EXEC */
+
+	parmcnt = 1;
+	parm = strtok(LSTR(*cmd)," ");
+	while (parm != NULL) {
+		/* printf(" %s \n ", parm); */
+		nlcnt=parmcnt*8;
+		memcpy( &svcbuff[nlcnt] , "        " , 8);
+		memcpy( &svcbuff[nlcnt] , parm,(strlen(parm)>8)?8:strlen(parm));
+
+		++parmcnt;
+		parm = strtok(NULL," ");
+	}
+
+	for (nlcnt = 0; nlcnt < 8; ++nlcnt)
+		svcbuff[parmcnt*8 + nlcnt] = 0xff;
+
+	/* if ENV = "COMMAND" just issue command */
+	if (strcmp(LSTR(*env) , "COMMAND") == 0) {
+		__SVC202 ( &svcbuff[8], &parmn, &code);
+		/*printf(" Return from SVC202 = <%d> \n", code);*/
+		rxReturnCode = code;
+		RxSetSpecialVar(RCVAR,rxReturnCode);
+		return code;
+	} else {
+		/* we need to try EXEC, no args, CP */
+		/* first see if there is an EXEC */
+		memcpy (&statbf[0] , "STATE   ", 8);
+		memcpy (&statbf[8] , &svcbuff[8], 8);
+		memcpy (&statbf[16] , "EXEC    ", 8);
+		memcpy (&statbf[24] , "*       ", 8);
+		for (nlcnt = 0; nlcnt < 8; ++nlcnt)
+			svcbuff[32 + nlcnt]=0xff;
+		__SVC202 ( statbf , &parmn, &code);
+		/* printf(" Return from STATE  = <%d> \n", code); */
+		if( code == 0 ) {	/* there is an EXEC */
+			memcpy ( &svcbuff[0] , "EXEC    ", 8);
+			__SVC202 ( svcbuff, &parmn, &code);
+			/* dw printf(" Return from EXEC - SVC202 = <%d> \n", code); */
+			rxReturnCode = code;
+			RxSetSpecialVar(RCVAR,rxReturnCode);
+		} else {   /* NO EXEC try CMS then CP */
+			__SVC202 ( &svcbuff[8], &parmn, &code);
+			/* dwprintf(" Return from PLAIN  SVC202 = <%d> \n", code); */
+			if(code == -1) { /* command not found try CP */
+				memcpy ( &svcbuff[0] , "CP      ", 8);
+				__SVC202 ( svcbuff, &parmn, &code);
+				/* dw   printf(" Return from CP - SVC202 = <%d> \n", code); */
+			}
+		}
+		rxReturnCode = code;
+		RxSetSpecialVar(RCVAR,rxReturnCode);
+	}
+	return code;
+} /* RxExecuteCmd */
+
+#elif defined(__MVS__)
+
+/* ------------------ RxExecuteCmd ----------------- */
+int __CDECL
+RxExecuteCmd( PLstr cmd, PLstr env )
+{
+	return (system(LSTR(*cmd)));
+} /* RxExecuteCmd */
+
+#else
 
 /* ------------------ RxExecuteCmd ----------------- */
 int __CDECL
@@ -320,3 +416,5 @@ RxExecuteCmd( PLstr cmd, PLstr env )
 #endif
 	return rxReturnCode;
 } /* RxExecuteCmd */
+
+#endif
