@@ -1,6 +1,9 @@
 /*
- * $Id: nextsymb.h,v 1.4 2002/06/11 12:37:56 bnv Exp $
+ * $Id: nextsymb.h,v 1.5 2008/07/15 14:57:11 bnv Exp $
  * $Log: nextsymb.h,v $
+ * Revision 1.5  2008/07/15 14:57:11  bnv
+ * mvs corretions
+ *
  * Revision 1.4  2002/06/11 12:37:56  bnv
  * Added: CDECL
  *
@@ -18,7 +21,7 @@
 #ifndef __NEXTSYMBOL_H__
 #define __NEXTSYMBOL_H__
 
-#include <lstring.h>
+#include "lstring.h"
 
 #ifdef __NEXTSYMB_C__
 #	define EXTERN

@@ -1,6 +1,9 @@
 /*
- * $Id: rxdefs.h,v 1.8 2008/07/14 13:09:21 bnv Exp $
+ * $Id: rxdefs.h,v 1.9 2008/07/15 14:57:11 bnv Exp $
  * $Log: rxdefs.h,v $
+ * Revision 1.9  2008/07/15 14:57:11  bnv
+ * mvs corretions
+ *
  * Revision 1.8  2008/07/14 13:09:21  bnv
  * MVS,CMS support
  *
@@ -29,6 +32,10 @@
 
 #ifndef __RXDEFS_H__
 #define __RXDEFS_H__
+
+#if defined(JCC) || defined(__CMS__) || defined(__MVS__)
+#	include "rxmvs.h"
+#endif
 
 #define ARGN   (rxArg.n)
 #define ARGR   (rxArg.r)
