@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.h,v 1.15 2008/07/15 07:40:07 bnv Exp $
+ * $Id: lstring.h,v 1.16 2008/07/15 14:57:11 bnv Exp $
  * $Log: lstring.h,v $
+ * Revision 1.16  2008/07/15 14:57:11  bnv
+ * Added include to lmvs.h
+ *
  * Revision 1.15  2008/07/15 07:40:07  bnv
  * MVS, CMS support
  *
@@ -63,7 +66,7 @@
 //#		define PACKAGE_STRING PACKAGE_NAME " V2.1"
 //#	endif
 #else
-#	include <config.h>
+#	include "config.h"
 #	if !defined(__CMS__) && !defined(__MVS__)
 #		include <wchar.h>
 #	endif
@@ -74,6 +77,10 @@
 #else
 #	include <ctype.h>
 #	include <stdio.h>
+#endif
+
+#if defined(JCC) || defined(__CMS__) || defined(__MVS__)
+#	include "lmvs.h"
 #endif
 
 #include "bmem.h"
