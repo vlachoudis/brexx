@@ -1,6 +1,9 @@
 /*
- * $Id: rxfiles.c,v 1.12 2006/01/26 10:27:13 bnv Exp $
+ * $Id: rxfiles.c,v 1.13 2008/07/15 07:40:25 bnv Exp $
  * $Log: rxfiles.c,v $
+ * Revision 1.13  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.12  2006/01/26 10:27:13  bnv
  * Corrected: When a file has a name as ddd.dd floating point number
  *
@@ -44,11 +47,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <lerror.h>
-#include <lstring.h>
+#include "lerror.h"
+#include "lstring.h"
 
-#include <rexx.h>
-#include <rxdefs.h>
+#include "rexx.h"
+#include "rxdefs.h"
 
 #define	FSTDIN	0
 #define	FSTDOUT	1

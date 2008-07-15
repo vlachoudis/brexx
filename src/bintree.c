@@ -1,6 +1,9 @@
 /*
- * $Id: bintree.c,v 1.8 2008/07/14 13:08:42 bnv Exp $
+ * $Id: bintree.c,v 1.9 2008/07/15 07:40:25 bnv Exp $
  * $Log: bintree.c,v $
+ * Revision 1.9  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.8  2008/07/14 13:08:42  bnv
  * MVS,CMS support
  *
@@ -42,13 +45,13 @@
  * and the value.
  */
 
-#include <os.h>
-#include <bmem.h>
+#include "os.h"
+#include "bmem.h"
 #ifndef WCE
 #	include <stdio.h>
 #endif
 #include <string.h>
-#include <bintree.h>
+#include "bintree.h"
 
 #ifdef __DEBUG__
 static int scandepth( BinLeaf *leaf, int depth );

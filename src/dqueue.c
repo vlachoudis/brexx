@@ -1,6 +1,9 @@
 /*
- * $Id: dqueue.c,v 1.4 2008/07/14 13:08:42 bnv Exp $
+ * $Id: dqueue.c,v 1.5 2008/07/15 07:40:25 bnv Exp $
  * $Log: dqueue.c,v $
+ * Revision 1.5  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.4  2008/07/14 13:08:42  bnv
  * MVS,CMS support
  *
@@ -15,8 +18,8 @@
  *
  */
 
-#include <bmem.h>
-#include <dqueue.h>
+#include "bmem.h"
+#include "dqueue.h"
 
 /* ------------- DQAdd2Head --------------- */
 void __CDECL

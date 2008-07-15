@@ -1,6 +1,9 @@
 /*
- * $Id: rxstr.c,v 1.8 2006/01/26 10:27:57 bnv Exp $
+ * $Id: rxstr.c,v 1.9 2008/07/15 07:40:25 bnv Exp $
  * $Log: rxstr.c,v $
+ * Revision 1.9  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.8  2006/01/26 10:27:57  bnv
  * Changed RxVar...Old() -> RxVar...Name()
  *
@@ -34,12 +37,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <lerror.h>
-#include <lstring.h>
+#include "lerror.h"
+#include "lstring.h"
 
-#include <rexx.h>
-#include <rxdefs.h>
-#include <interpre.h>
+#include "rexx.h"
+#include "rxdefs.h"
+#include "interpre.h"
 
 /* --------------------------------------------------------------- */
 /*  ABBREV(information,info[,length])                              */

@@ -1,6 +1,9 @@
 /*
- * $Id: builtin.c,v 1.10 2008/07/14 13:08:42 bnv Exp $
+ * $Id: builtin.c,v 1.11 2008/07/15 07:40:25 bnv Exp $
  * $Log: builtin.c,v $
+ * Revision 1.11  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.10  2008/07/14 13:08:42  bnv
  * MVS,CMS support
  *
@@ -51,16 +54,16 @@
 #	endif
 #endif
 
-#include <lerror.h>
-#include <lstring.h>
+#include "lerror.h"
+#include "lstring.h"
 
-#include <rexx.h>
-#include <stack.h>
-#include <trace.h>
-#include <rxdefs.h>
-#include <dqueue.h>
-#include <compile.h>
-#include <interpre.h>
+#include "rexx.h"
+#include "stack.h"
+#include "trace.h"
+#include "rxdefs.h"
+#include "dqueue.h"
+#include "compile.h"
+#include "interpre.h"
 
 #ifdef WIN
 #	include <winfunc.h>

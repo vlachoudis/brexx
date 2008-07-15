@@ -1,6 +1,9 @@
 /*
- * $Id: rxmath.c,v 1.7 2003/10/30 13:16:28 bnv Exp $
+ * $Id: rxmath.c,v 1.8 2008/07/15 07:40:25 bnv Exp $
  * $Log: rxmath.c,v $
+ * Revision 1.8  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.7  2003/10/30 13:16:28  bnv
  * Variable name change
  *
@@ -27,11 +30,11 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include <lerror.h>
-#include <lstring.h>
+#include "lerror.h"
+#include "lstring.h"
 
-#include <rexx.h>
-#include <rxdefs.h>
+#include "rexx.h"
+#include "rxdefs.h"
 
 /* --------------------------------------------------------------- */
 /*  ABS(number)                                                    */

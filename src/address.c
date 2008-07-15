@@ -1,6 +1,9 @@
 /*
- * $Id: address.c,v 1.13 2008/07/14 13:08:42 bnv Exp $
+ * $Id: address.c,v 1.14 2008/07/15 07:40:25 bnv Exp $
  * $Log: address.c,v $
+ * Revision 1.14  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.13  2008/07/14 13:08:42  bnv
  * MVS,CMS support
  *
@@ -41,13 +44,13 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <lstring.h>
 
-#include <rexx.h>
-#include <trace.h>
-#include <stack.h>
-#include <compile.h>
-#include <interpre.h>
+#include "lstring.h"
+#include "rexx.h"
+#include "trace.h"
+#include "stack.h"
+#include "compile.h"
+#include "interpre.h"
 
 #ifndef WIN
 #if defined(MSDOS) || defined(__WIN32__)

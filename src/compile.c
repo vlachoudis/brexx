@@ -1,6 +1,9 @@
 /*
- * $Id: compile.c,v 1.15 2008/07/14 13:08:42 bnv Exp $
+ * $Id: compile.c,v 1.16 2008/07/15 07:40:25 bnv Exp $
  * $Log: compile.c,v $
+ * Revision 1.16  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.15  2008/07/14 13:08:42  bnv
  * MVS,CMS support
  *
@@ -55,15 +58,15 @@
 
 #include <setjmp.h>
 
-#include <lerror.h>
-#include <lstring.h>
-#include <bintree.h>
-#include <dqueue.h>
+#include "lerror.h"
+#include "lstring.h"
+#include "bintree.h"
+#include "dqueue.h"
 
-#include <rexx.h>
-#include <trace.h>
-#include <compile.h>
-#include <nextsymb.h>
+#include "rexx.h"
+#include "trace.h"
+#include "compile.h"
+#include "nextsymb.h"
 
 /*
 //

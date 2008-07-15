@@ -1,6 +1,9 @@
 /*
- * $Id: trace.c,v 1.7 2004/04/30 15:27:34 bnv Exp $
+ * $Id: trace.c,v 1.8 2008/07/15 07:40:25 bnv Exp $
  * $Log: trace.c,v $
+ * Revision 1.8  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.7  2004/04/30 15:27:34  bnv
  * Type changes
  *
@@ -28,14 +31,14 @@
 #define __TRACE_C__
 
 #include <stdlib.h>
-#include <lstring.h>
+#include "lstring.h"
 
-#include <rexx.h>
-#include <trace.h>
-#include <compile.h>
-#include <interpre.h>
-#include <variable.h>
-#include <nextsymb.h>
+#include "rexx.h"
+#include "trace.h"
+#include "compile.h"
+#include "interpre.h"
+#include "variable.h"
+#include "nextsymb.h"
 
 /* ---------- function prototypes ------------- */
 void    __CDECL RxInitInterStr();

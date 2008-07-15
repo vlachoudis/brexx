@@ -1,6 +1,9 @@
 /*
- * $Id: expr.c,v 1.7 2004/08/16 15:28:54 bnv Exp $
+ * $Id: expr.c,v 1.8 2008/07/15 07:40:25 bnv Exp $
  * $Log: expr.c,v $
+ * Revision 1.8  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.7  2004/08/16 15:28:54  bnv
  * Changed: name of mnemonic operands from xxx_mn to O_XXX
  *
@@ -24,12 +27,12 @@
  *
  */
 
-#include <lerror.h>
-#include <lstring.h>
+#include "lerror.h"
+#include "lstring.h"
 
-#include <rexx.h>
-#include <trace.h>
-#include <compile.h>
+#include "rexx.h"
+#include "trace.h"
+#include "compile.h"
 
 /*-----------------* local function prototypes *------------ */
 static void __CDECL Exp0( void );

@@ -1,6 +1,9 @@
 /*
- * $Id: variable.c,v 1.11 2006/01/26 10:27:57 bnv Exp $
+ * $Id: variable.c,v 1.12 2008/07/15 07:40:25 bnv Exp $
  * $Log: variable.c,v $
+ * Revision 1.12  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.11  2006/01/26 10:27:57  bnv
  * Added: RxVarExposeInd
  * Changed RxVar...Old() -> RxVar...Name()
@@ -39,18 +42,18 @@
 
 #define __VARIABLE_C__
 
-#include <ldefs.h>
+#include "ldefs.h"
 #include <string.h>
 #include <stdlib.h>
 
-#include <lerror.h>
-#include <lstring.h>
+#include "lerror.h"
+#include "lstring.h"
 
-#include <rexx.h>
-#include <trace.h>
-#include <bintree.h>
-#include <interpre.h>
-#include <variable.h>
+#include "rexx.h"
+#include "trace.h"
+#include "bintree.h"
+#include "interpre.h"
+#include "variable.h"
 
 typedef
 struct	tpoolfunc {

@@ -1,6 +1,9 @@
 /*
- * $Id: nextsymb.c,v 1.7 2004/04/30 15:25:41 bnv Exp $
+ * $Id: nextsymb.c,v 1.8 2008/07/15 07:40:25 bnv Exp $
  * $Log: nextsymb.c,v $
+ * Revision 1.8  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.7  2004/04/30 15:25:41  bnv
  * Spaces...
  *
@@ -26,9 +29,9 @@
 
 #define  __NEXTSYMB_C__
 
-#include <lerror.h>
-#include <lstring.h>
-#include <nextsymb.h>
+#include "lerror.h"
+#include "lstring.h"
+#include "nextsymb.h"
 
 static PLstr	ProgStr;	/* pointer that holds the program string*/
 static int	InitNextch;	/* NextChar initialised?		*/

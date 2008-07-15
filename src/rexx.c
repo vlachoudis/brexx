@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.c,v 1.9 2008/07/14 13:08:42 bnv Exp $
+ * $Id: rexx.c,v 1.10 2008/07/15 07:40:25 bnv Exp $
  * $Log: rexx.c,v $
+ * Revision 1.10  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.9  2008/07/14 13:08:42  bnv
  * MVS,CMS support
  *
@@ -35,16 +38,16 @@
 #include <string.h>
 #include <setjmp.h>
 
-#include <lerror.h>
-#include <lstring.h>
+#include "lerror.h"
+#include "lstring.h"
 
-#include <rexx.h>
-#include <stack.h>
-#include <trace.h>
-#include <bintree.h>
-#include <compile.h>
-#include <interpre.h>
-#include <nextsymb.h>
+#include "rexx.h"
+#include "stack.h"
+#include "trace.h"
+#include "bintree.h"
+#include "compile.h"
+#include "interpre.h"
+#include "nextsymb.h"
 
 #if defined(UNIX)
 #	include <dlfcn.h>

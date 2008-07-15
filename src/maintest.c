@@ -1,6 +1,9 @@
 /*
- * $Id: maintest.c,v 1.8 2004/08/16 15:28:54 bnv Exp $
+ * $Id: maintest.c,v 1.9 2008/07/15 07:40:25 bnv Exp $
  * $Log: maintest.c,v $
+ * Revision 1.9  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.8  2004/08/16 15:28:54  bnv
  * Changed: name of mnemonic operands from xxx_mn to O_XXX
  *
@@ -28,11 +31,11 @@
  */
 #include <stdio.h>
 #include <string.h>
-#include <lstring.h>
+#include "lstring.h"
 
-#include <rexx.h>
-#include <rxdefs.h>
-#include <compile.h>
+#include "rexx.h"
+#include "rxdefs.h"
+#include "compile.h"
 
 /* ----------- MyFunc -------- */
 void __CDECL

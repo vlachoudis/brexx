@@ -1,6 +1,9 @@
 /*
- * $Id: rxword.c,v 1.4 2002/06/11 12:37:38 bnv Exp $
+ * $Id: rxword.c,v 1.5 2008/07/15 07:40:25 bnv Exp $
  * $Log: rxword.c,v $
+ * Revision 1.5  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.4  2002/06/11 12:37:38  bnv
  * Added: CDECL
  *
@@ -17,11 +20,11 @@
 
 #include <string.h>
 
-#include <lerror.h>
-#include <lstring.h>
+#include "lerror.h"
+#include "lstring.h"
 
-#include <rexx.h>
-#include <rxdefs.h>
+#include "rexx.h"
+#include "rxdefs.h"
 
 /* --------------------------------------------------------------- */
 /* SPACE(string(,(n)(,pad)))                                       */

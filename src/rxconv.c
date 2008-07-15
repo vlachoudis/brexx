@@ -1,6 +1,9 @@
 /*
- * $Id: rxconv.c,v 1.6 2008/07/14 13:08:42 bnv Exp $
+ * $Id: rxconv.c,v 1.7 2008/07/15 07:40:25 bnv Exp $
  * $Log: rxconv.c,v $
+ * Revision 1.7  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.6  2008/07/14 13:08:42  bnv
  * MVS,CMS support
  *
@@ -23,11 +26,11 @@
 
 #include <math.h>
 
-#include <lerror.h>
-#include <lstring.h>
+#include "lerror.h"
+#include "lstring.h"
 
-#include <rexx.h>
-#include <rxdefs.h>
+#include "rexx.h"
+#include "rxdefs.h"
 
 /* --------------------------------------------------------------- */
 /*  BITAND(string1[,[string2][,pad]])                              */

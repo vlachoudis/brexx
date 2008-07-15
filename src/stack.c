@@ -1,6 +1,9 @@
 /*
- * $Id: stack.c,v 1.7 2008/07/14 13:08:42 bnv Exp $
+ * $Id: stack.c,v 1.8 2008/07/15 07:40:25 bnv Exp $
  * $Log: stack.c,v $
+ * Revision 1.8  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.7  2008/07/14 13:08:42  bnv
  * MVS,CMS support
  *
@@ -26,11 +29,11 @@
 
 #define __STACK_C__
 
-#include <lerror.h>
-#include <lstring.h>
-#include <stack.h>
+#include "lerror.h"
+#include "lstring.h"
+#include "stack.h"
 
-#include <rexx.h>
+#include "rexx.h"
 
 /* ----------------- CreateStack ----------------------- */
 void __CDECL

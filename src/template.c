@@ -1,6 +1,9 @@
 /*
- * $Id: template.c,v 1.6 2004/08/16 15:29:30 bnv Exp $
+ * $Id: template.c,v 1.7 2008/07/15 07:40:25 bnv Exp $
  * $Log: template.c,v $
+ * Revision 1.7  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.6  2004/08/16 15:29:30  bnv
  * Changed: name of mnemonic operands from xxx_mn to O_XXX
  *
@@ -21,12 +24,12 @@
  *
  */
 
-#include <lerror.h>
-#include <lstring.h>
+#include "lerror.h"
+#include "lstring.h"
 
-#include <rexx.h>
-#include <trace.h>
-#include <compile.h>
+#include "rexx.h"
+#include "trace.h"
+#include "compile.h"
 
 /* ----------- vrefp --------- */
 /* variable reference position */

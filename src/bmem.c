@@ -1,6 +1,9 @@
 /*
- * $Id: bmem.c,v 1.8 2008/07/14 13:08:42 bnv Exp $
+ * $Id: bmem.c,v 1.9 2008/07/15 07:40:25 bnv Exp $
  * $Log: bmem.c,v $
+ * Revision 1.9  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.8  2008/07/14 13:08:42  bnv
  * MVS,CMS support
  *
@@ -43,10 +46,10 @@
 
 #include <stdlib.h>
 
-#include <os.h>
-#include <bmem.h>
-#include <ldefs.h>
-#include <signal.h>
+#include "os.h"
+#include "bmem.h"
+#include "ldefs.h"
+#include "signal.h"
 
 #define MAGIC	0xDECAFFEE
 

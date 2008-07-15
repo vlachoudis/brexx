@@ -1,6 +1,9 @@
 /*
- * $Id: error.c,v 1.9 2006/01/26 10:25:11 bnv Exp $
+ * $Id: error.c,v 1.10 2008/07/15 07:40:25 bnv Exp $
  * $Log: error.c,v $
+ * Revision 1.10  2008/07/15 07:40:25  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.9  2006/01/26 10:25:11  bnv
  * Windows CE support
  *
@@ -31,14 +34,14 @@
  */
 
 #include <stdarg.h>
-#include <lstring.h>
+#include "lstring.h"
 
-#include <rexx.h>
-#include <trace.h>
-#include <compile.h>
-#include <interpre.h>
-#include <variable.h>
-#include <nextsymb.h>
+#include "rexx.h"
+#include "trace.h"
+#include "compile.h"
+#include "interpre.h"
+#include "variable.h"
+#include "nextsymb.h"
 
 /* --- Global variable --- */
 Lstr	errmsg;			/* initialise string from beggining  */
