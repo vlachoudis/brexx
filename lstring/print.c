@@ -1,6 +1,9 @@
 /*
- * $Id: print.c,v 1.10 2008/07/14 13:08:16 bnv Exp $
+ * $Id: print.c,v 1.11 2008/07/15 07:40:54 bnv Exp $
  * $Log: print.c,v $
+ * Revision 1.11  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.10  2008/07/14 13:08:16  bnv
  * MVS,CMS support
  *
@@ -34,7 +37,7 @@
  *
  */
 
-#include <lstring.h>
+#include "lstring.h"
 
 #ifdef RXCONIO
 #	define ANSI_FPRINTF(fd,fs,ff)	if (fd==STDOUT) \

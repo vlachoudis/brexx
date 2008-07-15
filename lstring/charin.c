@@ -1,6 +1,9 @@
 /*
- * $Id: charin.c,v 1.5 2004/03/26 22:50:22 bnv Exp $
+ * $Id: charin.c,v 1.6 2008/07/15 07:40:54 bnv Exp $
  * $Log: charin.c,v $
+ * Revision 1.6  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.5  2004/03/26 22:50:22  bnv
  * *** empty log message ***
  *
@@ -18,7 +21,7 @@
  *
  */
 
-#include <lstring.h>
+#include "lstring.h"
 
 /* ---------------- Lcharin ------------------- */
 void __CDECL

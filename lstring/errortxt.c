@@ -1,6 +1,9 @@
 /*
- * $Id: errortxt.c,v 1.6 2003/02/26 16:28:55 bnv Exp $
+ * $Id: errortxt.c,v 1.7 2008/07/15 07:40:54 bnv Exp $
  * $Log: errortxt.c,v $
+ * Revision 1.7  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.6  2003/02/26 16:28:55  bnv
  * Added: New error message for IMPORT error on shared library
  *
@@ -23,8 +26,8 @@
 
 #include <stdarg.h>
 #include <stdlib.h>
-#include <lerror.h>
-#include <lstring.h>
+#include "lerror.h"
+#include "lstring.h"
 
 /* ============= Error messages =============== */
 ErrorMsg	errortext[] = {

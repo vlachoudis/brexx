@@ -1,6 +1,9 @@
 /*
- * $Id: datatype.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
+ * $Id: datatype.c,v 1.5 2008/07/15 07:40:54 bnv Exp $
  * $Log: datatype.c,v $
+ * Revision 1.5  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.4  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -16,7 +19,7 @@
  */
 
 #include <ctype.h>
-#include <lstring.h>
+#include "lstring.h"
 
 /* --------------- Ldatatype ----------------- */
 /* returns -1 on error type                    */

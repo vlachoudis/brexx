@@ -1,6 +1,9 @@
 /*
- * $Id: delword.c,v 1.4 2003/10/30 13:16:53 bnv Exp $
+ * $Id: delword.c,v 1.5 2008/07/15 07:40:54 bnv Exp $
  * $Log: delword.c,v $
+ * Revision 1.5  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.4  2003/10/30 13:16:53  bnv
  * Cosmetics
  *
@@ -15,7 +18,7 @@
  *
  */
 
-#include <lstring.h>
+#include "lstring.h"
 
 /* ----------------- Ldelword ---------------- */
 void __CDECL

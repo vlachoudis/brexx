@@ -1,6 +1,9 @@
 /*
- * $Id: changest.c,v 1.5 2002/06/11 12:37:15 bnv Exp $
+ * $Id: changest.c,v 1.6 2008/07/15 07:40:54 bnv Exp $
  * $Log: changest.c,v $
+ * Revision 1.6  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.5  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -18,7 +21,7 @@
  *
  */
 
-#include <lstring.h>
+#include "lstring.h"
 
 /* ----------------- Lchagestr ------------------- */
 void __CDECL

@@ -1,6 +1,9 @@
 /*
- * $Id: hashvalu.c,v 1.7 2008/07/14 13:08:16 bnv Exp $
+ * $Id: hashvalu.c,v 1.8 2008/07/15 07:40:54 bnv Exp $
  * $Log: hashvalu.c,v $
+ * Revision 1.8  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.7  2008/07/14 13:08:16  bnv
  * MVS,CMS support
  *
@@ -27,7 +30,7 @@
  * The hash string of an empty string is zero
  */
 
-#include <lstring.h>
+#include "lstring.h"
 
 /* --------------- Lhashvalue ------------------ */
 dword __CDECL

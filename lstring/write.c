@@ -1,6 +1,9 @@
 /*
- * $Id: write.c,v 1.7 2002/06/11 12:37:15 bnv Exp $
+ * $Id: write.c,v 1.8 2008/07/15 07:40:54 bnv Exp $
  * $Log: write.c,v $
+ * Revision 1.8  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.7  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -24,7 +27,7 @@
  *
  */
 
-#include <lstring.h>
+#include "lstring.h"
 
 /* ---------------- Lwrite ------------------- */
 void __CDECL

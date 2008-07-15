@@ -1,6 +1,9 @@
 /*
- * $Id: chars.c,v 1.6 2008/07/14 13:08:16 bnv Exp $
+ * $Id: chars.c,v 1.7 2008/07/15 07:40:54 bnv Exp $
  * $Log: chars.c,v $
+ * Revision 1.7  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.6  2008/07/14 13:08:16  bnv
  * MVS,CMS support
  *
@@ -26,7 +29,7 @@
 #	include <unistd.h>
 #endif
 
-#include <lstring.h>
+#include "lstring.h"
 
 /* ---------------- Lchars ------------------- */
 long __CDECL

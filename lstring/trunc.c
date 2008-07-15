@@ -1,6 +1,9 @@
 /*
- * $Id: trunc.c,v 1.5 2008/07/14 13:08:16 bnv Exp $
+ * $Id: trunc.c,v 1.6 2008/07/15 07:40:54 bnv Exp $
  * $Log: trunc.c,v $
+ * Revision 1.6  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.5  2008/07/14 13:08:16  bnv
  * MVS,CMS support
  *
@@ -18,7 +21,7 @@
  *
  */
 
-#include <lstring.h>
+#include "lstring.h"
 
 /* ---------------- Ltrunc ----------------- */
 void __CDECL

@@ -1,6 +1,9 @@
 /*
- * $Id: compare.c,v 1.3 2002/06/11 12:37:15 bnv Exp $
+ * $Id: compare.c,v 1.4 2008/07/15 07:40:54 bnv Exp $
  * $Log: compare.c,v $
+ * Revision 1.4  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.3  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -12,7 +15,7 @@
  *
  */
 
-#include <lstring.h>
+#include "lstring.h"
 
 /* ------------------- Lcompare --------------------- *
  * compares the two strings and returns the position  *

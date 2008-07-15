@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.c,v 1.9 2008/07/14 13:08:16 bnv Exp $
+ * $Id: lstring.c,v 1.10 2008/07/15 07:40:54 bnv Exp $
  * $Log: lstring.c,v $
+ * Revision 1.10  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.9  2008/07/14 13:08:16  bnv
  * MVS,CMS support
  *
@@ -36,8 +39,8 @@
 #define __LSTRING_C__
 
 #include <math.h>
-#include <lerror.h>
-#include <lstring.h>
+#include "lerror.h"
+#include "lstring.h"
 
 #ifndef WIN32
 #	if !defined(JCC) && !defined(__CMS__) && !defined(__MVS__)

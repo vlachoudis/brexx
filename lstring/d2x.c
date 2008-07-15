@@ -1,6 +1,9 @@
 /*
- * $Id: d2x.c,v 1.3 2002/06/11 12:37:15 bnv Exp $
+ * $Id: d2x.c,v 1.4 2008/07/15 07:40:54 bnv Exp $
  * $Log: d2x.c,v $
+ * Revision 1.4  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.3  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -12,7 +15,7 @@
  *
  */
 
-#include <lstring.h>
+#include "lstring.h"
 
 /* ------------------ Ld2x ------------------ */
 void __CDECL

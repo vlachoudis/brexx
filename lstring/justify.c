@@ -1,6 +1,9 @@
 /*
- * $Id: justify.c,v 1.4 2004/08/16 15:25:37 bnv Exp $
+ * $Id: justify.c,v 1.5 2008/07/15 07:40:54 bnv Exp $
  * $Log: justify.c,v $
+ * Revision 1.5  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.4  2004/08/16 15:25:37  bnv
  * float to double
  *
@@ -15,7 +18,7 @@
  *
  */
 
-#include <lstring.h>
+#include "lstring.h"
 
 /* ----------------- Ljustify ------------------ */
 void __CDECL

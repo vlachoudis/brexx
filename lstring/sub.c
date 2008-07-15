@@ -1,6 +1,9 @@
 /*
- * $Id: sub.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
+ * $Id: sub.c,v 1.5 2008/07/15 07:40:54 bnv Exp $
  * $Log: sub.c,v $
+ * Revision 1.5  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.4  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -15,8 +18,8 @@
  *
  */
 
-#include <lerror.h>
-#include <lstring.h>
+#include "lerror.h"
+#include "lstring.h"
 
 /* ---------------- Lsub ------------------- */
 void __CDECL

@@ -1,6 +1,9 @@
 /*
- * $Id: d2c.c,v 1.4 2008/07/14 13:08:16 bnv Exp $
+ * $Id: d2c.c,v 1.5 2008/07/15 07:40:54 bnv Exp $
  * $Log: d2c.c,v $
+ * Revision 1.5  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.4  2008/07/14 13:08:16  bnv
  * MVS,CMS support
  *
@@ -15,7 +18,7 @@
  *
  */
 
-#include <lstring.h>
+#include "lstring.h"
 
 /* -------------------- Ld2c -------------------- */
 void __CDECL

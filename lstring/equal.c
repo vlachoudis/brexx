@@ -1,6 +1,9 @@
 /*
- * $Id: equal.c,v 1.6 2004/03/26 22:51:11 bnv Exp $
+ * $Id: equal.c,v 1.7 2008/07/15 07:40:54 bnv Exp $
  * $Log: equal.c,v $
+ * Revision 1.7  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.6  2004/03/26 22:51:11  bnv
  * Increased the accuracy
  *
@@ -26,7 +29,7 @@
 #include <math.h>
 #include <ctype.h>
 #include <string.h>
-#include <lstring.h>
+#include "lstring.h"
 
 /* -------------------- Lequal ----------------- */
 int __CDECL

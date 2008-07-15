@@ -1,6 +1,9 @@
 /*
- * $Id: time.c,v 1.8 2008/07/14 13:08:16 bnv Exp $
+ * $Id: time.c,v 1.9 2008/07/15 07:40:54 bnv Exp $
  * $Log: time.c,v $
+ * Revision 1.9  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.8  2008/07/14 13:08:16  bnv
  * MVS,CMS support
  *
@@ -45,8 +48,8 @@
 #		include <unistd.h>
 #	endif
 #endif
-#include <lerror.h>
-#include <lstring.h>
+#include "lerror.h"
+#include "lstring.h"
 
 static double elapsed=0.0;
 

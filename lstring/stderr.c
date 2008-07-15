@@ -1,6 +1,9 @@
 /*
- * $Id: stderr.c,v 1.5 2004/08/16 15:26:30 bnv Exp $
+ * $Id: stderr.c,v 1.6 2008/07/15 07:40:54 bnv Exp $
  * $Log: stderr.c,v $
+ * Revision 1.6  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.5  2004/08/16 15:26:30  bnv
  * Spaces
  *
@@ -18,7 +21,7 @@
  *
  */
 
-#include <lstring.h>
+#include "lstring.h"
 
 #ifdef WCE
 #	error "Lstderr: should not be included in the CE version"

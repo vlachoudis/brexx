@@ -1,6 +1,9 @@
 /*
- * $Id: verify.c,v 1.4 2004/08/16 15:26:40 bnv Exp $
+ * $Id: verify.c,v 1.5 2008/07/15 07:40:54 bnv Exp $
  * $Log: verify.c,v $
+ * Revision 1.5  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.4  2004/08/16 15:26:40  bnv
  * Spaces...
  *
@@ -16,7 +19,7 @@
  */
 
 #include <string.h>
-#include <lstring.h>
+#include "lstring.h"
 
 /* --------------------- Lverify  ----------------------- *
  *  str      -  string that we check every char           *

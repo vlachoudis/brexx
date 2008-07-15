@@ -1,6 +1,9 @@
 /*
- * $Id: date.c,v 1.6 2004/08/16 15:25:20 bnv Exp $
+ * $Id: date.c,v 1.7 2008/07/15 07:40:54 bnv Exp $
  * $Log: date.c,v $
+ * Revision 1.7  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.6  2004/08/16 15:25:20  bnv
  * float to double
  *
@@ -27,8 +30,8 @@
 #ifdef MSDOS
 #	include <dos.h>
 #endif
-#include <lerror.h>
-#include <lstring.h>
+#include "lerror.h"
+#include "lstring.h"
 
 #ifdef WCE
 static	BYTE	month_days[12] = {

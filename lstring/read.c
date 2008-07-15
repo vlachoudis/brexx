@@ -1,6 +1,9 @@
 /*
- * $Id: read.c,v 1.11 2008/07/14 13:08:16 bnv Exp $
+ * $Id: read.c,v 1.12 2008/07/15 07:40:54 bnv Exp $
  * $Log: read.c,v $
+ * Revision 1.12  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.11  2008/07/14 13:08:16  bnv
  * MVS,CMS support
  *
@@ -40,7 +43,7 @@
  *
  */
 
-#include <lstring.h>
+#include "lstring.h"
 
 #ifdef HAVE_LIBREADLINE
 #	include <sys/stat.h>

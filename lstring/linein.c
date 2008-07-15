@@ -1,6 +1,9 @@
 /*
- * $Id: linein.c,v 1.5 2002/06/11 12:37:15 bnv Exp $
+ * $Id: linein.c,v 1.6 2008/07/15 07:40:54 bnv Exp $
  * $Log: linein.c,v $
+ * Revision 1.6  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.5  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -18,7 +21,7 @@
  *
  */
 
-#include <lstring.h>
+#include "lstring.h"
 
 /* ---------------- Llinein ------------------- */
 void __CDECL

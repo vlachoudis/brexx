@@ -1,6 +1,9 @@
 /*
- * $Id: overlay.c,v 1.3 2002/06/11 12:37:15 bnv Exp $
+ * $Id: overlay.c,v 1.4 2008/07/15 07:40:54 bnv Exp $
  * $Log: overlay.c,v $
+ * Revision 1.4  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.3  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -13,7 +16,7 @@
  */
 
 #include <string.h>
-#include <lstring.h>
+#include "lstring.h"
 
 /* ------------------ Loverlay ---------------- */
 void __CDECL

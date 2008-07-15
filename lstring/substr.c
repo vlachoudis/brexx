@@ -1,6 +1,9 @@
 /*
- * $Id: substr.c,v 1.3 2002/06/11 12:37:15 bnv Exp $
+ * $Id: substr.c,v 1.4 2008/07/15 07:40:54 bnv Exp $
  * $Log: substr.c,v $
+ * Revision 1.4  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.3  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -13,7 +16,7 @@
  */
 
 #include <string.h>
-#include <lstring.h>
+#include "lstring.h"
 
 /* --------------------------- Lsubstr -------------------------------- */
 /*    to       - Output Lstr                                            *

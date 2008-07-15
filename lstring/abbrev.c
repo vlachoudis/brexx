@@ -1,6 +1,9 @@
 /*
- * $Id: abbrev.c,v 1.4 2008/07/14 13:07:53 bnv Exp $
+ * $Id: abbrev.c,v 1.5 2008/07/15 07:40:54 bnv Exp $
  * $Log: abbrev.c,v $
+ * Revision 1.5  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.4  2008/07/14 13:07:53  bnv
  * Bug correction
  *
@@ -15,7 +18,7 @@
  *
  */
 
-#include <lstring.h>
+#include "lstring.h"
 
 /* ------------------- Labbrev -------------------- */
 bool __CDECL

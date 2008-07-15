@@ -1,6 +1,9 @@
 /*
- * $Id: reradix.c,v 1.4 2002/06/11 12:37:15 bnv Exp $
+ * $Id: reradix.c,v 1.5 2008/07/15 07:40:54 bnv Exp $
  * $Log: reradix.c,v $
+ * Revision 1.5  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.4  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -15,7 +18,7 @@
  *
  */
 
-#include <lstring.h>
+#include "lstring.h"
 
 /* --------------- Lreradix ----------------- */
 void __CDECL

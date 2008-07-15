@@ -1,6 +1,9 @@
 /*
- * $Id: mod.c,v 1.3 2002/06/11 12:37:15 bnv Exp $
+ * $Id: mod.c,v 1.4 2008/07/15 07:40:54 bnv Exp $
  * $Log: mod.c,v $
+ * Revision 1.4  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.3  2002/06/11 12:37:15  bnv
  * Added: CDECL
  *
@@ -12,8 +15,8 @@
  *
  */
 
-#include <lerror.h>
-#include <lstring.h>
+#include "lerror.h"
+#include "lstring.h"
 
 /* ------------------ Lmod ----------------- */
 void __CDECL

@@ -1,6 +1,9 @@
 /*
- * $Id: x2b.c,v 1.5 2008/07/14 13:08:16 bnv Exp $
+ * $Id: x2b.c,v 1.6 2008/07/15 07:40:54 bnv Exp $
  * $Log: x2b.c,v $
+ * Revision 1.6  2008/07/15 07:40:54  bnv
+ * #include changed from <> to ""
+ *
  * Revision 1.5  2008/07/14 13:08:16  bnv
  * MVS,CMS support
  *
@@ -19,15 +22,15 @@
  */
 
 #include <ctype.h>
-#include <lerror.h>
-#include <lstring.h>
+#include "lerror.h"
+#include "lstring.h"
 
 /* ------------------- Lx2b ------------------- */
 void __CDECL
 Lx2b( const PLstr to, const PLstr from )
 {
 	long	i;
-	int	k;
+	int	k,l;
 	char	*c,d;
 
 	L2STR(from);
@@ -39,7 +42,8 @@ Lx2b( const PLstr to, const PLstr from )
 		if (!ISXDIGIT(LSTR(*from)[i]))
 			Lerror(ERR_INVALID_HEX_CONST,0);
 
-		d = HEXVAL(LSTR(*from)[i]);
+		l = LSTR(*from)[i];	/* MVS C bug fix */
+		d = HEXVAL(l);
 		for (k=8; k; k>>=1)
 #ifndef __CMS__
 			*c++ = (d&k)? '1' : '0';
