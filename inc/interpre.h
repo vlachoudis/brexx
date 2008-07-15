@@ -1,6 +1,9 @@
 /*
- * $Id: interpre.h,v 1.4 2002/06/11 12:37:56 bnv Exp $
+ * $Id: interpre.h,v 1.5 2008/07/15 14:54:05 bnv Exp $
  * $Log: interpre.h,v $
+ * Revision 1.5  2008/07/15 14:54:05  bnv
+ * #include correction
+ *
  * Revision 1.4  2002/06/11 12:37:56  bnv
  * Added: CDECL
  *
@@ -18,8 +21,8 @@
 #ifndef __INTERPRET_H__
 #define __INTERPRET_H__
 
-#include <lstring.h>
-#include <bintree.h>
+#include "lstring.h"
+#include "bintree.h"
 
 #ifdef  __INTERPRET_C__
 #	define EXTERN
