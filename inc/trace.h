@@ -1,6 +1,9 @@
 /*
- * $Id: trace.h,v 1.5 2004/08/16 15:33:11 bnv Exp $
+ * $Id: trace.h,v 1.6 2008/07/15 07:40:07 bnv Exp $
  * $Log: trace.h,v $
+ * Revision 1.6  2008/07/15 07:40:07  bnv
+ * MVS, CMS support
+ *
  * Revision 1.5  2004/08/16 15:33:11  bnv
  * Spaces
  *
@@ -21,8 +24,8 @@
 #ifndef __TRACE_H__
 #define __TRACE_H__
 
-#include <lstring.h>
-#include <interpre.h>
+#include "lstring.h"
+#include "interpre.h"
 
 #ifdef __TRACE_C__
 #	define EXTERN

@@ -1,6 +1,9 @@
 /*
- * $Id: dqueue.h,v 1.3 2002/06/11 12:37:56 bnv Exp $
+ * $Id: dqueue.h,v 1.4 2008/07/15 07:40:07 bnv Exp $
  * $Log: dqueue.h,v $
+ * Revision 1.4  2008/07/15 07:40:07  bnv
+ * MVS, CMS support
+ *
  * Revision 1.3  2002/06/11 12:37:56  bnv
  * Added: CDECL
  *
@@ -15,7 +18,7 @@
 #ifndef __DEQUEUE_H__
 #define __DEQUEUE_H__
 
-#include <lstring.h>
+#include "lstring.h"
 
 /* ============= type definitions ================= */
 typedef struct dequeue_elem_st {

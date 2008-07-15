@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.h,v 1.14 2008/07/14 13:09:21 bnv Exp $
+ * $Id: lstring.h,v 1.15 2008/07/15 07:40:07 bnv Exp $
  * $Log: lstring.h,v $
+ * Revision 1.15  2008/07/15 07:40:07  bnv
+ * MVS, CMS support
+ *
  * Revision 1.14  2008/07/14 13:09:21  bnv
  * MVS,CMS support
  *
@@ -48,30 +51,32 @@
 #ifndef __LSTRING_H__
 #define __LSTRING_H__
 
-#include <ldefs.h>
-#include <os.h>
+#include "ldefs.h"
+#include "os.h"
 
 #ifdef WIN
 #	include <windows.h>
-#	include <winio.h>
-#	include	<bio.h>
+#	include "winio.h"
+#	include	"bio.h"
 //#	ifndef PACKAGE_STRING
 //#		define PACKAGE_NAME "brexx"
 //#		define PACKAGE_STRING PACKAGE_NAME " V2.1"
 //#	endif
 #else
 #	include <config.h>
-#	include <wchar.h>
+#	if !defined(__CMS__) && !defined(__MVS__)
+#		include <wchar.h>
+#	endif
 #endif
 
 #ifdef WCE
-#	include <bstr.h>
+#	include "bstr.h"
 #else
 #	include <ctype.h>
 #	include <stdio.h>
 #endif
 
-#include <bmem.h>
+#include "bmem.h"
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>

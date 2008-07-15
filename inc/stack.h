@@ -1,6 +1,9 @@
 /*
- * $Id: stack.h,v 1.3 2002/06/11 12:37:56 bnv Exp $
+ * $Id: stack.h,v 1.4 2008/07/15 07:40:07 bnv Exp $
  * $Log: stack.h,v $
+ * Revision 1.4  2008/07/15 07:40:07  bnv
+ * MVS, CMS support
+ *
  * Revision 1.3  2002/06/11 12:37:56  bnv
  * Added: CDECL
  *
@@ -15,8 +18,8 @@
 #ifndef __STACK_H__
 #define __STACK_H__
 
-#include <lstring.h>
-#include <dqueue.h>
+#include "lstring.h"
+#include "dqueue.h"
 
 /* ---- function prototypes ---- */
 void	__CDECL CreateStack( void );

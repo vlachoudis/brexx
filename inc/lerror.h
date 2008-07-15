@@ -1,6 +1,9 @@
 /*
- * $Id: lerror.h,v 1.5 2003/02/26 16:30:56 bnv Exp $
+ * $Id: lerror.h,v 1.6 2008/07/15 07:40:07 bnv Exp $
  * $Log: lerror.h,v $
+ * Revision 1.6  2008/07/15 07:40:07  bnv
+ * MVS, CMS support
+ *
  * Revision 1.5  2003/02/26 16:30:56  bnv
  * Minor changes
  *
@@ -21,7 +24,7 @@
 #ifndef	__ERROR_H__
 #define	__ERROR_H__
 
-#include <ldefs.h>
+#include "ldefs.h"
 
 #define	ERR_MESSAGE		0
 #define	ERR_FINALIZATION	2

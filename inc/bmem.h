@@ -1,6 +1,9 @@
 /*
- * $Id: bmem.h,v 1.6 2008/07/14 13:09:21 bnv Exp $
+ * $Id: bmem.h,v 1.7 2008/07/15 07:40:07 bnv Exp $
  * $Log: bmem.h,v $
+ * Revision 1.7  2008/07/15 07:40:07  bnv
+ * MVS, CMS support
+ *
  * Revision 1.6  2008/07/14 13:09:21  bnv
  * MVS,CMS support
  *
@@ -24,12 +27,12 @@
 #ifndef __BMEM_H__
 #define __BMEM_H__
 
-#include <os.h>
+#include "os.h"
 #include <stdlib.h>
 #if !defined(JCC) && !defined(__CMS__) && !defined(__MVS__)
 #	include <malloc.h>
 #endif
-#include <config.h>
+#include "config.h"
 
 #if defined(__DEBUG__) && !defined(WCE)
 #	define	MALLOC(s,d)	mem_malloc(s,d)

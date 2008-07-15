@@ -1,6 +1,9 @@
 /*
- * $Id: variable.h,v 1.5 2006/01/26 10:30:14 bnv Exp $
+ * $Id: variable.h,v 1.6 2008/07/15 07:40:07 bnv Exp $
  * $Log: variable.h,v $
+ * Revision 1.6  2008/07/15 07:40:07  bnv
+ * MVS, CMS support
+ *
  * Revision 1.5  2006/01/26 10:30:14  bnv
  * Changed RxVar...Old() -> RxVar...Name()
  * Added: RxVarExposeInd
@@ -22,7 +25,7 @@
 #ifndef __VARIABLE_H__
 #define __VARIABLE_H__
 
-#include <bintree.h>
+#include "bintree.h"
 
 /* ------------ some defines ------------------ */
 #define VARTREES	7

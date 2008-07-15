@@ -1,6 +1,9 @@
 /*
- * $Id: bintree.h,v 1.3 2002/06/11 12:37:56 bnv Exp $
+ * $Id: bintree.h,v 1.4 2008/07/15 07:40:07 bnv Exp $
  * $Log: bintree.h,v $
+ * Revision 1.4  2008/07/15 07:40:07  bnv
+ * MVS, CMS support
+ *
  * Revision 1.3  2002/06/11 12:37:56  bnv
  * Added: CDECL
  *
@@ -15,7 +18,7 @@
 #ifndef __BINTREE_H__
 #define __BINTREE_H__
 
-#include <lstring.h>
+#include "lstring.h"
 
 #ifdef __BINTREE_C__
 #	define	EXTERN

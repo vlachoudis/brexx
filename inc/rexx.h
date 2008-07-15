@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.h,v 2.2 2004/08/16 15:33:00 bnv Exp $
+ * $Id: rexx.h,v 2.3 2008/07/15 07:40:07 bnv Exp $
  * $Log: rexx.h,v $
+ * Revision 2.3  2008/07/15 07:40:07  bnv
+ * MVS, CMS support
+ *
  * Revision 2.2  2004/08/16 15:33:00  bnv
  * Changed: name of mnemonic operands from xxx_mn to O_XXX
  *
@@ -55,12 +58,12 @@
 
 #include <setjmp.h>
 
-#include <lerror.h>
-#include <lstring.h>
+#include "lerror.h"
+#include "lstring.h"
 
-#include <dqueue.h>
-#include <bintree.h>
-#include <variable.h>
+#include "dqueue.h"
+#include "bintree.h"
+#include "variable.h"
 
 #ifdef  __REXX_C__
 #	define EXTERN

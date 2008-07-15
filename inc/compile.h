@@ -1,6 +1,9 @@
 /*
- * $Id: compile.h,v 1.5 2004/08/16 15:30:30 bnv Exp $
+ * $Id: compile.h,v 1.6 2008/07/15 07:40:07 bnv Exp $
  * $Log: compile.h,v $
+ * Revision 1.6  2008/07/15 07:40:07  bnv
+ * MVS, CMS support
+ *
  * Revision 1.5  2004/08/16 15:30:30  bnv
  * Changed: name of mnemonic operands from xxx_mn to O_XXX
  *
@@ -22,11 +25,11 @@
 #define __COMPILE_H__
 
 #ifndef WIN
-#	include <bmem.h>
+#	include "bmem.h"
 #endif
-#include <lstring.h>
-#include <bintree.h>
-#include <nextsymb.h>
+#include "lstring.h"
+#include "bintree.h"
+#include "nextsymb.h"
 
 #ifdef __COMPILE_C__
 #	define EXTERN
