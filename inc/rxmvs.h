@@ -1,9 +1,6 @@
 /*
- * $Id: rxmvs.h,v 1.2 2009/06/02 09:41:43 bnv Exp $
+ * $Id: rxmvs.h,v 1.1 2008/07/15 14:57:11 bnv Exp $
  * $Log: rxmvs.h,v $
- * Revision 1.2  2009/06/02 09:41:43  bnv
- * MVS/CMS corrections
- *
  * Revision 1.1  2008/07/15 14:57:11  bnv
  * Initial revision
  *
@@ -24,6 +21,8 @@
 #define CompileCodePtr  CmpCoPt
 #define _CodeAddPtr _CoAdPt
 #define _CodeAddDWord _CoAdDw
+#define _CodeAddWord _CoAdWo
+#define _CodeAddByte _CoAdBy
 /*
  interpre.c & interpre.h
 */
