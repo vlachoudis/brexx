@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.c,v 1.10 2008/07/15 07:40:25 bnv Exp $
+ * $Id: rexx.c,v 1.11 2008/07/15 14:57:55 bnv Exp $
  * $Log: rexx.c,v $
+ * Revision 1.11  2008/07/15 14:57:55  bnv
+ * mvs corrections
+ *
  * Revision 1.10  2008/07/15 07:40:25  bnv
  * #include changed from <> to ""
  *
@@ -290,7 +293,7 @@ int __CDECL
 RxLoadLibrary( PLstr libname, bool shared )
 {
 	RxFile  *rxf, *last;
-#ifdef UNIX
+#if defined(UNIX) || defined(__CMS__) || defined(__MVS__)
 	Lstr	tmpstr;
 	char	*dlerrorstr;
 #endif
@@ -322,8 +325,9 @@ RxLoadLibrary( PLstr libname, bool shared )
 			goto LIB_LOADED;
 		}
 
-		/* Unfortunatelly we have to handle errors with strings */
-		/* Skip the errors when trying to load a rexx file instead of a dll-library */
+		/* Unfortunatelly we have to handle errors with strings.
+		 * Skip the errors when trying to load a rexx file instead
+		 * of a dll-library */
 		if (dlerrorstr != NULL) {
 			if (STRSTR(dlerrorstr,"invalid ELF header") &&
 			    STRSTR(dlerrorstr,"cannot open shared object file") &&
@@ -341,7 +345,7 @@ RxLoadLibrary( PLstr libname, bool shared )
 		return 1;
 	}
 
-#ifdef UNIX
+#if defined(UNIX) || defined(__CMS__) || defined(__MVS__)
 LIB_LOADED:
 #endif
 	/* find the last in the queue */

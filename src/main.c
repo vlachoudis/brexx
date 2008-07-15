@@ -1,6 +1,9 @@
 /*
- * $Id: main.c,v 1.12 2008/07/15 07:40:25 bnv Exp $
+ * $Id: main.c,v 1.13 2008/07/15 14:57:55 bnv Exp $
  * $Log: main.c,v $
+ * Revision 1.13  2008/07/15 14:57:55  bnv
+ * mvs corrections
+ *
  * Revision 1.12  2008/07/15 07:40:25  bnv
  * #include changed from <> to ""
  *
@@ -44,7 +47,9 @@
 #include "lstring.h"
 #include "rexx.h"
 #include "rxdefs.h"
-#include <sys/stat.h>
+#if !defined(__CMS__) && !defined(__MVS__)
+#	include <sys/stat.h>
+#endif
 
 /* ------- Includes for any other external library ------- */
 #ifdef RXCONIO
@@ -73,7 +78,9 @@ main(int ac, char *av[])
 	LINITSTR(file);
 
 	if (ac<2) {
-		puts("\nsyntax: rexx [-[trace]|-F] <filename> <args>...\n\trexx -\tto use stdin\n\trexx -F\tloop over standard input\n\t\t\'linein\' contains each line from stdin.\n");
+		puts("\nsyntax: rexx [-[trace]|-F] <filename> <args>...\n");
+                puts("\trexx -\tto use stdin\n\trexx -F\tloop over standard input\n");
+                puts("\t\t\'linein\' contains each line from stdin.\n");
 		puts(VERSIONSTR);
 		puts("Author: "AUTHOR);
 		puts("Please report bugs, errors or comments to the above address.\n");
