@@ -1,6 +1,9 @@
 /*
- * $Id: stack.c,v 1.8 2008/07/15 07:40:25 bnv Exp $
+ * $Id: stack.c,v 1.9 2009/02/02 09:26:23 bnv Exp $
  * $Log: stack.c,v $
+ * Revision 1.9  2009/02/02 09:26:23  bnv
+ * Modifications for CMS,MVS
+ *
  * Revision 1.8  2008/07/15 07:40:25  bnv
  * #include changed from <> to ""
  *
@@ -100,7 +103,7 @@ StackQueued( void )
 #ifdef __CMS__
 	int items;
 	long retval;
-	_STACKN_(&items);
+	__STACKN(&items);
 	retval = items;
 	/* dw printf(" In StackQueued -  Items  = %d \d", items); */
 	return items;
