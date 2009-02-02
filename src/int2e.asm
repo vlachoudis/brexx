@@ -1,5 +1,5 @@
 ;-----------------------------------------------------------------
-; $Id: int2e.asm,v 1.1 2009/02/02 09:25:52 bnv Exp bnv $
+; $Id: int2e.asm,v 1.1 2009/02/02 09:25:52 bnv Exp $
 ;      INT2E.ASM -- Execute a DOS command via the undocument
 ;      interrupt 0x2e (Back door for the command.com)
 ;      Vasilis.Vlachoudis@cern.ch
