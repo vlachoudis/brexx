@@ -1,6 +1,9 @@
 /*
- * $Id: interpre.c,v 1.20 2008/07/15 07:40:25 bnv Exp $
+ * $Id: interpre.c,v 1.21 2009/02/02 09:25:52 bnv Exp $
  * $Log: interpre.c,v $
+ * Revision 1.21  2009/02/02 09:25:52  bnv
+ * Modifications for CMS/MVS
+ *
  * Revision 1.20  2008/07/15 07:40:25  bnv
  * #include changed from <> to ""
  *
@@ -1592,11 +1595,10 @@ outofcmd:
 				LPFREE(a);
 				while (StackQueued()==0 && rxStackList.items>1)
 					DeleteStack();
-			} else {
+			} else
 #endif
 /*** dw end of let vm do stack */
 				Lread(STDIN,STACKTOP,LREADLINE);
-			}
 			DEBUGDISPLAY("RX_PULL");
 			goto main_loop;
 
