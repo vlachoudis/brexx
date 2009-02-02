@@ -1,6 +1,9 @@
 /*
- * $Id: time.c,v 1.9 2008/07/15 07:40:54 bnv Exp $
+ * $Id: time.c,v 1.10 2009/02/02 09:26:34 bnv Exp $
  * $Log: time.c,v $
+ * Revision 1.10  2009/02/02 09:26:34  bnv
+ * Modications for CMS,MVS
+ *
  * Revision 1.9  2008/07/15 07:40:54  bnv
  * #include changed from <> to ""
  *
@@ -82,7 +85,7 @@ _Ltimeinit( void )
 	_ftime(&tb);
 	elapsed = (double)tb.time + (double)tb.millitm/1000.0;
 #elif defined(__CMS__)
-	rawtime = __rexclk(vmnow);
+	rawtime = rexclock(vmnow);
 	tv=gmtime(&rawtime);
 	elapsed = (double)vmnow[0] + (double)vmnow[1]/1000000.0;
 #elif defined(__MVS__)
@@ -160,7 +163,7 @@ Ltime( const PLstr timestr, char option )
 			_ftime(&tb);
 			unow = (double)tb.time + (double)tb.millitm/1000.0;
 #elif defined(__CMS__)
-			__REXCLK(vmnow);
+			rexclock(vmnow);
 			unow = (double)vmnow[0]+(double)vmnow[1]/1000000.0;
 #elif defined(__MVS__)
 			__getclk(vmnow);
@@ -195,6 +198,8 @@ Ltime( const PLstr timestr, char option )
 			sprintf(LSTR(*timestr), "%02d:%02d:%02d.%03ld",
 				tmdata->tm_hour, tmdata->tm_min,
 				tmdata->tm_sec, tb.millitm) ;
+#elif defined(__CMS__) || defined(__MVS__)
+			/* need to provide a replacement here for CMS & MVS */
 #else
 			gettimeofday(&tv,&tz);
 			sprintf(LSTR(*timestr), "%02d:%02d:%02d.%06ld",
@@ -235,7 +240,7 @@ Ltime( const PLstr timestr, char option )
 			_ftime(&tb);
 			unow = (double)tb.time + (double)tb.millitm/1000.0;
 #elif defined(__CMS__)
-			__REXCLK(vmnow);
+			rexclock(vmnow);
 			unow=(double)vmnow[0] + (double)vmnow[1]/1000000.0;
 #elif defined(__MVS__)
 			__getclk(vmnow);
