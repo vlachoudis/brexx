@@ -1,6 +1,9 @@
 /*
- * $Id: time.c,v 1.10 2009/02/02 09:26:34 bnv Exp $
+ * $Id: time.c,v 1.11 2009/06/02 09:40:53 bnv Exp $
  * $Log: time.c,v $
+ * Revision 1.11  2009/06/02 09:40:53  bnv
+ * MVS/CMS corrections
+ *
  * Revision 1.10  2009/02/02 09:26:34  bnv
  * Modications for CMS,MVS
  *
@@ -46,7 +49,7 @@
  * struct timeval is
  */
 #	include <time.h>
-#	if !defined(JCC) && !defined(__CMS__) && !defined(__MVS__)
+#	if !defined(__CMS__) && !defined(__MVS__)
 #		include <sys/time.h>
 #		include <unistd.h>
 #	endif

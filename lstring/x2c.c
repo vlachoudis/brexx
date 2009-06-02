@@ -1,6 +1,9 @@
 /*
- * $Id: x2c.c,v 1.6 2008/07/15 07:40:54 bnv Exp $
+ * $Id: x2c.c,v 1.7 2009/06/02 09:40:53 bnv Exp $
  * $Log: x2c.c,v $
+ * Revision 1.7  2009/06/02 09:40:53  bnv
+ * MVS/CMS corrections
+ *
  * Revision 1.6  2008/07/15 07:40:54  bnv
  * #include changed from <> to ""
  *
@@ -29,7 +32,7 @@
 void __CDECL
 Lx2c( const PLstr to, const PLstr from )
 {
-	int	i,j,r,k;
+	int	i,j,r;
 	char	*t,*f;
 
 	L2STR(from);
@@ -48,8 +51,7 @@ Lx2c( const PLstr to, const PLstr from )
 		}
 
 		if ((j-i)&1)  {
-			k = f[i];		/* MVS C bug fix */
-			t[r++] = HEXVAL(k);
+			t[r++] = HEXVAL(f[i]);
 			i++;
 		}
 		for (; i<j; i+=2)

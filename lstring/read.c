@@ -1,6 +1,9 @@
 /*
- * $Id: read.c,v 1.12 2008/07/15 07:40:54 bnv Exp $
+ * $Id: read.c,v 1.13 2009/06/02 09:40:53 bnv Exp $
  * $Log: read.c,v $
+ * Revision 1.13  2009/06/02 09:40:53  bnv
+ * MVS/CMS corrections
+ *
  * Revision 1.12  2008/07/15 07:40:54  bnv
  * #include changed from <> to ""
  *
@@ -118,9 +121,8 @@ Lread( FILEP f, const PLstr line, long size )
 		}
 	} else {			/* Read entire file */
 #ifndef WCE
-#	if defined(JCC) || defined(__CMS__) || defined(__MVS__)
+#	if defined(__CMS__) || defined(__MVS__)
 		size = 0; /* Always do it the slow way: so no-seek (JCL inline) files work. */
-		/*   printf(" JCC Rules invoked \n");   dw*/
 #	else
 		l = FTELL(f);
 		if (l>=0) {
@@ -163,7 +165,7 @@ Lread( FILEP f, const PLstr line, long size )
 	}
 	LLEN(*line) = l;
 	LTYPE(*line) = LSTRING_TY;
-#if defined(JCC) || defined(__CMS__) || defined(__MVS__)
+#if defined(__CMS__) || defined(__MVS__)
 	LASCIIZ(*line);
 #endif
 } /* Lread */

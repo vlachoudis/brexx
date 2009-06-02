@@ -1,6 +1,9 @@
 /*
- * $Id: print.c,v 1.11 2008/07/15 07:40:54 bnv Exp $
+ * $Id: print.c,v 1.12 2009/06/02 09:40:53 bnv Exp $
  * $Log: print.c,v $
+ * Revision 1.12  2009/06/02 09:40:53  bnv
+ * MVS/CMS corrections
+ *
  * Revision 1.11  2008/07/15 07:40:54  bnv
  * #include changed from <> to ""
  *
@@ -103,11 +106,7 @@ Lprint( FILEP f, const PLstr str )
 			FPUTS(GCVT(LREAL(*str),lNumericDigits,s), f);
 #else
 			ANSI_FPUTS(f, s);
-#	if defined(__CMS__) || defined(__MVS__)
-			ANSI_FPRINTF(f, "%s", GCVT(LREAL(*str),lNumericDigits,s));
-#	else
 //			ANSI_FPRINTF(f, lFormatStringToReal, LREAL(*str));
-#	endif
 #endif
 			break;
 	}

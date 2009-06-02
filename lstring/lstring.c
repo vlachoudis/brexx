@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.c,v 1.10 2008/07/15 07:40:54 bnv Exp $
+ * $Id: lstring.c,v 1.11 2009/06/02 09:40:53 bnv Exp $
  * $Log: lstring.c,v $
+ * Revision 1.11  2009/06/02 09:40:53  bnv
+ * MVS/CMS corrections
+ *
  * Revision 1.10  2008/07/15 07:40:54  bnv
  * #include changed from <> to ""
  *
@@ -43,7 +46,7 @@
 #include "lstring.h"
 
 #ifndef WIN32
-#	if !defined(JCC) && !defined(__CMS__) && !defined(__MVS__)
+#	if !defined(__CMS__) && !defined(__MVS__)
 #	ifndef WIN
 #		include <limits.h>
 #	endif
@@ -55,7 +58,7 @@
 #	define MAXLONG LONG_MAX
 #endif
 
-#if defined(JCC) || defined(__CMS__) || defined(__MVS__)
+#if defined(__CMS__) || defined(__MVS__)
 #	include <limits.h>
 #	define MAXLONG LONG_MAX
 #endif
