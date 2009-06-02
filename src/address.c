@@ -1,6 +1,9 @@
 /*
- * $Id: address.c,v 1.14 2008/07/15 07:40:25 bnv Exp $
+ * $Id: address.c,v 1.15 2009/06/02 09:41:27 bnv Exp $
  * $Log: address.c,v $
+ * Revision 1.15  2009/06/02 09:41:27  bnv
+ * MVS/CMS corrections
+ *
  * Revision 1.14  2008/07/15 07:40:25  bnv
  * #include changed from <> to ""
  *
@@ -66,11 +69,7 @@
 #elif defined(__MPW__)
 #elif defined(_MSC_VER)
 #else
-#	if defined(JCC) || defined(__CMS__) || defined(__MVS__)
-#		if !defined(__CMS__) && !defined(__MVS__)
-#			include <io.h>
-#		endif
-#	else
+#	if !defined(__CMS__) && !defined(__MVS__)
 #		include <fcntl.h>
 #		include <unistd.h>
 #	endif
@@ -220,7 +219,7 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr outputstr)
 		dup2(old_stdout,LOW_STDOUT);  /* restore stdout */
 		close(old_stdout);
 #ifndef MSDOS
-#	if !defined(JCC) && !defined(__CMS__) && !defined(__MVS__)
+#	if !defined(__CMS__) && !defined(__MVS__)
 		chmod(fnout,0666);
 #	endif
 #endif

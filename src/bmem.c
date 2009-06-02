@@ -1,6 +1,9 @@
 /*
- * $Id: bmem.c,v 1.9 2008/07/15 07:40:25 bnv Exp $
+ * $Id: bmem.c,v 1.10 2009/06/02 09:41:27 bnv Exp $
  * $Log: bmem.c,v $
+ * Revision 1.10  2009/06/02 09:41:27  bnv
+ * MVS/CMS corrections
+ *
  * Revision 1.9  2008/07/15 07:40:25  bnv
  * #include changed from <> to ""
  *
@@ -40,7 +43,7 @@
 #include <ctype.h>
 #include <stdio.h>
 
-#if !defined(JCC) && !defined(__CMS__) && !defined(__MVS__)
+#if !defined(__CMS__) && !defined(__MVS__)
 #	include <malloc.h>
 #endif
 

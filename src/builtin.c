@@ -1,6 +1,9 @@
 /*
- * $Id: builtin.c,v 1.11 2008/07/15 07:40:25 bnv Exp $
+ * $Id: builtin.c,v 1.12 2009/06/02 09:41:27 bnv Exp $
  * $Log: builtin.c,v $
+ * Revision 1.12  2009/06/02 09:41:27  bnv
+ * MVS/CMS corrections
+ *
  * Revision 1.11  2008/07/15 07:40:25  bnv
  * #include changed from <> to ""
  *
@@ -884,7 +887,7 @@ VM_O(int func)
 			CMSUSER(ARGR);
 			break;
 		default:
-			fprintf("unknown function %d in VM_O" , func);
+			fprintf(stderr, "unknown function %d in VM_O" , func);
 	}
 } /* VM_O */
 #endif
