@@ -1,6 +1,9 @@
 /*
- * $Id: os.h,v 1.9 2008/07/14 13:09:21 bnv Exp $
+ * $Id: os.h,v 1.10 2009/06/02 09:41:43 bnv Exp $
  * $Log: os.h,v $
+ * Revision 1.10  2009/06/02 09:41:43  bnv
+ * MVS/CMS corrections
+ *
  * Revision 1.9  2008/07/14 13:09:21  bnv
  * MVS,CMS support
  *
@@ -104,7 +107,7 @@
 #	define VMCMS 1
 #	define SHELL "SHELL"
 #	define OS "VM//CMS"
-#	define FILESEP "."
+#	define FILESEP '.'
 #	define PATHSEP ':'
 
 #	define HAS_TERMINALIO
@@ -119,7 +122,7 @@
 #	define VMCMS 1
 #	define SHELL "SHELL"
 #	define OS "MVS"
-#	define FILESEP "."
+#	define FILESEP '.'
 #	define PATHSEP ':'
 
 #	define HAS_TERMINALIO

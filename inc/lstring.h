@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.h,v 1.16 2008/07/15 14:57:11 bnv Exp $
+ * $Id: lstring.h,v 1.17 2009/06/02 09:41:43 bnv Exp $
  * $Log: lstring.h,v $
+ * Revision 1.17  2009/06/02 09:41:43  bnv
+ * MVS/CMS corrections
+ *
  * Revision 1.16  2008/07/15 14:57:11  bnv
  * Added include to lmvs.h
  *
@@ -79,7 +82,7 @@
 #	include <stdio.h>
 #endif
 
-#if defined(JCC) || defined(__CMS__) || defined(__MVS__)
+#if defined(__CMS__) || defined(__MVS__)
 #	include "lmvs.h"
 #endif
 
@@ -87,6 +90,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 /* --- Lstring types --- */
 enum	TYPES	{ LSTRING_TY,

@@ -1,6 +1,9 @@
 /*
- * $Id: rxdefs.h,v 1.9 2008/07/15 14:57:11 bnv Exp $
+ * $Id: rxdefs.h,v 1.10 2009/06/02 09:41:43 bnv Exp $
  * $Log: rxdefs.h,v $
+ * Revision 1.10  2009/06/02 09:41:43  bnv
+ * MVS/CMS corrections
+ *
  * Revision 1.9  2008/07/15 14:57:11  bnv
  * mvs corretions
  *
@@ -33,7 +36,7 @@
 #ifndef __RXDEFS_H__
 #define __RXDEFS_H__
 
-#if defined(JCC) || defined(__CMS__) || defined(__MVS__)
+#if defined(__CMS__) || defined(__MVS__)
 #	include "rxmvs.h"
 #endif
 
