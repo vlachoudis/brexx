@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.c,v 1.11 2008/07/15 14:57:55 bnv Exp $
+ * $Id: rexx.c,v 1.12 2009/06/30 13:51:40 bnv Exp $
  * $Log: rexx.c,v $
+ * Revision 1.12  2009/06/30 13:51:40  bnv
+ * Added -a option to break arg into words
+ *
  * Revision 1.11  2008/07/15 14:57:55  bnv
  * mvs corrections
  *
@@ -410,14 +413,14 @@ RxRun( char *filename, PLstr programstr,
 	/* --- initialise Proc structure --- */
 				/* arguments...		*/
 	pr->arg.n = 0;
-	for (i=0; i<MAXARGS; i++)
-		pr->arg.a[i] = NULL;
+	for (i=0; i<MAXARGS; i++) {
+		if (LLEN(arguments[i])) {
+			pr->arg.n = i+1;
+			pr->arg.a[i] = &(arguments[i]);
+		} else
+			pr->arg.a[i] = NULL;
+	}
 	pr->arg.r = NULL;
-	if (LLEN(*arguments)) {
-		pr->arg.n = 1;
-		pr->arg.a[0] = arguments;
-	} else
-		pr->arg.n = 0;
 
 	pr->calltype = CT_PROGRAM;	/* call type...		*/
 	pr->ip = 0;			/* procedure ip		*/

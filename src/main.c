@@ -1,6 +1,9 @@
 /*
- * $Id: main.c,v 1.13 2008/07/15 14:57:55 bnv Exp $
+ * $Id: main.c,v 1.14 2009/06/30 13:51:40 bnv Exp $
  * $Log: main.c,v $
+ * Revision 1.14  2009/06/30 13:51:40  bnv
+ * Added -a option to break arg into words
+ *
  * Revision 1.13  2008/07/15 14:57:55  bnv
  * mvs corrections
  *
@@ -64,22 +67,25 @@ extern void __CDECL RxConIOInitialize();
 int __CDECL
 main(int ac, char *av[])
 {
-	Lstr	args, tracestr, file;
-	int	ia,ir;
-	bool	input, loop_over_stdin;
+	Lstr	args[MAXARGS], tracestr, file;
+	int	ia,ir,iaa;
+	bool	input, loop_over_stdin, parse_args;
 #if defined(HAVE_READLINE)
 	Lstr	line;
 	LINITSTR(line);
 #endif
 
-	input = loop_over_stdin = FALSE;
-	LINITSTR(args);
+	input = loop_over_stdin = parse_args = FALSE;
+	for (ia=0; ia<MAXARGS; ia++) LINITSTR(args[ia]);
 	LINITSTR(tracestr);
 	LINITSTR(file);
 
 	if (ac<2) {
-		puts("\nsyntax: rexx [-[trace]|-F] <filename> <args>...\n");
-                puts("\trexx -\tto use stdin\n\trexx -F\tloop over standard input\n");
+		puts("\nsyntax: rexx [-[trace]|-F|-a] <filename> <args>...\n");
+		puts("options:");
+		puts("\t-\tto use stdin");
+		puts("\t-a\tbreak words into multiple arguments");
+		puts("\t-F\tloop over standard input");
                 puts("\t\t\'linein\' contains each line from stdin.\n");
 		puts(VERSIONSTR);
 		puts("Author: "AUTHOR);
@@ -110,6 +116,9 @@ main(int ac, char *av[])
 		if (av[ia][1]=='F')
 			loop_over_stdin = input = TRUE;
 		else
+		if (av[ia][1]=='a')
+			parse_args = TRUE;
+		else
 			Lscpy(&tracestr,av[ia]+1);
 		ia++;
 	} else
@@ -121,11 +130,17 @@ main(int ac, char *av[])
 	/* --- let's read a normal file --- */
 	if (!input && ia<ac) {
 		/* prepare arguments for program */
+		iaa = 0;
 		for (ir=ia+1; ir<ac; ir++) {
-			Lcat(&args,av[ir]);
-			if (ir<ac-1) Lcat(&args," ");
+			if (parse_args) {
+				Lscpy(&args[iaa], av[ir]);
+				if (++iaa >= MAXARGS) break;
+			} else {
+				Lcat(&args[0], av[ir]);
+				if (ir<ac-1) Lcat(&args[0]," ");
+			}
 		}
-		RxRun(av[ia],NULL,&args,&tracestr,NULL);
+		RxRun(av[ia],NULL,args,&tracestr,NULL);
 	} else {
 		if (ia>=ac) {
 #if !defined(HAVE_READLINE)
@@ -159,12 +174,12 @@ main(int ac, char *av[])
 			if (loop_over_stdin)
 				Lcat(&file,";end");
 		}
-		RxRun(NULL,&file,&args,&tracestr,NULL);
+		RxRun(NULL,&file,args,&tracestr,NULL);
 	}
 
 	/* --- Free everything --- */
 	RxFinalize();
-	LFREESTR(args);
+	for (ia=0; ia<MAXARGS; ia++) LFREESTR(args[ia]);
 	LFREESTR(tracestr);
 	LFREESTR(file);
 #if defined(HAVE_READLINE)
