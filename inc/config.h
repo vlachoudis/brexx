@@ -110,6 +110,10 @@
 /* Define to 1 if you have the <values.h> header file. */
 #define HAVE_VALUES_H 1
 
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
+#define LT_OBJDIR ".libs/"
+
 /* Old MySQL version */
 /* #undef OLD_MYSQL */
 
@@ -123,13 +127,13 @@
 #define PACKAGE_NAME "brexx"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "brexx 2.1.7"
+#define PACKAGE_STRING "brexx 2.1.8"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "brexx"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.1.7"
+#define PACKAGE_VERSION "2.1.8"
 
 /* Remove the trailing CR from system commands */
 #define RMLAST 1
@@ -147,7 +151,7 @@
 /* #undef TM_IN_SYS_TIME */
 
 /* Version number of package */
-#define VERSION "2.1.7"
+#define VERSION "2.1.8"
 
 /* Enable debuging information */
 /* #undef __DEBUG__ */
