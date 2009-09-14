@@ -1,6 +1,9 @@
 /*
- * $Id: interpre.c,v 1.22 2009/06/02 09:41:27 bnv Exp $
+ * $Id: interpre.c,v 1.23 2009/09/14 14:00:56 bnv Exp $
  * $Log: interpre.c,v $
+ * Revision 1.23  2009/09/14 14:00:56  bnv
+ * Correction of the OP_DROP. Removed the trace
+ *
  * Revision 1.22  2009/06/02 09:41:27  bnv
  * MVS/CMS corrections
  *
@@ -119,13 +122,13 @@ extern Lstr	stemvaluenotfound;	/* from variable.c */
 #define STACKP(i)	RxStck[RxStckTop-(i)]
 
 #ifdef __DEBUG__
-#	define DEBUGDISPLAY0(a)		if (__debug__) printf("\t%u\t%s\n",inst_ip,(a))
-#	define DEBUGDISPLAY0nl(a)	if (__debug__) printf("\t%u\t%s\t",inst_ip,(a))
-#	define DEBUGDISPLAY(a)		if (__debug__) {printf("\t%u\t%s\t\"",inst_ip,(a)); \
+#	define DEBUGDISPLAY0(a)		if (__debug__) printf("\t%zu\t%s\n",inst_ip,(a))
+#	define DEBUGDISPLAY0nl(a)	if (__debug__) printf("\t%zu\t%s\t",inst_ip,(a))
+#	define DEBUGDISPLAY(a)		if (__debug__) {printf("\t%zu\t%s\t\"",inst_ip,(a)); \
 					Lprint(STDOUT,RxStck[RxStckTop]); printf("\"\n"); }
-#	define DEBUGDISPLAYi(a,b)	if (__debug__) {printf("\t%u\t%s\t\"",inst_ip,(a)); \
+#	define DEBUGDISPLAYi(a,b)	if (__debug__) {printf("\t%zu\t%s\t\"",inst_ip,(a)); \
 					Lprint(STDOUT,(b)); printf("\"\n"); }
-#	define DEBUGDISPLAY2(a)		if (__debug__) {printf("\t%u\t%s\t\"",inst_ip,(a)); \
+#	define DEBUGDISPLAY2(a)		if (__debug__) {printf("\t%zu\t%s\t\"",inst_ip,(a)); \
 					Lprint(STDOUT,STACKP(1)); printf("\",\""); \
 					Lprint(STDOUT,STACKTOP);printf("\"\n"); }
 #else
@@ -1163,7 +1166,8 @@ outofcmd:
 					RxVarDel(VarScope,litleaf,leaf);
 			}
 			inf->id = NO_CACHE;
-			goto chk4trace;
+			Rxcip++;
+			goto main_loop;
 
 				/* indirect drop, from stack	*/
 				/* asssume that is UPPER case tmp */
@@ -1295,7 +1299,7 @@ outofcmd:
 			Rxcip = (CIPTYPE*)((byte huge *)Rxcodestart + *(CWORD *)Rxcip);
 #ifdef __DEBUG__
 			if (__debug__)
-				printf("%d\n",(byte huge *)Rxcip-(byte huge *)Rxcodestart);
+				printf("%zd\n",(byte huge *)Rxcip-(byte huge *)Rxcodestart);
 #endif
 			goto main_loop;
 
