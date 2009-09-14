@@ -1,6 +1,9 @@
 /*
- * $Id: trace.c,v 1.8 2008/07/15 07:40:25 bnv Exp $
+ * $Id: trace.c,v 1.9 2009/09/14 14:00:56 bnv Exp $
  * $Log: trace.c,v $
+ * Revision 1.9  2009/09/14 14:00:56  bnv
+ * __DEBUG__ format correction
+ *
  * Revision 1.8  2008/07/15 07:40:25  bnv
  * #include changed from <> to ""
  *
@@ -121,7 +124,7 @@ TraceCurline( RxFile **rxf, int print )
 	if (print) {
 		int	i;
 
-		fprintf(STDERR,"%6d *-* ",line);
+		fprintf(STDERR,"%6zd *-* ",line);
 		for (i=1; i<_nesting; i++) fputc(' ',STDERR);
 
 		while (*ch && ch<chend) {

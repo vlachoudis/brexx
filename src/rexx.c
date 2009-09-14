@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.c,v 1.12 2009/06/30 13:51:40 bnv Exp $
+ * $Id: rexx.c,v 1.13 2009/09/14 14:00:56 bnv Exp $
  * $Log: rexx.c,v $
+ * Revision 1.13  2009/09/14 14:00:56  bnv
+ * __DEBUG__ format correction
+ *
  * Revision 1.12  2009/06/30 13:51:40  bnv
  * Added -a option to break arg into words
  *
@@ -459,7 +462,7 @@ RxRun( char *filename, PLstr programstr,
 
 		printf("Labels(&functions) are:\n");
 		BinPrint(_labels.parent);
-		printf("Code Size: %d\n\n",LLEN(*_code));
+		printf("Code Size: %zd\n\n",LLEN(*_code));
 		getchar();
 	}
 #endif
