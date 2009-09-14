@@ -1,6 +1,10 @@
 /*
- * $Id: bmem.c,v 1.10 2009/06/02 09:41:27 bnv Exp $
+ * $Id: bmem.c,v 1.11 2009/09/14 14:00:56 bnv Exp $
  * $Log: bmem.c,v $
+ * Revision 1.11  2009/09/14 14:00:56  bnv
+ * Correction to work with 64bit intel
+ * l.
+ *
  * Revision 1.10  2009/06/02 09:41:27  bnv
  * MVS/CMS corrections
  *
@@ -59,18 +63,17 @@
 /*
  * This file provides some debugging functions for memory allocation
  */
-
 typedef struct tmemory_st {
 	dword	magic;
 	char	*desc;
 	size_t	size;
 	struct	tmemory_st *next;
 	struct	tmemory_st *prev;
-#if defined(ALIGN) && !defined(__ALPHA)
-	/* Some machines have problems ithe address is not at 8-bytes aligned */
-	int	dummy;
-#endif
-	byte	data[sizeof(void*)];
+//#if defined(ALIGN) && !defined(__ALPHA)
+//	/* Some machines have problems if the address is not at 8-bytes aligned */
+//	int	dummy;
+//#endif
+	byte	data[sizeof(dword)];
 } Memory;
 
 static Memory	*mem_head = NULL;
@@ -108,7 +111,7 @@ mem_malloc(size_t size, char *desc)
 
 		return (void *)(mem->data);
 	} else {
-		fprintf(STDERR,"Not enough memory to allocate object %s size=%d\n",
+		fprintf(STDERR,"Not enough memory to allocate object %s size=%zu\n",
 				desc,size);
 		return NULL;
 	}
@@ -122,7 +125,7 @@ mem_realloc(void *ptr, size_t size)
 	int	head;
 
 	/* find our header */
-	mem = (Memory *)((char *)ptr - (sizeof(Memory)-sizeof(void*)));
+	mem = (Memory *)((char *)ptr - (sizeof(Memory)-sizeof(dword)));
 
 	/* check if the memory is valid */
 	if (mem->magic != MAGIC) {
@@ -147,7 +150,7 @@ mem_realloc(void *ptr, size_t size)
 #endif
 
 	if (mem==NULL) {
-		fprintf(STDERR,"Not enough memory to allocate object %s size=%d\n",
+		fprintf(STDERR,"Not enough memory to allocate object %s size=%zu\n",
 				mem->desc,size);
 		return NULL;
 	}
@@ -175,7 +178,7 @@ mem_free(void *ptr)
 	int	head;
 
 	/* find our header */
-	mem = (Memory *)((char *)ptr - (sizeof(Memory)-sizeof(void*)));
+	mem = (Memory *)((char *)ptr - (sizeof(Memory)-sizeof(dword)));
 
 	if (mem->magic != MAGIC) {
 		fprintf(STDERR,"mem_free: PREFIX Magic number doesn't match of object %p!\n",ptr);
@@ -216,7 +219,7 @@ mem_print(int count, Memory *mem)
 
 	fputs((mem->magic==MAGIC)?"  ":"??",STDERR);
 
-	fprintf(STDERR,"%3d %5d %p %s\t\"",
+	fprintf(STDERR,"%3d %5zu %p %s\t\"",
 		count, mem->size, mem->data, mem->desc);
 	for (i=0; i<10; i++)
 		fprintf(STDERR,"%c",
