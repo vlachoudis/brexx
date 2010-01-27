@@ -1,6 +1,9 @@
 /*
- * $Id: rexxfunc.c,v 1.10 2008/07/15 07:40:25 bnv Exp $
+ * $Id: rexxfunc.c,v 1.11 2010/01/27 13:20:27 bnv Exp $
  * $Log: rexxfunc.c,v $
+ * Revision 1.11  2010/01/27 13:20:27  bnv
+ * CMS and MVS corrections
+ *
  * Revision 1.10  2008/07/15 07:40:25  bnv
  * #include changed from <> to ""
  *
@@ -101,13 +104,13 @@ rexx_routine[] = {
 	{ "ASIN",	R_math		,f_asin		},
 	{ "ATAN",	R_math		,f_atan		},
 	{ "ATAN2",	R_atanpow	,f_atan2	},
-#ifndef __CMS__
+#if !defined(__CMS__) && !defined(__MVS__)
 	{ "B2X",	R_S		,f_b2x		},
 #endif
 	{ "BITAND",	R_SoSoC		,f_bitand	},
 	{ "BITOR",	R_SoSoC		,f_bitor	},
 	{ "BITXOR",	R_SoSoC		,f_bitxor	},
-#ifdef __CMS__
+#if defined(__CMS__) || defined(__MVS__)
 	{ "B2X",	R_S		,f_b2x		},
 #else
 	{ "C2D",	R_SoI		,f_c2d		},
@@ -120,7 +123,7 @@ rexx_routine[] = {
 	{ "CHAROUT",	R_charlineout	,f_charout	},
 	{ "CHARS",	R_charslines	,f_chars	},
 	{ "CLOSE",	R_close		,f_close	},
-#ifdef __CMS__
+#if defined(__CMS__)
 	{ "CMSFLAG",	VM_O		,f_cmsflag	},
 #endif
 	{ "COMPARE",	R_compare	,f_compare	},
@@ -128,7 +131,7 @@ rexx_routine[] = {
 	{ "COS",	R_math		,f_cos		},
 	{ "COSH",	R_math		,f_cosh		},
 	{ "COUNTSTR",	R_SS		,f_countstr	},
-#ifdef __CMS__
+#if defined(__CMS__) || defined(__MVS__)
 	{ "C2D",	R_SoI		,f_c2d		},
 	{ "C2X",	R_S		,f_c2x		},
 #else
@@ -142,7 +145,7 @@ rexx_routine[] = {
 	{ "DESBUF",	R_O		,f_desbuf	},
 	{ "DIGITS",	R_O		,f_digits	},
 	{ "DROPBUF",	R_dropbuf	,f_dropbuf	},
-#ifdef __CMS__
+#if defined(__CMS__) || defined(__MVS__)
 	{ "D2C",	R_IoI		,f_d2c		},
 	{ "D2X",	R_IoI		,f_d2x		},
 #endif
@@ -238,7 +241,7 @@ rexx_routine[] = {
 	{ "WORDPOS",	R_SSoI		,f_wordpos	},
 	{ "WORDS",	R_S		,f_words	},
 	{ "WRITE",	R_write		,f_write	},
-#ifdef __CMS__
+#if defined(__CMS__) || defined(__MVS__)
 	{ "XRANGE",	R_xrange	,f_xrange	},
 	{ "X2B",	R_S		,f_x2b		},
 	{ "X2C",	R_S		,f_x2c		},
