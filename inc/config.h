@@ -132,6 +132,9 @@
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "brexx"
 
+/* Define to the home page for this package. */
+#define PACKAGE_URL ""
+
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "2.1.8"
 
@@ -152,6 +155,12 @@
 
 /* Version number of package */
 #define VERSION "2.1.8"
+
+/* Define this if you are under an X64-based operating system. */
+/* #undef X64 */
+
+/* Define this if you are under an X86-based 32bit operating system. */
+/* #undef X86 */
 
 /* Enable debuging information */
 /* #undef __DEBUG__ */
