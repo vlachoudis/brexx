@@ -1,6 +1,9 @@
 /*
- * $Id: trunc.c,v 1.6 2008/07/15 07:40:54 bnv Exp $
+ * $Id: trunc.c,v 1.7 2010/01/27 13:21:03 bnv Exp $
  * $Log: trunc.c,v $
+ * Revision 1.7  2010/01/27 13:21:03  bnv
+ * Use of fcvt
+ *
  * Revision 1.6  2008/07/15 07:40:54  bnv
  * #include changed from <> to ""
  *
@@ -27,10 +30,9 @@
 void __CDECL
 Ltrunc( const PLstr to, const PLstr from, long n)
 {
-#ifdef WCE
 	char	*snum, *s;
 	int	decp, sign;
-#endif
+
 	if (n<0) n = 0;
 
 	if (!n) {
@@ -42,17 +44,9 @@ Ltrunc( const PLstr to, const PLstr from, long n)
 	} else {
 		L2REAL(from);
 		Lfx(to,n+15);
-#ifndef WCE
-		/*sprintf(LSTR(*to),"%.*f", (int)n, LREAL(*from));*/
-		GCVT(LREAL(*from) , (n), LSTR(*to));
-#else
-//////// WARNING NO ROUNDING ON THE NUMBER IS DONE!
-#define NDIG	20
 		s = LSTR(*to);
-		snum = FCVT(LREAL(*from), NDIG, &decp, &sign);
+		snum = FCVT(LREAL(*from), n, &decp, &sign);
 		if (sign) *s++ = '-';
-		if (decp<0)		// Move it in the front
-			decp += NDIG;
 		if (decp>=0) {
 			while (decp--)
 				*s++ = *snum++;
@@ -66,7 +60,6 @@ Ltrunc( const PLstr to, const PLstr from, long n)
 		while (n--)
 			*s++ = *snum++;
 		*s = 0;
-#endif
 		LTYPE(*to) = LSTRING_TY;
 		LLEN(*to)  = STRLEN(LSTR(*to));
 	}
