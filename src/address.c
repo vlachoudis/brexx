@@ -1,6 +1,9 @@
 /*
- * $Id: address.c,v 1.15 2009/06/02 09:41:27 bnv Exp $
+ * $Id: address.c,v 1.16 2010/01/27 13:19:39 bnv Exp $
  * $Log: address.c,v $
+ * Revision 1.16  2010/01/27 13:19:39  bnv
+ * MVS correction
+ *
  * Revision 1.15  2009/06/02 09:41:27  bnv
  * MVS/CMS corrections
  *
@@ -160,7 +163,11 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr outputstr)
 {
 #ifdef __CMS__
 /* stuff for VM commands will go here */
+	LASCIIZ(*cmd);
+	rxReturnCode = system(LSTR(*cmd));
 #elif defined(__MVS__)
+	LASCIIZ(*cmd);
+	rxReturnCode = system(LSTR(*cmd));
 #else
 	char	fnin[250], fnout[250];
 	int	old_stdin=0, old_stdout=0;
@@ -325,7 +332,12 @@ RxExecuteCmd( PLstr cmd, PLstr env )
 int __CDECL
 RxExecuteCmd( PLstr cmd, PLstr env )
 {
-	return (system(LSTR(*cmd)));
+	rxReturnCode = system(LSTR(*cmd));
+	if (rxReturnCode == 0x806000) {
+		rxReturnCode = -3;
+	}
+	RxSetSpecialVar(RCVAR,rxReturnCode);
+	return (rxReturnCode);
 } /* RxExecuteCmd */
 
 #else
