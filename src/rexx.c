@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.c,v 1.13 2009/09/14 14:00:56 bnv Exp $
+ * $Id: rexx.c,v 1.14 2010/01/27 13:20:11 bnv Exp $
  * $Log: rexx.c,v $
+ * Revision 1.14  2010/01/27 13:20:11  bnv
+ * Shared library correction
+ *
  * Revision 1.13  2009/09/14 14:00:56  bnv
  * __DEBUG__ format correction
  *
@@ -315,7 +318,7 @@ RxLoadLibrary( PLstr libname, bool shared )
 	/* create  a RxFile structure */
 	rxf = RxFileAlloc(LSTR(*libname));
 
-#if defined(__GNUC__) && !defined(MSDOS)
+#if defined(__GNUC__) && !defined(MSDOS) && !defined(WCE)
 	if (shared) {
 		/* try to load it as a shared library */
 #	if !defined(__CMS__) && !defined(__MVS__)
