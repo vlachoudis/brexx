@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.h,v 1.17 2009/06/02 09:41:43 bnv Exp $
+ * $Id: lstring.h,v 1.18 2011/05/17 06:53:00 bnv Exp $
  * $Log: lstring.h,v $
+ * Revision 1.18  2011/05/17 06:53:00  bnv
+ * Added sqlite
+ *
  * Revision 1.17  2009/06/02 09:41:43  bnv
  * MVS/CMS corrections
  *
@@ -107,7 +110,7 @@ enum	TYPES	{ LSTRING_TY,
 /* --- Lstring structure --- */
 /* ------------------------- */
 typedef struct Lstr_st {
-	char	*pstr;		/* String (Data) pointer		*/
+	unsigned char	*pstr;	/* String (Data) pointer		*/
 	size_t	len;		/* Actual length of string(data)	*/
 	size_t	maxlen;		/* Maximum length allocated for string	*/
 	short	type;		/* Type of data STRING, INT, REAL	*/
