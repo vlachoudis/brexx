@@ -1,6 +1,9 @@
 /*
- * $Id: variable.c,v 1.12 2008/07/15 07:40:25 bnv Exp $
+ * $Id: variable.c,v 1.13 2011/05/17 06:53:10 bnv Exp $
  * $Log: variable.c,v $
+ * Revision 1.13  2011/05/17 06:53:10  bnv
+ * Added SQLite
+ *
  * Revision 1.12  2008/07/15 07:40:25  bnv
  * #include changed from <> to ""
  *
@@ -172,8 +175,8 @@ RxVarAdd(Scope scope, PLstr name, int hasdot, PBinLeaf stemleaf )
 			var->stem = RxScopeMalloc();
 
 		{ /* do a small hashing */
-			register char	*s;
-			char	*se;
+			register unsigned char	*s;
+			unsigned char	*se;
 			int	sum=0;
 
 			s = LSTR(varidx);
@@ -377,8 +380,8 @@ RxVarFind(const Scope scope, const PBinLeaf litleaf, bool *found)
 		}
 
 		{ /* do a small hashing */
-			register char	*s;
-			char	*se;
+			register unsigned char	*s;
+			unsigned char	*se;
 			int	sum=0;
 
 			s = LSTR(varidx);
@@ -398,8 +401,8 @@ RxVarFind(const Scope scope, const PBinLeaf litleaf, bool *found)
 		while (leafidx != NULL) {
 			/* Inline version of Compare */
 			{
-				register char	*a,*b;
-				char	*ae,*be;
+				register unsigned char *a,*b;
+				unsigned char *ae,*be;
 				a = LSTR(varidx);
 				ae = a + LLEN(varidx);
 				b = LSTR(leafidx->key);
@@ -448,12 +451,12 @@ RxVarFindName(Scope scope, PLstr name, bool *found)
 	PBinLeaf leaf,leafidx;
 	Lstr	aux;
 	int	hasdot,start,stop;
-	register char	*ch;
+	register unsigned char	*ch;
 
 	/* search for a '.' except in the last character */
 	ch = MEMCHR(LSTR(*name),'.',LLEN(*name)-1);
 	if (ch)
-		hasdot = (size_t)((char huge *)ch - (char huge *)LSTR(*name) + 1);
+		hasdot = (size_t)((unsigned char huge *)ch - (unsigned char huge *)LSTR(*name) + 1);
 	else
 		hasdot = 0;
 
@@ -522,8 +525,8 @@ RxVarFindName(Scope scope, PLstr name, bool *found)
 		}
 
 		{ /* do a small hashing */
-			register char	*s;
-			char	*se;
+			register unsigned char	*s;
+			unsigned char	*se;
 			int	sum=0;
 
 			s = LSTR(varidx);
@@ -613,7 +616,7 @@ RxVarDelName(Scope scope, PLstr name, PBinLeaf varleaf)
 	Variable	*var;
 	BinTree *tree;
 	PBinLeaf leaf;
-	char	*ch;
+	unsigned char	*ch;
 
 	var = (Variable*)(varleaf->value);
 

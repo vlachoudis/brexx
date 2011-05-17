@@ -1,6 +1,9 @@
 /*
- * $Id: trace.c,v 1.9 2009/09/14 14:00:56 bnv Exp $
+ * $Id: trace.c,v 1.10 2011/05/17 06:53:10 bnv Exp $
  * $Log: trace.c,v $
+ * Revision 1.10  2011/05/17 06:53:10  bnv
+ * Added SQLite
+ *
  * Revision 1.9  2009/09/14 14:00:56  bnv
  * __DEBUG__ format correction
  *
@@ -81,8 +84,8 @@ TraceCurline( RxFile **rxf, int print )
 			cl++;
 		}
 		cl--;
-		line = CompileClause[cl].line;
-		ch = CompileClause[cl].ptr;
+		line  = CompileClause[cl].line;
+		ch    = CompileClause[cl].ptr;
 		chend = CompileClause[cl+1].ptr;
 		if (chend==NULL)
 			for (chend=ch; *chend!='\n'; chend++) /*do nothing*/;;
@@ -104,14 +107,14 @@ TraceCurline( RxFile **rxf, int print )
 		}
 		if (_in_nextsymbol) {
 			line = symboline;
-			ch = symbolptr;
+			ch   = symbolptr;
 			while (ch>symbolprevptr)
 				if (*ch--=='\n') line--;
 			ch = symbolprevptr;
 		} else
 		if (cl==0) {
 			line = 1;
-			ch   = LSTR((*rxf)->file);
+			ch   = (char*)LSTR((*rxf)->file);
 		} else {
 			cl   = CompileCurClause-1;
 			line = CompileClause[ cl ].line;
@@ -157,7 +160,7 @@ TraceCurline( RxFile **rxf, int print )
 void __CDECL
 TraceSet( PLstr trstr )
 {
-	char	*ch;
+	unsigned char *ch;
 
 	L2STR(trstr);
 	Lupper(trstr);
