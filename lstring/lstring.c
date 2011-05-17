@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.c,v 1.11 2009/06/02 09:40:53 bnv Exp $
+ * $Id: lstring.c,v 1.12 2011/05/17 06:53:31 bnv Exp $
  * $Log: lstring.c,v $
+ * Revision 1.12  2011/05/17 06:53:31  bnv
+ * Added SQLite
+ *
  * Revision 1.11  2009/06/02 09:40:53  bnv
  * MVS/CMS corrections
  *
@@ -119,7 +122,7 @@ Lfx( const PLstr s, const size_t len )
 	size_t	max;
 
 	if (LISNULL(*s)) {
-		LSTR(*s) = (char *) MALLOC( (max = LNORMALISE(len))+LEXTRA, "Lstr" );
+		LSTR(*s) = (unsigned char *) MALLOC( (max = LNORMALISE(len))+LEXTRA, "Lstr" );
 		LLEN(*s) = 0;
 		LMAXLEN(*s) = max;
 		LTYPE(*s) = LSTRING_TY;
@@ -129,12 +132,12 @@ Lfx( const PLstr s, const size_t len )
 	} else
 #ifdef USEOPTION
 	if (!LOPTION(*s,LOPTFIX) && LMAXLEN(*s)<len) {
-		LSTR(*s) = (char *) REALLOC( LSTR(*s), (max=LNORMALISE(len))+LEXTRA);
+		LSTR(*s) = (unsigned char *) REALLOC( LSTR(*s), (max=LNORMALISE(len))+LEXTRA);
 		LMAXLEN(*s) = max;
 	}
 #else
 	if (LMAXLEN(*s)<len) {
-		LSTR(*s) = (char *) REALLOC( LSTR(*s), (max=LNORMALISE(len))+LEXTRA);
+		LSTR(*s) = (unsigned char *) REALLOC( LSTR(*s), (max=LNORMALISE(len))+LEXTRA);
 		LMAXLEN(*s) = max;
 	}
 #endif

@@ -1,6 +1,9 @@
 /*
- * $Id: errortxt.c,v 1.7 2008/07/15 07:40:54 bnv Exp $
+ * $Id: errortxt.c,v 1.8 2011/05/17 06:53:31 bnv Exp $
  * $Log: errortxt.c,v $
+ * Revision 1.8  2011/05/17 06:53:31  bnv
+ * Added SQLite
+ *
  * Revision 1.7  2008/07/15 07:40:54  bnv
  * #include changed from <> to ""
  *
@@ -332,9 +335,10 @@ ErrorMsg	errortext[] = {
 #ifndef WCE
 	{ ERRNUM(54,1), "For this STEM APPEND, the value of \"<name>\" must be a count of lines; found: \"<value>\"" },
 #endif
-	{ ERRNUM(55,0),	"DB Error" },
+	{ ERRNUM(55,0),	"Database Error" },
 	{ ERRNUM(55,1),	"Database is not openned" },
 	{ ERRNUM(55,2),	"Field not found" },
+	{ ERRNUM(55,2),	"Not valid statement" },
 
 	{ ERRNUM(56,0),	"Shared library error \"<dlopen>\"" },
 
