@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.c,v 1.14 2010/01/27 13:20:11 bnv Exp $
+ * $Id: rexx.c,v 1.15 2011/05/17 06:53:10 bnv Exp $
  * $Log: rexx.c,v $
+ * Revision 1.15  2011/05/17 06:53:10  bnv
+ * Added SQLite
+ *
  * Revision 1.14  2010/01/27 13:20:11  bnv
  * Shared library correction
  *
@@ -181,7 +184,7 @@ RxFileAlloc(char *fname)
 void __CDECL
 RxFileType(RxFile *rxf)
 {
-	char	*c;
+	unsigned char *c;
 
 	/* find file type */
 	c = LSTR(rxf->name)+LLEN(rxf->name);

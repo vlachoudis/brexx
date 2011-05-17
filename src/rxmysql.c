@@ -1,6 +1,9 @@
 /*
- * $Id: rxmysql.c,v 1.3 2003/10/30 13:16:28 bnv Exp $
+ * $Id: rxmysql.c,v 1.4 2011/05/17 06:53:10 bnv Exp $
  * $Log: rxmysql.c,v $
+ * Revision 1.4  2011/05/17 06:53:10  bnv
+ * Added SQLite
+ *
  * Revision 1.3  2003/10/30 13:16:28  bnv
  * Variable name change
  *
@@ -352,7 +355,7 @@ void R_dbinfo( const int func )
 } /* R_dbinfo */
 
 /* --------------------------------------------------------------- */
-/*  Inialiaze/Finalize                                             */
+/*  Initialize/Finalize                                            */
 /* --------------------------------------------------------------- */
 void RxMySQLInitialize()
 {

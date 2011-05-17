@@ -1,6 +1,9 @@
 /*
- * $Id: main.c,v 1.14 2009/06/30 13:51:40 bnv Exp $
+ * $Id: main.c,v 1.15 2011/05/17 06:53:10 bnv Exp $
  * $Log: main.c,v $
+ * Revision 1.15  2011/05/17 06:53:10  bnv
+ * Added SQLite
+ *
  * Revision 1.14  2009/06/30 13:51:40  bnv
  * Added -a option to break arg into words
  *
@@ -62,6 +65,9 @@ extern void __CDECL RxConIOInitialize();
 #ifdef RXMYSQLSTATIC
 #	include "rxmysql.c"
 #endif
+#ifdef RXSQLITESTATIC
+#	include "rxsqlite.c"
+#endif
 
 /* --------------------- main ---------------------- */
 int __CDECL
@@ -102,6 +108,9 @@ main(int ac, char *av[])
 	/* --- Register functions of external libraries --- */
 #ifdef RXMYSQLSTATIC
 	RxMySQLInitialize();
+#endif
+#ifdef RXSQLITESTATIC
+	RxSQLiteInitialize();
 #endif
 #ifdef RXCONIO
 	RxConIOInitialize();
@@ -187,6 +196,9 @@ main(int ac, char *av[])
 #endif
 #ifdef RXMYSQLSTATIC
 	RxMySQLFinalize();
+#endif
+#ifdef RXSQLITESTATIC
+	RxSQLiteFinalize();
 #endif
 
 #ifdef __DEBUG__
