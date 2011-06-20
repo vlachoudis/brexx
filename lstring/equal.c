@@ -1,6 +1,9 @@
 /*
- * $Id: equal.c,v 1.7 2008/07/15 07:40:54 bnv Exp $
+ * $Id: equal.c,v 1.8 2011/06/20 08:31:19 bnv Exp $
  * $Log: equal.c,v $
+ * Revision 1.8  2011/06/20 08:31:19  bnv
+ * Using a global SMALL number
+ *
  * Revision 1.7  2008/07/15 07:40:54  bnv
  * #include changed from <> to ""
  *
@@ -65,7 +68,7 @@ Lequal(const PLstr A, const PLstr B)
 
 	/* is B also a number */
 	if (tb != LSTRING_TY) {
-		if (fabs(ra-rb)<=1E-20)
+		if (fabs(ra-rb)<=SMALL)
 			return 0;
 		else
 		if (ra>rb)
