@@ -1,6 +1,9 @@
 /*
- * $Id: datatype.c,v 1.5 2008/07/15 07:40:54 bnv Exp $
+ * $Id: datatype.c,v 1.6 2011/06/20 08:31:19 bnv Exp $
  * $Log: datatype.c,v $
+ * Revision 1.6  2011/06/20 08:31:19  bnv
+ * Corrected 'w'
+ *
  * Revision 1.5  2008/07/15 07:40:54  bnv
  * #include changed from <> to ""
  *
@@ -18,17 +21,21 @@
  *
  */
 
+#include <math.h>
 #include <ctype.h>
 #include "lstring.h"
 
 /* --------------- Ldatatype ----------------- */
-/* returns -1 on error type                    */
+/* returns 1 on success                        */
+/*         0 on failure                        */
+/*        -1 on error type                     */
 int __CDECL
 Ldatatype( const PLstr str, char type )
 {
 	Lstr	ref;
 	int	t,j,digits;
 	char	*c;
+	double	 d;
 
 	type = l2u[(byte)type];
 
@@ -87,7 +94,23 @@ Ldatatype( const PLstr str, char type )
 			Lscpy(&ref,cUPPER);
 			break;
 		case 'W':
-			Lscpy(&ref,cdigits);
+			if (LTYPE(*str)==LSTRING_TY) {
+				LASCIIZ(*str);
+				switch (_Lisnum(str)) {
+					case LINTEGER_TY:
+						return 1;
+
+					case LREAL_TY:
+						return fabs((double)(long)lLastScannedNumber-lLastScannedNumber)<=SMALL;
+
+					default:
+						return 0;
+				}
+			} else
+			if (LTYPE(*str)==LREAL_TY)
+				return fabs((double)(int)LREAL(*str) - LREAL(*str))<=SMALL;
+			else
+				return 1;
 			break;
 		case 'X':
 			/* check blanks in allowed places */
