@@ -1,6 +1,9 @@
 /*
- * $Id: bmem.h,v 1.9 2009/06/02 09:41:43 bnv Exp $
+ * $Id: bmem.h,v 1.10 2011/06/20 08:32:28 bnv Exp $
  * $Log: bmem.h,v $
+ * Revision 1.10  2011/06/20 08:32:28  bnv
+ * Added android
+ *
  * Revision 1.9  2009/06/02 09:41:43  bnv
  * MVS/CMS corrections
  *
@@ -39,7 +42,11 @@
 #	include <malloc.h>
 #endif
 
-#include "config.h"
+#if defined(ANDROID)
+#	include "android.h"
+#else
+#	include "config.h"
+#endif
 
 #if defined(__DEBUG__) && !defined(WCE)
 #	define	MALLOC(s,d)	mem_malloc(s,d)
