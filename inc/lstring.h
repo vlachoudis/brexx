@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.h,v 1.18 2011/05/17 06:53:00 bnv Exp $
+ * $Id: lstring.h,v 1.19 2011/06/20 08:32:49 bnv Exp $
  * $Log: lstring.h,v $
+ * Revision 1.19  2011/06/20 08:32:49  bnv
+ * Added android and global SMALL number
+ *
  * Revision 1.18  2011/05/17 06:53:00  bnv
  * Added sqlite
  *
@@ -63,7 +66,7 @@
 #include "ldefs.h"
 #include "os.h"
 
-#ifdef WIN
+#if defined(WIN)
 #	include <windows.h>
 #	include "winio.h"
 #	include	"bio.h"
@@ -71,6 +74,8 @@
 //#		define PACKAGE_NAME "brexx"
 //#		define PACKAGE_STRING PACKAGE_NAME " V2.1"
 //#	endif
+#elif defined(ANDROID)
+#	include "android.h"
 #else
 #	include "config.h"
 #	if !defined(__CMS__) && !defined(__MVS__)
@@ -94,6 +99,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+
+#define SMALL	1E-20
 
 /* --- Lstring types --- */
 enum	TYPES	{ LSTRING_TY,
