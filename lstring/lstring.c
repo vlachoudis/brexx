@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.c,v 1.12 2011/05/17 06:53:31 bnv Exp $
+ * $Id: lstring.c,v 1.13 2011/06/20 08:31:19 bnv Exp $
  * $Log: lstring.c,v $
+ * Revision 1.13  2011/06/20 08:31:19  bnv
+ * removed the FCVT and GCVT replaced with sprintf
+ *
  * Revision 1.12  2011/05/17 06:53:31  bnv
  * Added SQLite
  *
@@ -528,7 +531,11 @@ L2str( const PLstr s )
 		char	str[50];
 		size_t	len;
 
+#if defined(HAVE_GCVT)
 		GCVT(LREAL(*s),lNumericDigits,str);
+#else
+		snprintf(str, sizeof(str), "%.*g", lNumericDigits, LREAL(*s));
+#endif
 		/* --- remove the last dot from the number --- */
 		len = STRLEN(str);
 #ifdef WCE
@@ -554,12 +561,10 @@ L2int( const PLstr s )
 		LASCIIZ(*s);
 		switch (_Lisnum(s)) {
 			case LINTEGER_TY:
-				/*///LINT(*s) = atol( LSTR(*s) ); */
 				LINT(*s) = (long)lLastScannedNumber;
 				break;
 
 			case LREAL_TY:
-				/*///LREAL(*s) = strtod( LSTR(*s), NULL ); */
 				LREAL(*s) = lLastScannedNumber;
 				if ((double)((long)LREAL(*s)) == LREAL(*s))
 					LINT(*s) = (long)LREAL(*s);
