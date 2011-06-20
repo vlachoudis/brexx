@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.c,v 1.15 2011/05/17 06:53:10 bnv Exp $
+ * $Id: rexx.c,v 1.16 2011/06/20 08:31:57 bnv Exp $
  * $Log: rexx.c,v $
+ * Revision 1.16  2011/06/20 08:31:57  bnv
+ * removed the FCVT and GCVT replaced with sprintf
+ *
  * Revision 1.15  2011/05/17 06:53:10  bnv
  * Added SQLite
  *
@@ -209,7 +212,7 @@ RxFileFree(RxFile *rxf)
 		LFREESTR(f->name);
 		LFREESTR(f->file);
 #if defined(__GNUC__) && !defined(MSDOS) && !defined(__CMS__) \
-    && !defined(__MVS__)
+    && !defined(__MVS__) && !defined(ANDROID)
 		if (f->libHandle!=NULL)
 			dlclose(f->libHandle);
 #endif
@@ -321,7 +324,7 @@ RxLoadLibrary( PLstr libname, bool shared )
 	/* create  a RxFile structure */
 	rxf = RxFileAlloc(LSTR(*libname));
 
-#if defined(__GNUC__) && !defined(MSDOS) && !defined(WCE)
+#if defined(__GNUC__) && !defined(MSDOS) && !defined(WCE) && !defined(ANDROID)
 	if (shared) {
 		/* try to load it as a shared library */
 #	if !defined(__CMS__) && !defined(__MVS__)
