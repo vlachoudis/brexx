@@ -10,8 +10,8 @@
 #ifdef RSXWIN
 #include <windows.h>
 
-#include <rexx.h>
-#include <rxdefs.h>
+#include "rexx.h"
+#include "rxdefs.h"
 
 /* -------------------------------------------------------------- */
 /*  WINMESSAGEBOX((text))                                         */

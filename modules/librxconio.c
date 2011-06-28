@@ -7,11 +7,11 @@
 ||
 */
 
-#include <conio.h>
+//#include <conio.h>
 
-#include <rexx.h>
-#include <rxdefs.h>
-#include <rxconio.h>
+#include "rexx.h"
+#include "rxdefs.h"
+#include "rxconio.h"
 
 /* -------------------------------------------------------------- */
 /*  ANSICLS()                                                     */
