@@ -1,209 +1,198 @@
-addContextMenuItem
-addOptionsMenuItem
-batteryCheckPresent
-batteryGetHealth
-batteryGetLevel
-batteryGetPlugType
-batteryGetStatus
-batteryGetTechnology
-batteryGetTemperature
-batteryGetVoltage
-batteryStartMonitoring
-batteryStopMonitoring
-cameraCapturePicture
-cameraInteractiveCapturePicture
-checkAirplaneMode
-checkNetworkRoaming
-checkRingerSilentMode
-checkScreenOn
-checkWifiState
-clearContextMenu
-clearOptionsMenu
-contactsGet
-contactsGetAttributes
-contactsGetById
-contactsGetCount
-contactsGetIds
-dialogCreateAlert
-dialogCreateDatePicker
-dialogCreateHorizontalProgress
-dialogCreateInput
-dialogCreatePassword
-dialogCreateSeekBar
-dialogCreateSpinnerProgress
-dialogCreateTimePicker
-dialogDismiss
-dialogGetInput
-dialogGetPassword
-dialogGetResponse
-dialogGetSelectedItems
-dialogSetCurrentProgress
-dialogSetItems
-dialogSetMaxProgress
-dialogSetMultiChoiceItems
-dialogSetNegativeButtonText
-dialogSetNeutralButtonText
-dialogSetPositiveButtonText
-dialogSetSingleChoiceItems
-dialogShow
-environment
-eventClearBuffer
-eventPoll
-eventPost
-eventWait
-eventWaitFor
-forceStopPackage
-generateDtmfTones
-geocode
-getCellLocation
-getClipboard
-getConstants
-getDeviceId
-getDeviceSoftwareVersion
-getInput
-getIntent
-getLastKnownLocation
-getLaunchableApplications
-getLine1Number
-getMaxMediaVolume
-getMaxRingerVolume
-getMediaVolume
-getNeighboringCellInfo
-getNetworkOperator
-getNetworkOperatorName
-getNetworkType
-getPackageVersion
-getPackageVersionCode
-getPassword
-getPhoneType
-getRingerVolume
-getRunningPackages
-getScreenBrightness
-getScreenTimeout
-getSimCountryIso
-getSimOperator
-getSimOperatorName
-getSimSerialNumber
-getSimState
-getSubscriberId
-getVibrateMode
-getVoiceMailAlphaTag
-getVoiceMailNumber
-launch
-log
-makeIntent
-makeToast
-mediaIsPlaying
-mediaPlay
-mediaPlayClose
-mediaPlayInfo
-mediaPlayList
-mediaPlayPause
-mediaPlaySeek
-mediaPlaySetLooping
-mediaPlayStart
-notify
-phoneCall
-phoneCallNumber
-phoneDial
-phoneDialNumber
-pick
-pickContact
-pickPhone
-postEvent
-prefGetAll
-prefGetValue
-prefPutValue
-queryAttributes
-queryContent
-readBatteryData
-readLocation
-readPhoneState
-readSensors
-receiveEvent
-recognizeSpeech
-recorderCaptureVideo
-recorderStartMicrophone
-recorderStop
-requiredVersion
-scanBarcode
-search
-sendBroadcast
-sendBroadcastIntent
-sendEmail
-sensorsGetAccuracy
-sensorsGetLight
-sensorsReadAccelerometer
-sensorsReadMagnetometer
-sensorsReadOrientation
-setClipboard
-setMediaVolume
-setResultBoolean
-setResultBooleanArray
-setResultByte
-setResultByteArray
-setResultChar
-setResultCharArray
-setResultDouble
-setResultDoubleArray
-setResultFloat
-setResultFloatArray
-setResultInteger
-setResultIntegerArray
-setResultLong
-setResultLongArray
-setResultSerializable
-setResultShort
-setResultShortArray
-setResultString
-setResultStringArray
-setRingerVolume
-setScreenBrightness
-setScreenTimeout
-smsDeleteMessage
-smsGetAttributes
-smsGetMessageById
-smsGetMessageCount
-smsGetMessageIds
-smsGetMessages
-smsMarkMessageRead
-smsSend
-startActivity
-startActivityForResult
-startActivityForResultIntent
-startActivityIntent
-startInteractiveVideoRecording
-startLocating
-startSensing
-startSensingThreshold
-startSensingTimed
-startTrackingPhoneState
-stopLocating
-stopSensing
-stopTrackingPhoneState
-toggleAirplaneMode
-toggleRingerSilentMode
-toggleVibrateMode
-toggleWifiState
-ttsSpeak
-vibrate
-view
-viewContacts
-viewHtml
-viewMap
-waitForEvent
-wakeLockAcquireBright
-wakeLockAcquireDim
-wakeLockAcquireFull
-wakeLockAcquirePartial
-wakeLockRelease
-webViewShow
-wifiDisconnect
-wifiGetConnectionInfo
-wifiGetScanResults
-wifiLockAcquireFull
-wifiLockAcquireScanOnly
-wifiLockRelease
-wifiReassociate
-wifiReconnect
-wifiStartScan
+addContextMenuItem v=sso
+addOptionsMenuItem v=ssos
+batteryCheckPresent i=v
+batteryGetHealth i=v
+batteryGetLevel i=v
+batteryGetPlugType i=v
+batteryGetStatus i=v
+batteryGetTechnology i=v
+batteryGetTemperature r=v
+batteryGetVoltage r=v
+batteryStartMonitoring v=v
+batteryStopMonitoring v=v
+bluetoothAccept v=s
+bluetoothConnect b=ss
+bluetoothGetConnectedDeviceName s=v
+bluetoothMakeDiscoverable v=i
+bluetoothRead v=i
+bluetoothReadLine v=v
+bluetoothReadReady b=v
+bluetoothStop v=v
+bluetoothWrite v=s
+cameraCapturePicture o=sb
+cameraInteractiveCapturePicture v=s
+cancelRepeating v=s
+checkAirplaneMode b=v
+checkBluetoothState b=v
+checkNetworkRoaming b=v
+checkRingerSilentMode b=v
+checkScreenOn b=v
+checkWifiState b=v
+clearContextMenu v=v
+clearOptionsMenu v=v
+contactsGet o=a
+contactsGetAttributes a=v
+contactsGetById a=ia
+contactsGetCount i=v
+contactsGetIds a=v
+dialogCreateAlert v=ss
+dialogCreateDatePicker v=iii
+dialogCreateHorizontalProgress v=ssi
+dialogCreateInput v=sss
+dialogCreatePassword v=ss
+dialogCreateSeekBar v=iiss
+dialogCreateSpinnerProgress v=ssi
+dialogCreateTimePicker v=iib
+dialogDismiss v=v
+dialogGetInput v=sss
+dialogGetPassword v=ss
+dialogGetResponse s=v
+dialogGetSelectedItems a=v
+dialogSetCurrentProgress v=i
+dialogSetItems v=a
+dialogSetMaxProgress v=i
+dialogSetMultiChoiceItems v=aa
+dialogSetNegativeButtonText v=s
+dialogSetNeutralButtonText v=s
+dialogSetPositiveButtonText v=s
+dialogSetSingleChoiceItems v=ai
+dialogShow v=v
+forceStopPackage v=s
+generateDtmfTones v=si
+geocode a=rri
+getCellLocation s=v
+getClipboard s=v
+getDeviceId s=v
+getDeviceSoftwareVersion s=v
+getInput v=ss
+getIntent s=v
+getLastKnownLocation o=v
+getLaunchableApplications a=v
+getLine1Number s=v
+getMaxMediaVolume i=v
+getMaxRingerVolume i=v
+getMediaVolume i=v
+getNeighboringCellInfo s=v
+getNetworkOperator s=v
+getNetworkOperatorName s=v
+getNetworkType s=v
+getPackageVersion s=s
+getPackageVersionCode s=s
+getPassword v=ss
+getPhoneType s=v
+getRingerVolume i=v
+getRunningPackages a=v
+getScreenBrightness i=v
+getScreenTimeout i=v
+getSimCountryIso s=v
+getSimOperator s=v
+getSimOperatorName s=v
+getSimSerialNumber s=v
+getSimState s=v
+getSubscriberId s=v
+getVoiceMailAlphaTag s=v
+getVoiceMailNumber s=v
+launch v=s
+log v=s
+makeToast v=s
+notify v=ss
+onRingerSilent v=s
+phoneCall v=s
+phoneCallNumber v=s
+phoneDial v=s
+phoneDialNumber v=s
+pick o=s
+pickContact o=v
+pickPhone s=v
+postEvent v=ss
+pulseGeneratorGetHz r=v
+pulseGeneratorGetHzSamples i=v
+pulseGeneratorGetLeftPulseMs i=v
+pulseGeneratorGetLeftPulsePercent r=v
+pulseGeneratorGetLeftPulseSamples i=v
+pulseGeneratorGetRightPulseMs r=v
+pulseGeneratorGetRightPulsePercent r=v
+pulseGeneratorGetRightPulseSamples i=v
+pulseGeneratorIsPlaying b=v
+pulseGeneratorRun v=v
+pulseGeneratorSetHzPercent v=i
+pulseGeneratorSetLeftPulsePercent v=i
+pulseGeneratorSetRightPulsePercent v=i
+pulseGeneratorStop v=v
+pulseGeneratorToggleInverted v=v
+pulseGeneratorTogglePlayback v=v
+pulseGenteratorSetHz v=r
+readBatteryData s=v
+readLocation o=v
+readPhoneState o=v
+readSensors o=v
+readSignalStrengths o=v
+receiveEvent o=v
+recognizeSpeech s=sss
+recorderCaptureVideo v=srb
+recorderStartMicrophone v=s
+recorderStop v=v
+requiredVersion b=i
+scanBarcode o=v
+scheduleAbsolute v=srb
+scheduleInexactRepeating v=rsb
+scheduleRelative v=srb
+scheduleRepeating v=rrb
+search v=s
+sendEmail v=ssss
+sensorsGetAccuracy r=v
+sensorsGetLight r=v
+sensorsReadAccelerometer a=v
+sensorsReadMagnetometer a=v
+sensorsReadOrientation a=v
+setClipboard v=s
+setMediaVolume v=i
+setRingerVolume v=i
+setScreenBrightness v=i
+setScreenTimeout v=i
+smsDeleteMessage b=i
+smsGetAttributes a=v
+smsGetMessageById o=ia
+smsGetMessageCount i=bs
+smsGetMessageIds a=bs
+smsGetMessages o=bsa
+smsMarkMessageRead i=a
+smsSend v=ss
+startActivity v=sssob
+startActivityForResult o=ssso
+startInteractiveVideoRecording v=s
+startLocating v=ii
+startSensing v=i
+startTrackingPhoneState v=v
+startTrackingSignalStrengths v=v
+stopLocating v=v
+stopSensing v=v
+stopTrackingPhoneState v=v
+stopTrackingSignalStrengths v=v
+toggleAirplaneMode b=b
+toggleBluetoothState b=b
+toggleRingerSilentMode b=b
+toggleWifiState b=b
+ttsIsSpeaking b=v
+ttsSpeak v=s
+vibrate v=i
+view v=sso
+viewContacts v=v
+viewHtml v=s
+viewMap v=s
+waitForEvent o=si
+wakeLockAcquireBright v=v
+wakeLockAcquireDim v=v
+wakeLockAcquireFull v=v
+wakeLockAcquirePartial v=v
+wakeLockRelease v=v
+webViewShow v=sb
+wifiDisconnect b=v
+wifiGetConnectionInfo o=v
+wifiGetScanResults a=v
+wifiLockAcquireFull v=v
+wifiLockAcquireScanOnly v=v
+wifiLockRelease v=v
+wifiReassociate b=v
+wifiReconnect b=v
+wifiStartScan b=v
