@@ -1,9 +1,6 @@
 /*
- * $Id: librxjson.c,v 1.2 2013/09/02 08:25:32 bnv Exp $
+ * $Id: librxjson.c,v 1.1 2011/06/28 20:47:10 bnv Exp $
  * $Log: librxjson.c,v $
- * Revision 1.2  2013/09/02 08:25:32  bnv
- * Avoid infinite loop on problematic json strings
- *
  * Revision 1.1  2011/06/28 20:47:10  bnv
  * Initial revision
  *
@@ -28,12 +25,12 @@ static int jsonParseValue(const char *json, int ptr);
 /* --- jsonParseNumber --- */
 static int jsonParseNumber(const char *json, int ptr)
 {
-	if (json[ptr]=='-' || json[ptr]=='+')    ptr++;		/* accept + or -	*/
+	if (json[ptr]=='-' || json[ptr]=='+') ptr++;		/* accept + or -	*/
 	while (json[ptr]>='0' && json[ptr]<='9') ptr++;		/* accept digits 0..9	*/
 	if (json[ptr]=='.') ptr++;				/* accept .		*/
 	while (json[ptr]>='0' && json[ptr]<='9') ptr++;		/* accept digits 0..9	*/
-	if (json[ptr]=='e' || json[ptr]=='E')    ptr++;		/* accept e or E	*/
-	if (json[ptr]=='-' || json[ptr]=='+')    ptr++;		/* accept + or -	*/
+	if (json[ptr]=='e' || json[ptr]=='E') ptr++;		/* accept e or E	*/
+	if (json[ptr]=='-' || json[ptr]=='+') ptr++;		/* accept + or -	*/
 	while (json[ptr]>='0' && json[ptr]<='9') ptr++;		/* accept digits 0..9	*/
 	return ptr;
 } /* jsonParseNumber */
@@ -107,7 +104,7 @@ static int jsonParseValue(const char *json, int ptr)
 				return jsonParseNumber(json, ptr);
 	if (json[ptr]=='[')	return jsonParseArray(json, ptr);
 	if (json[ptr]=='{')	return jsonParseObject(json, ptr);
-	return ptr+1;
+	return ptr;
 } /* jsonParseValue */
 
 /* --- jsonCopyValue --- */
@@ -172,7 +169,7 @@ static void jsonCopyValue(PLstr str, const char *json, int from, int to)
 
 /* --------------------------------------------------------------- */
 /*  JSON(json, name [,start])                                      */
-/*  return value of name variable inside a json string             */
+/*  find location of name variable inside a json string            */
 /* --------------------------------------------------------------- */
 void __CDECL
 R_json( const int func )
@@ -185,13 +182,6 @@ R_json( const int func )
 	get_s(1);
 	get_s(2);
 	get_oi(3,ptr);
-	if (--ptr<0) ptr = 0;
-
-	if (ptr>=LLEN(*ARG1)) {
-		LTYPE(*ARGR) = LSTRING_TY;
-		LLEN(*ARGR)  = 0;
-		return;
-	}
 
 	LASCIIZ(*ARG1);
 	LASCIIZ(*ARG2);
@@ -246,13 +236,6 @@ R_jsonfind( const int func )
 	get_s(1);
 	get_s(2);
 	get_oi(3,ptr);
-	if (--ptr<0) ptr = 0;
-
-	if (ptr>=LLEN(*ARG1)) {
-		LTYPE(*ARGR) = LINTEGER_TY;
-		LINT(*ARGR)  = 0;
-		return;
-	}
 
 	LASCIIZ(*ARG1);
 	LASCIIZ(*ARG2);
@@ -280,14 +263,14 @@ R_jsonfind( const int func )
 		optr = ptr;
 		ptr = jsonParseValue(json, optr);
 		if (found) {
-			Licpy(ARGR,optr+1);
+			Licpy(ARGR,optr);
 			return;
 		}
 
 		SKIP_BLANK(json,ptr);
 		MUSTBE(json,ptr,',');
 	}
-	Licpy(ARGR,0);
+	Licpy(ARGR,-1);
 } /* R_jsonfind */
 
 /* --------------------------------------------------------------- */
@@ -306,13 +289,6 @@ R_jsonarray( const int func )
 	get_s(1);
 	get_oi(2,idx);
 	get_oi(3,ptr);
-	if (--ptr<0) ptr = 0;
-
-	if (ptr>=LLEN(*ARG1)) {
-		LTYPE(*ARGR) = LSTRING_TY;
-		LLEN(*ARGR)  = 0;
-		return;
-	}
 
 	LASCIIZ(*ARG1);
 
@@ -343,7 +319,7 @@ R_jsonarray( const int func )
 } /* R_jsonarray */
 
 /* --------------------------------------------------------------- */
-/*  JSONTYPE(json, pos)                                            */
+/*  JSONTYPE(json, ,pos)                                           */
 /*  return type at position pos                                    */
 /* --------------------------------------------------------------- */
 void __CDECL
@@ -355,13 +331,6 @@ R_jsontype( const int func )
 	if (ARGN!=2) Lerror(ERR_INCORRECT_CALL,0);
 	get_s(1);
 	get_i(2,ptr);
-	if (--ptr<0) ptr = 0;
-
-	if (ptr>=LLEN(*ARG1)) {
-		LTYPE(*ARGR) = LSTRING_TY;
-		LLEN(*ARGR)  = 0;
-		return;
-	}
 
 	json = LSTR(*ARG1);
 
@@ -385,7 +354,7 @@ R_jsontype( const int func )
 } /* R_jsontype */
 
 /* --------------------------------------------------------------- */
-/*  JSONVALUE(json, pos)                                           */
+/*  JSONVALUE(json, ,pos)                                          */
 /*  return type at position pos                                    */
 /* --------------------------------------------------------------- */
 void __CDECL
@@ -397,16 +366,8 @@ R_jsonvalue( const int func )
 	if (ARGN!=2) Lerror(ERR_INCORRECT_CALL,0);
 	get_s(1);
 	get_i(2,ptr);
-	if (--ptr<0) ptr = 0;
 
 	json = LSTR(*ARG1);
-	if (ptr>=LLEN(*ARG1)) {
-		LTYPE(*ARGR) = LSTRING_TY;
-		LLEN(*ARGR)  = 0;
-		return;
-	}
-
-	SKIP_BLANK(json,ptr);
 
 	if (!strncmp(json+ptr, "null",  4))	Lscpy(ARGR,"");
 	else
@@ -418,36 +379,6 @@ R_jsonvalue( const int func )
 		jsonCopyValue(ARGR, json, ptr, nptr);
 	}
 } /* R_jsonvalue */
-
-/* --------------------------------------------------------------- */
-/*  JSONNEXT(json, pos)                                            */
-/*  return position of next element                                */
-/* --------------------------------------------------------------- */
-void __CDECL
-R_jsonnext( const int func )
-{
-	int ptr;
-	const char *json;
-
-	if (ARGN!=2) Lerror(ERR_INCORRECT_CALL,0);
-	get_s(1);
-	get_i(2,ptr);
-	if (--ptr<0) ptr = 0;
-
-	if (ptr>=LLEN(*ARG1)) {
-		LTYPE(*ARGR) = LINTEGER_TY;
-		LINT(*ARGR)  = 0;
-		return;
-	}
-
-	json = LSTR(*ARG1);
-
-	SKIP_BLANK(json,ptr);
-	ptr = jsonParseValue(json, ptr);
-	SKIP_BLANK(json,ptr);
-
-	Licpy(ARGR,ptr+1);
-} /* R_jsonnext */
 
 /* --------------------------------------------------------------- */
 /*  JSONESC(str)                                                   */
@@ -502,19 +433,17 @@ R_jsonesc( const int func )
 				len += 2;
 				break;
 			default:
-				/*
 				if (*pin & 0x80) {
-					// convert utf to unicode
+					// convert to unicode
 					if (len+7 >= LMAXLEN(*ARGR))
 						Lfx(ARGR, LMAXLEN(*ARGR)+32);
 					*pout++ = '\\';
 					*pout++ = 'u';
 					len += 6;
 				} else {
-				*/
 					*pout++ = *pin;
 					len++;
-				//}
+				}
 		}
 	}
 	*pout = '\0';
@@ -529,7 +458,6 @@ RxJsonInitialize()
 	RxRegFunction("JSONARRAY"  , R_jsonarray     , 0);
 	RxRegFunction("JSONESC"    , R_jsonesc       , 0);
 	RxRegFunction("JSONFIND"   , R_jsonfind      , 0);
-	RxRegFunction("JSONNEXT"   , R_jsonnext      , 0);
 	RxRegFunction("JSONTYPE"   , R_jsontype      , 0);
 	RxRegFunction("JSONVALUE"  , R_jsonvalue     , 0);
 } /* RxUnixInitialize */
@@ -541,13 +469,13 @@ RxJsonFinalize()
 
 #ifndef STATIC
 /* --- Shared library init/fini functions --- */
-void __attribute__ ((constructor)) _rx_init(void)
+void _init(void)
 {
 	RxJsonInitialize();
-} /* _rx_init */
+} /* _init */
 
-void __attribute__ ((destructor)) _rx_fini(void)
+void _fini(void)
 {
 	RxJsonFinalize();
-} /* _rx_fini */
+} /* _fini */
 #endif
