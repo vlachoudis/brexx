@@ -1,6 +1,9 @@
 /*
- * $Id: interpre.c,v 1.23 2009/09/14 14:00:56 bnv Exp $
+ * $Id: interpre.c,v 1.24 2011/06/29 08:32:25 bnv Exp $
  * $Log: interpre.c,v $
+ * Revision 1.24  2011/06/29 08:32:25  bnv
+ * Corrected error on interpret with nested import
+ *
  * Revision 1.23  2009/09/14 14:00:56  bnv
  * Correction of the OP_DROP. Removed the trace
  *
@@ -724,32 +727,32 @@ I_ReturnProc( void )
 	lNumericDigits = _proc[_rx_proc].digits;
 
 	if (_proc[_rx_proc].trace & (normal_trace | off_trace | error_trace))
-			_trace = FALSE;
+		_trace = FALSE;
 	else
-			_trace = TRUE;
+		_trace = TRUE;
 } /* I_ReturnProc */
 
 /* ------------ RxInitInterStr -------------- */
 void __CDECL
 RxInitInterStr()
 {
-	RxProc	*pr;
+	RxProc *pr;
 
-	_rx_proc++;		/* increase program items       */
+	_rx_proc++;				/* increase program items       */
 	if (_rx_proc==_proc_size) RxProcResize();
 	pr = _proc+_rx_proc;
 
 	/* program id is the same */
 	MEMCPY(pr,_proc+_rx_proc-1,sizeof(*pr));
-	pr->calltype	= CT_INTERPRET;
-	pr->ip		= (size_t)((byte huge *)Rxcip - (byte huge *)Rxcodestart);
-	pr->codelen	= LLEN(*_code);
-	pr->clauselen	= CompileCurClause;
-	pr->stack	= RxStckTop-1;		/* before temporary str */
-	pr->stacktop	= RxStckTop;
+	pr->calltype  = CT_INTERPRET;
+	pr->ip        = (size_t)((byte huge *)Rxcip - (byte huge *)Rxcodestart);
+	pr->codelen   = LLEN(*_code);		/* remember code len before compile */
+	pr->clauselen = CompileCurClause;	/* remember clause len -//- */
+	pr->stack     = RxStckTop-1;		/* before temporary str */
+	pr->stacktop  = RxStckTop;
 
 	/* setup arguments */
-	(pr->arg).n	= 0;
+	(pr->arg).n = 0;
 	MEMSET(pr->arg.a,0,sizeof(pr->arg.a));
 	(pr->arg).r = NULL;
 
@@ -760,6 +763,7 @@ RxInitInterStr()
 	/* compile the program */
 	RxInitCompile(rxFileList,STACKTOP);
 	RxCompile();
+	pr->codelenafter = LLEN(*_code);	/* remember code len after compile */
 
 	/* --- restore state --- */
 	MEMCPY(_error_trap,old_error,sizeof(_error_trap));
@@ -767,7 +771,7 @@ RxInitInterStr()
 
 	/* might have changed position */
 	Rxcodestart = (CIPTYPE*)LSTR(*_code);
-	Rxcip = (CIPTYPE*)((byte huge *)Rxcodestart + pr->codelen);
+	Rxcip       = (CIPTYPE*)((byte huge *)Rxcodestart + pr->codelen);
 
 	/* check for an error in compilation */
 	if (rxReturnCode) {
@@ -798,15 +802,23 @@ RxDoneInterStr( void )
 	Rxcip = (CIPTYPE*)((byte huge *)Rxcodestart + _proc[_rx_proc].ip);
 	RxStckTop = _proc[_rx_proc].stack;
 
-	/* fixup code length, cut the interpretation code */
-	LLEN(*_code) = _proc[_rx_proc].codelen;
-	CompileCurClause = _proc[_rx_proc].clauselen;
+	/* Fixup code length, cut the interpretation code
+	 * Warning in the case that the interpret calls an import
+	 * then the import code will be after the temporary
+	 * interpret one. In this case leave untouched the
+	 * tempoerary interpret code (leaving garbage)
+	 * but otherwise we will end up with wrong pointers.
+	 */
+	if (_proc[_rx_proc].codelenafter == LLEN(*_code)) {
+		LLEN(*_code)     = _proc[_rx_proc].codelen;
+		CompileCurClause = _proc[_rx_proc].clauselen;
+	}
 	if (_proc[_rx_proc].env != _proc[_rx_proc-1].env) {
 		Lstrcpy(_proc[_rx_proc-1].env, _proc[_rx_proc].env);
 		LPFREE(_proc[_rx_proc].env);
 	}
 
-		/* --- load previous data and exit ---- */
+	/* --- load previous data and exit ---- */
 	_rx_proc--;
 	Rx_id = _proc[_rx_proc].id;
 
