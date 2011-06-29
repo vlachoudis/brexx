@@ -1,6 +1,9 @@
 /*
- * $Id: main.c,v 1.15 2011/05/17 06:53:10 bnv Exp $
+ * $Id: main.c,v 1.16 2011/06/29 08:32:25 bnv Exp $
  * $Log: main.c,v $
+ * Revision 1.16  2011/06/29 08:32:25  bnv
+ * Added interactive run
+ *
  * Revision 1.15  2011/05/17 06:53:10  bnv
  * Added SQLite
  *
@@ -75,13 +78,17 @@ main(int ac, char *av[])
 {
 	Lstr	args[MAXARGS], tracestr, file;
 	int	ia,ir,iaa;
-	bool	input, loop_over_stdin, parse_args;
-#if defined(HAVE_READLINE)
+	bool	input, loop_over_stdin, parse_args, interactive;
+#ifdef HAVE_READLINE
 	Lstr	line;
 	LINITSTR(line);
 #endif
 
-	input = loop_over_stdin = parse_args = FALSE;
+	input           = FALSE;
+	loop_over_stdin = FALSE;
+	parse_args      = FALSE;
+	interactive     = FALSE;
+
 	for (ia=0; ia<MAXARGS; ia++) LINITSTR(args[ia]);
 	LINITSTR(tracestr);
 	LINITSTR(file);
@@ -89,8 +96,9 @@ main(int ac, char *av[])
 	if (ac<2) {
 		puts("\nsyntax: rexx [-[trace]|-F|-a] <filename> <args>...\n");
 		puts("options:");
-		puts("\t-\tto use stdin");
+		puts("\t-\tto use stdin as input file");
 		puts("\t-a\tbreak words into multiple arguments");
+		puts("\t-i\tenter interactive mode");
 		puts("\t-F\tloop over standard input");
                 puts("\t\t\'linein\' contains each line from stdin.\n");
 		puts(VERSIONSTR);
@@ -106,10 +114,8 @@ main(int ac, char *av[])
 	RxInitialize(av[0]);
 
 	/* --- Register functions of external libraries --- */
-#ifdef RXMYSQLSTATIC
+#ifdef STATIC
 	RxMySQLInitialize();
-#endif
-#ifdef RXSQLITESTATIC
 	RxSQLiteInitialize();
 #endif
 #ifdef RXCONIO
@@ -128,6 +134,9 @@ main(int ac, char *av[])
 		if (av[ia][1]=='a')
 			parse_args = TRUE;
 		else
+		if (av[ia][1]=='i')
+			interactive = TRUE;
+		else
 			Lscpy(&tracestr,av[ia]+1);
 		ia++;
 	} else
@@ -137,7 +146,7 @@ main(int ac, char *av[])
 	}
 
 	/* --- let's read a normal file --- */
-	if (!input && ia<ac) {
+	if (!input && !interactive && ia<ac) {
 		/* prepare arguments for program */
 		iaa = 0;
 		for (ir=ia+1; ir<ac; ir++) {
@@ -151,8 +160,25 @@ main(int ac, char *av[])
 		}
 		RxRun(av[ia],NULL,args,&tracestr,NULL);
 	} else {
+		if (interactive)
+			Lcat(&file,
+				"signal on syntax;"
+				"signal on error;"
+				"signal on halt;"
+				"start:do forever;"
+				"call write ,\">>> \";"
+				" parse pull _;"
+				" result=@r;"
+				" interpret _;"
+				" @r=result;"
+				"end;"
+				"signal start;"
+				"syntax:;error: say \"+++ Error\" RC\":\" errortext(RC);"
+				"signal start;"
+				"halt:");
+		else
 		if (ia>=ac) {
-#if !defined(HAVE_READLINE)
+#ifndef HAVE_READLINE
 			Lread(STDIN,&file,LREADFILE);
 #else
 			struct stat buf;
@@ -191,13 +217,11 @@ main(int ac, char *av[])
 	for (ia=0; ia<MAXARGS; ia++) LFREESTR(args[ia]);
 	LFREESTR(tracestr);
 	LFREESTR(file);
-#if defined(HAVE_READLINE)
+#ifdef HAVE_READLINE
 	LFREESTR(line);
 #endif
-#ifdef RXMYSQLSTATIC
+#ifdef STATIC
 	RxMySQLFinalize();
-#endif
-#ifdef RXSQLITESTATIC
 	RxSQLiteFinalize();
 #endif
 
