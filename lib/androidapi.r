@@ -1,6 +1,5 @@
 /* --- Android API CALLS --- */
 /* Automatically generated */
-
 addContextMenuItem: procedure
 	method="addContextMenuItem"
 	signal _apiCall
@@ -49,86 +48,6 @@ batteryStopMonitoring: procedure
 	method="batteryStopMonitoring"
 	signal _apiCall
 
-bluetoothAccept: procedure
-	method="bluetoothAccept"
-	signal _apiCall
-
-bluetoothActiveConnections: procedure
-	method="bluetoothActiveConnections"
-	signal _apiCall
-
-bluetoothConnect: procedure
-	method="bluetoothConnect"
-	signal _apiCall
-
-bluetoothDiscoveryCancel: procedure
-	method="bluetoothDiscoveryCancel"
-	signal _apiCall
-
-bluetoothDiscoveryStart: procedure
-	method="bluetoothDiscoveryStart"
-	signal _apiCall
-
-bluetoothGetConnectedDeviceName: procedure
-	method="bluetoothGetConnectedDeviceName"
-	signal _apiCall
-
-bluetoothGetLocalAddress: procedure
-	method="bluetoothGetLocalAddress"
-	signal _apiCall
-
-bluetoothGetLocalName: procedure
-	method="bluetoothGetLocalName"
-	signal _apiCall
-
-bluetoothGetRemoteDeviceName: procedure
-	method="bluetoothGetRemoteDeviceName"
-	signal _apiCall
-
-bluetoothGetScanMode: procedure
-	method="bluetoothGetScanMode"
-	signal _apiCall
-
-bluetoothIsDiscovering: procedure
-	method="bluetoothIsDiscovering"
-	signal _apiCall
-
-bluetoothMakeDiscoverable: procedure
-	method="bluetoothMakeDiscoverable"
-	signal _apiCall
-
-bluetoothRead: procedure
-	method="bluetoothRead"
-	signal _apiCall
-
-bluetoothReadBinary: procedure
-	method="bluetoothReadBinary"
-	signal _apiCall
-
-bluetoothReadLine: procedure
-	method="bluetoothReadLine"
-	signal _apiCall
-
-bluetoothReadReady: procedure
-	method="bluetoothReadReady"
-	signal _apiCall
-
-bluetoothSetLocalName: procedure
-	method="bluetoothSetLocalName"
-	signal _apiCall
-
-bluetoothStop: procedure
-	method="bluetoothStop"
-	signal _apiCall
-
-bluetoothWrite: procedure
-	method="bluetoothWrite"
-	signal _apiCall
-
-bluetoothWriteBinary: procedure
-	method="bluetoothWriteBinary"
-	signal _apiCall
-
 cameraCapturePicture: procedure
 	method="cameraCapturePicture"
 	signal _apiCall
@@ -137,20 +56,8 @@ cameraInteractiveCapturePicture: procedure
 	method="cameraInteractiveCapturePicture"
 	signal _apiCall
 
-cameraStartPreview: procedure
-	method="cameraStartPreview"
-	signal _apiCall
-
-cameraStopPreview: procedure
-	method="cameraStopPreview"
-	signal _apiCall
-
 checkAirplaneMode: procedure
 	method="checkAirplaneMode"
-	signal _apiCall
-
-checkBluetoothState: procedure
-	method="checkBluetoothState"
 	signal _apiCall
 
 checkNetworkRoaming: procedure
@@ -293,24 +200,12 @@ eventClearBuffer: procedure
 	method="eventClearBuffer"
 	signal _apiCall
 
-eventGetBrodcastCategories: procedure
-	method="eventGetBrodcastCategories"
-	signal _apiCall
-
 eventPoll: procedure
 	method="eventPoll"
 	signal _apiCall
 
 eventPost: procedure
 	method="eventPost"
-	signal _apiCall
-
-eventRegisterForBroadcast: procedure
-	method="eventRegisterForBroadcast"
-	signal _apiCall
-
-eventUnregisterForBroadcast: procedure
-	method="eventUnregisterForBroadcast"
 	signal _apiCall
 
 eventWait: procedure
@@ -323,38 +218,6 @@ eventWaitFor: procedure
 
 forceStopPackage: procedure
 	method="forceStopPackage"
-	signal _apiCall
-
-fullDismiss: procedure
-	method="fullDismiss"
-	signal _apiCall
-
-fullKeyOverride: procedure
-	method="fullKeyOverride"
-	signal _apiCall
-
-fullQuery: procedure
-	method="fullQuery"
-	signal _apiCall
-
-fullQueryDetail: procedure
-	method="fullQueryDetail"
-	signal _apiCall
-
-fullSetList: procedure
-	method="fullSetList"
-	signal _apiCall
-
-fullSetProperty: procedure
-	method="fullSetProperty"
-	signal _apiCall
-
-fullSetTitle: procedure
-	method="fullSetTitle"
-	signal _apiCall
-
-fullShow: procedure
-	method="fullShow"
 	signal _apiCall
 
 generateDtmfTones: procedure
@@ -505,14 +368,6 @@ launch: procedure
 	method="launch"
 	signal _apiCall
 
-locationProviderEnabled: procedure
-	method="locationProviderEnabled"
-	signal _apiCall
-
-locationProviders: procedure
-	method="locationProviders"
-	signal _apiCall
-
 log: procedure
 	method="log"
 	signal _apiCall
@@ -593,8 +448,8 @@ pickPhone: procedure
 	method="pickPhone"
 	signal _apiCall
 
-rpcPostEvent: procedure
-	method="rpcPostEvent"
+postEvent: procedure
+	method="postEvent"
 	signal _apiCall
 
 prefGetAll: procedure
@@ -633,10 +488,6 @@ readSensors: procedure
 	method="readSensors"
 	signal _apiCall
 
-readSignalStrengths: procedure
-	method="readSignalStrengths"
-	signal _apiCall
-
 receiveEvent: procedure
 	method="receiveEvent"
 	signal _apiCall
@@ -651,10 +502,6 @@ recorderCaptureVideo: procedure
 
 recorderStartMicrophone: procedure
 	method="recorderStartMicrophone"
-	signal _apiCall
-
-recorderStartVideo: procedure
-	method="recorderStartVideo"
 	signal _apiCall
 
 recorderStop: procedure
@@ -849,10 +696,6 @@ startActivityIntent: procedure
 	method="startActivityIntent"
 	signal _apiCall
 
-startEventDispatcher: procedure
-	method="startEventDispatcher"
-	signal _apiCall
-
 startInteractiveVideoRecording: procedure
 	method="startInteractiveVideoRecording"
 	signal _apiCall
@@ -877,14 +720,6 @@ startTrackingPhoneState: procedure
 	method="startTrackingPhoneState"
 	signal _apiCall
 
-startTrackingSignalStrengths: procedure
-	method="startTrackingSignalStrengths"
-	signal _apiCall
-
-stopEventDispatcher: procedure
-	method="stopEventDispatcher"
-	signal _apiCall
-
 stopLocating: procedure
 	method="stopLocating"
 	signal _apiCall
@@ -897,16 +732,8 @@ stopTrackingPhoneState: procedure
 	method="stopTrackingPhoneState"
 	signal _apiCall
 
-stopTrackingSignalStrengths: procedure
-	method="stopTrackingSignalStrengths"
-	signal _apiCall
-
 toggleAirplaneMode: procedure
 	method="toggleAirplaneMode"
-	signal _apiCall
-
-toggleBluetoothState: procedure
-	method="toggleBluetoothState"
 	signal _apiCall
 
 toggleRingerSilentMode: procedure
@@ -919,10 +746,6 @@ toggleVibrateMode: procedure
 
 toggleWifiState: procedure
 	method="toggleWifiState"
-	signal _apiCall
-
-ttsIsSpeaking: procedure
-	method="ttsIsSpeaking"
 	signal _apiCall
 
 ttsSpeak: procedure
@@ -975,18 +798,6 @@ wakeLockRelease: procedure
 
 webViewShow: procedure
 	method="webViewShow"
-	signal _apiCall
-
-webcamAdjustQuality: procedure
-	method="webcamAdjustQuality"
-	signal _apiCall
-
-webcamStart: procedure
-	method="webcamStart"
-	signal _apiCall
-
-webcamStop: procedure
-	method="webcamStop"
 	signal _apiCall
 
 wifiDisconnect: procedure
