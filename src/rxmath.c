@@ -1,6 +1,9 @@
 /*
- * $Id: rxmath.c,v 1.8 2008/07/15 07:40:25 bnv Exp $
+ * $Id: rxmath.c,v 1.9 2011/06/29 08:32:25 bnv Exp $
  * $Log: rxmath.c,v $
+ * Revision 1.9  2011/06/29 08:32:25  bnv
+ * Corrected error on negative sqrt
+ *
  * Revision 1.8  2008/07/15 07:40:25  bnv
  * #include changed from <> to ""
  *
@@ -105,6 +108,8 @@ R_math( const int func )
 			break;
 
 		case f_sqrt:
+			if (LREAL(*ARGR)<0.0)
+				Lerror(ERR_ARITH_OVERFLOW,0);
 			LREAL(*ARGR) = sqrt(LREAL(*ARGR));
 			break;
 
