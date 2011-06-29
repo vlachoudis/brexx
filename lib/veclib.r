@@ -1,5 +1,5 @@
 /*
- * $Id: veclib.r,v 1.1 2011/06/29 08:33:29 bnv Exp bnv $
+ * $Id: veclib.r,v 1.1 2011/06/29 08:33:29 bnv Exp $
  * $Log: veclib.r,v $
  * Revision 1.1  2011/06/29 08:33:29  bnv
  * Initial revision
