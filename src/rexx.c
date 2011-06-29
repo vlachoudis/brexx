@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.c,v 1.16 2011/06/20 08:31:57 bnv Exp $
+ * $Id: rexx.c,v 1.17 2011/06/29 08:32:25 bnv Exp $
  * $Log: rexx.c,v $
+ * Revision 1.17  2011/06/29 08:32:25  bnv
+ * Corrected dlopen for android
+ *
  * Revision 1.16  2011/06/20 08:31:57  bnv
  * removed the FCVT and GCVT replaced with sprintf
  *
@@ -212,7 +215,7 @@ RxFileFree(RxFile *rxf)
 		LFREESTR(f->name);
 		LFREESTR(f->file);
 #if defined(__GNUC__) && !defined(MSDOS) && !defined(__CMS__) \
-    && !defined(__MVS__) && !defined(ANDROID)
+    && !defined(__MVS__)
 		if (f->libHandle!=NULL)
 			dlclose(f->libHandle);
 #endif
@@ -324,7 +327,7 @@ RxLoadLibrary( PLstr libname, bool shared )
 	/* create  a RxFile structure */
 	rxf = RxFileAlloc(LSTR(*libname));
 
-#if defined(__GNUC__) && !defined(MSDOS) && !defined(WCE) && !defined(ANDROID)
+#if defined(__GNUC__) && !defined(MSDOS) && !defined(WCE)
 	if (shared) {
 		/* try to load it as a shared library */
 #	if !defined(__CMS__) && !defined(__MVS__)
@@ -344,9 +347,11 @@ RxLoadLibrary( PLstr libname, bool shared )
 		 * Skip the errors when trying to load a rexx file instead
 		 * of a dll-library */
 		if (dlerrorstr != NULL) {
+			/*printf("ERROR=%s\n",dlerrorstr);*/
 			if (STRSTR(dlerrorstr,"invalid ELF header") &&
 			    STRSTR(dlerrorstr,"cannot open shared object file") &&
-			    STRSTR(dlerrorstr,"Win32 error ")) {
+			    STRSTR(dlerrorstr,"Win32 error ") &&
+			    STRSTR(dlerrorstr,"Cannot load library:")) {
 				LMKCONST(tmpstr,dlerrorstr);
 				Lerror(ERR_LIBRARY,0,&tmpstr);
 			}
@@ -354,7 +359,7 @@ RxLoadLibrary( PLstr libname, bool shared )
 	}
 #endif
 
-	/* try first to load the file as rexx library */
+	/* try to load the file as rexx library */
 	if (_LoadRexxLibrary(rxf,libname)) {
 		RxFileFree(rxf);
 		return 1;
