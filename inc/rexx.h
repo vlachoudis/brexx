@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.h,v 2.3 2008/07/15 07:40:07 bnv Exp $
+ * $Id: rexx.h,v 2.4 2011/06/29 08:32:12 bnv Exp $
  * $Log: rexx.h,v $
+ * Revision 2.4  2011/06/29 08:32:12  bnv
+ * Added android
+ *
  * Revision 2.3  2008/07/15 07:40:07  bnv
  * MVS, CMS support
  *
@@ -74,8 +77,15 @@
 #	define EXTERN extern
 #endif
 
+#define ALIGN  1
+//#define GREEK  1
+//#define RMLAST 1
+//#define STATIC 0
+
 /* ------------ some defines ------------------ */
-#define	VERSIONSTR	PACKAGE_STRING" "__DATE__
+#define PACKAGE         "brexx"
+#define VERSION         "2.1.9"
+#define	VERSIONSTR	PACKAGE" "VERSION" "__DATE__
 #define	AUTHOR		"Vasilis.Vlachoudis@cern.ch"
 #define REGAPPKEY	TEXT("Software\\Marmita\\BRexx")
 #define	SCIENTIFIC	0
@@ -124,7 +134,7 @@ struct trxfile {
 	char	*filetype;	/* filetype in name	*/
 	void	*libHandle;	/* Shared library handle*/
 	Lstr	file;		/* actual file		*/
-	struct trxfile *next;	/* prev in list		*/
+	struct trxfile *next;	/* next in list		*/
 } RxFile;
 
 /* ------------- clause structure ----------------- */
@@ -184,6 +194,7 @@ struct trxproc {
 	PLstr	lbl_notready;	/*			*/
 	PLstr	lbl_syntax;	/*			*/
 	int	codelen;	/* used in OP_INTERPRET	*/
+	int	codelenafter;	/* used in OP_INTERPRET	*/
 	int	clauselen;	/* used in OP_INTERPRET	*/
 	int	trace;		/* trace type		*/
 	bool	interactive_trace;

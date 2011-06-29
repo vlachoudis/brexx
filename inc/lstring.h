@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.h,v 1.19 2011/06/20 08:32:49 bnv Exp $
+ * $Id: lstring.h,v 1.20 2011/06/29 08:32:12 bnv Exp $
  * $Log: lstring.h,v $
+ * Revision 1.20  2011/06/29 08:32:12  bnv
+ * Added android
+ *
  * Revision 1.19  2011/06/20 08:32:49  bnv
  * Added android and global SMALL number
  *
@@ -74,10 +77,7 @@
 //#		define PACKAGE_NAME "brexx"
 //#		define PACKAGE_STRING PACKAGE_NAME " V2.1"
 //#	endif
-#elif defined(ANDROID)
-#	include "android.h"
 #else
-#	include "config.h"
 #	if !defined(__CMS__) && !defined(__MVS__)
 #		include <wchar.h>
 #	endif

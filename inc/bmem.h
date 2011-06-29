@@ -1,6 +1,9 @@
 /*
- * $Id: bmem.h,v 1.10 2011/06/20 08:32:28 bnv Exp $
+ * $Id: bmem.h,v 1.11 2011/06/29 08:32:12 bnv Exp $
  * $Log: bmem.h,v $
+ * Revision 1.11  2011/06/29 08:32:12  bnv
+ * Added android
+ *
  * Revision 1.10  2011/06/20 08:32:28  bnv
  * Added android
  *
@@ -40,12 +43,6 @@
 #include <stdlib.h>
 #if !defined(__CMS__) && !defined(__MVS__)
 #	include <malloc.h>
-#endif
-
-#if defined(ANDROID)
-#	include "android.h"
-#else
-#	include "config.h"
 #endif
 
 #if defined(__DEBUG__) && !defined(WCE)
