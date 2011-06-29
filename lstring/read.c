@@ -1,6 +1,9 @@
 /*
- * $Id: read.c,v 1.13 2009/06/02 09:40:53 bnv Exp $
+ * $Id: read.c,v 1.14 2011/06/29 08:33:09 bnv Exp $
  * $Log: read.c,v $
+ * Revision 1.14  2011/06/29 08:33:09  bnv
+ * char to unsigned
+ *
  * Revision 1.13  2009/06/02 09:40:53  bnv
  * MVS/CMS corrections
  *
@@ -48,31 +51,28 @@
 
 #include "lstring.h"
 
-#ifdef HAVE_LIBREADLINE
+#ifdef HAVE_READLINE
 #	include <sys/stat.h>
-#	if defined(HAVE_READLINE_READLINE_H)
-#		include <readline/readline.h>
-#	elif defined(HAVE_READLINE_H)
-#		include <readline.h>
-#	else /* !defined(HAVE_READLINE_H) */
-		extern char *readline ();
-#	endif /* !defined(HAVE_READLINE_H) */
-#else /* !defined(HAVE_READLINE_READLINE_H) */
-	/* no readline */
-#endif /* HAVE_LIBREADLINE */
+//#	if defined(HAVE_READLINE_READLINE_H)
+#	include <readline/readline.h>
+//#	elif defined(HAVE_READLINE_H)
+//#		include <readline.h>
+//#	else
+//		extern char *readline ();
+//#	endif
+//#endif
 
-#ifdef HAVE_READLINE_HISTORY
-#	if defined(HAVE_READLINE_HISTORY_H)
-#		include <readline/history.h>
-#	elif defined(HAVE_HISTORY_H)
-#		include <history.h>
-#	else /* !defined(HAVE_HISTORY_H) */
-		extern void add_history ();
-		extern int write_history ();
-		extern int read_history ();
-#	endif /* defined(HAVE_READLINE_HISTORY_H) */
-		/* no history */
-#endif /* HAVE_READLINE_HISTORY */
+//#ifdef HAVE_READLINE_HISTORY
+//#	if defined(HAVE_READLINE_HISTORY_H)
+#	include <readline/history.h>
+//#	elif defined(HAVE_HISTORY_H)
+//#		include <history.h>
+//#	else
+//		extern void add_history ();
+//		extern int write_history ();
+//		extern int read_history ();
+//#	endif
+#endif
 
 /* ---------------- Lread ------------------- */
 void __CDECL
@@ -94,13 +94,13 @@ Lread( FILEP f, const PLstr line, long size )
 		}
 	} else
 	if (size==0) {			/* Read a single line */
-#ifdef HAVE_LIBREADLINE
+#ifdef HAVE_READLINE
 		if (f==STDIN) {
 			struct stat buf;
 			fstat(0,&buf);
 			if (S_ISCHR(buf.st_mode) || S_ISBLK(buf.st_mode)) {
 				char *str = readline(NULL);
-#ifdef HAVE_READLINE_HISTORY
+#ifdef HAVE_READLINE
 				if (str && *str)
 					add_history(str);
 #endif

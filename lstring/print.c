@@ -1,6 +1,9 @@
 /*
- * $Id: print.c,v 1.13 2011/06/20 08:31:19 bnv Exp $
+ * $Id: print.c,v 1.14 2011/06/29 08:33:09 bnv Exp $
  * $Log: print.c,v $
+ * Revision 1.14  2011/06/29 08:33:09  bnv
+ * char to unsigned
+ *
  * Revision 1.13  2011/06/20 08:31:19  bnv
  * removed the FCVT and GCVT replaced with sprintf
  *
@@ -104,16 +107,11 @@ Lprint( FILEP f, const PLstr str )
 			break;
 
 		case LREAL_TY:
-#if defined(HAVE_GCVT)
-			GCVT(LREAL(*str),lNumericDigits,s);
-#else
 			snprintf(s, sizeof(s), "%.*g", lNumericDigits, LREAL(*str));
-#endif
 #ifdef WIN
 			FPUTS(s, f);
 #else
 			ANSI_FPUTS(f, s);
-//			ANSI_FPRINTF(f, lFormatStringToReal, LREAL(*str));
 #endif
 			break;
 	}

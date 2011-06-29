@@ -1,6 +1,9 @@
 /*
- * $Id: trunc.c,v 1.8 2011/06/20 08:31:19 bnv Exp $
+ * $Id: trunc.c,v 1.9 2011/06/29 08:33:09 bnv Exp $
  * $Log: trunc.c,v $
+ * Revision 1.9  2011/06/29 08:33:09  bnv
+ * char to unsigned
+ *
  * Revision 1.8  2011/06/20 08:31:19  bnv
  * removed the FCVT and GCVT replaced with sprintf
  *
@@ -33,12 +36,7 @@
 void __CDECL
 Ltrunc( const PLstr to, const PLstr from, long n)
 {
-#if defined(HAVE_FCVT)
-	char	*s, *snum;
-	int	decp, sign;
-#else
 	char	*buf[50];
-#endif
 
 	if (n<0) n = 0;
 
@@ -52,7 +50,7 @@ Ltrunc( const PLstr to, const PLstr from, long n)
 		L2REAL(from);
 		Lfx(to,n+15);
 		/* trunc doesn't round. therefore add one extra digit */
-		snprintf(LSTR(*to), LMAXLEN(*to), "%.*f", n+1, LREAL(*from));
+		snprintf(LSTR(*to), LMAXLEN(*to), "%.*f", (int)n+1, LREAL(*from));
 		LTYPE(*to) = LSTRING_TY;
 		/* ... and remove it later */
 		LLEN(*to)  = STRLEN(LSTR(*to))-1;

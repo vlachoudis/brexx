@@ -1,6 +1,9 @@
 /*
- * $Id: b2x.c,v 1.5 2008/07/15 07:40:54 bnv Exp $
+ * $Id: b2x.c,v 1.6 2011/06/29 08:33:09 bnv Exp $
  * $Log: b2x.c,v $
+ * Revision 1.6  2011/06/29 08:33:09  bnv
+ * char to unsigned
+ *
  * Revision 1.5  2008/07/15 07:40:54  bnv
  * #include changed from <> to ""
  *
@@ -27,7 +30,7 @@ Lb2x( const PLstr to, const PLstr from )
 {
 	long	i;
 	int	j,k;
-	char	*c;
+	unsigned char	*c;
 
 	Lstrcpy(to,from);
 	Lreverse(to);

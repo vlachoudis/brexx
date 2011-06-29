@@ -1,6 +1,9 @@
 /*
- * $Id: lstring.c,v 1.13 2011/06/20 08:31:19 bnv Exp $
+ * $Id: lstring.c,v 1.14 2011/06/29 08:33:09 bnv Exp $
  * $Log: lstring.c,v $
+ * Revision 1.14  2011/06/29 08:33:09  bnv
+ * char to unsigned
+ *
  * Revision 1.13  2011/06/20 08:31:19  bnv
  * removed the FCVT and GCVT replaced with sprintf
  *
@@ -69,14 +72,13 @@
 #	define MAXLONG LONG_MAX
 #endif
 
-#ifdef HAVE_READLINE_HISTORY
-#	if defined(HAVE_READLINE_HISTORY_H)
-#		include <readline/history.h>
-#	elif defined(HAVE_HISTORY_H)
-#		include <history.h>
-#	endif
-		/* no history */
-#endif /* HAVE_READLINE_HISTORY */
+#ifdef HAVE_READLINE
+//#	if defined(HAVE_READLINE_HISTORY_H)
+#	include <readline/history.h>
+//#	elif defined(HAVE_HISTORY_H)
+//#		include <history.h>
+//#	endif
+#endif
 
 /* ================= Lstring routines ================== */
 
@@ -103,7 +105,7 @@ Linit( LerrorFunc Lerr)
 		u2l[ (byte)cUPPER[i] & 0xFF ] = clower [i];
 	}
 
-#ifdef HAVE_READLINE_HISTORY
+#ifdef HAVE_READLINE
 	using_history();
 #endif
 
@@ -531,11 +533,7 @@ L2str( const PLstr s )
 		char	str[50];
 		size_t	len;
 
-#if defined(HAVE_GCVT)
-		GCVT(LREAL(*s),lNumericDigits,str);
-#else
 		snprintf(str, sizeof(str), "%.*g", lNumericDigits, LREAL(*s));
-#endif
 		/* --- remove the last dot from the number --- */
 		len = STRLEN(str);
 #ifdef WCE

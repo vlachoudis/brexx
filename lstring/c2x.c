@@ -1,6 +1,9 @@
 /*
- * $Id: c2x.c,v 1.4 2008/07/15 07:40:54 bnv Exp $
+ * $Id: c2x.c,v 1.5 2011/06/29 08:33:09 bnv Exp $
  * $Log: c2x.c,v $
+ * Revision 1.5  2011/06/29 08:33:09  bnv
+ * char to unsigned
+ *
  * Revision 1.4  2008/07/15 07:40:54  bnv
  * #include changed from <> to ""
  *
@@ -21,7 +24,7 @@
 void __CDECL
 Lc2x( const PLstr to, const PLstr from )
 {
-	char	*re, *ar;
+	unsigned char	*re, *ar;
 	int	i,r;
 
 	L2STR(from);

@@ -1,6 +1,9 @@
 /*
- * $Id: div.c,v 1.4 2008/07/15 07:40:54 bnv Exp $
+ * $Id: div.c,v 1.5 2011/06/29 08:33:09 bnv Exp $
  * $Log: div.c,v $
+ * Revision 1.5  2011/06/29 08:33:09  bnv
+ * char to unsigned
+ *
  * Revision 1.4  2008/07/15 07:40:54  bnv
  * #include changed from <> to ""
  *
@@ -25,7 +28,7 @@ Ldiv( const PLstr to, const PLstr A, const PLstr B )
 	double	b;
 
 	b = Lrdreal(B);
-	if (b == 0) Lerror(ERR_ARITH_OVERFLOW,0);
+	if (b == 0) Lerror(ERR_ARITH_OVERFLOW,3);
 	LREAL(*to) = Lrdreal(A) / b;
 	LTYPE(*to) = LREAL_TY;
 	LLEN(*to)  = sizeof(double);

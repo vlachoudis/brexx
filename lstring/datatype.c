@@ -1,6 +1,9 @@
 /*
- * $Id: datatype.c,v 1.6 2011/06/20 08:31:19 bnv Exp $
+ * $Id: datatype.c,v 1.7 2011/06/29 08:33:09 bnv Exp $
  * $Log: datatype.c,v $
+ * Revision 1.7  2011/06/29 08:33:09  bnv
+ * char to unsigned
+ *
  * Revision 1.6  2011/06/20 08:31:19  bnv
  * Corrected 'w'
  *
@@ -34,7 +37,7 @@ Ldatatype( const PLstr str, char type )
 {
 	Lstr	ref;
 	int	t,j,digits;
-	char	*c;
+	unsigned char	*c;
 	double	 d;
 
 	type = l2u[(byte)type];

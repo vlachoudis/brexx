@@ -1,6 +1,9 @@
 /*
- * $Id: errortxt.c,v 1.8 2011/05/17 06:53:31 bnv Exp $
+ * $Id: errortxt.c,v 1.9 2011/06/29 08:33:09 bnv Exp $
  * $Log: errortxt.c,v $
+ * Revision 1.9  2011/06/29 08:33:09  bnv
+ * char to unsigned
+ *
  * Revision 1.8  2011/05/17 06:53:31  bnv
  * Added SQLite
  *
@@ -341,6 +344,7 @@ ErrorMsg	errortext[] = {
 	{ ERRNUM(55,2),	"Not valid statement" },
 
 	{ ERRNUM(56,0),	"Shared library error \"<dlopen>\"" },
+	{ ERRNUM(56,1),	"System error" },
 
 	{ ERRNUM(57,0),	"Cannot open file" },
 	{ ERRNUM(58,0),	"File not found" },
@@ -398,10 +402,10 @@ Lerrortext( const PLstr to, const int errn, const int subn, va_list *ap)
 			i = (char huge *)ch - (char huge *)chstart;
 			MEMCPY(LSTR(*to)+LLEN(*to), chstart, i);
 			LLEN(*to) += i;
-	
+
 			str = va_arg(*ap,PLstr);/* read next argument	*/
 			Lstrcat(to,str);	/* append it to string	*/
-	
+
 			chstart = ch;
 			ch = STRCHR(chstart,'>');	/* find end	*/
 			chstart = ch+1;
@@ -415,6 +419,6 @@ Lerrortext( const PLstr to, const int errn, const int subn, va_list *ap)
 /////////  Be sure to check all the program for the correct number of
 /////////  arguments otherwise a disaster may happen...
 /////////  or to use a NULL pointer to mark the end of arguments
-///////// 
+/////////
 */
 } /* Lerrortext */
