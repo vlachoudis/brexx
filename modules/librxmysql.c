@@ -1,6 +1,9 @@
 /*
- * $Id: librxmysql.c,v 1.1 2011/06/28 20:47:10 bnv Exp $
+ * $Id: librxmysql.c,v 1.2 2013/09/02 08:25:32 bnv Exp $
  * $Log: librxmysql.c,v $
+ * Revision 1.2  2013/09/02 08:25:32  bnv
+ * _init, _fini changed to constructor and destructor
+ *
  * Revision 1.1  2011/06/28 20:47:10  bnv
  * Initial revision
  *
@@ -381,13 +384,13 @@ void RxMySQLFinalize()
 
 #ifndef STATIC
 /* --- Shared library init/fini functions --- */
-void _init(void)
+void __attribute__ ((constructor)) _rx_init(void)
 {
 	RxMySQLInitialize();
-} /* _init */
+} /* _rx_init */
 
-void _fini(void)
+void __attribute__ ((destructor)) _rx_fini(void)
 {
 	RxMySQLFinalize();
-} /* _fini */
+} /* _rx_fini */
 #endif

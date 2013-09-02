@@ -1,6 +1,9 @@
 /*
- * $Id: librxsqlite.c,v 1.1 2011/06/28 20:47:10 bnv Exp $
+ * $Id: librxsqlite.c,v 1.2 2013/09/02 08:25:32 bnv Exp $
  * $Log: librxsqlite.c,v $
+ * Revision 1.2  2013/09/02 08:25:32  bnv
+ * _init, _fini changed to constructor and destructor
+ *
  * Revision 1.1  2011/06/28 20:47:10  bnv
  * Initial revision
  *
@@ -47,6 +50,16 @@ void R_sqlclose( const int func )
 } /* R_sqlclose */
 
 /* --------------------------------------------------------------- */
+/*  SQLERROR()                                                     */
+/* --------------------------------------------------------------- */
+void R_sqlerror( const int func )
+{
+	if (ARGN) Lerror(ERR_INCORRECT_CALL,0);
+
+	Lscpy(ARGR,sqlite3_errmsg(sqldb));
+} /* R_sqlerror */
+
+/* --------------------------------------------------------------- */
 /*  SQL(sqlcmd)                                                    */
 /* --------------------------------------------------------------- */
 void R_sql( const int func )
@@ -80,7 +93,7 @@ void R_sql( const int func )
 } /* R_sql */
 
 /* --------------------------------------------------------------- */
-/*  SQLSTEP(sqlcmd)                                                */
+/*  SQLSTEP()                                                      */
 /* --------------------------------------------------------------- */
 void R_sqlstep( const int func )
 {
@@ -143,8 +156,8 @@ void R_sqlbind( const int func )
 			break;
 
 		case 'i': case 'I':	/* integer */
-			get_i(3, i);
-			Licpy(ARGR, sqlite3_bind_int(sqlstmt, col, i));
+			L2INT(ARG3);
+			Licpy(ARGR, sqlite3_bind_int(sqlstmt, col, LINT(*ARG3)));
 			break;
 
 		case 'd': case 'D':	/* double */
@@ -153,7 +166,7 @@ void R_sqlbind( const int func )
 			Licpy(ARGR, sqlite3_bind_double(sqlstmt, col, LREAL(*ARG3)));
 			break;
 
-		case 's': case 'S':	/* double */
+		case 's': case 'S':	/* string or text */
 		case 't': case 'T':
 			L2STR(ARG3);
 			Licpy(ARGR, sqlite3_bind_text(sqlstmt, col,
@@ -165,7 +178,7 @@ void R_sqlbind( const int func )
 			break;
 
 		case 'z': case 'Z':	/* zero blob */
-			get_i(3, i);
+			get_i0(3, i);
 			Licpy(ARGR, sqlite3_bind_zeroblob(sqlstmt, col, i));
 			break;
 
@@ -175,46 +188,70 @@ void R_sqlbind( const int func )
 } /* R_sqlbind */
 
 /* --------------------------------------------------------------- */
-/*  SQLGET(col)                                                    */
+/*  SQLGET([col[,['V','T','N']])                                   */
 /* --------------------------------------------------------------- */
 void R_sqlget( const int func )
 {
 	int col, bytes;
+	char opt;
 
 	if (ARGN==0) {
 		Licpy(ARGR, sqlite3_column_count(sqlstmt));
 		return;
 	}
-	if (ARGN>1) Lerror(ERR_INCORRECT_CALL,0);
+	if (ARGN>2) Lerror(ERR_INCORRECT_CALL,0);
 	get_i0(1,col);
+	get_pad(2,opt)
 	col--;
+	if (opt==' ') opt='V';	/* value */
 
+	if (opt=='N') {
+		Lscpy(ARGR, sqlite3_column_name(sqlstmt, col));
+		return;
+	}
 	switch (sqlite3_column_type(sqlstmt, col)) {
 		case SQLITE_INTEGER:
-			Licpy(ARGR, sqlite3_column_int(sqlstmt, col));
+			if (opt=='T')
+				Lscpy(ARGR, "INTEGER");
+			else
+				Licpy(ARGR, sqlite3_column_int(sqlstmt, col));
 			break;
 
 		case SQLITE_FLOAT:
-			Lrcpy(ARGR, sqlite3_column_double(sqlstmt, col));
+			if (opt=='T')
+				Lscpy(ARGR, "FLOAT");
+			else
+				Lrcpy(ARGR, sqlite3_column_double(sqlstmt, col));
 			break;
 
 		case SQLITE_TEXT:
-			Lscpy(ARGR, (char*)sqlite3_column_text(sqlstmt, col));
+			if (opt=='T')
+				Lscpy(ARGR, "TEXT");
+			else
+				Lscpy(ARGR, (char*)sqlite3_column_text(sqlstmt, col));
 			break;
 
 		case SQLITE_BLOB:
-			bytes = sqlite3_column_bytes(sqlstmt, col);
-			Lfx(ARGR, bytes);
-			LLEN(*ARGR) = bytes;
-			LTYPE(*ARGR) = LSTRING_TY;
-			MEMCPY(LSTR(*ARGR), sqlite3_column_blob(sqlstmt, col), bytes);
+			if (opt=='T')
+				Lscpy(ARGR, "BLOB");
+			else {
+				bytes = sqlite3_column_bytes(sqlstmt, col);
+				Lfx(ARGR, bytes);
+				LLEN(*ARGR) = bytes;
+				LTYPE(*ARGR) = LSTRING_TY;
+				MEMCPY(LSTR(*ARGR), sqlite3_column_blob(sqlstmt, col), bytes);
+			}
 			break;
 
 		case SQLITE_NULL:
-			Lfx(ARGR,1);
-			LTYPE(*ARGR)   = LSTRING_TY;
-			LLEN(*ARGR)    = 1;
-			LSTR(*ARGR)[0] = 0;
+			if (opt=='T')
+				Lscpy(ARGR, "NULL");
+			else {
+				Lfx(ARGR,1);
+				LTYPE(*ARGR)   = LSTRING_TY;
+				LLEN(*ARGR)    = 1;
+				LSTR(*ARGR)[0] = 0;
+			}
 			break;
 
 		default:
@@ -229,13 +266,14 @@ void R_sqlget( const int func )
 /* --------------------------------------------------------------- */
 void RxSQLiteInitialize()
 {
-	RxRegFunction("SQLOPEN",	R_sqlopen,	0);
-	RxRegFunction("SQLCLOSE",	R_sqlclose,	0);
 	RxRegFunction("SQL",		R_sql,		0);
-	RxRegFunction("SQLSTEP",	R_sqlstep,	0);
-	RxRegFunction("SQLRESET",	R_sqlreset,	0);
 	RxRegFunction("SQLBIND",	R_sqlbind,	0);
+	RxRegFunction("SQLCLOSE",	R_sqlclose,	0);
+	RxRegFunction("SQLERROR",	R_sqlerror,	0);
 	RxRegFunction("SQLGET",		R_sqlget,	0);
+	RxRegFunction("SQLOPEN",	R_sqlopen,	0);
+	RxRegFunction("SQLRESET",	R_sqlreset,	0);
+	RxRegFunction("SQLSTEP",	R_sqlstep,	0);
 } /* RxSQLiteInitialize() */
 
 void RxSQLiteFinalize()
@@ -246,13 +284,13 @@ void RxSQLiteFinalize()
 
 #ifndef STATIC
 /* --- Shared library init/fini functions --- */
-void _init(void)
+void __attribute__ ((constructor)) _rx_init(void)
 {
 	RxSQLiteInitialize();
-} /* _init */
+} /* _rx_init */
 
-void _fini(void)
+void __attribute__ ((destructor)) _rx_fini(void)
 {
 	RxSQLiteFinalize();
-} /* _fini */
+} /* _rx_fini */
 #endif

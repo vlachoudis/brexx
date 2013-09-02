@@ -1,6 +1,9 @@
 /*
- * $Id: librxunix.c,v 1.2 2011/06/28 20:49:33 bnv Exp $
+ * $Id: librxunix.c,v 1.3 2013/09/02 08:25:32 bnv Exp $
  * $Log: librxunix.c,v $
+ * Revision 1.3  2013/09/02 08:25:32  bnv
+ * _init, _fini changed to constructor and destructor
+ *
  * Revision 1.2  2011/06/28 20:49:33  bnv
  * 2.1.9 implementation
  *
@@ -152,7 +155,7 @@ void R_socketClose( const int func )
 } /* R_socketClose */
 
 /* --------------------------------------------------------------- */
-/*  SEND(fd,msg)                                                   */
+/*  SEND(fd, data)                                                 */
 /* --------------------------------------------------------------- */
 void R_send( const int func )
 {
@@ -207,6 +210,46 @@ void R_recv( const int func )
 	}
 } /* R_recv */
 
+/* --------------------------------------------------------------- */
+/*  SLEEP(time [,"US","SEC","MIN","HOUR","DAYS"])                  */
+/* --------------------------------------------------------------- */
+void R_sleep( const int func )
+{
+	int	duration, mult;
+	char	unit='S';
+
+	if (ARGN<1 || ARGN>2) Lerror(ERR_INCORRECT_CALL,0);
+
+	get_i(1, duration);
+	if (exist(2)) {
+		L2STR(ARG2);
+		unit = l2u[(byte)LSTR(*ARG2)[0]];
+	}
+
+	switch (unit) {
+		case 'U':
+			Licpy(ARGR, usleep(duration)+1);
+			return;
+
+		case 'M':
+			mult = 60;
+			break;
+
+		case 'H':
+			mult = 3600;
+			break;
+
+		case 'D':
+			mult = 86400;
+			break;
+
+		default:
+			mult = 1;
+	}
+	duration *= mult;
+	Licpy(ARGR, sleep(duration)+1);
+} /* R_sleep */
+
 /* --- Register functions --- */
 void __CDECL
 RxUnixInitialize()
@@ -215,9 +258,10 @@ RxUnixInitialize()
 	RxRegFunction("LISTEN"     , R_listen     , 0);
 	RxRegFunction("RECV"       , R_recv       , 0);
 	RxRegFunction("SEND"       , R_send       , 0);
-//	RxRegFunction("SELECT"     , R_select     , 0);
+	RxRegFunction("SLEEP"      , R_sleep      , 0);
 	RxRegFunction("SOCKET"     , R_socket     , 0);
 	RxRegFunction("SOCKETCLOSE", R_socketClose, 0);
+//	RxRegFunction("SELECT"     , R_select     , 0);
 } /* RxUnixInitialize */
 
 void __CDECL
@@ -227,13 +271,13 @@ RxUnixFinalize()
 
 #ifndef STATIC
 /* --- Shared library init/fini functions --- */
-void _init(void)
+void __attribute__ ((constructor)) _rx_init(void)
 {
 	RxUnixInitialize();
-} /* _init */
+} /* _rx_init */
 
-void _fini(void)
+void __attribute__ ((destructor)) _rx_fini(void)
 {
 	RxUnixFinalize();
-} /* _fini */
+} /* _rx_fini */
 #endif
