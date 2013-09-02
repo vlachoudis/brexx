@@ -126,17 +126,15 @@ clean:
 	cd lstring ; $(MAKE) $@
 	cd modules ; $(MAKE) $@
 	cd src;      $(MAKE) $@
+	rm -f $(TGZ)
 	rm -Rf $(RXVERSION)
-
-#rm -f $(TGZ)
 
 tags:
 	ctags inc/*.h src/*.c lstring/*.c bsub/*.c
 
-
 ${TGZ}: clean
 	mkdir $(RXVERSION)
-	cp AUTHORS COPYING ChangeLog INSTALL README $(RXVERSION)
+	cp [A-Z]* $(RXVERSION)
 	cp makefile make.cnf brexx.csh *.sh $(RXVERSION)
 	for d in inc src lstring modules doc lib progs win cms mvs; do \
 		mkdir $(RXVERSION)/$$d; \
