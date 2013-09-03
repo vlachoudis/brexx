@@ -1,6 +1,9 @@
 /*
- * $Id: interpre.c,v 1.24 2011/06/29 08:32:25 bnv Exp $
+ * $Id: interpre.c,v 1.25 2013/09/03 20:02:21 bnv Exp $
  * $Log: interpre.c,v $
+ * Revision 1.25  2013/09/03 20:02:21  bnv
+ * Invert ENG and SCI on numeric form
+ *
  * Revision 1.24  2011/06/29 08:32:25  bnv
  * Corrected error on interpret with nested import
  *
@@ -258,7 +261,7 @@ I_LoadOption( const PLstr value, const int opt )
 			break;
 
 		case form_opt:
-			Lscpy(value,(_proc[_rx_proc].form)?"SCIENTIFIC":"ENGINEERING");
+			Lscpy(value,(_proc[_rx_proc].form)?"ENGINEERING":"SCIENTIFIC");
 			break;
 
 		case author_opt:
