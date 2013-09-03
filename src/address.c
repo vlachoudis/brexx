@@ -1,6 +1,9 @@
 /*
- * $Id: address.c,v 1.16 2010/01/27 13:19:39 bnv Exp $
+ * $Id: address.c,v 1.17 2013/09/03 20:01:59 bnv Exp $
  * $Log: address.c,v $
+ * Revision 1.17  2013/09/03 20:01:59  bnv
+ * Cleanup
+ *
  * Revision 1.16  2010/01/27 13:19:39  bnv
  * MVS correction
  *
@@ -142,7 +145,6 @@ mkfntemp(char *fn, size_t length)
 {
 	int	l;
 	char	*c;
-
 
 	fn[0] = '\0'; c = getenv("TEMP");
 	if (c) STRCPY(fn,c);
