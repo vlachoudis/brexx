@@ -1,6 +1,9 @@
 /*
- * $Id: rxfiles.c,v 1.13 2008/07/15 07:40:25 bnv Exp $
+ * $Id: rxfiles.c,v 1.14 2013/09/03 20:03:40 bnv Exp $
  * $Log: rxfiles.c,v $
+ * Revision 1.14  2013/09/03 20:03:40  bnv
+ * Condition not ready for file
+ *
  * Revision 1.13  2008/07/15 07:40:25  bnv
  * #include changed from <> to ""
  *
@@ -472,6 +475,9 @@ R_charlinein( const int func )
 		Lerror(ERR_CANT_OPEN_FILE,0);
 	get_oiv(2,start,LSTARTPOS);
 	get_oiv(3,length,1);
+
+	if (LLEN(*ARGR)==0 && FEOF(file[i].f))
+		RxSignalCondition(SC_NOTREADY);
 
 	if (func == f_charin)
 		Lcharin(file[i].f,ARGR,start,length);
