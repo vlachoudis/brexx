@@ -1,6 +1,9 @@
 /*
- * $Id: rexx.c,v 1.17 2011/06/29 08:32:25 bnv Exp $
+ * $Id: rexx.c,v 1.18 2013/09/03 20:02:44 bnv Exp $
  * $Log: rexx.c,v $
+ * Revision 1.18  2013/09/03 20:02:44  bnv
+ * add (char*) cast in dlerror()
+ *
  * Revision 1.17  2011/06/29 08:32:25  bnv
  * Corrected dlopen for android
  *
@@ -332,7 +335,7 @@ RxLoadLibrary( PLstr libname, bool shared )
 		/* try to load it as a shared library */
 #	if !defined(__CMS__) && !defined(__MVS__)
 		rxf->libHandle = dlopen(LSTR(rxf->name),RTLD_NOW);
-		dlerrorstr = dlerror();
+		dlerrorstr = (char*)dlerror();
 #	else
 		rxf->libHandle = NULL;
 		dlerrorstr = NULL;
