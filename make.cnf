@@ -40,12 +40,10 @@ ANDOS     = 8
 #ANDVER    = 4.4.3
 ANDVER    = 4.8
 ANDARCH   = arm
-#ANDBIT     = linux-x86
-ANDBIT     = linux-x86_64
+ANDBIT     = linux-x86
+#ANDBIT     = linux-x86_64
 ANDBIN   := $(ANDNDK)/toolchains/${ANDARCH}-linux-androideabi-${ANDVER}/prebuilt/${ANDBIT}/bin
-ANDUSR   := $(ANDNDK)/platforms/android-${ANDOS}/arch-${ANDARCH}/usr
-ANDINC   := $(ANDUSR)/include
-ANDLIB   := $(ANDUSR)/lib
+ANDROOT  := $(ANDNDK)/platforms/android-${ANDOS}/arch-${ANDARCH}
 ANDARM   := $(ANDBIN)/${ANDARCH}-linux-androideabi
 ANDLINKER = /system/bin/linker
 
@@ -114,24 +112,18 @@ android:
 	"CC       = $(ANDARM)-gcc" \
 	"CPP      = $(ANDARM)-cpp" \
 	"STATIC   = no" \
-	"CFLAGS   = -O -fpic -rdynamic -DALIGN -DINLINE -DANDROID -I$(ANDINC)" \
-	"LDEXTRA  = -L$(ANDLIB) -Wl,-rpath-link=$(ANDLIB),-dynamic-linker=$(ANDLINKER) -nostdlib -lgcc -ldl -lm -lc" \
-	"LIBEXTRA = -L$(ANDLIB) -Wl,-rpath-link=$(ANDLIB),-dynamic-linker=$(ANDLINKER) $(ANDLIB)/crtbegin_dynamic.o -nostdlib -lgcc -ldl -lm -lc"
-#	"LIBEXTRA = -L$(ANDLIB) -Wl,--entry=main,-rpath-link=$(ANDLIB),-dynamic-linker=$(ANDLINKER) $(ANDLIB)/crtbegin_dynamic.o -nostdlib -lc -ldl -lm -disable-multilib"
-
-#	"CFLAGS   = -O -march=armv5te -mtune=xscale -fpic -rdynamic -static-libgcc -DALIGN -DINLINE -DANDROID -I$(ANDINC)" \
-#	"CFLAGS   = -march=armv5te -mtune=xscale -fpic -O -DALIGN -DINLINE -DANDROID -I$(ANDINC)" \
-#	"LIBEXTRA = -L$(ANDLIB) -Wl,-rpath-link=$(ANDLIB) -nostdlib $(ANDLIB)/crtbegin_dynamic.o -lc -ldl -lm"
-
+	"CFLAGS   = -O -fpic -rdynamic -DALIGN -DINLINE -DANDROID --sysroot=$(ANDROOT)" \
+	"LDEXTRA  = -ldl -lm" \
+	"LIBEXTRA = -ldl -lm"
 
 android_debug:
 	$(MAKE) targets \
 	"CC       = $(ANDARM)-gcc" \
 	"CPP      = $(ANDARM)-cpp" \
 	"STATIC   = no" \
-	"CFLAGS   = -g -fpic -rdynamic -D__DEBUG__ -DALIGN -DINLINE -DANDROID -I$(ANDINC)" \
-	"LDEXTRA  = -L$(ANDLIB) -Wl,-rpath-link=$(ANDLIB),-dynamic-linker=$(ANDLINKER) -nostdlib -lgcc -ldl -lm -lc" \
-	"LIBEXTRA = -L$(ANDLIB) -Wl,-rpath-link=$(ANDLIB),-dynamic-linker=$(ANDLINKER) $(ANDLIB)/crtbegin_dynamic.o -nostdlib -lgcc -ldl -lm -lc"
+	"CFLAGS   = -O0 -g -fpic -rdynamic -D__DEBUG__ -DALIGN -DINLINE -DANDROID --sysroot=$(ANDROOT)" \
+	"LDEXTRA  = -ldl -lm" \
+	"LIBEXTRA = -ldl -lm"
 
 bc:
 	$(MAKE) targets \
