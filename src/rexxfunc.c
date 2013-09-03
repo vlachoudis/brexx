@@ -1,6 +1,9 @@
 /*
- * $Id: rexxfunc.c,v 1.11 2010/01/27 13:20:27 bnv Exp $
+ * $Id: rexxfunc.c,v 1.12 2013/09/03 20:03:26 bnv Exp $
  * $Log: rexxfunc.c,v $
+ * Revision 1.12  2013/09/03 20:03:26  bnv
+ * Add setenv for windows ce
+ *
  * Revision 1.11  2010/01/27 13:20:27  bnv
  * CMS and MVS corrections
  *
@@ -207,6 +210,9 @@ rexx_routine[] = {
 	{ "REVERSE",	R_S		,f_reverse	},
 	{ "RIGHT",	R_SIoC		,f_right	},
 	{ "SEEK",	R_seek		,f_seek		},
+#ifndef WCE
+	{ "SETENV",	R_SS		,f_putenv	},
+#endif
 	{ "SIGN",	R_abs_sign	,f_sign		},
 	{ "SIN",	R_math		,f_sin		},
 	{ "SINH",	R_math		,f_sinh		},
