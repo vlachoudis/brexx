@@ -4,7 +4,16 @@ Android: procedure
 	args = ""
 	do i=2 to arg()
 		a = arg(i)
-		if ^datatype(a,"N") then a = '"'jsonesc(a)'"'
+		if ^datatype(a,"N") then do
+			l = left(a,1)
+			r = right(a,1)
+			select	/* ignore arguments starting/ending with [], {} */
+				/* treat them as json objects */
+				when l=='[' & r==']' then nop
+				when l=='{' & r=='}' then nop
+				otherwise a = '"'jsonesc(a)'"'
+			end
+		end
 		if args^=="" then
 			args = args","a
 		else
@@ -14,15 +23,15 @@ Android: procedure
 	sock = value('@ANDROIDSOCKET',,0)
 	id   = value('@ANDROIDID',,0)
 	json = '{"method":"'arg(1)'", "id":'id', "params": ['args']}'||"0a"x
-	/*say "<<<" json*/
 	call Send sock, json
 
 	str = Recv(sock)
-	/*say ">>>" str*/
 	call Value '@ANDROIDID', id+1, 0
-
-	error = json(str, "error")
+	call Value '@ANDROIDERROR', json(str, "error"), 0
 	return json(str, "result")
+
+/* --- Return last error --- */
+AndroidError: return Value('@ANDROIDERROR',,0)
 
 /* --- Initialize Android Communications --- */
 AndroidInit: procedure
