@@ -1,6 +1,9 @@
 /*
- * $Id: bio.c,v 1.8 2005/05/20 16:02:03 bnv Exp $
+ * $Id: bio.c,v 1.9 2017/01/12 11:08:21 bnv Exp $
  * $Log: bio.c,v $
+ * Revision 1.9  2017/01/12 11:08:21  bnv
+ * Window corrections
+ *
  * Revision 1.8  2005/05/20 16:02:03  bnv
  * *** empty log message ***
  *
@@ -33,21 +36,25 @@
  * that unfortunatelly do not exist on the Windows CE of Visual C++.
  */
 
-#include <bio.h>
-#include <bstr.h>
+#ifdef WCE
+
+#include "bio.h"
+#include "bstr.h"
 #include <string.h>
 #include <stdlib.h>
 
-static	char	buffer[128];
+static	char	buffer[MAX_PATH];
 static	int	bufferpos=0;
 static	BOOL	newline=FALSE;
+static	TCHAR	cwd[MAX_PATH] = TEXT("\\");		// Current working directory
 
 /* ----- Bfopen ----- */
-BFILE*
+BFILE* __CDECL
 Bfopen( const char *filename, const char *mode )
 {
 #ifndef __BORLANDC__
-	TCHAR	path[128];
+	TCHAR	path[MAX_PATH];
+	TCHAR	buffer[MAX_PATH];
 	TCHAR	options[128];
 	TCHAR	*wch;
 #endif
@@ -101,13 +108,17 @@ Bfopen( const char *filename, const char *mode )
 	mbstowcs(path,filename,STRLEN(filename)+1);
 
 	/* Scan for a special file */
-	wch = wcschr(path,_T(':'));
+	wch = wcschr(path,TEXT(':'));
 	if (wch != NULL) {
 		wch++;
 		wcscpy(options,wch);
 		*wch = (TCHAR)0;
-	} else
+	} else {
 		options[0] = (TCHAR)0;
+		/* convert to absolute */
+		Brel2absdir(buffer,MAX_PATH,path);
+		wcscpy(path,buffer);
+	}
 
 	if ((bitmode & (BIO_READ|BIO_WRITE)) == (BIO_READ|BIO_WRITE)) {
 		hnd = CreateFile( path,
@@ -131,7 +142,7 @@ Bfopen( const char *filename, const char *mode )
 
 	if (options[0]) {
 		/* Check for serial port */
-		if (path[0]==_T('c') || path[0]==_T('C')) {
+		if (path[0]==TEXT('c') || path[0]==TEXT('C')) {
 			UINT	speed  = 9600;
 			UINT	length = 8;
 			TCHAR	parity = 'N';
@@ -147,7 +158,7 @@ Bfopen( const char *filename, const char *mode )
 			 * parity = N, P, E
 			 * stop   = 1, 2
 			 */
-			swscanf(options,_T("%d,%d,%c,%d,%d"),
+			swscanf(options,TEXT("%d,%d,%c,%d,%d"),
 				&speed, &length, &parity, &stop, &buffer);
 			if (buffer == 0) buffer = 128;
 			ready = SetupComm(hnd,buffer,buffer);
@@ -155,13 +166,13 @@ Bfopen( const char *filename, const char *mode )
 			dcb.BaudRate = speed;
 			dcb.ByteSize = length;
 			switch (parity) {
-				case _T('E'): case _T('e'):
+				case TEXT('E'): case TEXT('e'):
 					dcb.Parity = EVENPARITY;
 					break;
-				case _T('O'): case _T('o'):
+				case TEXT('O'): case TEXT('o'):
 					dcb.Parity = ODDPARITY;
 					break;
-				case _T('M'): case _T('m'):
+				case TEXT('M'): case TEXT('m'):
 					dcb.Parity = MARKPARITY;
 					break;
 				default:
@@ -380,14 +391,14 @@ Bputs( const char *str )
 	while (*str) {
 		*ch++ = *str++;
 		if (++count == BUFFER_LEN-1) {
-			*ch=_T('\0');
+			*ch=TEXT('\0');
 			WWriteBuf(buffer,count);
 			ch = buffer;
 			count = 0;
 		}
 	}
 	if (count != 0) {
-		*ch=_T('\0');
+		*ch=TEXT('\0');
 		WWriteBuf(buffer,count);
 	}
 } /* Bputs */
@@ -399,3 +410,136 @@ Bputint( long num, int length, int radix )
 	char	str[10];
 	Bputs(Bl2a(str,num,length,radix));
 } /* Bputint */
+
+/* --- Brel2absdir --- */
+/* it doesn't make any check if the directory exists */
+void __CDECL
+Brel2absdir(LPTSTR buffer, int maxlen, LPCTSTR reldir)
+{
+	TCHAR	workdir[MAX_PATH];
+	BOOL	eos = FALSE;
+	int	buflen = 1;
+	TCHAR	*start = workdir;
+	TCHAR	*stop;
+
+#ifdef _DEBUG
+	OutputDebugString(L"RELDIR=\"");
+	OutputDebugString(reldir);
+	OutputDebugString(L"\"\n");
+#endif
+	/* if the first char is \ then we have an semi-abs reference */
+	if (reldir[0]==L'\\')
+		_tcscpy(workdir,reldir);
+	else {
+		/* if not add the current directory */
+		_tcscpy(workdir,cwd);
+		_tcscat(workdir,L"\\");
+		_tcscat(workdir,reldir);
+	}
+#ifdef _DEBUG
+	OutputDebugString(L"WORKDIR=\"");
+	OutputDebugString(workdir);
+	OutputDebugString(L"\"\n");
+#endif
+
+	/* start parsing the working directory */
+	buffer[0] = L'\\';
+
+#ifdef _DEBUG
+	buffer[buflen]=0;
+	OutputDebugString(L"BUFFER=\"");
+	OutputDebugString(buffer);
+	OutputDebugString(L"\"\n");
+#endif
+	while (!eos && start[1]) {
+		stop = ++start;
+
+		/* search for the next backslash */
+		while (*stop && *stop!=L'\\')
+			stop++;
+		eos = (*stop == 0);
+		*stop = 0;
+#ifdef _DEBUG
+		OutputDebugString(L"dir=\"");
+		OutputDebugString(start);
+		OutputDebugString(L"\"\n");
+#endif
+
+		if (*start==0 || !_tcscmp(start,L".")) {
+			/* do nothing this is the current dir */
+		} else
+		if (!_tcscmp(start,L"..")) {
+			/* go back one directory */
+			/* search backwords for the last \ */
+			if (buflen>1) {
+				buflen--;
+				while (buflen>1 && buffer[buflen-1]!=L'\\')
+					buflen--;
+			}
+		} else {
+			/* enter this directory */
+			_tcscpy(buffer+buflen,start);
+			buflen += _tcslen(start);
+			buffer[buflen++] = L'\\';
+#ifdef _DEBUG
+			buffer[buflen]=0;
+			OutputDebugString(L"BUFFER=\"");
+			OutputDebugString(buffer);
+			OutputDebugString(L"\"\n");
+#endif
+		}
+
+		if (buflen >= maxlen)
+			break;
+		start = stop;
+	}
+	if (buflen>1)
+		buffer[buflen-1] = 0;
+	else
+		buffer[buflen] = 0;
+#ifdef _DEBUG
+	OutputDebugString(L"BUFFER=\"");
+	OutputDebugString(buffer);
+	OutputDebugString(L"\"\n");
+#endif
+} /* Brel2absdir */
+
+/* --- getcwd --- */
+char* __CDECL
+Bgetcwd(char *buffer, int maxlen)
+{
+	int len = _tcslen(cwd);
+	if (len>=maxlen) len=maxlen-1;
+	wcstombs(buffer,cwd,len);
+	buffer[len] = 0;
+	return buffer;
+} /* getcwd */
+
+/* --- chdir --- */
+int __CDECL
+Bchdir(char *newdir)
+{
+	int	len;
+	TCHAR	newdirW[MAX_PATH];
+	TCHAR	workdir[MAX_PATH];
+
+	mbstowcs(newdirW,newdir,STRLEN(newdir)+1);
+
+	/* find the relative path if any */
+	Brel2absdir(workdir,MAX_PATH,newdirW);
+
+	/* verify if the directory exists */
+	if (GetFileAttributes(workdir)!=FILE_ATTRIBUTE_DIRECTORY)
+		return 1;
+
+	/* copy the directory */
+	_tcsncpy(cwd,workdir,MAX_PATH);
+
+	/* strip the ending backslash \ if any */
+	len = _tcslen(cwd)-1;
+	if (len>1 && cwd[len] == L'\\')
+		cwd[len] = 0;
+	return 0;
+} /* chdir */
+
+#endif

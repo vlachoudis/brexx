@@ -1,6 +1,9 @@
 /*
- * $Id: bstr.c,v 1.4 2004/08/16 15:34:53 bnv Exp $
+ * $Id: bstr.c,v 1.5 2017/01/12 11:08:21 bnv Exp $
  * $Log: bstr.c,v $
+ * Revision 1.5  2017/01/12 11:08:21  bnv
+ * Window corrections
+ *
  * Revision 1.4  2004/08/16 15:34:53  bnv
  * Spaces
  *
@@ -19,10 +22,12 @@
  * They exist only in a UNICODE format.
  */
 
+#ifdef WCE
+
 #include <windows.h>
-#include <os.h>
-#include <ldefs.h>
-#include <bstr.h>
+#include "os.h"
+#include "ldefs.h"
+#include "bstr.h"
 #include <stdlib.h>
 #ifdef __BORLANDC__
 #	include <string.h>
@@ -164,6 +169,19 @@ Bl2a( char *buf, const long num, int length, const int radix )
 	return buf;
 } /* Bl2a */
 
+/* ---- Bprintf ---- *
+int __CDECL
+Bprintf(const char *format, ...)
+{
+	char dlin[1024], *dl = dlin;
+	va_list ap;
+	va_start(ap,ln);
+	vsprintf(dlin, ln, ap);
+	va_end(ap);
+	while (*dl)
+		wputchar(wnd, *dl++);
+} * Bprintf */
+
 #if 0
 /* -------------- Bltoa -------------- */
 char* __CDECL
@@ -205,4 +223,6 @@ Bltoa(long num, char *str)
 	*b = 0;
 	return str;
 } /* Bltoa */
+#endif
+
 #endif

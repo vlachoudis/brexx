@@ -1,6 +1,9 @@
 /*
- * $Id: wintest.c,v 1.2 2001/06/25 18:51:48 bnv Exp $
+ * $Id: wintest.c,v 1.3 2017/01/12 11:08:21 bnv Exp $
  * $Log: wintest.c,v $
+ * Revision 1.3  2017/01/12 11:08:21  bnv
+ * Window corrections
+ *
  * Revision 1.2  2001/06/25 18:51:48  bnv
  * Header -> Id
  *
@@ -12,7 +15,7 @@
 #include <tchar.h>
 #include <string.h>
 #include <windows.h>
-#include <winio.h>
+#include "winio.h"
 
 
 /* --------------------- WinMain ---------------------- */

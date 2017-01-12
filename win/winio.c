@@ -1,6 +1,9 @@
 /*
- * $Id: winio.c,v 1.11 2005/05/30 13:04:49 bnv Exp $
+ * $Id: winio.c,v 1.12 2017/01/12 11:08:21 bnv Exp $
  * $Log: winio.c,v $
+ * Revision 1.12  2017/01/12 11:08:21  bnv
+ * Window corrections
+ *
  * Revision 1.11  2005/05/30 13:04:49  bnv
  * Changed: Selection functionality
  * Changed: Shift-Select reverse the mark or pan
@@ -59,11 +62,11 @@
 #		include <commctrl.h>
 #endif
 
-#include <os.h>
-#include <ldefs.h>
-#include <bstr.h>
-#include <rexx.h>
-#include <winfunc.h>
+#include "os.h"
+#include "ldefs.h"
+#include "bstr.h"
+#include "rexx.h"
+#include "winfunc.h"
 #ifdef __BORLANDC__
 #	define	TEXT(x)	x
 #	define	TCHAR	char
@@ -71,7 +74,7 @@
 #else
 #	include <tchar.h>
 #endif
-#include <winio.h>
+#include "winio.h"
 
 #define ID_CMDBAR		1
 
@@ -89,15 +92,15 @@
 LRESULT CALLBACK _WinIOProc(HWND Window, UINT Message,
 				WPARAM WParam, LONG LParam);
 
-POINT	_screenSize = { 80, 100 };	// Screen buffer dimensions
-POINT	_origin = { 0, 0 };		// Client Area Origin
-POINT	_cursor = { 0, 0 };		// Cursor location
-BOOL	_checkBreak = TRUE;		// Allow Ctrl-C for break?
-BOOL	_winTerminated = FALSE;		// Escape exists program
-HFONT	_hFont;				// Current working font
-HWND	_mainWindow = 0;		// Main Window
-HWND	_crtWindow = 0;			// CRT window handle
-HINSTANCE	_crtInstance;		// CRT class instance
+POINT		_screenSize = { 80, 100 };	// Screen buffer dimensions
+POINT		_origin = { 0, 0 };	// Client Area Origin
+POINT		_cursor = { 0, 0 };	// Cursor location
+BOOL		_checkBreak = TRUE;	// Allow Ctrl-C for break?
+BOOL		_winTerminated = FALSE;	// Escape exists program
+HFONT		_hFont;			// Current working font
+HWND		_mainWindow = 0;	// Main Window
+HWND		_crtWindow = 0;		// CRT window handle
+HINSTANCE	_rexxInstance;		// CRT class instance
 
 static HWND	hWndCB;			// Menu Command Bar Window
 static BOOL	markTool=TRUE;		// Move or Mark
@@ -642,7 +645,6 @@ WSetMenu(BOOL show)
 		DWORD dwState = (SHFS_HIDETASKBAR | SHFS_HIDESIPBUTTON);
 		SHFullScreen(_mainWindow, dwState);
 	}
-#else
 #endif
 	ShowWindow(hWndCB, showMenu?SW_SHOW:SW_HIDE);
 	WindowResize();
@@ -774,7 +776,9 @@ WSetFontSize(int fh)
 //WRONG on WindowsCE!!!		charSize.x = Metrics.tmMaxCharWidth;
 	charSize.y = Metrics.tmHeight + Metrics.tmExternalLeading;
 	charAscent = Metrics.tmAscent;
-	GetTextExtentPoint(DC,_T("Hello"),5,&size); charSize.x = size.cx/5; charSize.y = size.cy;
+	GetTextExtentPoint(DC,_T("Hello"),5,&size);
+	charSize.x = size.cx/5;
+	charSize.y = size.cy;
 	DoneDeviceContext();
 
 #ifdef WCE
@@ -839,10 +843,15 @@ DrawSelectedArea(void)
 #endif
 	oldR2 = SetROP2(DC,R2_NOT);
 
-	if (markBegin.y <= markEnd.y) {
-		start = &markBegin;
-		stop  = &markEnd;
-	} else {
+	start = &markBegin;
+	stop  = &markEnd;
+	if (markBegin.y == markEnd.y) {
+		if (markBegin.x > markEnd.x) {
+			start = &markEnd;
+			stop  = &markBegin;
+		}
+	} else
+	if (markBegin.y > markEnd.y) {
 		start = &markEnd;
 		stop  = &markBegin;
 	}
@@ -1077,7 +1086,7 @@ WindowPaint(void)
 		Y1 = max(0, PS.rcPaint.top / charSize.y + _origin.y);
 		Y2 = min(_screenSize.y-1,
 			(PS.rcPaint.bottom + charSize.y - 1) / charSize.y + _origin.y);
-		while (Y1 < Y2) {
+		while (Y1 <= Y2) {
 			ColorTextOut(X1,Y1,X2-X1);
 //			ExtTextOut(DC, (X1 - _origin.x) * charSize.x,
 //				(Y1 - _origin.y) * charSize.y,
@@ -1469,7 +1478,7 @@ WindowCommand(WPARAM WParam)
 			break;
 
 		case ID_ACTION_ABOUT:
-			DialogBox(_crtInstance, (LPCTSTR)IDD_ABOUTBOX, _mainWindow, (DLGPROC)About);
+			DialogBox(_rexxInstance, (LPCTSTR)IDD_ABOUTBOX, _mainWindow, (DLGPROC)About);
 			break;
 
 		case ID_ACTION_EXIT:
@@ -1579,7 +1588,7 @@ _MainWinIOProc(HWND Window, UINT Message, WPARAM WParam, LONG LParam)
 			// in the .rc file with the same name
 			//	mbi.dwFlags    = SHCMBF_HMENU;
 			mbi.nToolBarId = IDM_MAIN_MENU;
-			mbi.hInstRes   = _crtInstance;
+			mbi.hInstRes   = _rexxInstance;
 			mbi.nBmpId     = 0;
 			mbi.cBmpImages = 0;
 
@@ -1590,9 +1599,9 @@ _MainWinIOProc(HWND Window, UINT Message, WPARAM WParam, LONG LParam)
 					MB_OK);
 			hWndCB = mbi.hwndMB;
 #elif defined(WCE)
-			hWndCB = CommandBar_Create(_crtInstance, Window, 1);
+			hWndCB = CommandBar_Create(_rexxInstance, Window, 1);
 			CommandBar_InsertMenubar(hWndCB,
-					_crtInstance,
+					_rexxInstance,
 					IDM_MAIN_MENU,
 					0);
 			CommandBar_AddAdornments(hWndCB, 0, 0);
@@ -1766,18 +1775,18 @@ WInitWinIO(HINSTANCE hInst, HINSTANCE hPrev, int cmdShow)
 
 	if (hPrev == 0) {
 		MainClass.hInstance     = hInst;
-		MainClass.hIcon         = LoadIcon(hInst,MAKEINTRESOURCE(REXXICON));
+//		MainClass.hIcon         = LoadIcon(hInst,MAKEINTRESOURCE(REXXICON));
 		MainClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
 
 		CrtClass.hInstance     = hInst;
-		CrtClass.hIcon         = LoadIcon(hInst,MAKEINTRESOURCE(REXXICON));
+//		CrtClass.hIcon         = LoadIcon(hInst,MAKEINTRESOURCE(REXXICON));
 		CrtClass.hbrBackground = CreateSolidBrush(colorRef[15]);
 
 		if (RegisterClass(&MainClass)==0 || RegisterClass(&CrtClass)==0)
 			return GetLastError();
 	}
 
-	_crtInstance = hInst;
+	_rexxInstance = hInst;
 	_mainWindow = CreateWindow(
 			MainClass.lpszClassName,
 			MainClass.lpszClassName,
@@ -1791,6 +1800,7 @@ WInitWinIO(HINSTANCE hInst, HINSTANCE hPrev, int cmdShow)
 			NULL);
 
 	ShowWindow(_mainWindow, cmdShow);
+	UpdateWindow(_mainWindow);
 
 #if _WIN32_WCE > 211
 	_crtWindow = CreateWindow(
@@ -1801,7 +1811,7 @@ WInitWinIO(HINSTANCE hInst, HINSTANCE hPrev, int cmdShow)
 			CW_USEDEFAULT, CW_USEDEFAULT,
 			_mainWindow,
 			NULL,
-			_crtInstance,
+			_rexxInstance,
 			(LPTSTR)NULL);
 #elif _WIN32_WCE_EMULATION
 	_crtWindow = CreateWindow(
@@ -1812,7 +1822,7 @@ WInitWinIO(HINSTANCE hInst, HINSTANCE hPrev, int cmdShow)
 			CW_USEDEFAULT, CW_USEDEFAULT,
 			_mainWindow,
 			NULL,
-			_crtInstance,
+			_rexxInstance,
 			(LPTSTR)NULL);
 #else
 	_crtWindow = CreateWindow(
@@ -1823,30 +1833,29 @@ WInitWinIO(HINSTANCE hInst, HINSTANCE hPrev, int cmdShow)
 			CW_USEDEFAULT, CW_USEDEFAULT,
 			_mainWindow,
 			NULL,
-			_crtInstance,
+			_rexxInstance,
 			(LPTSTR)NULL);
 #endif
-
 	GetModuleFileName(hInst, moduleName, sizeof(moduleName)/sizeof(TCHAR));
 	ShowWindow(_crtWindow, cmdShow);
+	UpdateWindow(_crtWindow);
 
-	/* Set our Icon */
-	SendMessage(_crtWindow,WM_SETICON,FALSE,
-		(LPARAM)LoadImage(_crtInstance,MAKEINTRESOURCE(REXXICON),
-				IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR));
-
-//	hAccelerator = LoadAccelerators(_crtInstance,MAKEINTRESOURCE(IDM_MAIN_MENU));
+//	hAccelerator = LoadAccelerators(_rexxInstance,MAKEINTRESOURCE(IDM_MAIN_MENU));
 
 	WSetMenu(showMenu);
 	WSetScrollBars(showScrollBars);
 	WindowResize();
 	SetFocus(_mainWindow);
 
+	/* Set our Icon */
+//	(LPARAM)LoadIcon(_rexxInstance,MAKEINTRESOURCE(REXXICON)));
+	SendMessage(_mainWindow,WM_SETICON,FALSE,
+			(LPARAM)LoadImage(_rexxInstance,MAKEINTRESOURCE(REXXICON),
+				IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR));
 #if defined(WCE)
+	InvalidateRect(_mainWindow, NULL, TRUE);
 	InvalidateRect(_crtWindow, NULL, TRUE);
 #endif
-	UpdateWindow(_mainWindow);
-	UpdateWindow(_crtWindow);
 	return 0;
 } /* WInitWinIO */
 
