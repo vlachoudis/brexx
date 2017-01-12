@@ -31,6 +31,7 @@ TARGETS =	aix aix_debug \
 		alpha alpha_debug \
 		android android_debug \
 		amiga custom \
+		cygwin cygwin_debug \
 		gcc gcc_debug \
 		hpux hpux_debug \
 		hpux-gcc hpux-gcc_debug \
@@ -56,6 +57,7 @@ default:
 	@echo "  make bc86                 for a Borland C++, 8086 code"
 	@echo "  make cegcc                for Windows CE gcc"
 	@echo "  make custom               for user customizable built"
+	@echo "  make cygwin               for cygwin"
 	@echo "  make dos32                for a 32-bit DOS application"
 	@echo "  make gcc                  for a generic system with GCC"
 	@echo "  make hpux                 for HP systems with HPUX *"
@@ -126,15 +128,17 @@ clean:
 	cd lstring ; $(MAKE) $@
 	cd modules ; $(MAKE) $@
 	cd src;      $(MAKE) $@
-	rm -f $(TGZ)
 	rm -Rf $(RXVERSION)
+
+#rm -f $(TGZ)
 
 tags:
 	ctags inc/*.h src/*.c lstring/*.c bsub/*.c
 
+
 ${TGZ}: clean
 	mkdir $(RXVERSION)
-	cp [A-Z]* $(RXVERSION)
+	cp AUTHORS COPYING ChangeLog INSTALL README $(RXVERSION)
 	cp makefile make.cnf brexx.csh *.sh $(RXVERSION)
 	for d in inc src lstring modules doc lib progs win cms mvs; do \
 		mkdir $(RXVERSION)/$$d; \

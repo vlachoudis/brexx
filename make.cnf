@@ -40,8 +40,8 @@ ANDOS     = 8
 #ANDVER    = 4.4.3
 ANDVER    = 4.8
 ANDARCH   = arm
-ANDBIT     = linux-x86
-#ANDBIT     = linux-x86_64
+#ANDBIT     = linux-x86
+ANDBIT     = linux-x86_64
 ANDBIN   := $(ANDNDK)/toolchains/${ANDARCH}-linux-androideabi-${ANDVER}/prebuilt/${ANDBIT}/bin
 ANDROOT  := $(ANDNDK)/platforms/android-${ANDOS}/arch-${ANDARCH}
 ANDARM   := $(ANDBIN)/${ANDARCH}-linux-androideabi
@@ -112,7 +112,7 @@ android:
 	"CC       = $(ANDARM)-gcc" \
 	"CPP      = $(ANDARM)-cpp" \
 	"STATIC   = no" \
-	"CFLAGS   = -O -fpic -rdynamic -DALIGN -DINLINE -DANDROID --sysroot=$(ANDROOT)" \
+	"CFLAGS   = -O -rdynamic -fpic -pie -fPIE -DALIGN -DINLINE -DANDROID --sysroot=$(ANDROOT)" \
 	"LDEXTRA  = -ldl -lm" \
 	"LIBEXTRA = -ldl -lm"
 
@@ -121,7 +121,7 @@ android_debug:
 	"CC       = $(ANDARM)-gcc" \
 	"CPP      = $(ANDARM)-cpp" \
 	"STATIC   = no" \
-	"CFLAGS   = -O0 -g -fpic -rdynamic -D__DEBUG__ -DALIGN -DINLINE -DANDROID --sysroot=$(ANDROOT)" \
+	"CFLAGS   = -O0 -g -rdynamic -fpic -pie -fPIE -D__DEBUG__ -DALIGN -DINLINE -DANDROID --sysroot=$(ANDROOT)" \
 	"LDEXTRA  = -ldl -lm" \
 	"LIBEXTRA = -ldl -lm"
 
@@ -150,6 +150,16 @@ gcc_debug:
 	$(MAKE) targets \
 	"CC = gcc" \
 	"CFLAGS = -g -pg -Wall -DALIGN -D__DEBUG__"
+
+# cygwin
+cygwin:
+	$(MAKE) targets \
+	"CC = gcc" \
+	"STATIC = yes" \
+	"EXTRA = " \
+	"CFLAGS = -O2 -fpic -DALIGN -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
+	"LDEXTRA = -nostdlib -lreadline -lnsl -ldl -lm" \
+	"LIBEXTRA = -lreadline -lnsl -ldl -lm -Wl,-rpath"
 
 # linux dynamic
 linux:
