@@ -71,15 +71,15 @@ USRLIB    = /usr/lib
 
 ################### Install Directories ###############
 INSTALL   = install
-ifeq (.$(prefix),.)
-	prefix    = /usr/local
+ifeq (.$(PREFIX),.)
+	PREFIX = /usr/local
 endif
-INSBIN   := $(prefix)/bin
-INSINC   := $(prefix)/include/brexx
-INSLIB   := $(prefix)/lib/
-INSLIBR  := $(prefix)/lib/brexx
-INSSHA   := $(prefix)/share/brexx
-INSDOC   := $(prefix)/share/doc/brexx
+INSBIN   := $(PREFIX)/bin
+INSINC   := $(PREFIX)/include/brexx
+INSLIB   := $(PREFIX)/lib/
+INSLIBR  := $(PREFIX)/lib/brexx
+INSSHA   := $(PREFIX)/share/brexx
+INSDOC   := $(PREFIX)/share/doc/brexx
 
 ################### OS specific #######################
 aix:
