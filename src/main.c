@@ -72,6 +72,9 @@ extern void __CDECL RxConIOInitialize();
 #	include "rxsqlite.c"
 #endif
 
+#ifdef JCC
+extern int __libc_arch;
+#endif
 /* --------------------- main ---------------------- */
 int __CDECL
 main(int ac, char *av[])
@@ -94,7 +97,8 @@ main(int ac, char *av[])
 	LINITSTR(file);
 
 	if (ac<2) {
-		puts("\nsyntax: rexx [-[trace]|-F|-a] <filename> <args>...\n");
+#if !defined(__MVS__)
+		puts("\nsyntax: rexx [-[trace]|-F|-a|-i] <filename> <args>...\n");
 		puts("options:");
 		puts("\t-\tto use stdin as input file");
 		puts("\t-a\tbreak words into multiple arguments");
@@ -104,6 +108,25 @@ main(int ac, char *av[])
 		puts(VERSIONSTR);
 		puts("Author: "AUTHOR);
 		puts("Please report bugs, errors or comments to the above address.\n");
+#else
+#ifdef JCC
+		puts("\nsyntax: rexx [-[trace]|-F|-a|-i|-m] <filename> <args>...\n");
+#else
+		puts("\nsyntax: rexx [-[trace]|-F|-a|-i] <filename> <args>...\n");
+#endif
+		puts("options:");
+		puts("  -   to use stdin as input file");
+		puts("  -a  break words into multiple arguments");
+		puts("  -i  enter interactive mode");
+		puts("  -F  loop over standard input");
+#ifdef JCC
+		puts("  -m  machine architecture: 0=S/370, 1=Hercules s37x, 2=S/390, 3=z/Arch");
+#endif
+                puts("        \'linein\' contains each line from stdin.\n");
+		puts(VERSIONSTR);
+		puts("Author: "AUTHOR);
+		puts("Please report bugs, errors or comments to the above address.\n");
+#endif
 		return 0;
 	}
 #ifdef __DEBUG__
@@ -136,6 +159,11 @@ main(int ac, char *av[])
 		else
 		if (av[ia][1]=='i')
 			interactive = TRUE;
+#ifdef JCC
+		else
+		if (av[ia][1]=='m')
+			__libc_arch = atoi(av[ia]+2);
+#endif
 		else
 			Lscpy(&tracestr,av[ia]+1);
 		ia++;
