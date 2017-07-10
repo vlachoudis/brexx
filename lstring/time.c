@@ -58,6 +58,9 @@
 #include "lstring.h"
 
 static double elapsed=0.0;
+#if defined(JCC)
+	static double starttime=0.0;
+#endif
 
 /* ------------------ _Ltimeinit ----------------- */
 void __CDECL
@@ -69,8 +72,13 @@ _Ltimeinit( void )
 	/* nothing to declare */
 #elif defined(_MSC_VER)
 	struct _timeb tb;
-#elif defined(__CMS__) || defined(__MVS__)
+#elif defined(__CMS__) || (defined(__MVS__) && !defined(JCC))
 	unsigned int vmnow[2];
+	struct tm * tv;
+	time_t rawtime;
+#elif defined(JCC)
+	struct timeval vmtime;
+	struct timezone vmzone;
 	struct tm * tv;
 	time_t rawtime;
 #else
@@ -92,9 +100,16 @@ _Ltimeinit( void )
 	tv=gmtime(&rawtime);
 	elapsed = (double)vmnow[0] + (double)vmnow[1]/1000000.0;
 #elif defined(__MVS__)
+#if defined(JCC)
+	gettimeofday(&vmtime,&vmzone);
+	rawtime = time(NULL);
+	starttime = (double) vmtime.tv_sec + (double) vmtime.tv_usec/1000000.0;
+	elapsed=0.0;
+#else
 	rawtime = __getclk(vmnow);
-	tv=gmtime(&rawtime);
 	elapsed = (double)(vmnow[0] >> 12) + (double)(vmnow[1] >> 12)/1000000.0;
+#endif
+	tv=gmtime(&rawtime);
 #else
 	gettimeofday(&tv,&tz);
 	elapsed = tv.tv_sec + (double)tv.tv_usec/1000000.0;
@@ -119,8 +134,12 @@ Ltime( const PLstr timestr, char option )
 		struct time t;
 #	elif defined(_MSC_VER)
 		struct _timeb tb;
-#	elif defined(__CMS__) || defined(__MVS__)
+#	elif defined(__CMS__) // (defined(__MVS__) && !defined(JCC))
 		unsigned int vmnow[2];
+		struct tm * tv;
+#	elif defined(JCC)
+		struct timeval vmtime;
+		struct timezone vmzone;
 		struct tm * tv;
 #	else
 		struct timeval tv;
@@ -168,14 +187,21 @@ Ltime( const PLstr timestr, char option )
 #elif defined(__CMS__)
 			rexclock(vmnow);
 			unow = (double)vmnow[0]+(double)vmnow[1]/1000000.0;
-#elif defined(__MVS__)
+#elif (defined(__MVS__) && !defined(JCC))
 			__getclk(vmnow);
 			unow = (double)(vmnow[0]>>12)+(double)(vmnow[1]>>12)/1000000.0;
+#elif defined(JCC)
+			gettimeofday(&vmtime,&vmzone);
+			elapsed = (double) vmtime.tv_sec + (double) vmtime.tv_usec/1000000.0 - starttime;
 #else
 			gettimeofday(&tv,&tz);
 			unow = (double)tv.tv_sec + (double)tv.tv_usec/1000000.0;
 #endif
+#if defined(JCC)
+			LREAL(*timestr) = elapsed;
+#else
 			LREAL(*timestr) = unow-elapsed;
+#endif
 			LTYPE(*timestr) = LREAL_TY;
 			LLEN(*timestr) = sizeof(double);
 			return;
@@ -245,15 +271,23 @@ Ltime( const PLstr timestr, char option )
 #elif defined(__CMS__)
 			rexclock(vmnow);
 			unow=(double)vmnow[0] + (double)vmnow[1]/1000000.0;
-#elif defined(__MVS__)
+#elif (defined(__MVS__) && !defined(JCC))
 			__getclk(vmnow);
 			unow=(double)(vmnow[0] >> 12) + (double)(vmnow[1] >> 12)/1000000.0;
+#elif defined(JCC)
+			gettimeofday(&vmtime,&vmzone);
+			elapsed = (double) vmtime.tv_sec + (double) vmtime.tv_usec/1000000.0 - starttime;
 #else
 			gettimeofday(&tv,&tz);
 			unow = (double)tv.tv_sec + (double)tv.tv_usec/1000000.0;
 #endif
+#if defined(JCC)
+			LREAL(*timestr) = elapsed;
+			starttime = (double) vmtime.tv_sec + (double) vmtime.tv_usec/1000000.0;
+#else
 			LREAL(*timestr) = unow-elapsed;
 			elapsed = unow;
+#endif
 			LTYPE(*timestr) = LREAL_TY;
 			LLEN(*timestr) = sizeof(double);
 			return;
