@@ -264,7 +264,9 @@ void  __CDECL Lfx   (const PLstr  s, const size_t len );
 void  __CDECL Licpy (const PLstr to, const long   from );
 void  __CDECL Lrcpy (const PLstr to, const double from );
 void  __CDECL Lscpy (const PLstr to, const char *from );
+#ifndef JCC
 void  __CDECL Lwscpy(const PLstr to, const wchar_t *from );
+#endif
 void  __CDECL Lcat  (const PLstr to, const char *from );
 int   __CDECL Lcmp  (const PLstr  a, const char *b );
 

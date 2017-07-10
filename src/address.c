@@ -260,7 +260,7 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr outputstr)
 
 	return rxReturnCode;
 #endif
-} /* RxRedirectCmd */
+return 0;} /* RxRedirectCmd */
 #endif
 
 #if defined(__CMS__)
@@ -334,7 +334,15 @@ RxExecuteCmd( PLstr cmd, PLstr env )
 int __CDECL
 RxExecuteCmd( PLstr cmd, PLstr env )
 {
+#if defined(JCC)
+	if (strcmp(LSTR(*env) , "TSO") == 0) {
+		rxReturnCode = systemTSO(LSTR(*cmd));
+	} else {
+		rxReturnCode = system(LSTR(*cmd));
+	}
+#else
 	rxReturnCode = system(LSTR(*cmd));
+#endif
 	if (rxReturnCode == 0x806000) {
 		rxReturnCode = -3;
 	}
