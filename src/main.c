@@ -120,9 +120,11 @@ main(int ac, char *av[])
 		puts("  -i  enter interactive mode");
 		puts("  -F  loop over standard input");
 #ifdef JCC
-		puts("  -m  machine architecture: 0=S/370, 1=Hercules s37x, 2=S/390, 3=z/Arch");
+		puts("      \'linein\' contains each line from stdin");
+		puts("  -m  machine architecture: 0=S/370, 1=Hercules s37x, 2=S/390, 3=z/Arch.\n");
+#else
+		puts("      \'linein\' contains each line from stdin.\n");
 #endif
-                puts("        \'linein\' contains each line from stdin.\n");
 		puts(VERSIONSTR);
 		puts("Author: "AUTHOR);
 		puts("Please report bugs, errors or comments to the above address.\n");
