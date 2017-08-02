@@ -87,4 +87,5 @@ Lwordpos( const PLstr phrase, const PLstr s, long n )
 				}
 			}
 	}
-return 0;} /* Lwordpos */
+	return 0;
+} /* Lwordpos */

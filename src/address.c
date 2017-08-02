@@ -260,7 +260,8 @@ RxRedirectCmd(PLstr cmd, int in, int out, PLstr outputstr)
 
 	return rxReturnCode;
 #endif
-return 0;} /* RxRedirectCmd */
+	return 0;
+} /* RxRedirectCmd */
 #endif
 
 #if defined(__CMS__)

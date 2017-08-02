@@ -97,38 +97,24 @@ main(int ac, char *av[])
 	LINITSTR(file);
 
 	if (ac<2) {
-#if !defined(__MVS__)
-		puts("\nsyntax: rexx [-[trace]|-F|-a|-i] <filename> <args>...\n");
-		puts("options:");
-		puts("\t-\tto use stdin as input file");
-		puts("\t-a\tbreak words into multiple arguments");
-		puts("\t-i\tenter interactive mode");
-		puts("\t-F\tloop over standard input");
-                puts("\t\t\'linein\' contains each line from stdin.\n");
-		puts(VERSIONSTR);
-		puts("Author: "AUTHOR);
-		puts("Please report bugs, errors or comments to the above address.\n");
-#else
-#ifdef JCC
+#if defined(JCC)
 		puts("\nsyntax: rexx [-[trace]|-F|-a|-i|-m] <filename> <args>...\n");
 #else
 		puts("\nsyntax: rexx [-[trace]|-F|-a|-i] <filename> <args>...\n");
 #endif
 		puts("options:");
-		puts("  -   to use stdin as input file");
-		puts("  -a  break words into multiple arguments");
-		puts("  -i  enter interactive mode");
-		puts("  -F  loop over standard input");
+		puts("\t-\tto use stdin as input file");
+		puts("\t-a\tbreak words into multiple arguments");
+		puts("\t-i\tenter interactive mode");
+		puts("\t-F\tloop over standard input");
+		puts("\t\t\'linein\' contains each line from stdin.");
 #ifdef JCC
-		puts("      \'linein\' contains each line from stdin");
-		puts("  -m  machine architecture: 0=S/370, 1=Hercules s37x, 2=S/390, 3=z/Arch.\n");
-#else
-		puts("      \'linein\' contains each line from stdin.\n");
+		puts("  -m  machine architecture: 0=S/370, 1=Hercules s37x, 2=S/390, 3=z/Arch.");
+		puts("\n");
 #endif
 		puts(VERSIONSTR);
 		puts("Author: "AUTHOR);
 		puts("Please report bugs, errors or comments to the above address.\n");
-#endif
 		return 0;
 	}
 #ifdef __DEBUG__
