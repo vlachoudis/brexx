@@ -50,6 +50,10 @@
 
 #define __LSTRING_C__
 
+#ifdef JCC
+#include "rexx.h"
+#endif
+
 #include <math.h>
 #include "lerror.h"
 #include "lstring.h"
@@ -284,8 +288,12 @@ Lstrcat( const PLstr to, const PLstr from )
 	L2STR(from);
 
 	l = LLEN(*to)+LLEN(*from);
-	if (LMAXLEN(*to) <= l)
+	if (LMAXLEN(*to) < l)
+#ifdef JCC
+		Lfx(to, MAX(l,LMAXLEN(*to) + CAT_INC));
+#else
 		Lfx(to, l);
+#endif
 	MEMCPY( LSTR(*to) + LLEN(*to), LSTR(*from), LLEN(*from) );
 	LLEN(*to) = l;
 } /* Lstrcat */

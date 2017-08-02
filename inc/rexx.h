@@ -94,7 +94,12 @@
 #define MAXARGS		15
 #define PROC_INC	10
 #define CLAUSE_INC	100
+#ifdef JCC
+#define CODE_INC	4096
+#define CAT_INC		4095
+#else
 #define CODE_INC	256
+#endif
 #define STCK_SIZE	255
 
 /* call types */
