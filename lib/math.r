@@ -1,5 +1,4 @@
 /* extended math library */
-say "In math library"
 C  = 299792458.0		/* m/s */
 h  = 6.6260755e-34		/* J s */
 pi = 3.14159265358979323846
