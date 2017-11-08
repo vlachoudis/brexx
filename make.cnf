@@ -34,11 +34,10 @@ INCDIR = ../inc
 LIBDIR = ../lstring
 
 # Android paths
-ANDNDK    = /opt/android-ndk
-ANDOS     = 8
-#ANDOS     = 18
-#ANDVER    = 4.4.3
-ANDVER    = 4.8
+ANDNDK    = /opt/android-sdk/ndk-bundle
+#ANDOS     = 8
+ANDOS     = 19
+ANDVER    = 4.9
 ANDARCH   = arm
 #ANDBIT     = linux-x86
 ANDBIT     = linux-x86_64
