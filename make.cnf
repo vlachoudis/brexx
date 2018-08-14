@@ -33,17 +33,26 @@
 INCDIR = ../inc
 LIBDIR = ../lstring
 
-# Android paths
-ANDNDK    = /opt/android-sdk/ndk-bundle
-#ANDOS     = 8
-ANDOS     = 19
-ANDVER    = 4.9
-ANDARCH   = arm
+###############
+# Android
+#
+# Create first a standalone toolchain, since with the new ndk
+# the sysroot is no longer working from the default directory
+# https://developer.android.com/ndk/guides/standalone_toolchain
+# http://zwyuan.github.io/2015/12/22/three-ways-to-use-android-ndk-cross-compiler/
+###############
+ANDNDK    = /opt/android-ndk
+ANDOS     = 24
+#ANDARCH   = arm
+ANDARCH   = aarch64
 #ANDBIT     = linux-x86
-ANDBIT     = linux-x86_64
-ANDBIN   := $(ANDNDK)/toolchains/${ANDARCH}-linux-androideabi-${ANDVER}/prebuilt/${ANDBIT}/bin
-ANDROOT  := $(ANDNDK)/platforms/android-${ANDOS}/arch-${ANDARCH}
-ANDARM   := $(ANDBIN)/${ANDARCH}-linux-androideabi
+#ANDBIT     = linux-x86_64
+ANDBIT   := linux-${shell uname -p}
+#ANDBIN   := $(ANDNDK)/toolchains/${ANDARCH}-linux-androideabi-${ANDVER}/prebuilt/$(ANDBIT)/bin
+#ANDROOT  := $(ANDNDK)/platforms/android-${ANDOS}/arch-$(ANDARCH)
+#ANDARM   := $(ANDBIN)/${ANDARCH}-linux-androideabi
+#ANDARM    := $(ANDNDK)/android-$(ANDOS)/bin/${ANDARCH}-linux-androideabi
+ANDARM    := $(ANDNDK)/android-$(ANDOS)/bin/${ANDARCH}-linux-android
 ANDLINKER = /system/bin/linker
 
 # Support of Greek character set
@@ -111,18 +120,21 @@ android:
 	"CC       = $(ANDARM)-gcc" \
 	"CPP      = $(ANDARM)-cpp" \
 	"STATIC   = no" \
-	"CFLAGS   = -O -rdynamic -fpic -pie -fPIE -DALIGN -DINLINE -DANDROID --sysroot=$(ANDROOT)" \
+	"CFLAGS   = -O -rdynamic -pie -fPIE -fPIC -DALIGN -DINLINE -DANDROID -D__ANDROID_API__=${ANDOS}" \
 	"LDEXTRA  = -ldl -lm" \
 	"LIBEXTRA = -ldl -lm"
+
+#	"CFLAGS   = -O -rdynamic -fpic -pie -fPIE -DALIGN -DINLINE -DANDROID --sysroot=$(ANDROOT)" \
 
 android_debug:
 	$(MAKE) targets \
 	"CC       = $(ANDARM)-gcc" \
 	"CPP      = $(ANDARM)-cpp" \
 	"STATIC   = no" \
-	"CFLAGS   = -O0 -g -rdynamic -fpic -pie -fPIE -D__DEBUG__ -DALIGN -DINLINE -DANDROID --sysroot=$(ANDROOT)" \
-	"LDEXTRA  = -ldl -lm" \
+	"CFLAGS   = -O0 -g -rdynamic -fPIE -fPIC -D__DEBUG__ -DALIGN -DINLINE -DANDROID -D__ANDROID_API__=${ANDOS}" \
+	"LDEXTRA  = -pie -ldl -lm" \
 	"LIBEXTRA = -ldl -lm"
+#	"CFLAGS   = -O0 -g -rdynamic -fpic -pie -fPIE -D__DEBUG__ -DALIGN -DINLINE -DANDROID --sysroot=$(ANDROOT)" \
 
 bc:
 	$(MAKE) targets \
