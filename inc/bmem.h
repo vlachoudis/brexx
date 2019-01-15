@@ -41,7 +41,7 @@
 
 #include "os.h"
 #include <stdlib.h>
-#if !defined(__CMS__) && !defined(__MVS__)
+#if !defined(__CMS__) && !defined(__MVS__) && !defined(__MACH__)
 #	include <malloc.h>
 #endif
 
