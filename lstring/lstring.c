@@ -249,6 +249,10 @@ Lcmp( const PLstr a, const char *b )
 void __CDECL
 Lstrcpy( const PLstr to, const PLstr from )
 {
+	if ( LISNULL(*to) ) {
+		Lfx(to,31);
+	}
+    
 	if (LLEN(*from)==0) {
 		LLEN(*to) = 0;
 		LTYPE(*to) = LSTRING_TY;
@@ -410,6 +414,9 @@ _Lisnum( const PLstr s )
 
 	ch = LSTR(*s);
 	if (ch==NULL) return LSTRING_TY;
+#if defined(__CMS__) || defined(__MVS__)                
+  	if (s->len>LMAXNUMERICSTRING) return LSTRING_TY;
+#endif 		
 	LASCIIZ(*s);	/*	///// Remember to erase LASCIIZ
 				///// before all the calls to Lisnum */
 

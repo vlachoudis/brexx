@@ -238,6 +238,7 @@ typedef Lstr	*PLstr;
 #	define	LMAXNUMERICDIGITS	14
 #else
 #	define	LMAXNUMERICDIGITS	30
+#	define	LMAXNUMERICSTRING	75 
 #endif
 
 /* --- for interal use of lstring --- */
