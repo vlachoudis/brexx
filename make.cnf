@@ -178,7 +178,7 @@ linux:
 	"CC = gcc" \
 	"STATIC = no" \
 	"EXTRA = " \
-	"CFLAGS = -O2 -fno-stack-protector -fpic -rdynamic -DALIGN -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
+	"CFLAGS = -O2 -fno-stack-protector -fpic -DALIGN -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
 	"LDEXTRA = -nostdlib -lreadline -lnsl -ldl -lm" \
 	"LIBEXTRA = -lreadline -lnsl -ldl -lm -Wl,-rpath"
 
@@ -292,4 +292,15 @@ test_debug:
 	"CC = gcc" \
 	"MAIN = maintest.c" \
 	"CFLAGS = -g -pg -Wall -DALIGN -D__DEBUG__ -DHAVE_SETENV"
+
+macos:
+	$(MAKE) targets \
+	"CC = gcc" \
+	"MACOS = yes" \
+	"STATIC = no" \
+	"EXTRA = " \
+	"LSTR_SO   = liblstring.dylib" \
+	"CFLAGS = -O3 -fno-stack-protector -fpic -DALIGN -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
+	"LDEXTRA = -lreadline  -ldl -lm" \
+	"LIBEXTRA = -lreadline  -ldl -lm -Wl,-rpath"
 

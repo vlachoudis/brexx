@@ -100,6 +100,7 @@ OBJECTS = $(SOURCES:.c=.o)
 .c.o:
 	$(CC) -c $(CCOPTIONS) $<
 
+
 ############# TARGETS #############
 
 default:
@@ -110,9 +111,14 @@ $(LIBDIR)/$(LSTR_LIB):	$(OBJECTS)
 	$(RM) $@
 	$(MAKELIB) $@ $^
 
+
 ifeq ($(STATIC),no)
 $(LIBDIR)/$(LSTR_SO):	$(OBJECTS)
+ifeq ($(MACOS), yes)
+	$(CC) -o $(LSTR_SO) -dynamiclib *.o $(LDEXTRA) $(LIBEXTRA)
+else
 	$(CC) $(CCOPTIONS) -shared -Wl,-soname,$(LSTR_SO) -o $@ $^ $(LDEXTRA)
+endif
 
 targets: $(LIBDIR)/$(LSTR_LIB) $(LIBDIR)/$(LSTR_SO)
 
