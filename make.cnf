@@ -300,7 +300,7 @@ macos:
 	"STATIC = no" \
 	"EXTRA = " \
 	"LSTR_SO   = liblstring.dylib" \
-	"CFLAGS = -O3 -fno-stack-protector -fpic -DALIGN -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
+	"CFLAGS = -O3 -Wno-format -Wno-format-security -Wno-implicit-function-declaration -Wno-pointer-sign -Wno-empty-body -fno-stack-protector -fpic -DALIGN -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
 	"LDEXTRA = -lreadline  -ldl -lm" \
 	"LIBEXTRA = -lreadline  -ldl -lm -Wl,-rpath"
 
