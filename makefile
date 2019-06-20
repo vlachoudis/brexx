@@ -42,7 +42,7 @@ TARGETS =	aix aix_debug \
 		linux_intel linux_intel_debug \
 		linux_noalign linux_noalign_debug \
 		cegcc cegcc_debug \
-		test test_debug \
+		test test_debug macos \
 		install
 
 default:
@@ -68,7 +68,8 @@ default:
 	@echo "  make linux64              for Linux 64bit systems with GCC *"
 	@echo "  make linux_intel          for Linux systems with intel compiler,"
 	@echo "  make linux_noalign        for Linux systems with GCC,"
-	@echo "  make macintosh            for a Mac application"
+	@echo "  make macintosh            for a Mac (pre-Mac OPSX) application"
+	@echo "  make macos                for a macos application"
 	@echo "  make mswindows            for Microsoft Windows"
 	@echo "  make test                 for testing/experimenting"
 	@echo "  make tar                  to prepare a .tar.gz file"

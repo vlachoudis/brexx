@@ -47,7 +47,7 @@
 #include <ctype.h>
 #include <stdio.h>
 
-#if !defined(__CMS__) && !defined(__MVS__) && !defined(__MACH__)
+#if !defined(__CMS__) && !defined(__MVS__) && !defined(__MACH__) && !defined(__APPLE__)
 #	include <malloc.h>
 #endif
 

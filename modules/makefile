@@ -33,8 +33,11 @@ endif
 
 ############# MACROS ##############
 OBJECTS = $(SOURCES:.c=.o)
+ifeq ($(MACOS), yes)
+SOS     = $(SOURCES:.c=.dylib)
+else
 SOS     = $(SOURCES:.c=.so)
-
+endif
 ############# RULES ###############
 
 .c.o:
@@ -42,6 +45,10 @@ SOS     = $(SOURCES:.c=.so)
 
 %.so: %.o
 	$(CC) $(CCOPTIONS) -shared -Wl,-soname,$@ -o $@ $< -L../lstring -llstring $(LDEXTRA)
+
+%.dylib: %.o
+	$(CC) $(CCOPTIONS) -o $@ -dynamiclib -Wl,-U $< -L../lstring -llstring $(LDEXTRA) -rpath
+
 
 ############# TARGETS #############
 

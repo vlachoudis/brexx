@@ -58,6 +58,10 @@ $(REXX_EXE):	$(OBJECTS)
 else
 $(REXX_EXE):	$(OBJECTS)
 	$(CC) -o $@ $(CCOPTIONS) $^ $(LIBDIR)/$(LSTR_SO) $(LIBEXTRA)
+ifeq ($(MACOS),yes)
+	mv rexx brexx
+	install_name_tool -change liblstring.dylib @loader_path/../lstring/liblstring.dylib brexx
+endif
 endif
 
 install:

@@ -314,7 +314,7 @@ int __CDECL
 RxLoadLibrary( PLstr libname, bool shared )
 {
 	RxFile  *rxf, *last;
-#if defined(UNIX) || defined(__CMS__) || defined(__MVS__)
+#if defined(UNIX) || defined(__CMS__) || defined(__MVS__) || defined(__APPLE__)
 	Lstr	tmpstr;
 	char	*dlerrorstr;
 #endif
