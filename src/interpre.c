@@ -1452,6 +1452,8 @@ outofcmd:
 			DEBUGDISPLAY2("SYSTEM");
 			L2STR(STACKTOP);
 			LASCIIZ(*(STACKTOP));
+			L2STR(STACKP(1));
+			LASCIIZ(*(STACKP(1)));
 			RxExecuteCmd(STACKTOP,STACKP(1));
 			RxStckTop -= 2;
 			goto main_loop;

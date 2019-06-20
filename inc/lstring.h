@@ -226,7 +226,11 @@ typedef Lstr	*PLstr;
 
 /* --- file options --- */
 #define LSTARTPOS	-1
+#ifdef JCC
+#define LREADINCSIZE	4096
+#else
 #define LREADINCSIZE	32
+#endif
 #define LREADLINE	0
 #define LREADFILE	-1
 
@@ -234,6 +238,7 @@ typedef Lstr	*PLstr;
 #	define	LMAXNUMERICDIGITS	14
 #else
 #	define	LMAXNUMERICDIGITS	30
+#	define	LMAXNUMERICSTRING	75 
 #endif
 
 /* --- for interal use of lstring --- */
@@ -425,11 +430,11 @@ DECLMATH( tanh );
 	char
 #	ifdef GREEK
 #	   ifdef MSDOS
-		*clower="abcdefghijklmnopqrstuvwxyz���������������������������������",
-		*cUPPER="ABCDEFGHIJKLMNOPQRSTUVWXYZ����������������������������������",
+		*clower="abcdefghijklmnopqrstuvwxyz ¡¢£¤¥¦§¨©«¬­®¯àªáâãåæçéäè",
+		*cUPPER="ABCDEFGHIJKLMNOPQRSTUVWXYZêëìíîïð",
 #	   else
-		*clower="abcdefghijklmnopqrstuvwxyz������������������������������������",
-		*cUPPER="ABCDEFGHIJKLMNOPQRSTUVWXYZ�����������������������ٶ����ڼ��ۿ�",
+		*clower="abcdefghijklmnopqrstuvwxyzáâãäåæçèéêëìíîïðñóôõö÷øùÜÝÞßúÀüýûàþò",
+		*cUPPER="ABCDEFGHIJKLMNOPQRSTUVWXYZÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÓÔÕÖ×ØÙ¶¸¹ºÚÚ¼¾ÛÛ¿Ó",
 #	   endif
 #	else
 		*clower="abcdefghijklmnopqrstuvwxyz",
