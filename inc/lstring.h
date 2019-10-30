@@ -131,6 +131,7 @@ typedef Lstr	*PLstr;
 /* ---------------- Macros ------------------- */
 /* --- lstring data --- */
 #define LSTR(L)		((L).pstr)
+#define CLSTR(L)	(const char*)((L).pstr)
 #define LINT(L)		(*(long*)((L).pstr))
 #define LREAL(L)	(*(double*)((L).pstr))
 #define LLEN(L)		((L).len)

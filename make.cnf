@@ -189,8 +189,10 @@ linux:
 	"STATIC = no" \
 	"EXTRA = " \
 	"CFLAGS = -O2 -fno-stack-protector -fpic -DALIGN -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
-	"LDEXTRA = -nostdlib -lreadline -lnsl -ldl -lm" \
-	"LIBEXTRA = -lreadline -lnsl -ldl -lm -Wl,-rpath"
+	"LDEXTRA = -nostdlib -lreadline -ldl -lm" \
+	"LIBEXTRA = -lreadline -ldl -lm -Wl,-rpath"
+#	"LDEXTRA = -nostdlib -lreadline -lnsl -ldl -lm" \
+#	"LIBEXTRA = -lreadline -lnsl -ldl -lm -Wl,-rpath"
 
 # linux debug
 linux_debug:

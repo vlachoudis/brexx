@@ -196,8 +196,8 @@ R_json( const int func )
 	LASCIIZ(*ARG1);
 	LASCIIZ(*ARG2);
 
-	json = LSTR(*ARG1);
-	name = LSTR(*ARG2);
+	json = CLSTR(*ARG1);
+	name = CLSTR(*ARG2);
 	nlen = strlen(name);
 
 	LTYPE(*ARGR) = LSTRING_TY;
@@ -257,8 +257,8 @@ R_jsonfind( const int func )
 	LASCIIZ(*ARG1);
 	LASCIIZ(*ARG2);
 
-	json = LSTR(*ARG1);
-	name = LSTR(*ARG2);
+	json = CLSTR(*ARG1);
+	name = CLSTR(*ARG2);
 	nlen = strlen(name);
 
 	SKIP_BLANK(json,ptr);
@@ -316,7 +316,7 @@ R_jsonarray( const int func )
 
 	LASCIIZ(*ARG1);
 
-	json = LSTR(*ARG1);
+	json = CLSTR(*ARG1);
 
 	LTYPE(*ARGR) = LSTRING_TY;
 	LLEN(*ARGR)  = 0;
@@ -363,7 +363,7 @@ R_jsontype( const int func )
 		return;
 	}
 
-	json = LSTR(*ARG1);
+	json = CLSTR(*ARG1);
 
 	LTYPE(*ARGR) = LSTRING_TY;
 	LLEN(*ARGR)  = 0;
@@ -399,7 +399,7 @@ R_jsonvalue( const int func )
 	get_i(2,ptr);
 	if (--ptr<0) ptr = 0;
 
-	json = LSTR(*ARG1);
+	json = CLSTR(*ARG1);
 	if (ptr>=LLEN(*ARG1)) {
 		LTYPE(*ARGR) = LSTRING_TY;
 		LLEN(*ARGR)  = 0;
@@ -440,7 +440,7 @@ R_jsonnext( const int func )
 		return;
 	}
 
-	json = LSTR(*ARG1);
+	json = CLSTR(*ARG1);
 
 	SKIP_BLANK(json,ptr);
 	ptr = jsonParseValue(json, ptr);
@@ -456,7 +456,7 @@ R_jsonnext( const int func )
 void __CDECL
 R_jsonesc( const int func )
 {
-	char *pin, *pout;
+	unsigned char *pin, *pout;
 	int len;
 
 	if (ARGN!=1) Lerror(ERR_INCORRECT_CALL,0);
@@ -518,7 +518,7 @@ R_jsonesc( const int func )
 		}
 	}
 	*pout = '\0';
-	LLEN(*ARGR) = STRLEN(LSTR(*ARGR));
+	LLEN(*ARGR) = STRLEN(CLSTR(*ARGR));
 } /* JSONESC */
 
 /* --- Register functions --- */
