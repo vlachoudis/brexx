@@ -86,8 +86,8 @@ $(TARGETS):
 	cd doc;      $(MAKE) $@
 	cd inc;      $(MAKE) $@
 	cd lstring ; $(MAKE) $@
-	cd modules;  $(MAKE) $@
 	cd src;      $(MAKE) $@
+	cd modules;  $(MAKE) $@
 
 dos32:
 	cd lstring ; $(MAKE) $@

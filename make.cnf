@@ -166,6 +166,16 @@ gcc_debug:
 cygwin:
 	$(MAKE) targets \
 	"CC = gcc" \
+	"STATIC = no" \
+	"EXTRA = " \
+	"CFLAGS = -O2 -fpic -DALIGN -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
+	"LDEXTRA = -lreadline -lnsl -ldl -lm" \
+	"LIBEXTRA = -lreadline -lnsl -ldl -lm -Wl,-rpath"
+
+# cygwin
+cygwin2:
+	$(MAKE) targets \
+	"CC = gcc" \
 	"STATIC = yes" \
 	"EXTRA = " \
 	"CFLAGS = -O2 -fpic -DALIGN -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
