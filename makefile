@@ -36,6 +36,7 @@ TARGETS =	aix aix_debug \
 		hpux hpux_debug \
 		hpux-gcc hpux-gcc_debug \
 		irix irix_debug \
+		termux \
 		linux linux_debug \
 		linux32 linux32_debug \
 		linux64 linux64_debug \
@@ -45,6 +46,10 @@ TARGETS =	aix aix_debug \
 		test test_debug macos \
 		install
 
+.PHONY: help
+help: default
+
+.PHONY: default
 default:
 	@echo "BREXX V2 makefile"
 	@echo "Make file for $(RXVERSION)"
@@ -71,6 +76,7 @@ default:
 	@echo "  make macintosh            for a Mac (pre-Mac OPSX) application"
 	@echo "  make macos                for a macos application"
 	@echo "  make mswindows            for Microsoft Windows"
+	@echo "  make termux               for android termux"
 	@echo "  make test                 for testing/experimenting"
 	@echo "  make tar                  to prepare a .tar.gz file"
 	@echo "  make tags                 to generate the ctags file"

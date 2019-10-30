@@ -182,10 +182,20 @@ cygwin2:
 	"LDEXTRA = -nostdlib -lreadline -lnsl -ldl -lm" \
 	"LIBEXTRA = -lreadline -lnsl -ldl -lm -Wl,-rpath"
 
+# termux
+termux:
+	$(MAKE) targets \
+	"CC = cc" \
+	"STATIC = no" \
+	"EXTRA = " \
+	"CFLAGS = -O2 -fpic -DALIGN -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
+	"LDEXTRA = -lreadline -ldl -lm" \
+	"LIBEXTRA = -lreadline -ldl -lm"
+
 # linux dynamic
 linux:
 	$(MAKE) targets \
-	"CC = gcc" \
+	"CC = cc" \
 	"STATIC = no" \
 	"EXTRA = " \
 	"CFLAGS = -O2 -fno-stack-protector -fpic -DALIGN -DINLINE -DHAVE_SETENV -DHAVE_READLINE" \
