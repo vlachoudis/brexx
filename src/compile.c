@@ -1569,7 +1569,7 @@ C_signal( void)
 	int	cnd=0;
 	void	*ptr=NULL;
 
-	if (symbol==ident_sy) {
+	if (symbol==ident_sy || symbol==literal_sy || symbol==dot_sy) {
 		if (!CMP("OFF") || (!CMP("ON"))) {
 			value = 0;
 			if (!CMP("ON")) value = 1;
@@ -1832,7 +1832,7 @@ C_instr(bool until_end)
 	} else
 		C_HostCmd();
 
-	if (!checked_semicolon)		/* if noone has checked for a */
+	if (!checked_semicolon)		/* if none has checked for a */
 		MUSTBE_SEMICOLON;	/* semicolon then check it now */
 
 	CompileNesting--;
