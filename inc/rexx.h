@@ -84,7 +84,7 @@
 
 /* ------------ some defines ------------------ */
 #define PACKAGE         "brexx"
-#define VERSION         "2.1.9"
+#define VERSION         "2.1.10"
 #define	VERSIONSTR	PACKAGE" "VERSION" "__DATE__
 #define	AUTHOR		"Vasilis.Vlachoudis@cern.ch"
 #define REGAPPKEY	TEXT("Software\\Marmita\\BRexx")

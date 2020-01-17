@@ -120,13 +120,13 @@
 #define PACKAGE_NAME "brexx"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "brexx 2.1.9"
+#define PACKAGE_STRING "brexx 2.1.10"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "brexx"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2.1.9"
+#define PACKAGE_VERSION "2.1.10"
 
 /* Remove the trailing CR from system commands */
 #define RMLAST 1
@@ -144,7 +144,7 @@
 /* #undef TM_IN_SYS_TIME */
 
 /* Version number of package */
-#define VERSION "2.1.9"
+#define VERSION "2.1.10"
 
 /* Enable debuging information */
 /* #undef __DEBUG__ */

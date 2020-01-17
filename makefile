@@ -12,7 +12,7 @@
 # To add a new configuration for your system add it to the list below
 # then update the make.cnf file.
 
-RXVERSION = brexx-2.1.9
+RXVERSION = brexx-2.1.10
 RELEASE   = 0
 SPEC      = brexx.spec
 BUILDIR   = ${HOME}/rpmbuild/
