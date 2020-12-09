@@ -73,7 +73,7 @@ default:
 	@echo "  make linux64              for Linux 64bit systems with GCC *"
 	@echo "  make linux_intel          for Linux systems with intel compiler,"
 	@echo "  make linux_noalign        for Linux systems with GCC,"
-	@echo "  make macintosh            for a Mac (pre-Mac OPSX) application"
+	@echo "  make macintosh            for a Mac (pre-Mac OSX) application"
 	@echo "  make macos                for a macos application"
 	@echo "  make mswindows            for Microsoft Windows"
 	@echo "  make termux               for android termux"
