@@ -1,10 +1,10 @@
 # brexx
                                                                         o o
                                                                       ____oo_
-                                 R  E  X  X               1992-2011  /||    |\
+                                 R  E  X  X               1992-2020  /||    |\
                                   Ver. 2.x                   BNV      ||    |
                                  for  MSDOS                MARMITA    `.___.'
-                                  and Unix
+                                  and Unix                   SOFT
 
 
                  Author.........Vasilis N. Vlachoudis
@@ -56,20 +56,6 @@
      written in ANSI C, and I have tried to make it fast and flexible,
      with very little restrictions, without lossing compatibility with
      the Ansi-Rexx
-
-
-     How much does it cost
-     ~~~~~~~~~~~~~~~~~~~~~
-       This is a FREEWARE program, as long as it is used for NON COMMERCIAL
-     purpose. But any generous contribution is well accepted :) to help
-     keeping this project alive. It is still FREEWARE if it is included
-     as a part (macro language) for another FREEWARE product.
-
-       For commercial use the registration fee is $50 (for version 2.x
-     and above). Furthermore, if you want to include it as a macro
-     language in one of your shareware/commercial program you have to
-     contact the author Vasilis.Vlachoudis@cern.ch. For more
-     informations please contact me by e-mail on one of the above addresses.
 
 
      Files in this distribution
@@ -212,8 +198,8 @@
           names.
        o  Rexx variables are not declared as strings, integers, reals,
           or any other kind of variable. All variables are handled
-	  as strings. Only in arithmetic operations must variables
-	  evaluate to a valid number.
+          as strings. Only in arithmetic operations must variables
+          evaluate to a valid number.
           ie.    ' -2' + 3    will evaluate to '1'
                 left(21+6,1)  will return '2'
                 left('amo',1) will return 'a'
@@ -222,8 +208,8 @@
           time they are used.
        o  There is no any limitation in the size of each variable (or
           array) except the convential memory (Only in the 16bit-DOS
-	  version, the maximum allocated memory per variable will be
-	  1 segment 64kb)
+          version, the maximum allocated memory per variable will be
+          1 segment 64kb)
        o  When rexx intrepreter doesn't understand one command it pass
           it to the operating system (default) to execute it, or to any
           other program you want.
