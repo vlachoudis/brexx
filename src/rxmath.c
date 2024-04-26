@@ -162,7 +162,7 @@ R_bitwise( const int func )
 	L2INT(ARGR);
 
 	for (i=1; i<ARGN; i++) {
-		num = Lrdint(rxArg.a[i]);
+		num = Lrdint(rxArg.aÝi¨);
 		if (func==f_and)
 			LINT(*ARGR) &= num;
 		else

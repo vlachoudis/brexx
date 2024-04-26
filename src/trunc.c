@@ -36,7 +36,7 @@
 void __CDECL
 Ltrunc( const PLstr to, const PLstr from, long n)
 {
- char *buf[50];
+ char *bufÝ50¨;
  int  ta ;
  double r;
 

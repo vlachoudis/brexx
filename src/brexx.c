@@ -24,13 +24,13 @@ void term();
 
 /* --------------------- main ---------------------- */
 int __CDECL
-main(int ac, char *av[])
+main(int ac, char *avÝ¨)
 {
-	Lstr	args[MAXARGS], tracestr, file;
+	Lstr	argsÝMAXARGS¨, tracestr, file;
 	int	ia,ir,iaa,rc,staeret;
 	bool	input, loop_over_stdin, parse_args, interactive;
     jmp_buf b;
-    char sdwa[104];
+    char sdwaÝ104¨;
 
 	input           = FALSE;
 	loop_over_stdin = FALSE;
@@ -47,7 +47,7 @@ main(int ac, char *av[])
             return rc;
         }
 
-        for (ia=0; ia<MAXARGS; ia++) LINITSTR(args[ia]);
+        for (ia=0; ia<MAXARGS; ia++) LINITSTR(argsÝia¨);
         LINITSTR(tracestr);
         LINITSTR(file);
 
@@ -60,7 +60,7 @@ main(int ac, char *av[])
         __debug__ = FALSE;
 #endif
 
-        RxInitialize(av[0]);
+        RxInitialize(avÝ0¨);
 
         /* --- Register functions of external libraries --- */
 #if defined(__MVS__) || defined(__CROSS__)
@@ -69,29 +69,29 @@ main(int ac, char *av[])
 
         /* --- scan arguments --- */
         ia = 1;
-        if (av[ia][0]=='-') {
-            if (av[ia][1]==0)
+        if (avÝia¨Ý0¨=='-') {
+            if (avÝia¨Ý1¨==0)
                 input = TRUE;
             else
-            if (av[ia][1]=='F')
+            if (avÝia¨Ý1¨=='F')
                 loop_over_stdin = input = TRUE;
             else
-            if (av[ia][1]=='a')
+            if (avÝia¨Ý1¨=='a')
                 parse_args = TRUE;
             else
-            if (av[ia][1]=='i')
+            if (avÝia¨Ý1¨=='i')
                 interactive = TRUE;
 #ifndef __CROSS__
                 else
-		if (av[ia][1]=='m')
-			__libc_arch = atoi(av[ia]+2);
+		if (avÝia¨Ý1¨=='m')
+			__libc_arch = atoi(avÝia¨+2);
 #endif
             else
-                Lscpy(&tracestr,av[ia]+1);
+                Lscpy(&tracestr,avÝia¨+1);
             ia++;
         } else
-        if (av[ia][0]=='?' || av[ia][0]=='!') {
-            Lscpy(&tracestr,av[ia]);
+        if (avÝia¨Ý0¨=='?' || avÝia¨Ý0¨=='!') {
+            Lscpy(&tracestr,avÝia¨);
             ia++;
         }
 
@@ -101,18 +101,18 @@ main(int ac, char *av[])
             iaa = 0;
             for (ir=ia+1; ir<ac; ir++) {
                 if (parse_args) {
-                    Lscpy(&args[iaa], av[ir]);
+                    Lscpy(&argsÝiaa¨, avÝir¨);
                     if (++iaa >= MAXARGS) break;
                 } else {
-                    Lcat(&args[0], av[ir]);
-                    if (ir<ac-1) Lcat(&args[0]," ");
+                    Lcat(&argsÝ0¨, avÝir¨);
+                    if (ir<ac-1) Lcat(&argsÝ0¨," ");
                 }
             }
 
             if(isTSO())
-                RxRun(av[ia],NULL,args,&tracestr,"TSO");
+                RxRun(avÝia¨,NULL,args,&tracestr,"TSO");
             else
-                RxRun(av[ia],NULL,args,&tracestr,NULL);
+                RxRun(avÝia¨,NULL,args,&tracestr,NULL);
 
         } else {
             if (interactive)
@@ -141,7 +141,7 @@ main(int ac, char *av[])
                                "linein=read();"
                                "if eof(0) then exit;");
                 for (;ia<ac; ia++) {
-                    Lcat(&file,av[ia]);
+                    Lcat(&file,avÝia¨);
                     if (ia<ac-1) Lcat(&file," ");
                 }
                 /* and a footer */
@@ -167,7 +167,7 @@ TERMINATE:
 	RxFinalize();
     // TODO: call brxterm
     ResetTcpIp();
-	for (ia=0; ia<MAXARGS; ia++) LFREESTR(args[ia]);
+	for (ia=0; ia<MAXARGS; ia++) LFREESTR(argsÝia¨);
 	LFREESTR(tracestr);
 	LFREESTR(file);
 

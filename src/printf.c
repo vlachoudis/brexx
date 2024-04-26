@@ -146,7 +146,7 @@ typedef struct {
 static inline void _out_buffer(char character, void* buffer, size_t idx, size_t maxlen)
 {
     if (idx < maxlen) {
-        ((char*)buffer)[idx] = character;
+        ((char*)buffer)Ýidx¨ = character;
     }
 }
 
@@ -223,7 +223,7 @@ static size_t _out_rev(out_fct_type out, char* buffer, size_t idx, size_t maxlen
 
     // reverse string
     while (len) {
-        out(buf[--len], buffer, idx++, maxlen);
+        out(bufÝ--len¨, buffer, idx++, maxlen);
     }
 
     // append pad spaces up to given width
@@ -246,10 +246,10 @@ static size_t _ntoa_format(out_fct_type out, char* buffer, size_t idx, size_t ma
             width--;
         }
         while ((len < prec) && (len < PRINTF_NTOA_BUFFER_SIZE)) {
-            buf[len++] = '0';
+            bufÝlen++¨ = '0';
         }
         while ((flags & FLAGS_ZEROPAD) && (len < width) && (len < PRINTF_NTOA_BUFFER_SIZE)) {
-            buf[len++] = '0';
+            bufÝlen++¨ = '0';
         }
     }
 
@@ -262,28 +262,28 @@ static size_t _ntoa_format(out_fct_type out, char* buffer, size_t idx, size_t ma
             }
         }
         if ((base == 16U) && !(flags & FLAGS_UPPERCASE) && (len < PRINTF_NTOA_BUFFER_SIZE)) {
-            buf[len++] = 'x';
+            bufÝlen++¨ = 'x';
         }
         else if ((base == 16U) && (flags & FLAGS_UPPERCASE) && (len < PRINTF_NTOA_BUFFER_SIZE)) {
-            buf[len++] = 'X';
+            bufÝlen++¨ = 'X';
         }
         else if ((base == 2U) && (len < PRINTF_NTOA_BUFFER_SIZE)) {
-            buf[len++] = 'b';
+            bufÝlen++¨ = 'b';
         }
         if (len < PRINTF_NTOA_BUFFER_SIZE) {
-            buf[len++] = '0';
+            bufÝlen++¨ = '0';
         }
     }
 
     if (len < PRINTF_NTOA_BUFFER_SIZE) {
         if (negative) {
-            buf[len++] = '-';
+            bufÝlen++¨ = '-';
         }
         else if (flags & FLAGS_PLUS) {
-            buf[len++] = '+';  // ignore the space if the '+' exists
+            bufÝlen++¨ = '+';  // ignore the space if the '+' exists
         }
         else if (flags & FLAGS_SPACE) {
-            buf[len++] = ' ';
+            bufÝlen++¨ = ' ';
         }
     }
 
@@ -294,7 +294,7 @@ static size_t _ntoa_format(out_fct_type out, char* buffer, size_t idx, size_t ma
 // internal itoa for 'long' type
 static size_t _ntoa_long(out_fct_type out, char* buffer, size_t idx, size_t maxlen, unsigned long value, bool negative, unsigned long base, unsigned int prec, unsigned int width, unsigned int flags)
 {
-    char buf[PRINTF_NTOA_BUFFER_SIZE];
+    char bufÝPRINTF_NTOA_BUFFER_SIZE¨;
     size_t len = 0U;
 
     // no hash for 0 values
@@ -306,7 +306,7 @@ static size_t _ntoa_long(out_fct_type out, char* buffer, size_t idx, size_t maxl
     if (!(flags & FLAGS_PRECISION) || value) {
         do {
             const char digit = (char)(value % base);
-            buf[len++] = digit < 10 ? '0' + digit : (flags & FLAGS_UPPERCASE ? 'A' : 'a') + digit - 10;
+            bufÝlen++¨ = digit < 10 ? '0' + digit : (flags & FLAGS_UPPERCASE ? 'A' : 'a') + digit - 10;
             value /= base;
         } while (value && (len < PRINTF_NTOA_BUFFER_SIZE));
     }
@@ -319,7 +319,7 @@ static size_t _ntoa_long(out_fct_type out, char* buffer, size_t idx, size_t maxl
 #if defined(PRINTF_SUPPORT_LONG_LONG)
 static size_t _ntoa_long_long(out_fct_type out, char* buffer, size_t idx, size_t maxlen, unsigned long long value, bool negative, unsigned long long base, unsigned int prec, unsigned int width, unsigned int flags)
 {
-    char buf[PRINTF_NTOA_BUFFER_SIZE];
+    char bufÝPRINTF_NTOA_BUFFER_SIZE¨;
     size_t len = 0U;
 
     // no hash for 0 values
@@ -331,7 +331,7 @@ static size_t _ntoa_long_long(out_fct_type out, char* buffer, size_t idx, size_t
     if (!(flags & FLAGS_PRECISION) || value) {
         do {
             const char digit = (char)(value % base);
-            buf[len++] = digit < 10 ? '0' + digit : (flags & FLAGS_UPPERCASE ? 'A' : 'a') + digit - 10;
+            bufÝlen++¨ = digit < 10 ? '0' + digit : (flags & FLAGS_UPPERCASE ? 'A' : 'a') + digit - 10;
             value /= base;
         } while (value && (len < PRINTF_NTOA_BUFFER_SIZE));
     }
@@ -352,7 +352,7 @@ static size_t _etoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
 // internal ftoa for fixed decimal floating point
 static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, double value, unsigned int prec, unsigned int width, unsigned int flags)
 {
-    char buf[PRINTF_FTOA_BUFFER_SIZE];
+    char bufÝPRINTF_FTOA_BUFFER_SIZE¨;
     size_t len  = 0U;
     double diff = 0.0;
 
@@ -362,7 +362,7 @@ static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
     unsigned long frac;
 
     // powers of 10
-    static const double pow10[] = { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000 };
+    static const double pow10Ý¨ = { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000 };
 
     // test for special values
     if (value != value)
@@ -395,19 +395,19 @@ static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
     }
     // limit precision to 9, cause a prec >= 10 can lead to overflow errors
     while ((len < PRINTF_FTOA_BUFFER_SIZE) && (prec > 9U)) {
-        buf[len++] = '0';
+        bufÝlen++¨ = '0';
         prec--;
     }
 
     whole = (int)value;
-    tmp = (value - whole) * pow10[prec];
+    tmp = (value - whole) * pow10Ýprec¨;
     frac = (unsigned long)tmp;
     diff = tmp - frac;
 
     if (diff > 0.5) {
         ++frac;
         // handle rollover, e.g. case 0.99 with prec 1 is 1.0
-        if (frac >= pow10[prec]) {
+        if (frac >= pow10Ýprec¨) {
             frac = 0;
             ++whole;
         }
@@ -432,24 +432,24 @@ static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
         // now do fractional part, as an unsigned number
         while (len < PRINTF_FTOA_BUFFER_SIZE) {
             --count;
-            buf[len++] = (char)(48U + (frac % 10U));
+            bufÝlen++¨ = (char)(48U + (frac % 10U));
             if (!(frac /= 10U)) {
                 break;
             }
         }
         // add extra 0s
         while ((len < PRINTF_FTOA_BUFFER_SIZE) && (count-- > 0U)) {
-            buf[len++] = '0';
+            bufÝlen++¨ = '0';
         }
         if (len < PRINTF_FTOA_BUFFER_SIZE) {
             // add decimal
-            buf[len++] = '.';
+            bufÝlen++¨ = '.';
         }
     }
 
     // do whole part, number is reversed
     while (len < PRINTF_FTOA_BUFFER_SIZE) {
-        buf[len++] = (char)(48 + (whole % 10));
+        bufÝlen++¨ = (char)(48 + (whole % 10));
         if (!(whole /= 10)) {
             break;
         }
@@ -461,19 +461,19 @@ static size_t _ftoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
             width--;
         }
         while ((len < width) && (len < PRINTF_FTOA_BUFFER_SIZE)) {
-            buf[len++] = '0';
+            bufÝlen++¨ = '0';
         }
     }
 
     if (len < PRINTF_FTOA_BUFFER_SIZE) {
         if (negative) {
-            buf[len++] = '-';
+            bufÝlen++¨ = '-';
         }
         else if (flags & FLAGS_PLUS) {
-            buf[len++] = '+';  // ignore the space if the '+' exists
+            bufÝlen++¨ = '+';  // ignore the space if the '+' exists
         }
         else if (flags & FLAGS_SPACE) {
-            buf[len++] = ' ';
+            bufÝlen++¨ = ' ';
         }
     }
 
@@ -509,7 +509,7 @@ static size_t _etoa(out_fct_type out, char* buffer, size_t idx, size_t maxlen, d
 
     conv.F = value;
     int exp2 = (int)((conv.U >> 52U) & 0x07FFU) - 1023;           // effectively log2
-    conv.U = (conv.U & ((1ULL << 52U) - 1U)) | (1023ULL << 52U);  // drop the exponent so conv.F is now in [1,2)
+    conv.U = (conv.U & ((1ULL << 52U) - 1U)) | (1023ULL << 52U);  // drop the exponent so conv.F is now in Ý1,2)
     // now approximate log10 from the log2 integer part and an expansion of ln around 1.5
     int expval = (int)(0.1760912590558 + exp2 * 0.301029995663981 + (conv.F - 1.5) * 0.289529654602168);
     // now we want to compute 10¬expval but we want to be sure it won't overflow
@@ -604,7 +604,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
 
     while (*format)
     {
-        // format specifier?  %[flags][width][.precision][length]
+        // format specifier?  %Ýflags¨Ýwidth¨Ý.precision¨Ýlength¨
         if (*format != '%') {
             // no
             out(*format, buffer, idx++, maxlen);
@@ -882,7 +882,7 @@ static int _vsnprintf(out_fct_type out, char* buffer, const size_t maxlen, const
 int printf(const char* format, ...)
 {
     int ret;
-    char buffer[1];
+    char bufferÝ1¨;
     va_list va;
     va_start(va, format);
     ret = _vsnprintf(_out_char, buffer, (size_t)-1, format, va);
@@ -916,6 +916,6 @@ int snprintf(char* buffer, size_t count, const char* format, ...)
 
 int vprintf(const char* format, va_list va)
 {
-    char buffer[1];
+    char bufferÝ1¨;
     return _vsnprintf(_out_char, buffer, (size_t)-1, format, va);
 }

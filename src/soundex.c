@@ -35,7 +35,7 @@ Lsoundex( const PLstr to, const PLstr str )
        letter in alphabetical order. 0 represents
        letters which are to be ignored. */
     char        *code, *name;
-    static char    ctable[] =  { "01230120022455012623010202" };
+    static char    ctableÝ¨ =  { "01230120022455012623010202" };
     char        prior=' ', c;
     short        i, y=0;
     word        len;
@@ -55,19 +55,19 @@ Lsoundex( const PLstr to, const PLstr str )
     if (len > MAX_LENGTH) len = MAX_LENGTH;
 
     /* generate 1st character of Soundex code */
-    code[0] = l2u[(byte)name[0]];
+    codeÝ0¨ = l2uÝ(byte)nameÝ0¨¨;
     y=1;
 
 
-    if (l2u[(byte)name[0]]=='K')    /* modifications */
-        code[0] = 'C';
+    if (l2uÝ(byte)nameÝ0¨¨=='K')    /* modifications */
+        codeÝ0¨ = 'C';
     else
-    if (l2u[(byte)name[0]]=='P' && l2u[(byte)name[1]]=='H')
-        code[0] = 'F';
+    if (l2uÝ(byte)nameÝ0¨¨=='P' && l2uÝ(byte)nameÝ1¨¨=='H')
+        codeÝ0¨ = 'F';
 
     /* loop through the rest of name, until code complete */
     for (i=1; i<len; i++) {
-        c = l2u[(byte)name[i]];
+        c = l2uÝ(byte)nameÝi¨¨;
             /* skip non alpha */
         if (!ISALPHA(c))
             continue;
@@ -78,14 +78,14 @@ Lsoundex( const PLstr to, const PLstr str )
 
             /* lookup letter in table   */
         c -= ALPHA_OFFSET;
-        if (ctable[(byte)c]=='0')
+        if (ctableÝ(byte)c¨=='0')
             continue;    /* ignore this letter */
 
-        code[y++] = ctable[(byte)c];    /* add to code */
+        codeÝy++¨ = ctableÝ(byte)c¨;    /* add to code */
 
         if (y >= SOUNDEX_LENGTH) break;    /* code is complete */
     }
-    while (y < SOUNDEX_LENGTH) code[y++] = '0';   /* pad code with zeros */
-    code[y] = '\0';
+    while (y < SOUNDEX_LENGTH) codeÝy++¨ = '0';   /* pad code with zeros */
+    codeÝy¨ = '\0';
     LLEN(*to) = y;
 } /* Lsoundex */

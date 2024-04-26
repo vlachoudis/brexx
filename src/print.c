@@ -64,7 +64,7 @@ Lprint( FILEP f, const PLstr str )
 {
 	size_t	l;
 	char	*c;
-	char	s[64];
+	char	sÝ64¨;
 
 #ifndef WIN
 	if (str==NULL) {

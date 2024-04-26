@@ -15,7 +15,7 @@
 typedef struct T_DebugInfo_st {
     dword  magic_eye;
     char  *message;
-    dword  pointer[MAX_POINTER_ELEMENTS];
+    dword  pointerÝMAX_POINTER_ELEMENTS¨;
 } DebugInfo;
 
 typedef DebugInfo *P_DebugInfo;
@@ -39,12 +39,12 @@ static void updateDebugInfo (char *message, int num, ...)
 
     /* zero out all old values */
     for (ii=0; ii < MAX_POINTER_ELEMENTS; ii++) {
-        debugInfo->pointer[ii] = 0;
+        debugInfo->pointerÝii¨ = 0;
     }
 
     /* set new values */
     for (jj=0; jj < MIN(num,MAX_POINTER_ELEMENTS); jj++) {
-        debugInfo->pointer[jj] = va_arg(args,dword);
+        debugInfo->pointerÝjj¨ = va_arg(args,dword);
     }
 
     /* clean up */

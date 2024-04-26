@@ -52,14 +52,14 @@ void    __CDECL RxInitInterStr();
 /* ---------- Extern variables ---------------- */
 extern    Clause    *CompileClause;        /* compile clauses    */
 extern    int    CompileCurClause;    /* current clause    */
-extern    ErrorMsg errortext[];        /* from lstring/errortxt.c */
+extern    ErrorMsg errortextÝ¨;        /* from lstring/errortxt.c */
 extern    bool    _in_nextsymbol;        /* from nextsymb.c    */
 extern    int    _trace;            /* from interpret.c    */
-extern    PLstr    RxStck[];        /*     -//-        */
+extern    PLstr    RxStckÝ¨;        /*     -//-        */
 extern    int    RxStckTop;        /*     -//-        */
-extern    Lstr    _tmpstr[];        /*     -//-        */
+extern    Lstr    _tmpstrÝ¨;        /*     -//-        */
 
-static    char    TraceChar[] = {' ','>','L','V','C','O','F','.'};
+static    char    TraceCharÝ¨ = {' ','>','L','V','C','O','F','.'};
 
 /* ----------------- TraceCurline ----------------- */
 int __CDECL
@@ -78,32 +78,32 @@ TraceCurline( RxFile **rxf, int print )
         codepos = (size_t)((byte huge *)Rxcip - (byte huge *)Rxcodestart);
         /* search for clause */
         cl = 0;
-        while (CompileClause[cl].ptr) {
-            if (CompileClause[cl].code >= codepos)
+        while (CompileClauseÝcl¨.ptr) {
+            if (CompileClauseÝcl¨.code >= codepos)
                 break;
             cl++;
         }
         cl--;
-        line  = CompileClause[cl].line;
-        ch    = CompileClause[cl].ptr;
-        chend = CompileClause[cl+1].ptr;
+        line  = CompileClauseÝcl¨.line;
+        ch    = CompileClauseÝcl¨.ptr;
+        chend = CompileClauseÝcl+1¨.ptr;
         if (chend==NULL)
             for (chend=ch; *chend!='\n'; chend++) /*do nothing*/;;
-        _nesting = _rx_proc + CompileClause[cl].nesting;
+        _nesting = _rx_proc + CompileClauseÝcl¨.nesting;
         if (rxf)
-            *rxf = CompileClause[ cl ].fptr;
+            *rxf = CompileClauseÝ cl ¨.fptr;
     } else {        /* we are in compile  */
         if (CompileCurClause==0)
             cl = 0;
         else
             cl = CompileCurClause-1;
 
-        _nesting   = CompileClause[ cl ].nesting;
+        _nesting   = CompileClauseÝ cl ¨.nesting;
         if (rxf) {
             if (CompileCurClause==0)
                 *rxf = CompileRxFile;
             else
-                *rxf = CompileClause[ cl ].fptr;
+                *rxf = CompileClauseÝ cl ¨.fptr;
         }
         if (_in_nextsymbol) {
             line = symboline;
@@ -117,8 +117,8 @@ TraceCurline( RxFile **rxf, int print )
             ch   = (char*)LSTR((*rxf)->file);
         } else {
             cl   = CompileCurClause-1;
-            line = CompileClause[ cl ].line;
-            ch   = CompileClause[ cl ].ptr;
+            line = CompileClauseÝ cl ¨.line;
+            ch   = CompileClauseÝ cl ¨.ptr;
         }
         for (chend=ch; *chend!=';' && *chend!='\n'; chend++) /*do nothing*/;;
     }
@@ -170,14 +170,14 @@ TraceSet( PLstr trstr )
         ch++;
     } else
     if (*ch=='?') {
-        _proc[_rx_proc].interactive_trace
-            = 1 - _proc[_rx_proc].interactive_trace;
-        if (_proc[_rx_proc].interactive_trace)
+        _procÝ_rx_proc¨.interactive_trace
+            = 1 - _procÝ_rx_proc¨.interactive_trace;
+        if (_procÝ_rx_proc¨.interactive_trace)
 #ifndef WIN
-            fprintf(STDERR,"       +++ %s +++\n",errortext[2].errormsg);
+            fprintf(STDERR,"       +++ %s +++\n",errortextÝ2¨.errormsg);
 #else
             PUTS("       +++ ");
-            PUTS(errortext[0].errormsg);
+            PUTS(errortextÝ0¨.errormsg);
             PUTS(" +++\n");
 #endif
         ch++;
@@ -185,37 +185,37 @@ TraceSet( PLstr trstr )
 
     switch (*ch) {
         case 'A':
-            _proc[_rx_proc].trace = all_trace;
+            _procÝ_rx_proc¨.trace = all_trace;
             break;
         case 'C':
-            _proc[_rx_proc].trace = commands_trace;
+            _procÝ_rx_proc¨.trace = commands_trace;
             break;
         case 'E':
-            _proc[_rx_proc].trace = error_trace;
+            _procÝ_rx_proc¨.trace = error_trace;
             break;
 /*
 ///        case 'F':
-///            _proc[_rx_proc].trace = ;
+///            _procÝ_rx_proc¨.trace = ;
 ///            break;
 */
         case 'I':
-            _proc[_rx_proc].trace = intermediates_trace;
+            _procÝ_rx_proc¨.trace = intermediates_trace;
             break;
         case 'L':
-            _proc[_rx_proc].trace = labels_trace;
+            _procÝ_rx_proc¨.trace = labels_trace;
             break;
         case 'N':
-            _proc[_rx_proc].trace = normal_trace;
+            _procÝ_rx_proc¨.trace = normal_trace;
             break;
         case 'O':
-            _proc[_rx_proc].trace = off_trace;
-            _proc[_rx_proc].interactive_trace = FALSE;
+            _procÝ_rx_proc¨.trace = off_trace;
+            _procÝ_rx_proc¨.interactive_trace = FALSE;
             break;
         case 'R':
-            _proc[_rx_proc].trace = results_trace;
+            _procÝ_rx_proc¨.trace = results_trace;
             break;
         case 'S':
-            _proc[_rx_proc].trace = scan_trace;
+            _procÝ_rx_proc¨.trace = scan_trace;
             break;
 #ifdef __DEBUG__
         case 'D':
@@ -247,7 +247,7 @@ TraceByte( int middlechar )
 void __CDECL
 TraceClause( void )
 {
-    if (_proc[_rx_proc].interactive_trace) {
+    if (_procÝ_rx_proc¨.interactive_trace) {
         /* return if user specified a string for interactive trace */
         if (TraceInteractive(TRUE))
             return;
@@ -263,21 +263,21 @@ void __CDECL
 TraceInstruction( CIPTYPE inst )
 {
     if ((inst & TB_MIDDLECHAR) != nothing_middle)
-        if (_proc[_rx_proc].trace == intermediates_trace) {
+        if (_procÝ_rx_proc¨.trace == intermediates_trace) {
             int    i;
 #ifndef WIN
-            fprintf(STDERR,"       >%c>  ",TraceChar[ inst & TB_MIDDLECHAR ]);
+            fprintf(STDERR,"       >%c>  ",TraceCharÝ inst & TB_MIDDLECHAR ¨);
             for (i=0; i<_nesting; i++) fputc(' ',STDERR);
             fputc('\"',STDERR);
-            Lprint(STDERR,RxStck[RxStckTop]);
+            Lprint(STDERR,RxStckÝRxStckTop¨);
             fprintf(STDERR,"\"\n");
 #else
             PUTS("       >");
-            PUTCHAR(TraceChar[ inst & TB_MIDDLECHAR ]);
+            PUTCHAR(TraceCharÝ inst & TB_MIDDLECHAR ¨);
             PUTS(">  ");
             for (i=0; i<_nesting; i++) PUTCHAR(' ');
             PUTCHAR('\"');
-            Lprint(NULL,RxStck[RxStckTop]);
+            Lprint(NULL,RxStckÝRxStckTop¨);
             PUTS("\"\n");
 #endif
         }
@@ -289,10 +289,10 @@ TraceInteractive( int frominterpret )
 {
     /* Read the interactive string into a tmp var */
     RxStckTop++;
-    RxStck[RxStckTop] = &(_tmpstr[RxStckTop]);
+    RxStckÝRxStckTop¨ = &(_tmpstrÝRxStckTop¨);
 
-    Lread(STDIN,RxStck[RxStckTop],LREADLINE);
-    if (!LLEN(*RxStck[RxStckTop])) {
+    Lread(STDIN,RxStckÝRxStckTop¨,LREADLINE);
+    if (!LLEN(*RxStckÝRxStckTop¨)) {
         RxStckTop--;
         return FALSE;
     }
@@ -300,14 +300,14 @@ TraceInteractive( int frominterpret )
     _trace = FALSE;
 
     RxInitInterStr();
-    _proc[_rx_proc].calltype = CT_INTERACTIVE;
+    _procÝ_rx_proc¨.calltype = CT_INTERACTIVE;
     if (frominterpret) {
-        _proc[_rx_proc].calltype = CT_INTERACTIVE;
+        _procÝ_rx_proc¨.calltype = CT_INTERACTIVE;
         /* lets go again to NEWCLAUSE */
 #ifdef ALIGN
-        _proc[_rx_proc].ip-=sizeof(dword);
+        _procÝ_rx_proc¨.ip-=sizeof(dword);
 #else
-        _proc[_rx_proc].ip--;
+        _procÝ_rx_proc¨.ip--;
 #endif
     }
     return TRUE;
