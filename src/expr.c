@@ -397,8 +397,10 @@ C_function( void )
 	/* add a space in stack, for the result string */
 	if ((exp_ct==exp_assign) && (exp_pos==CompileCodeLen))
 		exp_ct = exp_normal;
-	else
+	else {
+		_CodeAddByte(OP_COPY2TMP);
 		_CodeAddByte(OP_PUSHTMP);
+	}
 
 	nextsymbol();
 	ia = lastarg = 0;
