@@ -1,3 +1,7 @@
+mm/yyyy
+    * Release x.y.z
+		Fix issue #14: Segmentation fault in Lstrcpy() under INTERPRET
+		Fix issue #9: SIGL not set
 04/2011 Vasilis Vlachoudis <Vasilis.Vlachoudis@cern.ch>
 	* Release 2.1.9:
 		Support for ANDROID
