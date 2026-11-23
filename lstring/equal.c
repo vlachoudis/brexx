@@ -96,8 +96,8 @@ eq_str:
 	if (a==ae && b==be)
 		return 0;
 	else
-	if (a<ae && b<be)
-		return (*a<*b) ? -1 : 1 ;
+	if (a<ae)
+		return (*a<' ') ? -1 : 1;
 	else
-		return (a<ae) ? 1 : -1 ;
+		return (*b<' ') ? 1 : -1;
 } /* Lequal */
